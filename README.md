@@ -1,5 +1,5 @@
 # philiagus/validator
-PHP converter classes for sanitization, parsing and conversion of inputs.
+PHP converter classes for asserting, parsing and converting of inputs.
 
 ## Why?
 Making sure your inputs are what they should be is one of the core principles of not falling into a hackers trap.
@@ -12,8 +12,18 @@ A simple example:
 
 ```php
 <?php
-(new IntegerPrimitive())
+use Philiagus\Parser\IntegerPrimitive;
+
+$integer = 100;
+
+$parsingResult = (new IntegerPrimitive())
+    ->withRange(0, 100)
+    ->parse($integer);
+
+// or, also possible:
+(new IntegerPrimitive($parsingResult))
     ->withMinimum(0)
-    ->validate($integer);
+    ->withDivisibleBy(10)
+    ->parse($integer);
 ```
 

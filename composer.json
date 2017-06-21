@@ -1,0 +1,29 @@
+{
+    "name": "philiagus/parser",
+    "description": "PHP converter classes for asserting, parsing and converting of inputs.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andreas Bittner",
+            "email": "philiagus@philiagus.de",
+            "role": "lead"
+        }
+    ],
+    "require": {
+        "php": "^7.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.2.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Philiagus\\Parser\\": "src/Philiagus/Parser"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Philiagus\\Test\\Parser\\": "tests/Philiagus/Parser"
+        }
+    }
+}
