@@ -23,7 +23,8 @@ class DataProvider
     public const TYPE_RESOURCE = 1 << 5;
     public const TYPE_STRING = 1 << 6;
     public const TYPE_NULL = 1 << 7;
-    public const TYPE_SPECIAL_FLOAT = 1 << 8;
+    public const TYPE_NAN = 1 << 8;
+    public const TYPE_INFINITE = 1 << 9;
     public const TYPE_ALL = PHP_INT_MAX;
 
     /**
@@ -118,8 +119,11 @@ class DataProvider
             $cases['null'] = null;
         }
 
-        if ($types & self::TYPE_SPECIAL_FLOAT) {
+        if ($types & self::TYPE_NAN) {
             $cases['special float NaN'] = NAN;
+        }
+
+        if ($types & self::TYPE_INFINITE) {
             $cases['special float INF'] = INF;
         }
 

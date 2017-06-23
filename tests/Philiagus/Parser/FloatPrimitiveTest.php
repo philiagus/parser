@@ -11,20 +11,20 @@
 namespace Philiagus\Test\Parser;
 
 use Philiagus\Parser\Base\Parser;
-use Philiagus\Parser\IntegerPrimitive;
+use Philiagus\Parser\FloatPrimitive;
 use PHPUnit\Framework\TestCase;
 
-class IntegerPrimitiveTest extends TestCase
+class FloatPrimitiveTest extends TestCase
 {
 
     public function testThatItExtendsBaseParser()
     {
-        self::assertTrue((new IntegerPrimitive()) instanceof Parser);
+        self::assertTrue((new FloatPrimitive()) instanceof Parser);
     }
 
     public function provideInvalidValues()
     {
-        return DataProvider::provide(~DataProvider::TYPE_INTEGER);
+        return DataProvider::provide(~DataProvider::TYPE_FLOAT);
     }
 
     /**
@@ -33,14 +33,14 @@ class IntegerPrimitiveTest extends TestCase
      * @expectedException \Philiagus\Parser\Exception\ParsingException
      * @dataProvider provideInvalidValues
      */
-    public function testThatNonIntegersAreBlocked($value)
+    public function testThatNonFloatsAreBlocked($value)
     {
-        (new IntegerPrimitive())->parse($value);
+        (new FloatPrimitive())->parse($value);
     }
 
     public function provideValidValues(): array
     {
-        return DataProvider::provide(DataProvider::TYPE_INTEGER);
+        return DataProvider::provide(DataProvider::TYPE_FLOAT);
     }
 
     /**
@@ -48,9 +48,9 @@ class IntegerPrimitiveTest extends TestCase
      *
      * @dataProvider provideValidValues
      */
-    public function testThatIntegersAreAllowed($value)
+    public function testThatFloatsAreAllowed($value)
     {
-        $result = (new IntegerPrimitive())->parse($value);
+        $result = (new FloatPrimitive())->parse($value);
         self::assertSame($result, $value);
     }
 
@@ -59,7 +59,7 @@ class IntegerPrimitiveTest extends TestCase
      */
     public function testThatRangeDoesNotAcceptMinGreaterMax()
     {
-        (new IntegerPrimitive())->withRange(100, 0);
+        (new FloatPrimitive())->withRange(100, 0);
     }
 
     /**
@@ -67,7 +67,7 @@ class IntegerPrimitiveTest extends TestCase
      */
     public function testThatMinimumCannotBeGreaterThanMaximum()
     {
-        (new IntegerPrimitive())->withMaximum(100)->withMinimum(1000);
+        (new FloatPrimitive())->withMaximum(100)->withMinimum(1000);
     }
 
     /**
@@ -75,7 +75,7 @@ class IntegerPrimitiveTest extends TestCase
      */
     public function testThatMaximumCannotBeLowerThanMinimum()
     {
-        (new IntegerPrimitive())->withMinimum(1000)->withMaximum(100);
+        (new FloatPrimitive())->withMinimum(1000.0)->withMaximum(100.0);
     }
 
     /**
@@ -83,9 +83,9 @@ class IntegerPrimitiveTest extends TestCase
      */
     public function testThatValueMustBeGreaterThanMinimum()
     {
-        (new IntegerPrimitive())
-            ->withMinimum(10)
-            ->parse(0);
+        (new FloatPrimitive())
+            ->withMinimum(10.0)
+            ->parse(0.0);
     }
 
     /**
@@ -93,16 +93,16 @@ class IntegerPrimitiveTest extends TestCase
      */
     public function testThatValueMustBeLowerThanMaximum()
     {
-        (new IntegerPrimitive())
-            ->withMaximum(0)
-            ->parse(10);
+        (new FloatPrimitive())
+            ->withMaximum(0.0)
+            ->parse(10.0);
     }
 
     public function provideOutOfRangeValues()
     {
         return [
-            'lower' => [-1],
-            'upper' => [11],
+            'lower' => [-1.0],
+            'upper' => [11.0],
         ];
     }
 
@@ -114,25 +114,25 @@ class IntegerPrimitiveTest extends TestCase
      */
     public function testThatValueMustBeInRange(int $value)
     {
-        (new IntegerPrimitive())
-            ->withRange(0, 10)
+        (new FloatPrimitive())
+            ->withRange(0.0, 10.0)
             ->parse($value);
     }
 
     public function testThatValueOverMinimumPasses()
     {
-        $parser = (new IntegerPrimitive())->withMinimum(0);
-        self::assertSame(10, $parser->parse(10));
-        self::assertSame(0, $parser->parse(0));
-        self::assertSame(PHP_INT_MAX, $parser->parse(PHP_INT_MAX));
+        $parser = (new FloatPrimitive())->withMinimum(0.0);
+        self::assertSame(10.0, $parser->parse(10.0));
+        self::assertSame(0.0, $parser->parse(0.0));
+        self::assertSame((float) PHP_INT_MAX, $parser->parse((float) PHP_INT_MAX));
     }
 
     public function testThatValueUnderMaximumPasses()
     {
-        $parser = (new IntegerPrimitive())->withMaximum(10);
-        self::assertSame(10, $parser->parse(10));
-        self::assertSame(1, $parser->parse(1));
-        self::assertSame(PHP_INT_MIN, $parser->parse(PHP_INT_MIN));
+        $parser = (new FloatPrimitive())->withMaximum(10.0);
+        self::assertSame(10.0, $parser->parse(10.0));
+        self::assertSame(1.0, $parser->parse(1.0));
+        self::assertSame((float) PHP_INT_MIN, $parser->parse((float) PHP_INT_MIN));
     }
 
 }
