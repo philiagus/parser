@@ -34,27 +34,6 @@ class IntegerPrimitive extends Parser implements Type\IntegerType
 
     /**
      * @param int $minimum
-     * @param int $maximum
-     *
-     * @return IntegerPrimitive
-     * @throws Exception\ParserConfigurationException
-     */
-    public function withRange(int $minimum, int $maximum): self
-    {
-        if ($minimum > $maximum) {
-            throw new Exception\ParserConfigurationException(
-                sprintf('Trying to set minimum of %s to a higher value than the maximum of %s', $minimum, $maximum)
-            );
-        }
-
-        $this->minimumValue = $minimum;
-        $this->maximumValue = $maximum;
-
-        return $this;
-    }
-
-    /**
-     * @param int $minimum
      *
      * @return IntegerPrimitive
      * @throws Exception\ParserConfigurationException

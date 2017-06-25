@@ -28,27 +28,6 @@ class FloatPrimitive extends Parser implements Type\FloatType
     private $maximumValue = null;
 
     /**
-     * @param int $minimum
-     * @param int $maximum
-     *
-     * @return FloatPrimitive
-     * @throws Exception\ParserConfigurationException
-     */
-    public function withRange(int $minimum, int $maximum): self
-    {
-        if ($minimum > $maximum) {
-            throw new Exception\ParserConfigurationException(
-                sprintf('Trying to set minimum of %s to a higher value than the maximum of %s', $minimum, $maximum)
-            );
-        }
-
-        $this->minimumValue = $minimum;
-        $this->maximumValue = $maximum;
-
-        return $this;
-    }
-
-    /**
      * @param float $minimum
      *
      * @return FloatPrimitive

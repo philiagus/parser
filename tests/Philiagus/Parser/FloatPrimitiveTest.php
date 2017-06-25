@@ -57,14 +57,6 @@ class FloatPrimitiveTest extends TestCase
     /**
      * @expectedException \Philiagus\Parser\Exception\ParserConfigurationException
      */
-    public function testThatRangeDoesNotAcceptMinGreaterMax()
-    {
-        (new FloatPrimitive())->withRange(100, 0);
-    }
-
-    /**
-     * @expectedException \Philiagus\Parser\Exception\ParserConfigurationException
-     */
     public function testThatMinimumCannotBeGreaterThanMaximum()
     {
         (new FloatPrimitive())->withMaximum(100)->withMinimum(1000);
@@ -104,19 +96,6 @@ class FloatPrimitiveTest extends TestCase
             'lower' => [-1.0],
             'upper' => [11.0],
         ];
-    }
-
-    /**
-     * @expectedException \Philiagus\Parser\Exception\ParsingException
-     * @dataProvider provideOutOfRangeValues
-     *
-     * @param int $value
-     */
-    public function testThatValueMustBeInRange(int $value)
-    {
-        (new FloatPrimitive())
-            ->withRange(0.0, 10.0)
-            ->parse($value);
     }
 
     public function testThatValueOverMinimumPasses()
