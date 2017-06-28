@@ -20,7 +20,7 @@ use Philiagus\Parser\Contract;
  *
  * @package Philiagus\Parser\Type
  */
-interface StringType extends Contract\Parser
+interface AcceptsString extends Contract\Parser
 {
 
 }

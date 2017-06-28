@@ -15,7 +15,7 @@ namespace Philiagus\Parser;
 
 use Philiagus\Parser\Base\Parser;
 
-class IntegerPrimitive extends Parser implements Type\IntegerType
+class IntegerPrimitive extends Parser implements Type\AcceptsInteger
 {
     /**
      * @var int|null

@@ -15,13 +15,13 @@ namespace Philiagus\Parser;
 use Philiagus\Parser\Base\Parser;
 
 class OneOf extends Parser implements
-    Type\ArrayType,
-    Type\BooleanType,
-    Type\FloatType,
-    Type\IntegerType,
-    Type\ObjectType,
-    Type\ResourceType,
-    Type\StringType
+    Type\AcceptsArray,
+    Type\AcceptsBoolean,
+    Type\AcceptsFloat,
+    Type\AcceptsInteger,
+    Type\AcceptsObject,
+    Type\AcceptsResource,
+    Type\AcceptsString
 {
 
     /**

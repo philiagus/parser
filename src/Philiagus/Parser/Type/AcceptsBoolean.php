@@ -16,11 +16,11 @@ use Philiagus\Parser\Contract;
 
 /**
  * This is a dummy interface used for type hinting.
- * Every parser that is capable of accepting a resource value must implement this interface
+ * Every parser that is capable of accepting a boolean value must implement this interface
  *
  * @package Philiagus\Parser\Type
  */
-interface ResourceType extends Contract\Parser
+interface AcceptsBoolean extends Contract\Parser
 {
 
 }

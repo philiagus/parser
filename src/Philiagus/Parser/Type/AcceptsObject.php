@@ -16,11 +16,11 @@ use Philiagus\Parser\Contract;
 
 /**
  * This is a dummy interface used for type hinting.
- * Every parser that is capable of accepting a integer value must implement this interface
+ * Every parser that is capable of accepting an object value must implement this interface
  *
  * @package Philiagus\Parser\Type
  */
-interface IntegerType extends Contract\Parser
+interface AcceptsObject extends Contract\Parser
 {
 
 }

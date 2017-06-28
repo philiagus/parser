@@ -15,7 +15,7 @@ namespace Philiagus\Parser;
 use Philiagus\Parser\Base\Parser;
 
 class ArrayPrimitive extends Parser implements
-    Type\ArrayType
+    Type\AcceptsArray
 {
     /**
      * @var int|null

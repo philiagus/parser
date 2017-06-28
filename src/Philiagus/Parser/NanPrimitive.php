@@ -14,9 +14,9 @@ namespace Philiagus\Parser;
 
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Type\FloatType;
+use Philiagus\Parser\Type\AcceptsFloat;
 
-class NanPrimitive extends Parser implements FloatType
+class NanPrimitive extends Parser implements AcceptsFloat
 {
 
     /**

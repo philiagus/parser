@@ -15,7 +15,7 @@ namespace Philiagus\Parser;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Exception\ParsingException;
 
-class FloatPrimitive extends Parser implements Type\FloatType
+class FloatPrimitive extends Parser implements Type\AcceptsFloat
 {
     /**
      * @var float|null

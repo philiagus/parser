@@ -16,11 +16,11 @@ use Philiagus\Parser\Contract;
 
 /**
  * This is a dummy interface used for type hinting.
- * Every parser that is capable of accepting a float value must implement this interface
+ * Every parser that is capable of accepting an array value must implement this interface
  *
  * @package Philiagus\Parser\Type
  */
-interface FloatType extends Contract\Parser
+interface AcceptsArray extends Contract\Parser
 {
 
 }

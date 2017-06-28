@@ -22,7 +22,7 @@ use Philiagus\Parser\Type;
  * @package Philiagus\Parser
  */
 class BooleanPrimitive extends Parser implements
-    Type\BooleanType
+    Type\AcceptsBoolean
 {
 
     /**

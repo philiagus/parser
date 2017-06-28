@@ -18,22 +18,22 @@ use Philiagus\Parser\Base\Parser;
  * Takes any input and attempts a loss free conversion of the provided value into a valid integer value
  */
 class IntegerConverter extends Parser implements
-    Type\IntegerType,
-    Type\StringType,
-    Type\FloatType
+    Type\AcceptsInteger,
+    Type\AcceptsString,
+    Type\AcceptsFloat
 {
 
     /**
-     * @var null|Type\IntegerType
+     * @var null|Type\AcceptsInteger
      */
     private $followupParser = null;
 
     /**
-     * @param Type\IntegerType $parser
+     * @param Type\AcceptsInteger $parser
      *
      * @return IntegerConverter
      */
-    public function withFollowupParser(Type\IntegerType $parser): self
+    public function withFollowupParser(Type\AcceptsInteger $parser): self
     {
         $this->followupParser = $parser;
 
