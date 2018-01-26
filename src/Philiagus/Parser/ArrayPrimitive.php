@@ -28,6 +28,11 @@ class ArrayPrimitive extends Parser implements
     private $maximumCount = null;
 
     /**
+     * @var null|Parser
+     */
+    private $value = null;
+
+    /**
      * @param int $minimum
      *
      * @return ArrayPrimitive
@@ -78,6 +83,18 @@ class ArrayPrimitive extends Parser implements
     }
 
     /**
+     * @param Parser $parser
+     *
+     * @return ArrayPrimitive
+     */
+    public function withValue(Parser $parser): self
+    {
+        $this->value = $parser;
+
+        return $this;
+    }
+
+    /**
      * @inheritdoc
      */
     protected function convert($value, string $path)
@@ -109,6 +126,12 @@ class ArrayPrimitive extends Parser implements
                     ),
                     $path
                 );
+            }
+        }
+
+        if($this->value) {
+            foreach($value as $index => &$element) {
+                $element = $this->value->parse($value, $path . self::PATH_SEPARATOR . $index);
             }
         }
 

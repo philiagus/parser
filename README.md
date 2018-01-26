@@ -27,3 +27,25 @@ $parsingResult = (new IntegerPrimitive())
     ->parse($integer);
 ```
 
+The real fun begins, when you start stacking the methods:
+
+```php
+<?php
+use Philiagus\Parser\OneOf;
+use Philiagus\Parser\ArrayPrimitive;
+use Philiagus\Parser\IntegerPrimitive;
+use Philiagus\Parser\FloatPrimitive;
+
+$parser = (new ArrayPrimitive())
+    ->withValue(
+        (new OneOf())
+            ->withOption(
+                (new IntegerPrimitive())
+                    ->withMinimum(0)
+            )
+            ->withOption(
+                (new FloatPrimitive())
+                    ->withMinimum(0)
+            )
+    );
+```
