@@ -15,8 +15,6 @@
          colors="true"
          bootstrap="vendor/autoload.php"
          cacheResult="false"
-         stopOnError="true"
-         stopOnFailure="true"
 >
     <filter>
         <whitelist>
