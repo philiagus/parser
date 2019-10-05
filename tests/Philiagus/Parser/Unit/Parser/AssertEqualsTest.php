@@ -10,7 +10,7 @@
 
 declare(strict_types=1);
 
-namespace Philiagus\Test\Parser\Unit;
+namespace Philiagus\Test\Parser\Unit\Parser;
 
 use Philiagus\Parser\Parser\AssertEquals;
 use Philiagus\Parser\Base\Parser;

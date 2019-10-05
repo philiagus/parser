@@ -10,7 +10,7 @@
 
 declare(strict_types=1);
 
-namespace Philiagus\Test\Parser\Unit;
+namespace Philiagus\Test\Parser\Unit\Parser;
 
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
@@ -34,7 +34,7 @@ class OneOfTest extends TestCase
     public function testThatItStopsAtTheFirstMatchingParser()
     {
         self::assertEquals('matched!', (new OneOf())
-            ->withOption(
+            ->addOption(
                 new class() implements AcceptsMixed
                 {
                     public function parse($value, Path $path = null)
@@ -43,7 +43,7 @@ class OneOfTest extends TestCase
                     }
                 }
             )
-            ->withOption(
+            ->addOption(
                 new class() implements AcceptsMixed
                 {
                     public function parse($value, Path $path = null)
@@ -52,7 +52,7 @@ class OneOfTest extends TestCase
                     }
                 }
             )
-            ->withOption(
+            ->addOption(
                 new class() implements AcceptsMixed
                 {
                     public function parse($value, Path $path = null)
@@ -77,7 +77,7 @@ class OneOfTest extends TestCase
 
         self::expectException(MultipleParsingException::class);
         (new OneOf())
-            ->withOption($option->reveal())
+            ->addOption($option->reveal())
             ->parse(null);
     }
 

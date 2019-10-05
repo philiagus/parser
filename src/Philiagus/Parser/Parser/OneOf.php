@@ -34,7 +34,7 @@ class OneOf extends Parser implements
      */
     private $options = [];
 
-    public function withOption(AcceptsMixed $parser): self
+    public function addOption(AcceptsMixed $parser): self
     {
         $this->options[] = $parser;
 

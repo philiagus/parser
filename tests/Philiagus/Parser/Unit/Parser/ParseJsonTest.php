@@ -10,7 +10,7 @@
 
 declare(strict_types=1);
 
-namespace Philiagus\Test\Parser\Unit;
+namespace Philiagus\Test\Parser\Unit\Parser;
 
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Exception\ParsingException;

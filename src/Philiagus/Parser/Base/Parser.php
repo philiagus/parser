@@ -18,8 +18,6 @@ use Philiagus\Parser\Type\AcceptsMixed;
 
 abstract class Parser
 {
-    public const PATH_SEPARATOR = "\0";
-
     /**
      * @var mixed
      */

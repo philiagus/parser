@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Philiagus\Test\Parser\Unit;
+namespace Philiagus\Test\Parser\Unit\Parser;
 
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;

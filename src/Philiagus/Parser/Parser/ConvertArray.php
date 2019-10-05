@@ -22,7 +22,7 @@ class ConvertArray extends Parser implements AcceptsMixed
 {
 
     /**
-     * @var int
+     * @var bool|string|int
      */
     private $convertNonArrays = false;
 
@@ -59,7 +59,7 @@ class ConvertArray extends Parser implements AcceptsMixed
     public function withDefaultedElement($key, $forcedValue): self
     {
         if (!is_string($key) && !is_int($key)) {
-            throw new ParserConfigurationException('Array key can only be string or integer');
+            throw new ParserConfigurationException('Arrays only accept string or integer keys');
         }
 
         $this->forcedKeys[$key] = $forcedValue;
@@ -71,7 +71,7 @@ class ConvertArray extends Parser implements AcceptsMixed
     {
         foreach ($keys as $key) {
             if (!is_string($key) && !is_int($key)) {
-                throw new ParserConfigurationException('Array key can onle be string or integer');
+                throw new ParserConfigurationException('Arrays only accept string or integer keys');
             }
         }
 

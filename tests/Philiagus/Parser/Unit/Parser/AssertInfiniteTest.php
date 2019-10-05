@@ -10,25 +10,25 @@
 
 declare(strict_types=1);
 
-namespace Philiagus\Test\Parser\Unit;
+namespace Philiagus\Test\Parser\Unit\Parser;
 
 use Philiagus\Parser\Base\Parser;
-use Philiagus\Parser\Parser\AssertBoolean;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Parser\AssertInfinite;
 use Philiagus\Test\Parser\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-class AssertBooleanTest extends TestCase
+class AssertInfiniteTest extends TestCase
 {
 
     public function testThatItExtendsBaseParser()
     {
-        self::assertTrue((new AssertBoolean()) instanceof Parser);
+        self::assertTrue((new AssertInfinite()) instanceof Parser);
     }
 
     public function provideInvalidValues(): array
     {
-        return DataProvider::provide(~DataProvider::TYPE_BOOLEAN);
+        return DataProvider::provide(~DataProvider::TYPE_INFINITE);
     }
 
     /**
@@ -36,15 +36,15 @@ class AssertBooleanTest extends TestCase
      *
      * @dataProvider provideInvalidValues
      */
-    public function testThatItBlocksNonBooleanValues($value)
+    public function testThatItBlocksNonInfiniteValues($value)
     {
         self::expectException(ParsingException::class);
-        (new AssertBoolean())->parse($value);
+        (new AssertInfinite())->parse($value);
     }
 
     public function provideValidValues(): array
     {
-        return DataProvider::provide(DataProvider::TYPE_BOOLEAN);
+        return DataProvider::provide(DataProvider::TYPE_INFINITE);
     }
 
     /**
@@ -52,9 +52,9 @@ class AssertBooleanTest extends TestCase
      *
      * @dataProvider provideValidValues
      */
-    public function testThatItAllowsBooleanValues($value)
+    public function testThatItAllowsInfiniteValues($value)
     {
-        $result = (new AssertBoolean())->parse($value);
+        $result = (new AssertInfinite())->parse($value);
         self::assertSame($value, $result);
     }
 
