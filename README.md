@@ -14,16 +14,17 @@ A simple example:
 
 ```php
 <?php
-use Philiagus\Parser\IntegerPrimitive;
+use Philiagus\Parser\Parser\AssertInteger;
 
 $integer = 100;
 
-$parsingResult = (new IntegerPrimitive())
-    ->withRange(0, 100)
+$parsingResult = (new AssertInteger())
+    ->withMinimum(0)
+    ->withMaximum(100)
     ->parse($integer);
 
 // or, also possible:
-(new IntegerPrimitive($parsingResult))
+(new AssertInteger($parsingResult))
     ->withMinimum(0)
     ->withDivisibleBy(10)
     ->parse($integer);
@@ -33,21 +34,21 @@ The real fun begins, when you start stacking the methods:
 
 ```php
 <?php
-use Philiagus\Parser\OneOf;
-use Philiagus\Parser\ArrayPrimitive;
-use Philiagus\Parser\IntegerPrimitive;
-use Philiagus\Parser\FloatPrimitive;
+use Philiagus\Parser\Parser\OneOf;
+use Philiagus\Parser\Parser\AssertInteger;
+use Philiagus\Parser\Parser\AssertFloat;
+use Philiagus\Parser\Parser\AssertArray;
 
-$parser = (new ArrayPrimitive())
-    ->withValue(
+$parser = (new AssertArray())
+    ->withValues(
         (new OneOf())
-            ->withOption(
-                (new IntegerPrimitive())
+            ->addOption(
+                (new AssertInteger())
                     ->withMinimum(0)
             )
-            ->withOption(
-                (new FloatPrimitive())
-                    ->withMinimum(0)
+            ->addOption(
+                (new AssertFloat())
+                    ->withMinimum(0.0)
             )
     );
 ```
