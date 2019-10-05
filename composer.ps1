@@ -1,1 +1,0 @@
-docker-compose run test composer install --no-interaction

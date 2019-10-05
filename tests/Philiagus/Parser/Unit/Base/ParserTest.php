@@ -15,9 +15,11 @@ namespace Philiagus\Test\Parser\Unit\Base;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Path\Root;
 use Philiagus\Parser\Type\AcceptsMixed;
 use Philiagus\Test\Parser\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 
 class ParserTest extends TestCase
 {
@@ -47,7 +49,7 @@ class ParserTest extends TestCase
                 return $this->wasCalled;
             }
 
-            protected function execute($value, string $path)
+            protected function execute($value, Path $path)
             {
                 $this->wasCalled = true;
 
@@ -97,7 +99,7 @@ class ParserTest extends TestCase
     public function testRecoveryWithError(): void
     {
         $recoveryParser = $this->prophesize(AcceptsMixed::class);
-        $recoveryParser->parse(null, '')->shouldBeCalledTimes(1);
+        $recoveryParser->parse(null, Argument::type(Root::class))->shouldBeCalledTimes(1);
         self::assertSame(
             null,
             (new class() extends Parser
@@ -124,7 +126,7 @@ class ParserTest extends TestCase
     {
 
         $pipeToParser = $this->prophesize(AcceptsMixed::class);
-        $pipeToParser->parse('success value', '')->shouldBeCalledTimes(1)->willReturn('final value');
+        $pipeToParser->parse('success value', Argument::type(Root::class))->shouldBeCalledTimes(1)->willReturn('final value');
         self::assertSame(
             'final value',
             (new class() extends Parser
@@ -160,10 +162,10 @@ class ParserTest extends TestCase
     {
 
         $recoveryParser = $this->prophesize(AcceptsMixed::class);
-        $recoveryParser->parse(null, '')->shouldBeCalledTimes(1)->willReturn('error value');
+        $recoveryParser->parse(null, Argument::type(Root::class))->shouldBeCalledTimes(1)->willReturn('error value');
 
         $postprocessParser = $this->prophesize(AcceptsMixed::class);
-        $postprocessParser->parse('error value', '')->shouldBeCalledTimes(1)->willReturn('Postprocess value');
+        $postprocessParser->parse('error value', Argument::type(Root::class))->shouldBeCalledTimes(1)->willReturn('Postprocess value');
         self::assertSame(
             'Postprocess value',
             (new class() extends Parser

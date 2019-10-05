@@ -16,6 +16,7 @@ use Philiagus\Parser\Parser\AssertEquals;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Path\Root;
 use PHPUnit\Framework\TestCase;
 
 class AssertEqualsTest extends TestCase
@@ -29,7 +30,7 @@ class AssertEqualsTest extends TestCase
     public function testThatItBlocksNotEqualValues(): void
     {
         self::expectException(ParsingException::class);
-        (new AssertEquals())->withValue(1)->parse(2, '');
+        (new AssertEquals())->withValue(1)->parse(2);
     }
 
     public function testThatItAllowsEqualValues(): void

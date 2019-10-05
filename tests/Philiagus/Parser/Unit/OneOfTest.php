@@ -18,8 +18,10 @@ use Philiagus\Parser\Exception\MultipleParsingException;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\OneOf;
+use Philiagus\Parser\Path\Root;
 use Philiagus\Parser\Type\AcceptsMixed;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 
 class OneOfTest extends TestCase
 {
@@ -35,7 +37,7 @@ class OneOfTest extends TestCase
             ->withOption(
                 new class() implements AcceptsMixed
                 {
-                    public function parse($value, Path $path)
+                    public function parse($value, Path $path = null)
                     {
                         throw new ParsingException('value', 'Exception', $path);
                     }
@@ -44,7 +46,7 @@ class OneOfTest extends TestCase
             ->withOption(
                 new class() implements AcceptsMixed
                 {
-                    public function parse($value, string $path = '')
+                    public function parse($value, Path $path = null)
                     {
                         return 'matched!';
                     }
@@ -53,7 +55,7 @@ class OneOfTest extends TestCase
             ->withOption(
                 new class() implements AcceptsMixed
                 {
-                    public function parse($value, string $path = '')
+                    public function parse($value, Path $path = null)
                     {
                         throw new \LogicException('This code should never be reached');
                     }
@@ -69,9 +71,9 @@ class OneOfTest extends TestCase
 
     public function testThatItThrowsAnExceptionWhenNothingMatches()
     {
-        $exception = new ParsingException('value', 'Exception', '');
+        $exception = new ParsingException('value', 'Exception', new Root(''));
         $option = $this->prophesize(AcceptsMixed::class);
-        $option->parse(null, '')->willThrow($exception);
+        $option->parse(null, Argument::type(Path::class))->willThrow($exception);
 
         self::expectException(MultipleParsingException::class);
         (new OneOf())

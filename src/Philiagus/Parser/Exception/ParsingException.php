@@ -56,10 +56,4 @@ class ParsingException extends \Exception
     {
         return $this->path;
     }
-
-    public function getPathString(): string
-    {
-        return $this->path->toString();
-    }
-
 }

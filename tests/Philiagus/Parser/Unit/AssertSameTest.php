@@ -44,7 +44,7 @@ class AssertSameTest extends TestCase
     public function testThatItBlocksNotSameValue($value): void
     {
         self::expectException(ParsingException::class);
-        (new AssertSame())->withValue(0)->parse($value, '');
+        (new AssertSame())->withValue(0)->parse($value);
     }
 
     public function testThatItAllowsSameValue(): void
