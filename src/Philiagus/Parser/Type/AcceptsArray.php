@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * This file is part of philiagus/parser
  *
  * (c) Andreas Bittner <philiagus@philiagus.de>
@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Type;
 
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Base\Path;
 
 /**
  * This is a dummy interface used for type hinting.
@@ -20,7 +20,7 @@ use Philiagus\Parser\Contract;
  *
  * @package Philiagus\Parser\Type
  */
-interface AcceptsArray extends Contract\Parser
+interface AcceptsArray extends AcceptsMixed
 {
-
+    public function parse($value, Path $path = null);
 }

@@ -16,11 +16,11 @@ use Philiagus\Parser\Base\Path;
 
 /**
  * This is a dummy interface used for type hinting.
- * Every parser that is capable of accepting a float value must implement this interface
+ * Every parser must at least implement this interface
  *
  * @package Philiagus\Parser\Type
  */
-interface AcceptsFloat extends AcceptsMixed
+interface AcceptsMixed
 {
-    public function parse($value, Path $path = null);
+    public function parse($value, ?Path $path = null);
 }
