@@ -1,3 +1,5 @@
+***!!! NOT READY FOR PRODUCTION USE !!!***
+
 # philiagus/validator
 PHP converter classes for asserting, parsing and converting of inputs.
 
