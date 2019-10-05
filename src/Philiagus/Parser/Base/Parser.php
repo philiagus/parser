@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * This file is part of philiagus/parser
  *
  * (c) Andreas Bittner <philiagus@philiagus.de>
@@ -12,9 +12,11 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Base;
 
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Path\Root;
+use Philiagus\Parser\Type\AcceptsMixed;
 
-abstract class Parser implements Contract\Parser
+abstract class Parser
 {
     public const PATH_SEPARATOR = "\0";
 
@@ -22,6 +24,21 @@ abstract class Parser implements Contract\Parser
      * @var mixed
      */
     private $target;
+
+    /**
+     * @var AcceptsMixed|null
+     */
+    private $recovery = null;
+
+    /**
+     * @var AcceptsMixed|null
+     */
+    private $pipeTo = null;
+
+    /**
+     * @var AcceptsMixed|null
+     */
+    private $postprocess = null;
 
     /**
      * The constructor receives the target to parse into
@@ -33,14 +50,54 @@ abstract class Parser implements Contract\Parser
         $this->target = &$target;
     }
 
+    public function recovery(AcceptsMixed $parser): self
+    {
+        $this->recovery = $parser;
+
+        return $this;
+    }
+
+    public function pipeTo(AcceptsMixed $parser): self
+    {
+        $this->pipeTo = $parser;
+
+        return $this;
+    }
+
+    public function postprocess(AcceptsMixed $parser): self
+    {
+        $this->postprocess = $parser;
+
+        return $this;
+    }
+
     /**
      * @inheritdoc
      */
-    final public function parse($value, string $path = '')
+    final public function parse($value, Path $path = null)
     {
-        $this->target = $this->convert($value, $path);
+        if($path === null) {
+            $path = new Root('root');
+        }
 
-        return $this->target;
+        try {
+            $result = $this->execute($value, $path);
+
+            if ($this->pipeTo) {
+                $result = $this->pipeTo->parse($result, $path);
+            }
+        } catch (ParsingException $exception) {
+            if (!$this->recovery) {
+                throw $exception;
+            }
+            $result = $this->recovery->parse($value, $path);
+        }
+
+        if ($this->postprocess) {
+            $result = $this->postprocess->parse($result, $path);
+        }
+
+        return $this->target = $result;
     }
 
     /**
@@ -48,10 +105,11 @@ abstract class Parser implements Contract\Parser
      * This must be individually implemented by the implementing parser class
      *
      * @param mixed $value
-     * @param string $path
+     * @param Path $path
      *
      * @return mixed
+     * @throws ParsingException
      */
-    abstract protected function convert($value, string $path);
+    abstract protected function execute($value, Path $path);
 
 }

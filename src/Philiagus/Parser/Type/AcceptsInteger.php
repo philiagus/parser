@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * This file is part of philiagus/parser
  *
  * (c) Andreas Bittner <philiagus@philiagus.de>
@@ -12,15 +12,13 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Type;
 
-use Philiagus\Parser\Contract;
-
 /**
  * This is a dummy interface used for type hinting.
  * Every parser that is capable of accepting a integer value must implement this interface
  *
  * @package Philiagus\Parser\Type
  */
-interface AcceptsInteger extends Contract\Parser
+interface AcceptsInteger extends AcceptsMixed
 {
 
 }

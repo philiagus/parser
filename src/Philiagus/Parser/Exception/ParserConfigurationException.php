@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * This file is part of philiagus/parser
  *
  * (c) Andreas Bittner <philiagus@philiagus.de>

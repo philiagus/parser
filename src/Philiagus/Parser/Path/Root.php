@@ -10,15 +10,15 @@
 
 declare(strict_types=1);
 
-namespace Philiagus\Parser\Type;
+namespace Philiagus\Parser\Path;
 
-/**
- * This is a dummy interface used for type hinting.
- * Every parser that is capable of accepting a string value must implement this interface
- *
- * @package Philiagus\Parser\Type
- */
-interface AcceptsString extends AcceptsMixed
+use Philiagus\Parser\Base\Path;
+
+class Root extends Path
 {
 
+    protected function getDelimiter(): string
+    {
+        return '';
+    }
 }

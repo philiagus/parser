@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * This file is part of philiagus/parser
  *
  * (c) Andreas Bittner <philiagus@philiagus.de>
@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Exception;
 
-use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Base\Path;
 use Throwable;
 
 /**
@@ -23,34 +23,43 @@ class ParsingException extends \Exception
 {
 
     /**
-     * @var string[]
+     * @var Path
      */
-    private $path = [];
+    private $path;
+
+    /**
+     * @var mixed
+     */
+    private $value;
 
     /**
      * ParsingException constructor.
      *
+     * @param $value
      * @param string $message
-     * @param string $path
+     * @param Path $path
      * @param Throwable|null $previous
      */
-    public function __construct(string $message = "", string $path, Throwable $previous = null)
+    public function __construct($value, string $message, Path $path, Throwable $previous = null)
     {
-        if ($path) {
-            $this->path = explode(
-                Parser::PATH_SEPARATOR,
-                ltrim($path, Parser::PATH_SEPARATOR)
-            );
-        }
+        $this->value = $value;
+        $this->path = $path;
         parent::__construct($message, 0, $previous);
     }
 
-    /**
-     * @return string[]
-     */
-    public function getPath(): array
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    public function getPath(): Path
     {
         return $this->path;
+    }
+
+    public function getPathString(): string
+    {
+        return $this->path->toString();
     }
 
 }

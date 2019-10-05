@@ -14,11 +14,11 @@ namespace Philiagus\Parser\Type;
 
 /**
  * This is a dummy interface used for type hinting.
- * Every parser that is capable of accepting a string value must implement this interface
+ * Every parser must at least implement this interface
  *
  * @package Philiagus\Parser\Type
  */
-interface AcceptsString extends AcceptsMixed
+interface AcceptsMixed
 {
 
 }
