@@ -41,7 +41,7 @@ class ConvertArray extends Parser implements AcceptsMixed
      */
     private $withElement = [];
 
-    public function convertNonArraysWithArrayCast($usingArrayCast = true, $elementKey = null): self
+    public function convertNonArraysWithArrayCast(): self
     {
         $this->convertNonArrays = true;
 
@@ -116,20 +116,19 @@ class ConvertArray extends Parser implements AcceptsMixed
             $value = array_intersect_key($value, array_flip($this->reduceToKeys));
         }
 
-        $keys = array_keys($value);
-        foreach ($this->forcedKeys as $key => $element) {
-            if (!in_array($key, $keys)) {
-                $value[$key] = $element;
-                $keys[] = $key;
-            }
+        if($this->forcedKeys) {
+            $value += $this->forcedKeys;
         }
 
-        foreach ($this->withElement as $key => $parser) {
-            if (!in_array($key, $keys)) {
-                throw new ParsingException($value, 'Array does not contain the requested key ' . var_export($key, true), $path);
-            }
+        if($this->withElement) {
+            $keys = array_keys($value);
+            foreach ($this->withElement as $key => $parser) {
+                if (!in_array($key, $keys)) {
+                    throw new ParsingException($value, 'Array does not contain the requested key ' . var_export($key, true), $path);
+                }
 
-            $value[$key] = $parser->parse($value[$key], $path->index((string) $key));
+                $value[$key] = $parser->parse($value[$key], $path->index((string) $key));
+            }
         }
 
         return $value;

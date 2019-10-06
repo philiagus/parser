@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Type;
 
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\ParserInterface;
 
 /**
  * This is a dummy interface used for type hinting.
@@ -20,7 +20,6 @@ use Philiagus\Parser\Base\Path;
  *
  * @package Philiagus\Parser\Type
  */
-interface AcceptsMixed
+interface AcceptsMixed extends ParserInterface
 {
-    public function parse($value, ?Path $path = null);
 }

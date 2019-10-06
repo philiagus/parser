@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Type;
 
-use Philiagus\Parser\Base\Path;
 
 /**
  * This is a dummy interface used for type hinting.
@@ -22,5 +21,4 @@ use Philiagus\Parser\Base\Path;
  */
 interface AcceptsBoolean extends AcceptsMixed
 {
-    public function parse($value, Path $path = null);
 }

@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Base;
 
+use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Path\Root;
-use Philiagus\Parser\Type\AcceptsMixed;
 
-abstract class Parser
+abstract class Parser implements ParserInterface
 {
     /**
      * @var mixed
@@ -54,6 +54,7 @@ abstract class Parser
      *
      * @return mixed
      * @throws ParsingException
+     * @throws ParserConfigurationException
      */
     abstract protected function execute($value, Path $path);
 
