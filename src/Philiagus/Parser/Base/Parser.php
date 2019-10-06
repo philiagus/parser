@@ -24,21 +24,6 @@ abstract class Parser
     private $target;
 
     /**
-     * @var AcceptsMixed|null
-     */
-    private $recovery = null;
-
-    /**
-     * @var AcceptsMixed|null
-     */
-    private $pipeTo = null;
-
-    /**
-     * @var AcceptsMixed|null
-     */
-    private $postprocess = null;
-
-    /**
      * The constructor receives the target to parse into
      *
      * @param mixed $target
@@ -46,27 +31,6 @@ abstract class Parser
     public function __construct(&$target = null)
     {
         $this->target = &$target;
-    }
-
-    public function recovery(AcceptsMixed $parser): self
-    {
-        $this->recovery = $parser;
-
-        return $this;
-    }
-
-    public function pipeTo(AcceptsMixed $parser): self
-    {
-        $this->pipeTo = $parser;
-
-        return $this;
-    }
-
-    public function postprocess(AcceptsMixed $parser): self
-    {
-        $this->postprocess = $parser;
-
-        return $this;
     }
 
     /**
@@ -78,24 +42,7 @@ abstract class Parser
             $path = new Root('root');
         }
 
-        try {
-            $result = $this->execute($value, $path);
-
-            if ($this->pipeTo) {
-                $result = $this->pipeTo->parse($result, $path);
-            }
-        } catch (ParsingException $exception) {
-            if (!$this->recovery) {
-                throw $exception;
-            }
-            $result = $this->recovery->parse($value, $path);
-        }
-
-        if ($this->postprocess) {
-            $result = $this->postprocess->parse($result, $path);
-        }
-
-        return $this->target = $result;
+        return $this->target = $this->execute($value, $path);
     }
 
     /**

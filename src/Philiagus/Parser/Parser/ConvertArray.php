@@ -41,28 +41,34 @@ class ConvertArray extends Parser implements AcceptsMixed
      */
     private $withElement = [];
 
-    public function convertNonArrays($usingArrayCast = true, $elementKey = null): self
+    public function convertNonArraysWithArrayCast($usingArrayCast = true, $elementKey = null): self
     {
-        if ($usingArrayCast) {
-            $this->convertNonArrays = true;
-        } else {
-            if (!is_string($elementKey) && !is_int($elementKey)) {
-                throw new ParserConfigurationException('Array key can only be string or integer');
-            }
-
-            $this->convertNonArrays = $elementKey;
-        }
+        $this->convertNonArrays = true;
 
         return $this;
     }
 
-    public function withDefaultedElement($key, $forcedValue): self
+    public function convertNonArraysWithKey($key): self
+    {
+        if (!is_string($key) && !is_int($key)) {
+            throw new ParserConfigurationException('Array key can only be string or integer');
+        }
+
+        $this->convertNonArrays = $key;
+
+        return $this;
+    }
+
+    public function withDefaultedElement($key, $forcedValue, AcceptsMixed $andParse = null): self
     {
         if (!is_string($key) && !is_int($key)) {
             throw new ParserConfigurationException('Arrays only accept string or integer keys');
         }
 
         $this->forcedKeys[$key] = $forcedValue;
+        if ($andParse) {
+            $this->withElement[$key] = $andParse;
+        }
 
         return $this;
     }
@@ -114,6 +120,7 @@ class ConvertArray extends Parser implements AcceptsMixed
         foreach ($this->forcedKeys as $key => $element) {
             if (!in_array($key, $keys)) {
                 $value[$key] = $element;
+                $keys[] = $key;
             }
         }
 
