@@ -41,6 +41,11 @@ class ConvertArray extends Parser implements AcceptsMixed
      */
     private $withElement = [];
 
+    /**
+     * @var bool
+     */
+    private $sequentialKeys = false;
+
     public function convertNonArraysWithArrayCast(): self
     {
         $this->convertNonArrays = true;
@@ -73,7 +78,7 @@ class ConvertArray extends Parser implements AcceptsMixed
         return $this;
     }
 
-    public function withElementWhitelist($keys): self
+    public function withElementWhitelist(array $keys): self
     {
         foreach ($keys as $key) {
             if (!is_string($key) && !is_int($key)) {
@@ -93,6 +98,13 @@ class ConvertArray extends Parser implements AcceptsMixed
         }
 
         $this->withElement[$key] = $parser;
+
+        return $this;
+    }
+
+    public function withSequentialKeys(): self
+    {
+        $this->sequentialKeys = true;
 
         return $this;
     }
@@ -129,6 +141,10 @@ class ConvertArray extends Parser implements AcceptsMixed
 
                 $value[$key] = $parser->parse($value[$key], $path->index((string) $key));
             }
+        }
+
+        if($this->sequentialKeys) {
+            $value = array_values($value);
         }
 
         return $value;

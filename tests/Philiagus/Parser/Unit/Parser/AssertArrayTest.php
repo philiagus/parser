@@ -274,4 +274,18 @@ class AssertArrayTest extends TestCase
             ->parse([$stringInt => 'value'], new Root('root'));
     }
 
+    public function testThatItAllowsSequentialArrays(): void
+    {
+        $array = [1,2,3,4,5];
+        $after = (new AssertArray())->withSequentialKeys()->parse($array);
+        self::assertSame($array, $after);
+    }
+
+    public function testThatItBlocksNotSequentialArrays(): void
+    {
+        $array = [1 => 1, 2 => 2, 3 => 3];
+        self::expectException(ParsingException::class);
+        (new AssertArray())->withSequentialKeys()->parse($array);
+    }
+
 }

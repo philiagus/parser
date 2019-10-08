@@ -52,6 +52,11 @@ class AssertArray
     private $withDefaultedElement = [];
 
     /**
+     * @var bool
+     */
+    private $sequentialKeys = false;
+
+    /**
      * @param AcceptsMixed $parser
      *
      * @return AssertArray
@@ -99,6 +104,13 @@ class AssertArray
         return $this;
     }
 
+    public function withSequentialKeys(): self
+    {
+        $this->sequentialKeys = true;
+
+        return $this;
+    }
+
     /**
      * @inheritdoc
      */
@@ -112,12 +124,16 @@ class AssertArray
             $this->length->parse(count($value), $path->meta('length'));
         }
 
-        if ($this->values || $this->keys) {
+        if ($this->values || $this->keys || $this->sequentialKeys) {
+            $expectedSequenceKey = 0;
             foreach ($value as $index => $element) {
+                if($this->sequentialKeys && $index !== $expectedSequenceKey) {
+                    throw new ParsingException($value, 'The array is not a sequential numerical array starting at 0', $path);
+                }
                 if ($this->keys) $this->keys->parse($index, $path->key((string) $index));
                 if ($this->values) $this->values->parse($element, $path->index((string) $index));
+                $expectedSequenceKey++;
             }
-            unset($element);
         }
 
         $keys = array_keys($value);
