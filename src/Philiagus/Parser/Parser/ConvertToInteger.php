@@ -20,7 +20,7 @@ use Philiagus\Parser\Type;
 /**
  * Takes any input and attempts a loss free conversion of the provided value into a valid integer value
  */
-class ConvertInteger
+class ConvertToInteger
     extends Parser
     implements
     Type\AcceptsInteger,

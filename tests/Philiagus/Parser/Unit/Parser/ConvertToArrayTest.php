@@ -7,18 +7,18 @@ use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Parser\ConvertArray;
+use Philiagus\Parser\Parser\ConvertToArray;
 use Philiagus\Parser\Type\AcceptsMixed;
 use Philiagus\Test\Parser\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
-class ConvertArrayTest extends TestCase
+class ConvertToArrayTest extends TestCase
 {
 
     public function testThatItExtendsBaseParser()
     {
-        self::assertTrue((new ConvertArray()) instanceof Parser);
+        self::assertTrue((new ConvertToArray()) instanceof Parser);
     }
 
     public function provideInvalidValues(): array
@@ -34,7 +34,7 @@ class ConvertArrayTest extends TestCase
     public function testThatItBlocksNonArrayValues($value)
     {
         self::expectException(ParsingException::class);
-        (new ConvertArray())->parse($value);
+        (new ConvertToArray())->parse($value);
     }
 
     public function provideValidValues(): array
@@ -49,7 +49,7 @@ class ConvertArrayTest extends TestCase
      */
     public function testThatItAllowsArrayValues($value)
     {
-        $result = (new ConvertArray())->parse($value);
+        $result = (new ConvertToArray())->parse($value);
         self::assertSame($value, $result);
     }
 
@@ -60,7 +60,7 @@ class ConvertArrayTest extends TestCase
      */
     public function testThatItConvertsValuesToArrays($value): void
     {
-        $result = (new ConvertArray())->convertNonArraysWithArrayCast()->parse($value);
+        $result = (new ConvertToArray())->convertNonArraysWithArrayCast()->parse($value);
         self::assertIsArray($result);
         self::assertCount(count((array) $value), $result);
         if (count($result)) {
@@ -81,7 +81,7 @@ class ConvertArrayTest extends TestCase
      */
     public function testThatItConvertsValuesWithDedicatedStringKey($value): void
     {
-        $result = (new ConvertArray())->convertNonArraysWithKey('key')->parse($value);
+        $result = (new ConvertToArray())->convertNonArraysWithKey('key')->parse($value);
         self::assertIsArray($result);
         self::assertCount(1, $result);
         self::assertTrue(array_key_exists('key', $result));
@@ -106,7 +106,7 @@ class ConvertArrayTest extends TestCase
     {
         self::assertSame(
             [$key => 'value'],
-            (new ConvertArray())->convertNonArraysWithKey($key)->parse('value')
+            (new ConvertToArray())->convertNonArraysWithKey($key)->parse('value')
         );
     }
 
@@ -125,12 +125,12 @@ class ConvertArrayTest extends TestCase
     public function testThatConvertNonArraysBlocksNonStringInteger($wrongKey): void
     {
         self::expectException(ParserConfigurationException::class);
-        (new ConvertArray())->convertNonArraysWithKey($wrongKey);
+        (new ConvertToArray())->convertNonArraysWithKey($wrongKey);
     }
 
     public function testTestThatItForcesKeysWithValue(): void
     {
-        $parser = (new ConvertArray())->withDefaultedElement('forced', 1);
+        $parser = (new ConvertToArray())->withDefaultedElement('forced', 1);
         $result = $parser->parse(['original' => 1]);
         self::assertSame(
             [
@@ -143,7 +143,7 @@ class ConvertArrayTest extends TestCase
 
     public function testTestThatForcedKeysDoNotOverwriteExistingKeys(): void
     {
-        $parser = (new ConvertArray())->withDefaultedElement('forced', 1);
+        $parser = (new ConvertToArray())->withDefaultedElement('forced', 1);
         $result = $parser->parse(['forced' => 666]);
         self::assertSame(
             [
@@ -160,7 +160,7 @@ class ConvertArrayTest extends TestCase
      */
     public function testThatForcedKeysAcceptIntegerAndString($key): void
     {
-        $parser = (new ConvertArray())->withDefaultedElement($key, 'value');
+        $parser = (new ConvertToArray())->withDefaultedElement($key, 'value');
         self::assertSame(
             [
                 $key => 'value',
@@ -178,7 +178,7 @@ class ConvertArrayTest extends TestCase
     public function testThatForcedKeysDoNotExceptNonIntegerOrString($key): void
     {
         self::expectException(ParserConfigurationException::class);
-        (new ConvertArray())->withDefaultedElement($key, 'value');
+        (new ConvertToArray())->withDefaultedElement($key, 'value');
     }
 
     public function testThatForcedKeysUseParser(): void
@@ -187,7 +187,7 @@ class ConvertArrayTest extends TestCase
         $childParser->parse('value', Argument::type(Path::class))
             ->shouldBeCalledOnce()
             ->willReturn('parsedValue');
-        $parser = (new ConvertArray())->withDefaultedElement('key', 'value', $childParser->reveal());
+        $parser = (new ConvertToArray())->withDefaultedElement('key', 'value', $childParser->reveal());
         $result = $parser->parse([]);
         self::assertSame(
             [
@@ -203,7 +203,7 @@ class ConvertArrayTest extends TestCase
         $childParser->parse('value', Argument::type(Path::class))
             ->shouldBeCalledOnce()
             ->willReturn('parsedValue');
-        $parser = (new ConvertArray())->withDefaultedElement('key', 'will not be used', $childParser->reveal());
+        $parser = (new ConvertToArray())->withDefaultedElement('key', 'will not be used', $childParser->reveal());
         $result = $parser->parse(['key' => 'value']);
         self::assertSame(
             [
@@ -215,7 +215,7 @@ class ConvertArrayTest extends TestCase
 
     public function testWithElementWhitelist(): void
     {
-        $parser = (new ConvertArray())->withElementWhitelist(['key1', 2]);
+        $parser = (new ConvertToArray())->withElementWhitelist(['key1', 2]);
         self::assertSame(
             [
                 'key1' => 123,
@@ -239,7 +239,7 @@ class ConvertArrayTest extends TestCase
      */
     public function testThatElementWhitelistAcceptsIntegersAndStrings($key): void
     {
-        $parser = (new ConvertArray())->withElementWhitelist([$key]);
+        $parser = (new ConvertToArray())->withElementWhitelist([$key]);
         self::assertSame(
             [
                 $key => 'exists',
@@ -260,19 +260,19 @@ class ConvertArrayTest extends TestCase
     public function testThatElementWhitelistDoesNotAcceptNonIntegerString($key): void
     {
         self::expectException(ParserConfigurationException::class);
-        (new ConvertArray())->withElementWhitelist([$key]);
+        (new ConvertToArray())->withElementWhitelist([$key]);
     }
 
     public function testThatWhitelistIgnoresIfKeysAreNotPresent(): void
     {
-        $parser = (new ConvertArray())->withElementWhitelist(['ignored', 'as well']);
+        $parser = (new ConvertToArray())->withElementWhitelist(['ignored', 'as well']);
         self::assertSame([], $parser->parse(['something', 'or', 'other']));
     }
 
     public function testThatForcedElementsMustExist(): void
     {
         $childParser = $this->prophesize(AcceptsMixed::class);
-        $parser = (new ConvertArray())->withElement('key', $childParser->reveal());
+        $parser = (new ConvertToArray())->withElement('key', $childParser->reveal());
         self::expectException(ParsingException::class);
         $parser->parse([]);
     }
@@ -283,7 +283,7 @@ class ConvertArrayTest extends TestCase
         $childParser->parse('value', Argument::type(Path::class))
             ->shouldBeCalledOnce()
             ->willReturn('parsedValue');
-        $parser = (new ConvertArray())->withElement('key', $childParser->reveal());
+        $parser = (new ConvertToArray())->withElement('key', $childParser->reveal());
         self::assertSame(
             ['key' => 'parsedValue'],
             $parser->parse(['key' => 'value'])
@@ -301,7 +301,7 @@ class ConvertArrayTest extends TestCase
         $childParser->parse('value', Argument::type(Path::class))
             ->shouldBeCalledOnce()
             ->willReturn('parsedValue');
-        $parser = (new ConvertArray())->withElement($key, $childParser->reveal());
+        $parser = (new ConvertToArray())->withElement($key, $childParser->reveal());
         self::assertSame(
             [$key => 'parsedValue'],
             $parser->parse([$key => 'value'])
@@ -317,7 +317,7 @@ class ConvertArrayTest extends TestCase
     {
         $childParser = $this->prophesize(AcceptsMixed::class);
         self::expectException(ParserConfigurationException::class);
-        $parser = (new ConvertArray())->withElement($key, $childParser->reveal());
+        $parser = (new ConvertToArray())->withElement($key, $childParser->reveal());
     }
 
 

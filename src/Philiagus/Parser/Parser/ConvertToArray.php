@@ -18,7 +18,7 @@ use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Type\AcceptsMixed;
 
-class ConvertArray extends Parser implements AcceptsMixed
+class ConvertToArray extends Parser implements AcceptsMixed
 {
 
     /**

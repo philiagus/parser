@@ -82,6 +82,10 @@ class ParserTest extends TestCase
         }
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testThatChainingWorks(): void
     {
         $resultA = $resultB = $resultC = null;
