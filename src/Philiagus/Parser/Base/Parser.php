@@ -24,6 +24,11 @@ abstract class Parser implements ParserInterface
     private $target;
 
     /**
+     * @var null|self
+     */
+    private $then = null;
+
+    /**
      * The constructor receives the target to parse into
      *
      * @param mixed $target
@@ -42,7 +47,27 @@ abstract class Parser implements ParserInterface
             $path = new Root('root');
         }
 
+        if($this->then) {
+            return $this->target = $this->then->parse(
+                $this->execute($value, $path),
+                $path
+            );
+        }
         return $this->target = $this->execute($value, $path);
+    }
+
+    /**
+     * Appends a parser to execute once this parser has done its job
+     * The result of this parser is identical to the result of the chained parser
+     * @param Parser $parser
+     *
+     * @return $this
+     */
+    public function then(Parser $parser): self
+    {
+        $this->then = $parser;
+
+        return $this;
     }
 
     /**

@@ -14,10 +14,12 @@ namespace Philiagus\Test\Parser\Unit\Base;
 
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Path\Root;
 use Philiagus\Parser\Type\AcceptsMixed;
 use Philiagus\Test\Parser\Provider\DataProvider;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
@@ -78,6 +80,33 @@ class ParserTest extends TestCase
             self::assertSame([$value, ParserTest::ANOTHER_VALUE], $result);
             self::assertSame($target, $result);
         }
+    }
+
+    public function testThatChainingWorks(): void
+    {
+        $resultA = $resultB = $resultC = null;
+        $baseParser = new class($resultA) extends Parser {
+            protected function execute($value, Path $path)
+            {
+                Assert::assertSame(1, $value);
+                return 2;
+            }
+        };
+
+        $baseParser->then(
+            new class($resultB) extends Parser {
+                protected function execute($value, Path $path)
+                {
+                    Assert::assertSame(2, $value);
+                    return 3;
+                }
+            }
+        );
+
+        $resultC = $baseParser->parse(1);
+        self::assertSame(3, $resultA);
+        self::assertSame(3, $resultB);
+        self::assertSame(3, $resultC);
     }
 
 }
