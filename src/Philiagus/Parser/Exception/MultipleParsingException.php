@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Exception;
 
 
+use LogicException;
 use Philiagus\Parser\Base\Path;
 
 class MultipleParsingException extends ParsingException
@@ -33,7 +34,7 @@ class MultipleParsingException extends ParsingException
         parent::__construct($value, $message, $path);
         foreach ($parsingExceptions as $parsingException) {
             if (!$parsingException instanceof ParsingException) {
-                throw new \LogicException(
+                throw new LogicException(
                     'MultipleParsingException was created with non-ParsingException in provided list of Exceptions'
                 );
             }

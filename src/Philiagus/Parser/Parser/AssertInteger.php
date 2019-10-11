@@ -16,9 +16,8 @@ namespace Philiagus\Parser\Parser;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception;
-use Philiagus\Parser\Type;
 
-class AssertInteger extends Parser implements Type\AcceptsInteger
+class AssertInteger extends Parser
 {
     /**
      * @var int|null

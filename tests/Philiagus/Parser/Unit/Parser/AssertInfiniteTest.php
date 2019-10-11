@@ -21,14 +21,14 @@ use PHPUnit\Framework\TestCase;
 class AssertInfiniteTest extends TestCase
 {
 
-    public function testThatItExtendsBaseParser()
+    public function testThatItExtendsBaseParser(): void
     {
         self::assertTrue((new AssertInfinite()) instanceof Parser);
     }
 
     public function provideInvalidValues(): array
     {
-        return DataProvider::provide(~DataProvider::TYPE_INFINITE);
+        return DataProvider::provide((int)~DataProvider::TYPE_INFINITE);
     }
 
     /**
@@ -36,7 +36,7 @@ class AssertInfiniteTest extends TestCase
      *
      * @dataProvider provideInvalidValues
      */
-    public function testThatItBlocksNonInfiniteValues($value)
+    public function testThatItBlocksNonInfiniteValues($value): void
     {
         self::expectException(ParsingException::class);
         (new AssertInfinite())->parse($value);
@@ -52,7 +52,7 @@ class AssertInfiniteTest extends TestCase
      *
      * @dataProvider provideValidValues
      */
-    public function testThatItAllowsInfiniteValues($value)
+    public function testThatItAllowsInfiniteValues($value): void
     {
         $result = (new AssertInfinite())->parse($value);
         self::assertSame($value, $result);

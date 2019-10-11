@@ -17,37 +17,33 @@ use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Type;
-use Philiagus\Parser\Type\AcceptsInteger;
-use Philiagus\Parser\Type\AcceptsMixed;
 
 class AssertArray
     extends Parser
-    implements Type\AcceptsArray
 {
 
     /**
-     * @var null|AcceptsMixed
+     * @var null|Parser
      */
     private $values = null;
 
     /**
-     * @var null|AcceptsMixed
+     * @var null|Parser
      */
     private $keys = null;
 
     /**
-     * @var null|AcceptsInteger
+     * @var null|Parser
      */
     private $length = null;
 
     /**
-     * @var AcceptsMixed[]
+     * @var Parser[]
      */
     private $withElement = [];
 
     /**
-     * @var AcceptsMixed[]
+     * @var Parser[]
      */
     private $withDefaultedElement = [];
 
@@ -57,32 +53,32 @@ class AssertArray
     private $sequentialKeys = false;
 
     /**
-     * @param AcceptsMixed $parser
+     * @param Parser $parser
      *
      * @return AssertArray
      */
-    public function withValues(AcceptsMixed $parser): self
+    public function withValues(Parser $parser): self
     {
         $this->values = $parser;
 
         return $this;
     }
 
-    public function withKeys(AcceptsMixed $parser): self
+    public function withKeys(Parser $parser): self
     {
         $this->keys = $parser;
 
         return $this;
     }
 
-    public function withLength(AcceptsInteger $parser): self
+    public function withLength(Parser $integerParser): self
     {
-        $this->length = $parser;
+        $this->length = $integerParser;
 
         return $this;
     }
 
-    public function withElement($key, AcceptsMixed $parser): self
+    public function withElement($key, Parser $parser): self
     {
         if (!is_string($key) && !is_int($key)) {
             throw new ParserConfigurationException('Arrays only accept string or integer keys');
@@ -93,7 +89,7 @@ class AssertArray
         return $this;
     }
 
-    public function withDefaultedElement($key, $default, AcceptsMixed $parser): self
+    public function withDefaultedElement($key, $default, Parser $parser): self
     {
         if (!is_string($key) && !is_int($key)) {
             throw new ParserConfigurationException('Arrays only accept string or integer keys');
@@ -127,7 +123,7 @@ class AssertArray
         if ($this->values || $this->keys || $this->sequentialKeys) {
             $expectedSequenceKey = 0;
             foreach ($value as $index => $element) {
-                if($this->sequentialKeys && $index !== $expectedSequenceKey) {
+                if ($this->sequentialKeys && $index !== $expectedSequenceKey) {
                     throw new ParsingException($value, 'The array is not a sequential numerical array starting at 0', $path);
                 }
                 if ($this->keys) $this->keys->parse($index, $path->key((string) $index));

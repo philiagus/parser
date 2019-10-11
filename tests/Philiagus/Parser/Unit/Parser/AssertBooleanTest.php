@@ -21,14 +21,14 @@ use PHPUnit\Framework\TestCase;
 class AssertBooleanTest extends TestCase
 {
 
-    public function testThatItExtendsBaseParser()
+    public function testThatItExtendsBaseParser(): void
     {
         self::assertTrue((new AssertBoolean()) instanceof Parser);
     }
 
     public function provideInvalidValues(): array
     {
-        return DataProvider::provide(~DataProvider::TYPE_BOOLEAN);
+        return DataProvider::provide((int)~DataProvider::TYPE_BOOLEAN);
     }
 
     /**
@@ -36,7 +36,7 @@ class AssertBooleanTest extends TestCase
      *
      * @dataProvider provideInvalidValues
      */
-    public function testThatItBlocksNonBooleanValues($value)
+    public function testThatItBlocksNonBooleanValues($value): void
     {
         self::expectException(ParsingException::class);
         (new AssertBoolean())->parse($value);
@@ -52,7 +52,7 @@ class AssertBooleanTest extends TestCase
      *
      * @dataProvider provideValidValues
      */
-    public function testThatItAllowsBooleanValues($value)
+    public function testThatItAllowsBooleanValues($value): void
     {
         $result = (new AssertBoolean())->parse($value);
         self::assertSame($value, $result);

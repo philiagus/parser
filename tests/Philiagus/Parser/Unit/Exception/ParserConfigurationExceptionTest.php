@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Test\Parser\Unit\Exception;
 
+use Exception;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use PHPUnit\Framework\TestCase;
 
@@ -28,7 +29,7 @@ class ParserConfigurationExceptionTest extends TestCase
 
     public function testConstructWithPrevious(): void
     {
-        $previous = new \Exception();
+        $previous = new Exception();
         $exception = new ParserConfigurationException('message', $previous);
 
         self::assertSame('message', $exception->getMessage());

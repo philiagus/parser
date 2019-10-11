@@ -16,9 +16,8 @@ use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Type;
 
-class AssertFloat extends Parser implements Type\AcceptsFloat
+class AssertFloat extends Parser
 {
     /**
      * @var float|null

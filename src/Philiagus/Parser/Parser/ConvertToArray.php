@@ -16,9 +16,8 @@ use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Type\AcceptsMixed;
 
-class ConvertToArray extends Parser implements AcceptsMixed
+class ConvertToArray extends Parser
 {
 
     /**
@@ -64,7 +63,7 @@ class ConvertToArray extends Parser implements AcceptsMixed
         return $this;
     }
 
-    public function withDefaultedElement($key, $forcedValue, AcceptsMixed $andParse = null): self
+    public function withDefaultedElement($key, $forcedValue, Parser $andParse = null): self
     {
         if (!is_string($key) && !is_int($key)) {
             throw new ParserConfigurationException('Arrays only accept string or integer keys');
@@ -91,7 +90,7 @@ class ConvertToArray extends Parser implements AcceptsMixed
         return $this;
     }
 
-    public function withElement($key, AcceptsMixed $parser): self
+    public function withElement($key, Parser $parser): self
     {
         if (!is_string($key) && !is_int($key)) {
             throw new ParserConfigurationException('Arrays only accept string or integer keys');

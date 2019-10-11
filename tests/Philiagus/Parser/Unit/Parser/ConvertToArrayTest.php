@@ -8,7 +8,6 @@ use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\ConvertToArray;
-use Philiagus\Parser\Type\AcceptsMixed;
 use Philiagus\Test\Parser\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -16,14 +15,14 @@ use Prophecy\Argument;
 class ConvertToArrayTest extends TestCase
 {
 
-    public function testThatItExtendsBaseParser()
+    public function testThatItExtendsBaseParser(): void
     {
         self::assertTrue((new ConvertToArray()) instanceof Parser);
     }
 
     public function provideInvalidValues(): array
     {
-        return DataProvider::provide(~DataProvider::TYPE_ARRAY);
+        return DataProvider::provide((int)~DataProvider::TYPE_ARRAY);
     }
 
     /**
@@ -31,7 +30,7 @@ class ConvertToArrayTest extends TestCase
      *
      * @dataProvider provideInvalidValues
      */
-    public function testThatItBlocksNonArrayValues($value)
+    public function testThatItBlocksNonArrayValues($value): void
     {
         self::expectException(ParsingException::class);
         (new ConvertToArray())->parse($value);
@@ -47,7 +46,7 @@ class ConvertToArrayTest extends TestCase
      *
      * @dataProvider provideValidValues
      */
-    public function testThatItAllowsArrayValues($value)
+    public function testThatItAllowsArrayValues($value): void
     {
         $result = (new ConvertToArray())->parse($value);
         self::assertSame($value, $result);
@@ -112,7 +111,7 @@ class ConvertToArrayTest extends TestCase
 
     public function provideInvalidKeys(): array
     {
-        return DataProvider::provide(~(DataProvider::TYPE_INTEGER | DataProvider::TYPE_STRING));
+        return DataProvider::provide((int)~(DataProvider::TYPE_INTEGER | DataProvider::TYPE_STRING));
     }
 
     /**
@@ -183,8 +182,8 @@ class ConvertToArrayTest extends TestCase
 
     public function testThatForcedKeysUseParser(): void
     {
-        $childParser = $this->prophesize(AcceptsMixed::class);
-        $childParser->parse('value', Argument::type(Path::class))
+        $childParser = $this->prophesize(Parser::class);
+        $childParser->execute('value', Argument::type(Path::class))
             ->shouldBeCalledOnce()
             ->willReturn('parsedValue');
         $parser = (new ConvertToArray())->withDefaultedElement('key', 'value', $childParser->reveal());
@@ -199,8 +198,8 @@ class ConvertToArrayTest extends TestCase
 
     public function testThatForcedKeysUseParserEvenIfValueIsAlreadyPresent(): void
     {
-        $childParser = $this->prophesize(AcceptsMixed::class);
-        $childParser->parse('value', Argument::type(Path::class))
+        $childParser = $this->prophesize(Parser::class);
+        $childParser->execute('value', Argument::type(Path::class))
             ->shouldBeCalledOnce()
             ->willReturn('parsedValue');
         $parser = (new ConvertToArray())->withDefaultedElement('key', 'will not be used', $childParser->reveal());
@@ -271,7 +270,7 @@ class ConvertToArrayTest extends TestCase
 
     public function testThatForcedElementsMustExist(): void
     {
-        $childParser = $this->prophesize(AcceptsMixed::class);
+        $childParser = $this->prophesize(Parser::class);
         $parser = (new ConvertToArray())->withElement('key', $childParser->reveal());
         self::expectException(ParsingException::class);
         $parser->parse([]);
@@ -279,8 +278,8 @@ class ConvertToArrayTest extends TestCase
 
     public function testThatForcedElementsAreParsedAndOverwriteReturn(): void
     {
-        $childParser = $this->prophesize(AcceptsMixed::class);
-        $childParser->parse('value', Argument::type(Path::class))
+        $childParser = $this->prophesize(Parser::class);
+        $childParser->execute('value', Argument::type(Path::class))
             ->shouldBeCalledOnce()
             ->willReturn('parsedValue');
         $parser = (new ConvertToArray())->withElement('key', $childParser->reveal());
@@ -297,8 +296,8 @@ class ConvertToArrayTest extends TestCase
      */
     public function testThatForcedElementKeysCanBeIntegerOrString($key): void
     {
-        $childParser = $this->prophesize(AcceptsMixed::class);
-        $childParser->parse('value', Argument::type(Path::class))
+        $childParser = $this->prophesize(Parser::class);
+        $childParser->execute('value', Argument::type(Path::class))
             ->shouldBeCalledOnce()
             ->willReturn('parsedValue');
         $parser = (new ConvertToArray())->withElement($key, $childParser->reveal());
@@ -315,7 +314,7 @@ class ConvertToArrayTest extends TestCase
      */
     public function testThatForcedElementKeysMustBeIntegerOrString($key): void
     {
-        $childParser = $this->prophesize(AcceptsMixed::class);
+        $childParser = $this->prophesize(Parser::class);
         self::expectException(ParserConfigurationException::class);
         $parser = (new ConvertToArray())->withElement($key, $childParser->reveal());
     }

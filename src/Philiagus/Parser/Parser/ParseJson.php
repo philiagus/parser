@@ -12,12 +12,13 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
+use JsonException;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Type\AcceptsString;
+use function json_decode;
 
-class ParseJson extends Parser implements AcceptsString
+class ParseJson extends Parser
 {
 
     /**
@@ -78,8 +79,8 @@ class ParseJson extends Parser implements AcceptsString
         }
 
         try {
-            return @\json_decode($value, $this->objectAsArrays, $this->maxDepth, $options);
-        } catch (\JsonException $exception) {
+            return @json_decode($value, $this->objectAsArrays, $this->maxDepth, $options);
+        } catch (JsonException $exception) {
             throw new ParsingException($value, 'Provided string is not a valid JSON', $path, $exception);
         }
     }

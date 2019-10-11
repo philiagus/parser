@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Exception;
 
+use Exception;
 use Philiagus\Parser\Base\Path;
 use Throwable;
 
@@ -19,7 +20,7 @@ use Throwable;
  * This exception is supposed to be thrown, when the value as provided by the input does not conform with the parser
  * e.g. when the value could not be converted to the target type or when the provided type is not of the correct type
  */
-class ParsingException extends \Exception
+class ParsingException extends Exception
 {
 
     /**

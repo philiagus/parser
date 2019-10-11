@@ -16,12 +16,9 @@ use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Path\Root;
-use Philiagus\Parser\Type\AcceptsMixed;
 use Philiagus\Test\Parser\Provider\DataProvider;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
 
 class ParserTest extends TestCase
 {

@@ -20,14 +20,14 @@ use PHPUnit\Framework\TestCase;
 class AssertFloatTest extends TestCase
 {
 
-    public function testThatItExtendsBaseParser()
+    public function testThatItExtendsBaseParser(): void
     {
         self::assertTrue((new AssertFloat()) instanceof Parser);
     }
 
-    public function provideInvalidValues()
+    public function provideInvalidValues(): array
     {
-        return DataProvider::provide(~DataProvider::TYPE_FLOAT);
+        return DataProvider::provide((int)~DataProvider::TYPE_FLOAT);
     }
 
     /**
@@ -35,7 +35,7 @@ class AssertFloatTest extends TestCase
      *
      * @dataProvider provideInvalidValues
      */
-    public function testThatNonFloatsAreBlocked($value)
+    public function testThatNonFloatsAreBlocked($value): void
     {
         self::expectException(ParsingException::class);
         (new AssertFloat())->parse($value);
@@ -51,25 +51,25 @@ class AssertFloatTest extends TestCase
      *
      * @dataProvider provideValidValues
      */
-    public function testThatFloatsAreAllowed($value)
+    public function testThatFloatsAreAllowed($value): void
     {
         $result = (new AssertFloat())->parse($value);
         self::assertSame($result, $value);
     }
 
-    public function testThatMinimumCannotBeGreaterThanMaximum()
+    public function testThatMinimumCannotBeGreaterThanMaximum(): void
     {
         self::expectException(ParserConfigurationException::class);
         (new AssertFloat())->withMaximum(100)->withMinimum(1000);
     }
 
-    public function testThatMaximumCannotBeLowerThanMinimum()
+    public function testThatMaximumCannotBeLowerThanMinimum(): void
     {
         self::expectException(ParserConfigurationException::class);
         (new AssertFloat())->withMinimum(1000.0)->withMaximum(100.0);
     }
 
-    public function testThatValueMustBeGreaterThanMinimum()
+    public function testThatValueMustBeGreaterThanMinimum(): void
     {
         self::expectException(ParsingException::class);
         (new AssertFloat())
@@ -77,7 +77,7 @@ class AssertFloatTest extends TestCase
             ->parse(0.0);
     }
 
-    public function testThatValueMustBeLowerThanMaximum()
+    public function testThatValueMustBeLowerThanMaximum(): void
     {
         self::expectException(ParsingException::class);
         (new AssertFloat())
@@ -85,7 +85,7 @@ class AssertFloatTest extends TestCase
             ->parse(10.0);
     }
 
-    public function provideOutOfRangeValues()
+    public function provideOutOfRangeValues(): array
     {
         return [
             'lower' => [-1.0],
@@ -93,7 +93,7 @@ class AssertFloatTest extends TestCase
         ];
     }
 
-    public function testThatValueOverMinimumPasses()
+    public function testThatValueOverMinimumPasses(): void
     {
         $parser = (new AssertFloat())->withMinimum(0.0);
         self::assertSame(10.0, $parser->parse(10.0));
@@ -101,7 +101,7 @@ class AssertFloatTest extends TestCase
         self::assertSame((float) PHP_INT_MAX, $parser->parse((float) PHP_INT_MAX));
     }
 
-    public function testThatValueUnderMaximumPasses()
+    public function testThatValueUnderMaximumPasses(): void
     {
         $parser = (new AssertFloat())->withMaximum(10.0);
         self::assertSame(10.0, $parser->parse(10.0));

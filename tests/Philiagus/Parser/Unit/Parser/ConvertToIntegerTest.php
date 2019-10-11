@@ -21,16 +21,16 @@ use PHPUnit\Framework\TestCase;
 class ConvertToIntegerTest extends TestCase
 {
 
-    public function testThatItExtendsBaseParser()
+    public function testThatItExtendsBaseParser(): void
     {
         self::assertTrue((new ConvertToInteger()) instanceof Parser);
     }
 
-    public function provideIncompatibleValues()
+    public function provideIncompatibleValues(): array
     {
         return
             array_merge(
-                DataProvider::provide(~(DataProvider::TYPE_INTEGER | DataProvider::TYPE_FLOAT | DataProvider::TYPE_STRING)),
+                DataProvider::provide((int)~(DataProvider::TYPE_INTEGER | DataProvider::TYPE_FLOAT | DataProvider::TYPE_STRING)),
                 [
                     'string non numeric' => ['asdf'],
                     'string almost numeric' => ['0asdf'],
@@ -45,13 +45,13 @@ class ConvertToIntegerTest extends TestCase
      *
      * @dataProvider provideIncompatibleValues
      */
-    public function testThatItDoesNotAcceptIncompatibleValues($incompatibleValue)
+    public function testThatItDoesNotAcceptIncompatibleValues($incompatibleValue): void
     {
         self::expectException(ParsingException::class);
         (new ConvertToInteger())->parse($incompatibleValue);
     }
 
-    public function compatibleValueProvider()
+    public function compatibleValueProvider(): array
     {
         $cases =
             [
@@ -78,7 +78,7 @@ class ConvertToIntegerTest extends TestCase
      *
      * @dataProvider compatibleValueProvider
      */
-    public function testThatItDoesConvertCompatibleValues($baseValue, $expectedValue)
+    public function testThatItDoesConvertCompatibleValues($baseValue, $expectedValue): void
     {
         self::assertSame($expectedValue, (new ConvertToInteger())->parse($baseValue));
     }

@@ -16,25 +16,16 @@ use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Type;
-use Philiagus\Parser\Type\AcceptsMixed;
 
-class OneOf extends Parser implements
-    Type\AcceptsArray,
-    Type\AcceptsBoolean,
-    Type\AcceptsFloat,
-    Type\AcceptsInteger,
-    Type\AcceptsObject,
-    Type\AcceptsResource,
-    Type\AcceptsString
+class OneOf extends Parser
 {
 
     /**
-     * @var AcceptsMixed[]
+     * @var Parser[]
      */
     private $options = [];
 
-    public function addOption(AcceptsMixed $parser): self
+    public function addOption(Parser $parser): self
     {
         $this->options[] = $parser;
 

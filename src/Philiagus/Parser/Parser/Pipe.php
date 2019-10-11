@@ -5,16 +5,15 @@ namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Type\AcceptsMixed;
 
-class Pipe extends Parser implements AcceptsMixed
+class Pipe extends Parser
 {
     /**
-     * @var AcceptsMixed[]
+     * @var Parser[]
      */
     private $parsers = [];
 
-    public function add(AcceptsMixed $parser): self
+    public function add(Parser $parser): self
     {
         $this->parsers[] = $parser;
 

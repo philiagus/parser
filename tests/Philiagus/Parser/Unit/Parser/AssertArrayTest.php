@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Philiagus\Test\Parser\Unit\Parser;
 
+use Exception;
 use Philiagus\Parser\Base\Parser;
-use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Parser\AssertArray;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
@@ -21,8 +21,6 @@ use Philiagus\Parser\Path\Index;
 use Philiagus\Parser\Path\Key;
 use Philiagus\Parser\Path\MetaInformation;
 use Philiagus\Parser\Path\Root;
-use Philiagus\Parser\Type\AcceptsInteger;
-use Philiagus\Parser\Type\AcceptsMixed;
 use Philiagus\Test\Parser\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -30,14 +28,14 @@ use Prophecy\Argument;
 class AssertArrayTest extends TestCase
 {
 
-    public function testThatItExtendsBaseParser()
+    public function testThatItExtendsBaseParser(): void
     {
         self::assertTrue((new AssertArray()) instanceof Parser);
     }
 
     public function provideInvalidValues(): array
     {
-        return DataProvider::provide(~DataProvider::TYPE_ARRAY);
+        return DataProvider::provide((int)~DataProvider::TYPE_ARRAY);
     }
 
     /**
@@ -45,7 +43,7 @@ class AssertArrayTest extends TestCase
      *
      * @dataProvider provideInvalidValues
      */
-    public function testThatItBlocksNonArrayValues($value)
+    public function testThatItBlocksNonArrayValues($value): void
     {
         self::expectException(ParsingException::class);
         (new AssertArray())->parse($value);
@@ -61,13 +59,13 @@ class AssertArrayTest extends TestCase
      *
      * @dataProvider provideValidValues
      */
-    public function testThatItAllowsArrayValues($value)
+    public function testThatItAllowsArrayValues($value): void
     {
         $result = (new AssertArray())->parse($value);
         self::assertSame($value, $result);
     }
 
-    public function testWithValues()
+    public function testWithValues(): void
     {
         $array = [
             'key1' => 'one',
@@ -75,15 +73,15 @@ class AssertArrayTest extends TestCase
             'key3' => ['array'],
         ];
 
-        $parser = $this->prophesize(AcceptsMixed::class);
+        $parser = $this->prophesize(Parser::class);
         foreach ($array as $key => $value) {
-            $parser->parse($value, Argument::type(Index::class))->shouldBeCalledOnce()->willReturn($value);
+            $parser->execute($value, Argument::type(Index::class))->shouldBeCalledOnce()->willReturn($value);
         }
 
         (new AssertArray())->withValues($parser->reveal())->parse($array);
     }
 
-    public function testWithValuesException()
+    public function testWithValuesException(): void
     {
         $exception = new ParsingException('value', 'message', new Root('root'));
         $array = [
@@ -93,14 +91,14 @@ class AssertArrayTest extends TestCase
             'key4' => $exception,
         ];
 
-        $parser = $this->prophesize(AcceptsMixed::class);
+        $parser = $this->prophesize(Parser::class);
         foreach ($array as $key => $value) {
-            if ($value instanceof \Exception) {
-                $parser->parse($value, Argument::type(Index::class))
+            if ($value instanceof Exception) {
+                $parser->execute($value, Argument::type(Index::class))
                     ->shouldBeCalledOnce()
                     ->willThrow($value);
             } else {
-                $parser->parse($value, Argument::type(Index::class))->shouldBeCalledOnce()->willReturn($value);
+                $parser->execute($value, Argument::type(Index::class))->shouldBeCalledOnce()->willReturn($value);
             }
         }
 
@@ -108,7 +106,7 @@ class AssertArrayTest extends TestCase
         (new AssertArray())->withValues($parser->reveal())->parse($array);
     }
 
-    public function testWithKeys()
+    public function testWithKeys(): void
     {
         $array = [
             'key1' => 'one',
@@ -116,15 +114,15 @@ class AssertArrayTest extends TestCase
             'key3' => ['array'],
         ];
 
-        $parser = $this->prophesize(AcceptsMixed::class);
+        $parser = $this->prophesize(Parser::class);
         foreach ($array as $key => $value) {
-            $parser->parse($key, Argument::type(Key::class))->shouldBeCalledOnce()->willReturn($key);
+            $parser->execute($key, Argument::type(Key::class))->shouldBeCalledOnce()->willReturn($key);
         }
 
         (new AssertArray())->withKeys($parser->reveal())->parse($array);
     }
 
-    public function testWithKeysException()
+    public function testWithKeysException(): void
     {
         $exception = new ParsingException('value', 'message', new Root('root'));
         $array = [
@@ -134,14 +132,14 @@ class AssertArrayTest extends TestCase
             'key4' => $exception,
         ];
 
-        $parser = $this->prophesize(AcceptsMixed::class);
+        $parser = $this->prophesize(Parser::class);
         foreach ($array as $key => $value) {
-            if ($value instanceof \Exception) {
-                $parser->parse($key, Argument::type(Key::class))
+            if ($value instanceof Exception) {
+                $parser->execute($key, Argument::type(Key::class))
                     ->shouldBeCalledOnce()
                     ->willThrow($value);
             } else {
-                $parser->parse($key, Argument::type(Key::class))->shouldBeCalledOnce()->willReturn($key);
+                $parser->execute($key, Argument::type(Key::class))->shouldBeCalledOnce()->willReturn($key);
             }
         }
 
@@ -149,18 +147,18 @@ class AssertArrayTest extends TestCase
         (new AssertArray())->withKeys($parser->reveal())->parse($array);
     }
 
-    public function testWithLength()
+    public function testWithLength(): void
     {
-        $parser = $this->prophesize(AcceptsInteger::class);
-        $parser->parse(2, Argument::type(MetaInformation::class))->shouldBeCalledOnce();
+        $parser = $this->prophesize(Parser::class);
+        $parser->execute(2, Argument::type(MetaInformation::class))->shouldBeCalledOnce();
 
         (new AssertArray())->withLength($parser->reveal())->parse([1, 2]);
     }
 
-    public function testWithLengthException()
+    public function testWithLengthException(): void
     {
-        $parser = $this->prophesize(AcceptsInteger::class);
-        $parser->parse(2, Argument::type(MetaInformation::class))
+        $parser = $this->prophesize(Parser::class);
+        $parser->execute(2, Argument::type(MetaInformation::class))
             ->shouldBeCalledOnce()
             ->willThrow(new ParsingException(2, 'message', new Root('root')));
 
@@ -168,19 +166,19 @@ class AssertArrayTest extends TestCase
         (new AssertArray())->withLength($parser->reveal())->parse([1, 2]);
     }
 
-    public function testWithElement()
+    public function testWithElement(): void
     {
-        $parser = $this->prophesize(AcceptsMixed::class);
-        $parser->parse('value', Argument::type(Index::class))->shouldBeCalledOnce();
+        $parser = $this->prophesize(Parser::class);
+        $parser->execute('value', Argument::type(Index::class))->shouldBeCalledOnce();
 
         (new AssertArray())
             ->withElement('key', $parser->reveal())
             ->parse(['key' => 'value']);
     }
 
-    public function testWithMissingElement()
+    public function testWithMissingElement(): void
     {
-        $parser = $this->prophesize(AcceptsMixed::class);
+        $parser = $this->prophesize(Parser::class);
 
         self::expectException(ParsingException::class);
         (new AssertArray())
@@ -188,12 +186,12 @@ class AssertArrayTest extends TestCase
             ->parse([]);
     }
 
-    public function provideInvalidArrayKeys()
+    public function provideInvalidArrayKeys(): array
     {
-        return DataProvider::provide(~(DataProvider::TYPE_STRING | DataProvider::TYPE_INTEGER));
+        return DataProvider::provide((int)~(DataProvider::TYPE_STRING | DataProvider::TYPE_INTEGER));
     }
 
-    public function provideValidArrayKeys()
+    public function provideValidArrayKeys(): array
     {
         return DataProvider::provide(DataProvider::TYPE_STRING | DataProvider::TYPE_INTEGER);
     }
@@ -204,9 +202,9 @@ class AssertArrayTest extends TestCase
      * @dataProvider provideInvalidArrayKeys
      * @throws ParserConfigurationException
      */
-    public function testWithElementWrongConfiguration($notStringInt)
+    public function testWithElementWrongConfiguration($notStringInt): void
     {
-        $parser = $this->prophesize(AcceptsMixed::class)->reveal();
+        $parser = $this->prophesize(Parser::class)->reveal();
         self::expectException(ParserConfigurationException::class);
         (new AssertArray())->withElement($notStringInt, $parser);
     }
@@ -216,30 +214,30 @@ class AssertArrayTest extends TestCase
      *
      * @dataProvider provideValidArrayKeys
      */
-    public function testAcceptingValidKeys($stringInt)
+    public function testAcceptingValidKeys($stringInt): void
     {
-        $parser = $this->prophesize(AcceptsMixed::class);
-        $parser->parse('value', Argument::type(Index::class))->shouldBeCalledOnce();
+        $parser = $this->prophesize(Parser::class);
+        $parser->execute('value', Argument::type(Index::class))->shouldBeCalledOnce();
 
         (new AssertArray())
             ->withElement($stringInt, $parser->reveal())
             ->parse([$stringInt => 'value'], new Root('root'));
     }
 
-    public function testWithDefaultedElement()
+    public function testWithDefaultedElement(): void
     {
-        $parser = $this->prophesize(AcceptsMixed::class);
-        $parser->parse('value', Argument::type(Index::class))->shouldBeCalledOnce();
+        $parser = $this->prophesize(Parser::class);
+        $parser->execute('value', Argument::type(Index::class))->shouldBeCalledOnce();
 
         (new AssertArray())
             ->withDefaultedElement('key', 'default', $parser->reveal())
             ->parse(['key' => 'value'], new Root('root'));
     }
 
-    public function testWithMissingDefaultedElement()
+    public function testWithMissingDefaultedElement(): void
     {
-        $parser = $this->prophesize(AcceptsMixed::class);
-        $parser->parse('default', Argument::type(Index::class))->shouldBeCalledOnce();
+        $parser = $this->prophesize(Parser::class);
+        $parser->execute('default', Argument::type(Index::class))->shouldBeCalledOnce();
 
         (new AssertArray())
             ->withDefaultedElement('key', 'default', $parser->reveal())
@@ -252,9 +250,9 @@ class AssertArrayTest extends TestCase
      * @dataProvider provideInvalidArrayKeys
      * @throws ParserConfigurationException
      */
-    public function testWithDefaultedElementWrongConfiguration($notStringInt)
+    public function testWithDefaultedElementWrongConfiguration($notStringInt): void
     {
-        $parser = $this->prophesize(AcceptsMixed::class)->reveal();
+        $parser = $this->prophesize(Parser::class)->reveal();
         self::expectException(ParserConfigurationException::class);
         (new AssertArray())->withDefaultedElement($notStringInt, 'default', $parser);
     }
@@ -264,10 +262,10 @@ class AssertArrayTest extends TestCase
      *
      * @dataProvider provideValidArrayKeys
      */
-    public function testAcceptingValidKeysForWithDefaultedElement($stringInt)
+    public function testAcceptingValidKeysForWithDefaultedElement($stringInt): void
     {
-        $parser = $this->prophesize(AcceptsMixed::class);
-        $parser->parse('value', Argument::type(Index::class))->shouldBeCalledOnce();
+        $parser = $this->prophesize(Parser::class);
+        $parser->execute('value', Argument::type(Index::class))->shouldBeCalledOnce();
 
         (new AssertArray())
             ->withDefaultedElement($stringInt, 'default', $parser->reveal())

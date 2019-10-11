@@ -12,6 +12,10 @@ declare(strict_types=1);
 
 namespace Philiagus\Test\Parser\Provider;
 
+use DateTime;
+use Exception;
+use stdClass;
+
 class DataProvider
 {
 
@@ -31,7 +35,7 @@ class DataProvider
      * @param int $types
      *
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     public static function provide(int $types): array
     {
@@ -93,9 +97,9 @@ class DataProvider
         }
 
         if ($types & self::TYPE_OBJECT) {
-            $cases['object stdClass'] = new \stdClass();
-            $cases['object \Exception'] = new \Exception();
-            $cases['object \DateTime'] = new \DateTime();
+            $cases['object stdClass'] = new stdClass();
+            $cases['object \Exception'] = new Exception();
+            $cases['object \DateTime'] = new DateTime();
         }
 
         if ($types & self::TYPE_RESOURCE) {

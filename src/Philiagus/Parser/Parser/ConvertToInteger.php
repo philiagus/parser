@@ -15,17 +15,12 @@ namespace Philiagus\Parser\Parser;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception;
-use Philiagus\Parser\Type;
 
 /**
  * Takes any input and attempts a loss free conversion of the provided value into a valid integer value
  */
 class ConvertToInteger
     extends Parser
-    implements
-    Type\AcceptsInteger,
-    Type\AcceptsString,
-    Type\AcceptsFloat
 {
     /**
      * @inheritdoc

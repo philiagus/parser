@@ -15,9 +15,8 @@ namespace Philiagus\Parser\Parser;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Type\AcceptsFloat;
 
-class AssertInfinite extends Parser implements AcceptsFloat
+class AssertInfinite extends Parser
 {
 
     /**

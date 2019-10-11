@@ -6,9 +6,8 @@ namespace Philiagus\Parser\Parser;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParserConfigurationException;
-use Philiagus\Parser\Type\AcceptsMixed;
 
-class Fixed extends Parser implements AcceptsMixed
+class Fixed extends Parser
 {
     private $value = null;
 

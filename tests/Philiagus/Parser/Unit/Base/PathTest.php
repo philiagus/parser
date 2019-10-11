@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 class PathTest extends TestCase
 {
-    public function testClass()
+    public function testClass(): void
     {
         $parent = new class('parent') extends Path {
 
@@ -36,7 +36,7 @@ class PathTest extends TestCase
         self::assertSame('parent||path', (string)$path);
     }
 
-    public function testIndexChain()
+    public function testIndexChain(): void
     {
         $path = new class('parent') extends Path {
             protected function getDelimiter(): string
@@ -51,7 +51,7 @@ class PathTest extends TestCase
         self::assertSame('index', $child->getName());
     }
 
-    public function testPropertyChain()
+    public function testPropertyChain(): void
     {
         $path = new class('parent') extends Path {
             protected function getDelimiter(): string
@@ -66,7 +66,7 @@ class PathTest extends TestCase
         self::assertSame('property', $child->getName());
     }
 
-    public function testMetaChain()
+    public function testMetaChain(): void
     {
         $path = new class('parent') extends Path {
             protected function getDelimiter(): string
@@ -81,7 +81,7 @@ class PathTest extends TestCase
         self::assertSame('meta', $child->getName());
     }
 
-    public function testKeyChain()
+    public function testKeyChain(): void
     {
         $path = new class('parent') extends Path {
             protected function getDelimiter(): string

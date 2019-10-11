@@ -21,14 +21,14 @@ use PHPUnit\Framework\TestCase;
 class AssertNullTest extends TestCase
 {
 
-    public function testThatItExtendsBaseParser()
+    public function testThatItExtendsBaseParser(): void
     {
         self::assertTrue((new AssertNull()) instanceof Parser);
     }
 
     public function provideInvalidValues(): array
     {
-        return DataProvider::provide(~DataProvider::TYPE_NULL);
+        return DataProvider::provide((int)~DataProvider::TYPE_NULL);
     }
 
     /**
@@ -36,7 +36,7 @@ class AssertNullTest extends TestCase
      *
      * @dataProvider provideInvalidValues
      */
-    public function testThatItBlocksNonNullValues($value)
+    public function testThatItBlocksNonNullValues($value): void
     {
         self::expectException(ParsingException::class);
         (new AssertNull())->parse($value);
@@ -52,7 +52,7 @@ class AssertNullTest extends TestCase
      *
      * @dataProvider provideValidValues
      */
-    public function testThatItAllowsNullValues($value)
+    public function testThatItAllowsNullValues($value): void
     {
         $result = (new AssertNull())->parse($value);
         self::assertSame($value, $result);

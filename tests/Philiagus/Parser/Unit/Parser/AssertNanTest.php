@@ -21,14 +21,14 @@ use PHPUnit\Framework\TestCase;
 class AssertNanTest extends TestCase
 {
 
-    public function testThatItExtendsBaseParser()
+    public function testThatItExtendsBaseParser(): void
     {
         self::assertTrue((new AssertNan()) instanceof Parser);
     }
 
     public function provideInvalidValues(): array
     {
-        return DataProvider::provide(~DataProvider::TYPE_NAN);
+        return DataProvider::provide((int)~DataProvider::TYPE_NAN);
     }
 
     /**
@@ -36,7 +36,7 @@ class AssertNanTest extends TestCase
      *
      * @dataProvider provideInvalidValues
      */
-    public function testThatItBlocksNonNanValues($value)
+    public function testThatItBlocksNonNanValues($value): void
     {
         self::expectException(ParsingException::class);
         (new AssertNan())->parse($value);
@@ -52,7 +52,7 @@ class AssertNanTest extends TestCase
      *
      * @dataProvider provideValidValues
      */
-    public function testThatItAllowsNanValues($value)
+    public function testThatItAllowsNanValues($value): void
     {
         $result = (new AssertNan())->parse($value);
         self::assertNan($result);

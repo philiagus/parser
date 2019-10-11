@@ -16,11 +16,9 @@ use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Type\AcceptsMixed;
 
 class AssertEquals
     extends Parser
-    implements AcceptsMixed
 {
 
     /**

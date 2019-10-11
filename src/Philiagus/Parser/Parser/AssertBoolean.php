@@ -15,7 +15,6 @@ namespace Philiagus\Parser\Parser;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Type;
 
 /**
  * Class BooleanPrimitive
@@ -24,7 +23,6 @@ use Philiagus\Parser\Type;
  */
 class AssertBoolean
     extends Parser
-    implements Type\AcceptsBoolean
 {
 
     /**

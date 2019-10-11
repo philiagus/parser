@@ -13,36 +13,33 @@ declare(strict_types=1);
 namespace Philiagus\Test\Parser\Unit\Parser;
 
 use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Exception\MultipleParsingException;
+use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\ParseJson;
-use Philiagus\Parser\Type\AcceptsString;
 use Philiagus\Test\Parser\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class ParseJsonTest extends TestCase
 {
 
-    public function testThatItExtendsBaseParser()
+    public function testThatItExtendsBaseParser(): void
     {
         self::assertTrue((new ParseJson()) instanceof Parser);
     }
 
-    public function testThatItAcceptsString()
-    {
-        self::assertTrue((new ParseJson()) instanceof AcceptsString);
-    }
-
     public function provideNonStringValues(): array
     {
-        return DataProvider::provide(~DataProvider::TYPE_STRING);
+        return DataProvider::provide((int)~DataProvider::TYPE_STRING);
     }
 
     /**
      * @param $value
      *
      * @throws ParsingException
-     * @throws \Philiagus\Parser\Exception\MultipleParsingException
-     * @throws \Philiagus\Parser\Exception\ParserConfigurationException
+     * @throws MultipleParsingException
+     * @throws ParserConfigurationException
      * @dataProvider provideNonStringValues
      */
     public function testExceptionOnNonStringValues($value): void
@@ -75,7 +72,7 @@ class ParseJsonTest extends TestCase
     public function testWithObjectsAsArrays(): void
     {
         $parser = (new ParseJson());
-        self::assertInstanceOf(\stdClass::class, $parser->parse('{}'));
+        self::assertInstanceOf(stdClass::class, $parser->parse('{}'));
         $parser->withObjectsAsArrays();
         self::assertSame([], $parser->parse('{}'));
     }
