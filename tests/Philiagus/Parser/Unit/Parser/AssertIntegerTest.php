@@ -10,6 +10,7 @@
 
 namespace Philiagus\Test\Parser\Unit\Parser;
 
+use Exception;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
@@ -19,12 +20,15 @@ use PHPUnit\Framework\TestCase;
 
 class AssertIntegerTest extends TestCase
 {
-
     public function testThatItExtendsBaseParser(): void
     {
         self::assertTrue((new AssertInteger()) instanceof Parser);
     }
 
+    /**
+     * @return array
+     * @throws Exception
+     */
     public function provideInvalidValues(): array
     {
         return DataProvider::provide((int)~DataProvider::TYPE_INTEGER);
@@ -33,6 +37,8 @@ class AssertIntegerTest extends TestCase
     /**
      * @param mixed $value
      *
+     * @throws ParserConfigurationException
+     * @throws ParsingException
      * @dataProvider provideInvalidValues
      */
     public function testThatNonIntegersAreBlocked($value): void
@@ -41,6 +47,10 @@ class AssertIntegerTest extends TestCase
         (new AssertInteger())->parse($value);
     }
 
+    /**
+     * @return array
+     * @throws Exception
+     */
     public function provideValidValues(): array
     {
         return DataProvider::provide(DataProvider::TYPE_INTEGER);
@@ -49,6 +59,8 @@ class AssertIntegerTest extends TestCase
     /**
      * @param mixed $value
      *
+     * @throws ParserConfigurationException
+     * @throws ParsingException
      * @dataProvider provideValidValues
      */
     public function testThatIntegersAreAllowed($value): void
@@ -57,18 +69,28 @@ class AssertIntegerTest extends TestCase
         self::assertSame($result, $value);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     */
     public function testThatMinimumCannotBeGreaterThanMaximum(): void
     {
         self::expectException(ParserConfigurationException::class);
         (new AssertInteger())->withMaximum(100)->withMinimum(1000);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     */
     public function testThatMaximumCannotBeLowerThanMinimum(): void
     {
         self::expectException(ParserConfigurationException::class);
         (new AssertInteger())->withMinimum(1000)->withMaximum(100);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testThatValueMustBeGreaterThanMinimum(): void
     {
         self::expectException(ParsingException::class);
@@ -77,6 +99,10 @@ class AssertIntegerTest extends TestCase
             ->parse(0);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testThatValueMustBeLowerThanMaximum(): void
     {
         self::expectException(ParsingException::class);
@@ -85,6 +111,9 @@ class AssertIntegerTest extends TestCase
             ->parse(10);
     }
 
+    /**
+     * @return array
+     */
     public function provideOutOfRangeValues(): array
     {
         return [
@@ -93,6 +122,10 @@ class AssertIntegerTest extends TestCase
         ];
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testThatValueOverMinimumPasses(): void
     {
         $parser = (new AssertInteger())->withMinimum(0);
@@ -101,6 +134,10 @@ class AssertIntegerTest extends TestCase
         self::assertSame(PHP_INT_MAX, $parser->parse(PHP_INT_MAX));
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testThatValueUnderMaximumPasses(): void
     {
         $parser = (new AssertInteger())->withMaximum(10);
@@ -109,6 +146,10 @@ class AssertIntegerTest extends TestCase
         self::assertSame(PHP_INT_MIN, $parser->parse(PHP_INT_MIN));
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testDivisibleBy(): void
     {
         self::assertSame(
@@ -119,18 +160,28 @@ class AssertIntegerTest extends TestCase
         );
     }
 
+    /**
+     * @throws ParserConfigurationException
+     */
     public function testDivisibleByDivisorZeroException(): void
     {
         self::expectException(ParserConfigurationException::class);
         (new AssertInteger())->withDivisibleBy(0);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     */
     public function testDivisibleByDivisorNegativeException(): void
     {
         self::expectException(ParserConfigurationException::class);
         (new AssertInteger())->withDivisibleBy(-1);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testDivisibleByWrongValueException(): void
     {
         self::expectException(ParsingException::class);

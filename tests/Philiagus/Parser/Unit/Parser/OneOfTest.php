@@ -31,6 +31,10 @@ class OneOfTest extends TestCase
         self::assertTrue((new OneOf()) instanceof Parser);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testThatItStopsAtTheFirstMatchingParser(): void
     {
         self::assertEquals('matched!', (new OneOf())
@@ -63,12 +67,20 @@ class OneOfTest extends TestCase
             )->parse(null));
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testThatItThrowsExceptionWhenNoOptionsAreDefined(): void
     {
         self::expectException(ParserConfigurationException::class);
         (new OneOf())->parse(null);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testThatItThrowsAnExceptionWhenNothingMatches(): void
     {
         $exception = new ParsingException('value', 'Exception', new Root(''));

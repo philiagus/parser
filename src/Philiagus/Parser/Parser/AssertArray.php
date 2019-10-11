@@ -78,6 +78,13 @@ class AssertArray
         return $this;
     }
 
+    /**
+     * @param $key
+     * @param Parser $parser
+     *
+     * @return $this
+     * @throws ParserConfigurationException
+     */
     public function withElement($key, Parser $parser): self
     {
         if (!is_string($key) && !is_int($key)) {
@@ -89,6 +96,14 @@ class AssertArray
         return $this;
     }
 
+    /**
+     * @param $key
+     * @param $default
+     * @param Parser $parser
+     *
+     * @return $this
+     * @throws ParserConfigurationException
+     */
     public function withDefaultedElement($key, $default, Parser $parser): self
     {
         if (!is_string($key) && !is_int($key)) {

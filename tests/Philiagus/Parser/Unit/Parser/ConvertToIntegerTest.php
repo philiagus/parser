@@ -12,7 +12,9 @@ declare(strict_types=1);
 
 namespace Philiagus\Test\Parser\Unit\Parser;
 
+use Exception;
 use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\ConvertToInteger;
 use Philiagus\Test\Parser\Provider\DataProvider;
@@ -26,6 +28,10 @@ class ConvertToIntegerTest extends TestCase
         self::assertTrue((new ConvertToInteger()) instanceof Parser);
     }
 
+    /**
+     * @return array
+     * @throws Exception
+     */
     public function provideIncompatibleValues(): array
     {
         return
@@ -43,6 +49,8 @@ class ConvertToIntegerTest extends TestCase
     /**
      * @param $incompatibleValue
      *
+     * @throws ParsingException
+     * @throws ParserConfigurationException
      * @dataProvider provideIncompatibleValues
      */
     public function testThatItDoesNotAcceptIncompatibleValues($incompatibleValue): void
@@ -51,6 +59,9 @@ class ConvertToIntegerTest extends TestCase
         (new ConvertToInteger())->parse($incompatibleValue);
     }
 
+    /**
+     * @return array
+     */
     public function compatibleValueProvider(): array
     {
         $cases =
@@ -76,12 +87,13 @@ class ConvertToIntegerTest extends TestCase
      * @param $baseValue
      * @param $expectedValue
      *
+     * @throws ParsingException
+     * @throws ParserConfigurationException
      * @dataProvider compatibleValueProvider
      */
     public function testThatItDoesConvertCompatibleValues($baseValue, $expectedValue): void
     {
         self::assertSame($expectedValue, (new ConvertToInteger())->parse($baseValue));
     }
-
 
 }

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Test\Parser\Unit\Parser;
 
+use Exception;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParserConfigurationException;
@@ -20,6 +21,10 @@ class ConvertToArrayTest extends TestCase
         self::assertTrue((new ConvertToArray()) instanceof Parser);
     }
 
+    /**
+     * @return array
+     * @throws Exception
+     */
     public function provideInvalidValues(): array
     {
         return DataProvider::provide((int)~DataProvider::TYPE_ARRAY);
@@ -28,6 +33,8 @@ class ConvertToArrayTest extends TestCase
     /**
      * @param mixed $value
      *
+     * @throws ParserConfigurationException
+     * @throws ParsingException
      * @dataProvider provideInvalidValues
      */
     public function testThatItBlocksNonArrayValues($value): void
@@ -36,6 +43,10 @@ class ConvertToArrayTest extends TestCase
         (new ConvertToArray())->parse($value);
     }
 
+    /**
+     * @return array
+     * @throws Exception
+     */
     public function provideValidValues(): array
     {
         return DataProvider::provide(DataProvider::TYPE_ARRAY);
@@ -44,6 +55,8 @@ class ConvertToArrayTest extends TestCase
     /**
      * @param mixed $value
      *
+     * @throws ParserConfigurationException
+     * @throws ParsingException
      * @dataProvider provideValidValues
      */
     public function testThatItAllowsArrayValues($value): void
@@ -55,6 +68,8 @@ class ConvertToArrayTest extends TestCase
     /**
      * @param mixed $value
      *
+     * @throws ParserConfigurationException
+     * @throws ParsingException
      * @dataProvider provideInvalidValues
      */
     public function testThatItConvertsValuesToArrays($value): void
@@ -76,6 +91,8 @@ class ConvertToArrayTest extends TestCase
     /**
      * @param mixed $value
      *
+     * @throws ParserConfigurationException
+     * @throws ParsingException
      * @dataProvider provideInvalidValues
      */
     public function testThatItConvertsValuesWithDedicatedStringKey($value): void
@@ -91,6 +108,10 @@ class ConvertToArrayTest extends TestCase
         }
     }
 
+    /**
+     * @return array
+     * @throws Exception
+     */
     public function provideValidKeys(): array
     {
         return DataProvider::provide(DataProvider::TYPE_STRING | DataProvider::TYPE_INTEGER);
@@ -99,6 +120,8 @@ class ConvertToArrayTest extends TestCase
     /**
      * @param $key
      *
+     * @throws ParserConfigurationException
+     * @throws ParsingException
      * @dataProvider provideValidKeys
      */
     public function testThatConvertNonArraysAcceptsStringsAndIntegers($key): void
@@ -109,6 +132,10 @@ class ConvertToArrayTest extends TestCase
         );
     }
 
+    /**
+     * @return array
+     * @throws Exception
+     */
     public function provideInvalidKeys(): array
     {
         return DataProvider::provide((int)~(DataProvider::TYPE_INTEGER | DataProvider::TYPE_STRING));
@@ -127,6 +154,10 @@ class ConvertToArrayTest extends TestCase
         (new ConvertToArray())->convertNonArraysWithKey($wrongKey);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testTestThatItForcesKeysWithValue(): void
     {
         $parser = (new ConvertToArray())->withDefaultedElement('forced', 1);
@@ -140,6 +171,10 @@ class ConvertToArrayTest extends TestCase
         );
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testTestThatForcedKeysDoNotOverwriteExistingKeys(): void
     {
         $parser = (new ConvertToArray())->withDefaultedElement('forced', 1);
@@ -155,6 +190,8 @@ class ConvertToArrayTest extends TestCase
     /**
      * @param $key
      *
+     * @throws ParserConfigurationException
+     * @throws ParsingException
      * @dataProvider provideValidKeys
      */
     public function testThatForcedKeysAcceptIntegerAndString($key): void
@@ -180,6 +217,10 @@ class ConvertToArrayTest extends TestCase
         (new ConvertToArray())->withDefaultedElement($key, 'value');
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testThatForcedKeysUseParser(): void
     {
         $childParser = $this->prophesize(Parser::class);
@@ -196,6 +237,10 @@ class ConvertToArrayTest extends TestCase
         );
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testThatForcedKeysUseParserEvenIfValueIsAlreadyPresent(): void
     {
         $childParser = $this->prophesize(Parser::class);
@@ -212,6 +257,10 @@ class ConvertToArrayTest extends TestCase
         );
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testWithElementWhitelist(): void
     {
         $parser = (new ConvertToArray())->withElementWhitelist(['key1', 2]);
@@ -235,6 +284,7 @@ class ConvertToArrayTest extends TestCase
      *
      * @dataProvider provideValidKeys
      * @throws ParserConfigurationException
+     * @throws ParsingException
      */
     public function testThatElementWhitelistAcceptsIntegersAndStrings($key): void
     {
@@ -262,12 +312,20 @@ class ConvertToArrayTest extends TestCase
         (new ConvertToArray())->withElementWhitelist([$key]);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testThatWhitelistIgnoresIfKeysAreNotPresent(): void
     {
         $parser = (new ConvertToArray())->withElementWhitelist(['ignored', 'as well']);
         self::assertSame([], $parser->parse(['something', 'or', 'other']));
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testThatForcedElementsMustExist(): void
     {
         $childParser = $this->prophesize(Parser::class);
@@ -276,6 +334,10 @@ class ConvertToArrayTest extends TestCase
         $parser->parse([]);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testThatForcedElementsAreParsedAndOverwriteReturn(): void
     {
         $childParser = $this->prophesize(Parser::class);
@@ -291,8 +353,10 @@ class ConvertToArrayTest extends TestCase
 
     /**
      * @param $key
+     *
      * @dataProvider provideValidKeys
-     * @throws ParserConfigurationException
+     * @throws ParserConfigurationException*@throws ParsingException
+     * @throws ParsingException
      */
     public function testThatForcedElementKeysCanBeIntegerOrString($key): void
     {
@@ -316,7 +380,7 @@ class ConvertToArrayTest extends TestCase
     {
         $childParser = $this->prophesize(Parser::class);
         self::expectException(ParserConfigurationException::class);
-        $parser = (new ConvertToArray())->withElement($key, $childParser->reveal());
+        (new ConvertToArray())->withElement($key, $childParser->reveal());
     }
 
 

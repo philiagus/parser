@@ -12,7 +12,9 @@ declare(strict_types=1);
 
 namespace Philiagus\Test\Parser\Unit\Parser;
 
+use Exception;
 use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\AssertInfinite;
 use Philiagus\Test\Parser\Provider\DataProvider;
@@ -20,12 +22,15 @@ use PHPUnit\Framework\TestCase;
 
 class AssertInfiniteTest extends TestCase
 {
-
     public function testThatItExtendsBaseParser(): void
     {
         self::assertTrue((new AssertInfinite()) instanceof Parser);
     }
 
+    /**
+     * @return array
+     * @throws Exception
+     */
     public function provideInvalidValues(): array
     {
         return DataProvider::provide((int)~DataProvider::TYPE_INFINITE);
@@ -34,6 +39,8 @@ class AssertInfiniteTest extends TestCase
     /**
      * @param mixed $value
      *
+     * @throws ParsingException
+     * @throws ParserConfigurationException
      * @dataProvider provideInvalidValues
      */
     public function testThatItBlocksNonInfiniteValues($value): void
@@ -42,6 +49,10 @@ class AssertInfiniteTest extends TestCase
         (new AssertInfinite())->parse($value);
     }
 
+    /**
+     * @return array
+     * @throws Exception
+     */
     public function provideValidValues(): array
     {
         return DataProvider::provide(DataProvider::TYPE_INFINITE);
@@ -50,6 +61,8 @@ class AssertInfiniteTest extends TestCase
     /**
      * @param mixed $value
      *
+     * @throws ParsingException
+     * @throws ParserConfigurationException
      * @dataProvider provideValidValues
      */
     public function testThatItAllowsInfiniteValues($value): void

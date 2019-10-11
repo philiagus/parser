@@ -6,6 +6,7 @@ namespace Philiagus\Test\Parser\Unit\Parser;
 use Exception;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
+use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\Fixed;
 use Philiagus\Test\Parser\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -30,6 +31,9 @@ class FixedTest extends TestCase
 
     /**
      * @param $value
+     *
+     * @throws ParserConfigurationException
+     * @throws ParsingException
      * @dataProvider provideAllTypes
      */
     public function testThatItIgnoresAnyInputAndReturnsTheDefinedValue($value): void
@@ -40,6 +44,9 @@ class FixedTest extends TestCase
 
     /**
      * @param $value
+     *
+     * @throws ParserConfigurationException
+     * @throws ParsingException
      * @dataProvider provideAllTypes
      */
     public function testThatItAcceptsAnyValueAsFixed($value): void
@@ -53,6 +60,10 @@ class FixedTest extends TestCase
         }
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testThatItThrowsAnExceptionIfNoValueIsDefined(): void
     {
         self::expectException(ParserConfigurationException::class);

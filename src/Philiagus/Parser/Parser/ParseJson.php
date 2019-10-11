@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use JsonException;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParsingException;
@@ -73,15 +72,16 @@ class ParseJson extends Parser
             throw new ParsingException($value, 'Provided value is not a string and thus not a valid JSON', $path);
         }
 
-        $options = JSON_THROW_ON_ERROR;
+        $options = 0;
         if ($this->bigintAsString) {
             $options |= JSON_BIGINT_AS_STRING;
         }
 
-        try {
-            return @json_decode($value, $this->objectAsArrays, $this->maxDepth, $options);
-        } catch (JsonException $exception) {
-            throw new ParsingException($value, 'Provided string is not a valid JSON', $path, $exception);
+        $result = @json_decode($value, $this->objectAsArrays, $this->maxDepth, $options);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new ParsingException($value, 'Provided string is not a valid JSON: ' . json_last_error_msg(), $path);
         }
+
+        return $result;
     }
 }

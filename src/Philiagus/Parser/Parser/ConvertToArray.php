@@ -45,6 +45,9 @@ class ConvertToArray extends Parser
      */
     private $sequentialKeys = false;
 
+    /**
+     * @return $this
+     */
     public function convertNonArraysWithArrayCast(): self
     {
         $this->convertNonArrays = true;
@@ -52,6 +55,12 @@ class ConvertToArray extends Parser
         return $this;
     }
 
+    /**
+     * @param $key
+     *
+     * @return $this
+     * @throws ParserConfigurationException
+     */
     public function convertNonArraysWithKey($key): self
     {
         if (!is_string($key) && !is_int($key)) {
@@ -63,6 +72,14 @@ class ConvertToArray extends Parser
         return $this;
     }
 
+    /**
+     * @param $key
+     * @param $forcedValue
+     * @param Parser|null $andParse
+     *
+     * @return $this
+     * @throws ParserConfigurationException
+     */
     public function withDefaultedElement($key, $forcedValue, Parser $andParse = null): self
     {
         if (!is_string($key) && !is_int($key)) {
@@ -77,6 +94,12 @@ class ConvertToArray extends Parser
         return $this;
     }
 
+    /**
+     * @param array $keys
+     *
+     * @return $this
+     * @throws ParserConfigurationException
+     */
     public function withElementWhitelist(array $keys): self
     {
         foreach ($keys as $key) {
@@ -90,6 +113,13 @@ class ConvertToArray extends Parser
         return $this;
     }
 
+    /**
+     * @param $key
+     * @param Parser $parser
+     *
+     * @return $this
+     * @throws ParserConfigurationException
+     */
     public function withElement($key, Parser $parser): self
     {
         if (!is_string($key) && !is_int($key)) {
@@ -101,6 +131,9 @@ class ConvertToArray extends Parser
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function withSequentialKeys(): self
     {
         $this->sequentialKeys = true;

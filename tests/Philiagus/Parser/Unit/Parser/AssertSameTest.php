@@ -26,6 +26,9 @@ class AssertSameTest extends TestCase
         self::assertTrue((new AssertSame()) instanceof Parser);
     }
 
+    /**
+     * @return array
+     */
     public function notZeroValues(): array
     {
         return [
@@ -39,6 +42,8 @@ class AssertSameTest extends TestCase
     /**
      * @param $value
      *
+     * @throws ParserConfigurationException
+     * @throws ParsingException
      * @dataProvider notZeroValues
      */
     public function testThatItBlocksNotSameValue($value): void
@@ -47,12 +52,20 @@ class AssertSameTest extends TestCase
         (new AssertSame())->withValue(0)->parse($value);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testThatItAllowsSameValue(): void
     {
         $parser = (new AssertSame())->withValue(0);
         self::assertSame(0, $parser->parse(0));
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testExceptionOnMissingConfiguration(): void
     {
         self::expectException(ParserConfigurationException::class);

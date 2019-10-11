@@ -16,7 +16,6 @@ use Philiagus\Parser\Parser\AssertEquals;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Path\Root;
 use PHPUnit\Framework\TestCase;
 
 class AssertEqualsTest extends TestCase
@@ -27,12 +26,20 @@ class AssertEqualsTest extends TestCase
         self::assertTrue((new AssertEquals()) instanceof Parser);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testThatItBlocksNotEqualValues(): void
     {
         self::expectException(ParsingException::class);
         (new AssertEquals())->withValue(1)->parse(2);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testThatItAllowsEqualValues(): void
     {
         $parser = (new AssertEquals())->withValue(0);
@@ -42,6 +49,10 @@ class AssertEqualsTest extends TestCase
         self::assertSame(0.0, $parser->parse(0.0));
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testExceptionOnMissingConfiguration(): void
     {
         self::expectException(ParserConfigurationException::class);

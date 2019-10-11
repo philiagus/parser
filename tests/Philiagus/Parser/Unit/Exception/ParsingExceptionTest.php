@@ -41,6 +41,10 @@ class ParsingExceptionTest extends TestCase
         self::assertSame('value', $exception->getValue());
     }
 
+    /**
+     * @return array
+     * @throws Exception
+     */
     public function provideAllTypes(): array
     {
         return DataProvider::provide(DataProvider::TYPE_ALL);

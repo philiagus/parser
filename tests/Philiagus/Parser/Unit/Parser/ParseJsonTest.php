@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Test\Parser\Unit\Parser;
 
+use Exception;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Exception\MultipleParsingException;
 use Philiagus\Parser\Exception\ParserConfigurationException;
@@ -29,6 +30,10 @@ class ParseJsonTest extends TestCase
         self::assertTrue((new ParseJson()) instanceof Parser);
     }
 
+    /**
+     * @return array
+     * @throws Exception
+     */
     public function provideNonStringValues(): array
     {
         return DataProvider::provide((int)~DataProvider::TYPE_STRING);
@@ -38,7 +43,6 @@ class ParseJsonTest extends TestCase
      * @param $value
      *
      * @throws ParsingException
-     * @throws MultipleParsingException
      * @throws ParserConfigurationException
      * @dataProvider provideNonStringValues
      */
@@ -48,12 +52,20 @@ class ParseJsonTest extends TestCase
         (new ParseJson())->parse($value);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testExceptionOnNonJsonString(): void
     {
         self::expectException(ParsingException::class);
         (new ParseJson())->parse('not a json');
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testMaxDepth(): void
     {
         $json = [
@@ -63,12 +75,20 @@ class ParseJsonTest extends TestCase
         self::assertSame($json, (new ParseJson())->withMaxDepth(10)->parse($jsonString));
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testMaxDepthException(): void
     {
         self::expectException(ParsingException::class);
         (new ParseJson())->withMaxDepth(1)->parse('[[[[[[[[[[[[[1]]]]]]]]]]]]]');
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testWithObjectsAsArrays(): void
     {
         $parser = (new ParseJson());
@@ -77,6 +97,10 @@ class ParseJsonTest extends TestCase
         self::assertSame([], $parser->parse('{}'));
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testBigintAsString(): void
     {
         $parser = (new ParseJson());

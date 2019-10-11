@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Philiagus\Test\Parser\Unit;
 
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Path\Index;
 use Philiagus\Parser\Path\Key;
 use PHPUnit\Framework\TestCase;
 

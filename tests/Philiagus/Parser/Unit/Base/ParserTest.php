@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Test\Parser\Unit\Base;
 
+use Exception;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParserConfigurationException;
@@ -25,6 +26,10 @@ class ParserTest extends TestCase
 
     public const ANOTHER_VALUE = 'another value';
 
+    /**
+     * @return array
+     * @throws Exception
+     */
     public function allValuesProvider(): array
     {
         return DataProvider::provide(DataProvider::TYPE_ALL);
@@ -34,6 +39,9 @@ class ParserTest extends TestCase
      * @dataProvider allValuesProvider
      *
      * @param $value
+     *
+     * @throws ParserConfigurationException
+     * @throws ParsingException
      */
     public function testThatItWritesByReferenceAndReturnsValue($value): void
     {

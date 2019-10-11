@@ -25,6 +25,11 @@ use Philiagus\Test\Parser\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
+/**
+ * Class AssertArrayTest
+ *
+ * @package Philiagus\Test\Parser\Unit\Parser
+ */
 class AssertArrayTest extends TestCase
 {
 
@@ -33,6 +38,10 @@ class AssertArrayTest extends TestCase
         self::assertTrue((new AssertArray()) instanceof Parser);
     }
 
+    /**
+     * @return array
+     * @throws Exception
+     */
     public function provideInvalidValues(): array
     {
         return DataProvider::provide((int)~DataProvider::TYPE_ARRAY);
@@ -41,6 +50,8 @@ class AssertArrayTest extends TestCase
     /**
      * @param mixed $value
      *
+     * @throws ParserConfigurationException
+     * @throws ParsingException
      * @dataProvider provideInvalidValues
      */
     public function testThatItBlocksNonArrayValues($value): void
@@ -49,6 +60,10 @@ class AssertArrayTest extends TestCase
         (new AssertArray())->parse($value);
     }
 
+    /**
+     * @return array
+     * @throws Exception
+     */
     public function provideValidValues(): array
     {
         return DataProvider::provide(DataProvider::TYPE_ARRAY);
@@ -57,6 +72,8 @@ class AssertArrayTest extends TestCase
     /**
      * @param mixed $value
      *
+     * @throws ParserConfigurationException
+     * @throws ParsingException
      * @dataProvider provideValidValues
      */
     public function testThatItAllowsArrayValues($value): void
@@ -65,6 +82,10 @@ class AssertArrayTest extends TestCase
         self::assertSame($value, $result);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testWithValues(): void
     {
         $array = [
@@ -81,6 +102,10 @@ class AssertArrayTest extends TestCase
         (new AssertArray())->withValues($parser->reveal())->parse($array);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testWithValuesException(): void
     {
         $exception = new ParsingException('value', 'message', new Root('root'));
@@ -106,6 +131,10 @@ class AssertArrayTest extends TestCase
         (new AssertArray())->withValues($parser->reveal())->parse($array);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testWithKeys(): void
     {
         $array = [
@@ -122,6 +151,10 @@ class AssertArrayTest extends TestCase
         (new AssertArray())->withKeys($parser->reveal())->parse($array);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testWithKeysException(): void
     {
         $exception = new ParsingException('value', 'message', new Root('root'));
@@ -147,6 +180,10 @@ class AssertArrayTest extends TestCase
         (new AssertArray())->withKeys($parser->reveal())->parse($array);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testWithLength(): void
     {
         $parser = $this->prophesize(Parser::class);
@@ -155,6 +192,10 @@ class AssertArrayTest extends TestCase
         (new AssertArray())->withLength($parser->reveal())->parse([1, 2]);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testWithLengthException(): void
     {
         $parser = $this->prophesize(Parser::class);
@@ -166,6 +207,10 @@ class AssertArrayTest extends TestCase
         (new AssertArray())->withLength($parser->reveal())->parse([1, 2]);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testWithElement(): void
     {
         $parser = $this->prophesize(Parser::class);
@@ -176,6 +221,10 @@ class AssertArrayTest extends TestCase
             ->parse(['key' => 'value']);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testWithMissingElement(): void
     {
         $parser = $this->prophesize(Parser::class);
@@ -186,11 +235,19 @@ class AssertArrayTest extends TestCase
             ->parse([]);
     }
 
+    /**
+     * @return array
+     * @throws Exception
+     */
     public function provideInvalidArrayKeys(): array
     {
         return DataProvider::provide((int)~(DataProvider::TYPE_STRING | DataProvider::TYPE_INTEGER));
     }
 
+    /**
+     * @return array
+     * @throws Exception
+     */
     public function provideValidArrayKeys(): array
     {
         return DataProvider::provide(DataProvider::TYPE_STRING | DataProvider::TYPE_INTEGER);
@@ -212,6 +269,8 @@ class AssertArrayTest extends TestCase
     /**
      * @param $stringInt
      *
+     * @throws ParserConfigurationException
+     * @throws ParsingException
      * @dataProvider provideValidArrayKeys
      */
     public function testAcceptingValidKeys($stringInt): void
@@ -224,6 +283,10 @@ class AssertArrayTest extends TestCase
             ->parse([$stringInt => 'value'], new Root('root'));
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testWithDefaultedElement(): void
     {
         $parser = $this->prophesize(Parser::class);
@@ -234,6 +297,10 @@ class AssertArrayTest extends TestCase
             ->parse(['key' => 'value'], new Root('root'));
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testWithMissingDefaultedElement(): void
     {
         $parser = $this->prophesize(Parser::class);
@@ -260,6 +327,8 @@ class AssertArrayTest extends TestCase
     /**
      * @param $stringInt
      *
+     * @throws ParserConfigurationException
+     * @throws ParsingException
      * @dataProvider provideValidArrayKeys
      */
     public function testAcceptingValidKeysForWithDefaultedElement($stringInt): void
@@ -272,6 +341,10 @@ class AssertArrayTest extends TestCase
             ->parse([$stringInt => 'value'], new Root('root'));
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testThatItAllowsSequentialArrays(): void
     {
         $array = [1,2,3,4,5];
@@ -279,6 +352,10 @@ class AssertArrayTest extends TestCase
         self::assertSame($array, $after);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testThatItBlocksNotSequentialArrays(): void
     {
         $array = [1 => 1, 2 => 2, 3 => 3];

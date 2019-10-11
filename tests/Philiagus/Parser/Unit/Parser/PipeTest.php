@@ -14,6 +14,8 @@ namespace Philiagus\Test\Parser\Unit\Parser;
 
 use Exception;
 use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Exception\ParserConfigurationException;
+use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\Pipe;
 use Philiagus\Parser\Path\Root;
 use Philiagus\Test\Parser\Provider\DataProvider;
@@ -21,7 +23,6 @@ use PHPUnit\Framework\TestCase;
 
 class PipeTest extends TestCase
 {
-
     public function testThatItExtendsBaseParser(): void
     {
         self::assertTrue((new Pipe()) instanceof Parser);
@@ -39,6 +40,8 @@ class PipeTest extends TestCase
     /**
      * @param $value
      *
+     * @throws ParserConfigurationException
+     * @throws ParsingException
      * @dataProvider provideAllValues
      */
     public function testThatEmptyPipeReturnsWithoutAlteration($value): void
@@ -51,6 +54,10 @@ class PipeTest extends TestCase
         }
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testThatItPerformTheEntirePipe(): void
     {
         $path = new Root('root');
