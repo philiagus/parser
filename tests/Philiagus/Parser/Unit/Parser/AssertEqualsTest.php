@@ -12,10 +12,12 @@ declare(strict_types=1);
 
 namespace Philiagus\Test\Parser\Unit\Parser;
 
+use Exception;
 use Philiagus\Parser\Parser\AssertEquals;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Test\Parser\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class AssertEqualsTest extends TestCase
@@ -69,6 +71,49 @@ class AssertEqualsTest extends TestCase
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
         (new AssertEquals())->withValue(false, $msg)->parse(true);
+    }
+
+    /**
+     * @return array
+     * @throws Exception
+     */
+    public function provideEverything(): array
+    {
+        return DataProvider::provide(DataProvider::TYPE_ALL);
+    }
+
+    /**
+     * @return array
+     * @throws Exception
+     */
+    public function provideEverythingExceptNAN(): array
+    {
+        return DataProvider::provide((int)~DataProvider::TYPE_NAN);
+    }
+
+    /**
+     * @dataProvider provideEverything
+     * @param $value
+     */
+    public function testStaticConstructor($value): void
+    {
+        $message = 'hello';
+        self::assertSame(
+            serialize((new AssertEquals())->withValue($value, $message)),
+            serialize(AssertEquals::with($value, $message))
+        );
+    }
+
+    /**
+     * @param $value
+     *
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     * @dataProvider provideEverythingExceptNAN
+     */
+    public function testThatItAcceptsAllValues($value): void
+    {
+        DataProvider::assertSame($value, (new AssertEquals())->withValue($value)->parse($value));
     }
 
 }

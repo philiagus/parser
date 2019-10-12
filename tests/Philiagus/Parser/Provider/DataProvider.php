@@ -153,21 +153,7 @@ class DataProvider
      */
     public static function isSame($expected, $value): bool
     {
-        if (is_float($expected) && is_nan($expected)) {
-            return is_float($value) && is_nan($value);
-        }
-
-        if (is_array($expected)) {
-            if (!is_array($value)) return false;
-            if (array_keys($expected) !== array_keys($value)) return false;
-            foreach ($expected as $key => $expectedValue) {
-                if (!self::isSame($expectedValue, $value[$key])) return false;
-            }
-
-            return true;
-        }
-
-        return $expected === $value;
+        return serialize($expected) === serialize($value);
     }
 
     /**
@@ -178,7 +164,9 @@ class DataProvider
      */
     public static function assertSame($expected, $value): void
     {
-        Assert::assertTrue(self::isSame($expected, $value));
+        Assert::assertSame(
+            serialize($expected), serialize($value)
+        );
     }
 
 }

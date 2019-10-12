@@ -21,6 +21,8 @@ class AssertSame
     extends Parser
 {
 
+    private const DEFAULT_MESSAGE = 'The value is not the same as the expected value';
+
     /**
      * @var null|string
      */
@@ -31,7 +33,7 @@ class AssertSame
      */
     private $targetValue;
 
-    public function withValue($equalsValue, string $exceptionMessage = 'The value is not the same as the expected value'): self
+    public function withValue($equalsValue, string $exceptionMessage = self::DEFAULT_MESSAGE): self
     {
         $this->exceptionMessage = $exceptionMessage;
         $this->targetValue = $equalsValue;
@@ -53,5 +55,17 @@ class AssertSame
         }
 
         return $value;
+    }
+
+    /**
+     * Shortcut constructor for assertion against a value when no by-reference check is needed
+     * @param $value
+     * @param string $exceptionMessage
+     *
+     * @return static
+     */
+    public static function with($value, string $exceptionMessage = self::DEFAULT_MESSAGE): self
+    {
+        return (new self())->withValue($value, $exceptionMessage);
     }
 }

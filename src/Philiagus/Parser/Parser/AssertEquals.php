@@ -21,6 +21,8 @@ class AssertEquals
     extends Parser
 {
 
+    private const DEFAULT_MESSAGE = 'The value is not equal to the expected value';
+
     /**
      * @var string|null
      */
@@ -31,7 +33,7 @@ class AssertEquals
      */
     private $targetValue;
 
-    public function withValue($equalsValue, string $exceptionMessage = 'The value is not equal to the expected value'): self
+    public function withValue($equalsValue, string $exceptionMessage = self::DEFAULT_MESSAGE): self
     {
         $this->targetValue = $equalsValue;
         $this->exceptionMessage = $exceptionMessage;
@@ -53,5 +55,17 @@ class AssertEquals
         }
 
         return $value;
+    }
+
+    /**
+     * Shortcut constructor for assertion against a value when no by-reference check is needed
+     * @param $value
+     * @param string $exceptionMessage
+     *
+     * @return static
+     */
+    public static function with($value, string $exceptionMessage = self::DEFAULT_MESSAGE): self
+    {
+        return (new self())->withValue($value, $exceptionMessage);
     }
 }
