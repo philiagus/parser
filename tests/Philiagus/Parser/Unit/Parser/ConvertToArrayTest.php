@@ -27,7 +27,7 @@ class ConvertToArrayTest extends TestCase
      */
     public function provideInvalidValues(): array
     {
-        return DataProvider::provide((int)~DataProvider::TYPE_ARRAY);
+        return DataProvider::provide((int) ~DataProvider::TYPE_ARRAY);
     }
 
     /**
@@ -138,7 +138,7 @@ class ConvertToArrayTest extends TestCase
      */
     public function provideInvalidKeys(): array
     {
-        return DataProvider::provide((int)~(DataProvider::TYPE_INTEGER | DataProvider::TYPE_STRING));
+        return DataProvider::provide((int) ~(DataProvider::TYPE_INTEGER | DataProvider::TYPE_STRING));
     }
 
     /**
@@ -373,6 +373,7 @@ class ConvertToArrayTest extends TestCase
 
     /**
      * @param $key
+     *
      * @dataProvider provideInvalidKeys
      * @throws ParserConfigurationException
      */
@@ -381,6 +382,21 @@ class ConvertToArrayTest extends TestCase
         $childParser = $this->prophesize(Parser::class);
         self::expectException(ParserConfigurationException::class);
         (new ConvertToArray())->withElement($key, $childParser->reveal());
+    }
+
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
+    public function testWithSequentialKeysConversion(): void
+    {
+        $input = ['a' => 'a', 'b' => 'b', 'c' => 'c'];
+        self::assertSame(
+            array_values($input),
+            (new ConvertToArray())
+                ->withSequentialKeys()
+                ->parse($input)
+        );
     }
 
 

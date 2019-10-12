@@ -25,7 +25,12 @@ class AssertArray
     /**
      * @var null|Parser
      */
-    private $values = null;
+    private $eachValue = null;
+
+    /**
+     * @var null|Parser
+     */
+    private $eachKey = null;
 
     /**
      * @var null|Parser
@@ -57,16 +62,23 @@ class AssertArray
      *
      * @return AssertArray
      */
-    public function withValues(Parser $parser): self
+    public function withEachValue(Parser $parser): self
     {
-        $this->values = $parser;
+        $this->eachValue = $parser;
 
         return $this;
     }
 
-    public function withKeys(Parser $parser): self
+    public function withEachKey(Parser $parser): self
     {
-        $this->keys = $parser;
+        $this->eachKey = $parser;
+
+        return $this;
+    }
+
+    public function withKeys(Parser $arrayParser): self
+    {
+        $this->keys = $arrayParser;
 
         return $this;
     }
@@ -85,7 +97,7 @@ class AssertArray
      * @return $this
      * @throws ParserConfigurationException
      */
-    public function withElement($key, Parser $parser): self
+    public function withKeyHavingValue($key, Parser $parser): self
     {
         if (!is_string($key) && !is_int($key)) {
             throw new ParserConfigurationException('Arrays only accept string or integer keys');
@@ -135,19 +147,23 @@ class AssertArray
             $this->length->parse(count($value), $path->meta('length'));
         }
 
-        if ($this->values || $this->keys || $this->sequentialKeys) {
+        if ($this->eachValue || $this->eachKey || $this->sequentialKeys) {
             $expectedSequenceKey = 0;
             foreach ($value as $index => $element) {
                 if ($this->sequentialKeys && $index !== $expectedSequenceKey) {
                     throw new ParsingException($value, 'The array is not a sequential numerical array starting at 0', $path);
                 }
-                if ($this->keys) $this->keys->parse($index, $path->key((string) $index));
-                if ($this->values) $this->values->parse($element, $path->index((string) $index));
+                if ($this->eachKey) $this->eachKey->parse($index, $path->key((string) $index));
+                if ($this->eachValue) $this->eachValue->parse($element, $path->index((string) $index));
                 $expectedSequenceKey++;
             }
         }
 
         $keys = array_keys($value);
+
+        if($this->keys) {
+            $this->keys->parse($keys, $path->meta('keys'));
+        }
 
         foreach ($this->withElement as $key => $parser) {
             if (!in_array($key, $keys)) {

@@ -40,7 +40,7 @@ use Philiagus\Parser\Parser\AssertFloat;
 use Philiagus\Parser\Parser\AssertArray;
 
 $parser = (new AssertArray())
-    ->withValues(
+    ->withEachValue(
         (new OneOf())
             ->addOption(
                 (new AssertInteger())
