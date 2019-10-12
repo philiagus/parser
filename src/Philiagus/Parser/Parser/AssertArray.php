@@ -22,6 +22,8 @@ class AssertArray
     extends Parser
 {
 
+    private $typeExceptionMessage = 'Provided value is not an array';
+
     /**
      * @var null|Parser
      */
@@ -43,7 +45,7 @@ class AssertArray
     private $length = null;
 
     /**
-     * @var Parser[]
+     * @var array[]
      */
     private $withElement = [];
 
@@ -53,9 +55,16 @@ class AssertArray
     private $withDefaultedElement = [];
 
     /**
-     * @var bool
+     * @var null|string
      */
-    private $sequentialKeys = false;
+    private $sequentialKeys = null;
+
+    public function withTypeExceptionMessage(string $message): self
+    {
+        $this->typeExceptionMessage = $message;
+
+        return $this;
+    }
 
     /**
      * @param Parser $parser
@@ -69,6 +78,11 @@ class AssertArray
         return $this;
     }
 
+    /**
+     * @param Parser $parser
+     *
+     * @return $this
+     */
     public function withEachKey(Parser $parser): self
     {
         $this->eachKey = $parser;
@@ -76,6 +90,11 @@ class AssertArray
         return $this;
     }
 
+    /**
+     * @param Parser $arrayParser
+     *
+     * @return $this
+     */
     public function withKeys(Parser $arrayParser): self
     {
         $this->keys = $arrayParser;
@@ -83,6 +102,11 @@ class AssertArray
         return $this;
     }
 
+    /**
+     * @param Parser $integerParser
+     *
+     * @return $this
+     */
     public function withLength(Parser $integerParser): self
     {
         $this->length = $integerParser;
@@ -91,19 +115,25 @@ class AssertArray
     }
 
     /**
+     * Tests that the key exists and performs the parser on the value if present
+     * If the key does not exist an exception with the specified message is thrown.
+     * Replacers in the exception message:
+     * {key} = var_export($key, true)
+     *
      * @param $key
      * @param Parser $parser
+     * @param string $missingKeyExceptionMessage
      *
      * @return $this
      * @throws ParserConfigurationException
      */
-    public function withKeyHavingValue($key, Parser $parser): self
+    public function withKeyHavingValue($key, Parser $parser, string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'): self
     {
         if (!is_string($key) && !is_int($key)) {
             throw new ParserConfigurationException('Arrays only accept string or integer keys');
         }
 
-        $this->withElement[$key] = $parser;
+        $this->withElement[$key] = [$parser, $missingKeyExceptionMessage];
 
         return $this;
     }
@@ -127,9 +157,15 @@ class AssertArray
         return $this;
     }
 
-    public function withSequentialKeys(): self
+    /**
+     * Specifies that this array is expected to have numeric keys starting at 0, incrementing by 1
+     * @param string $exceptionMessage
+     *
+     * @return $this
+     */
+    public function withSequentialKeys(string $exceptionMessage = 'The array is not a sequential numerical array starting at 0'): self
     {
-        $this->sequentialKeys = true;
+        $this->sequentialKeys = $exceptionMessage;
 
         return $this;
     }
@@ -140,7 +176,7 @@ class AssertArray
     protected function execute($value, Path $path)
     {
         if (!is_array($value)) {
-            throw new Exception\ParsingException($value, 'Provided value is not an array', $path);
+            throw new Exception\ParsingException($value, $this->typeExceptionMessage, $path);
         }
 
         if ($this->length) {
@@ -151,7 +187,7 @@ class AssertArray
             $expectedSequenceKey = 0;
             foreach ($value as $index => $element) {
                 if ($this->sequentialKeys && $index !== $expectedSequenceKey) {
-                    throw new ParsingException($value, 'The array is not a sequential numerical array starting at 0', $path);
+                    throw new ParsingException($value, $this->sequentialKeys, $path);
                 }
                 if ($this->eachKey) $this->eachKey->parse($index, $path->key((string) $index));
                 if ($this->eachValue) $this->eachValue->parse($element, $path->index((string) $index));
@@ -165,9 +201,18 @@ class AssertArray
             $this->keys->parse($keys, $path->meta('keys'));
         }
 
-        foreach ($this->withElement as $key => $parser) {
+        /**
+         * @var string|int $key
+         * @var Parser $parser
+         * @var string $exceptionMessage
+         */
+        foreach ($this->withElement as $key => [$parser, $exceptionMessage]) {
             if (!in_array($key, $keys)) {
-                throw new ParsingException($value, 'Array does not contain the requested key ' . var_export($key, true), $path);
+                throw new ParsingException(
+                    $value,
+                    strtr($exceptionMessage, ['{key}' => var_export($key, true)]),
+                    $path
+                );
             }
 
             $parser->parse($value[$key], $path->index((string) $key));

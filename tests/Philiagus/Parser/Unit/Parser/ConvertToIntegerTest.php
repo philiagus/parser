@@ -19,6 +19,7 @@ use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\ConvertToInteger;
 use Philiagus\Test\Parser\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class ConvertToIntegerTest extends TestCase
 {
@@ -38,8 +39,8 @@ class ConvertToIntegerTest extends TestCase
             array_merge(
                 DataProvider::provide((int)~(DataProvider::TYPE_INTEGER | DataProvider::TYPE_FLOAT | DataProvider::TYPE_STRING)),
                 [
-                    'string non numeric' => ['asdf'],
-                    'string almost numeric' => ['0asdf'],
+                    'string non numeric' => ['abc'],
+                    'string almost numeric' => ['0abc'],
                     'float overflow' => [PHP_INT_MAX + .5],
                     'float underflow' => [PHP_INT_MIN - .5],
                 ]
@@ -94,6 +95,31 @@ class ConvertToIntegerTest extends TestCase
     public function testThatItDoesConvertCompatibleValues($baseValue, $expectedValue): void
     {
         self::assertSame($expectedValue, (new ConvertToInteger())->parse($baseValue));
+    }
+
+    public function provideExceptionMessageData(): array
+    {
+        return [
+            'string' => ['its {type}', 'its string', 'abc'],
+            'object' => ['its {type}', 'its object', new stdClass()],
+            'array' => ['its {type}', 'its array', []]
+        ];
+    }
+
+    /**
+     * @param string $baseMsg
+     * @param string $expected
+     * @param $value
+     *
+     * @dataProvider provideExceptionMessageData
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
+    public function testExceptionMessage(string $baseMsg, string $expected, $value): void
+    {
+        self::expectException(ParsingException::class);
+        self::expectExceptionMessage($expected);
+        (new ConvertToInteger())->withExceptionMessage($baseMsg)->parse($value);
     }
 
 }

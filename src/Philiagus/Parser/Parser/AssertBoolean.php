@@ -25,6 +25,16 @@ class AssertBoolean
     extends Parser
 {
 
+    private $typeExceptionMessage = 'Provided value is not a boolean';
+
+    public function withTypeExceptionMessage(string $message): self
+    {
+        $this->typeExceptionMessage = $message;
+
+        return $this;
+    }
+
+
     /**
      * @inheritdoc
      */
@@ -32,6 +42,6 @@ class AssertBoolean
     {
         if (is_bool($value)) return $value;
 
-        throw new ParsingException($value, 'Provided value is not a boolean', $path);
+        throw new ParsingException($value, $this->typeExceptionMessage, $path);
     }
 }

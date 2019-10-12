@@ -72,4 +72,16 @@ class AssertNullTest extends TestCase
         self::assertSame($value, $result);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
+    public function testWithExceptionMessage(): void
+    {
+        $msg = 'msg';
+        self::expectException(ParsingException::class);
+        self::expectExceptionMessage($msg);
+        (new AssertNull())->withExceptionMessage($msg)->parse(false);
+    }
+
 }

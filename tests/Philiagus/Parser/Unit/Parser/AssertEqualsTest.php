@@ -59,4 +59,16 @@ class AssertEqualsTest extends TestCase
         (new AssertEquals())->parse(0);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
+    public function testExceptionMessage(): void
+    {
+        $msg = 'msg';
+        self::expectException(ParsingException::class);
+        self::expectExceptionMessage($msg);
+        (new AssertEquals())->withValue(false, $msg)->parse(true);
+    }
+
 }

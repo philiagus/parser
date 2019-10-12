@@ -20,6 +20,8 @@ use Philiagus\Parser\Exception\ParsingException;
 class ConvertToArray extends Parser
 {
 
+    private $typeExceptionMessage = 'Provided value is not an array';
+
     /**
      * @var bool|string|int
      */
@@ -38,12 +40,25 @@ class ConvertToArray extends Parser
     /**
      * @var array
      */
-    private $withElement = [];
+    private $withKeyConvertingValue = [];
 
     /**
      * @var bool
      */
     private $sequentialKeys = false;
+
+    /**
+     * Defines the exception message thrown when the input value is not an array and no conversion is active
+     * @param string $message
+     *
+     * @return $this
+     */
+    public function withTypeExceptionMessage(string $message): self
+    {
+        $this->typeExceptionMessage = $message;
+
+        return $this;
+    }
 
     /**
      * @return $this
@@ -77,10 +92,16 @@ class ConvertToArray extends Parser
      * @param $forcedValue
      * @param Parser|null $andParse
      *
+     * @param string $missingKeyExceptionMessage
+     *
      * @return $this
      * @throws ParserConfigurationException
      */
-    public function withDefaultedElement($key, $forcedValue, Parser $andParse = null): self
+    public function withDefaultedKeyConvertingValue(
+        $key, $forcedValue,
+        Parser $andParse = null,
+        string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'
+    ): self
     {
         if (!is_string($key) && !is_int($key)) {
             throw new ParserConfigurationException('Arrays only accept string or integer keys');
@@ -88,7 +109,7 @@ class ConvertToArray extends Parser
 
         $this->forcedKeys[$key] = $forcedValue;
         if ($andParse) {
-            $this->withElement[$key] = $andParse;
+            $this->withKeyConvertingValue[$key] = [$andParse, $missingKeyExceptionMessage];
         }
 
         return $this;
@@ -114,19 +135,25 @@ class ConvertToArray extends Parser
     }
 
     /**
+     * Tests that the key exists and performs the parser on the value if present
+     * If the key does not exist an exception with the specified message is thrown.
+     * Replacers in the exception message:
+     * {key} = var_export($key, true)
+     *
      * @param $key
      * @param Parser $parser
+     * @param string $missingKeyExceptionMessage
      *
      * @return $this
      * @throws ParserConfigurationException
      */
-    public function withElement($key, Parser $parser): self
+    public function withKeyConvertingValue($key, Parser $parser, string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'): self
     {
         if (!is_string($key) && !is_int($key)) {
             throw new ParserConfigurationException('Arrays only accept string or integer keys');
         }
 
-        $this->withElement[$key] = $parser;
+        $this->withKeyConvertingValue[$key] = [$parser, $missingKeyExceptionMessage];
 
         return $this;
     }
@@ -150,7 +177,7 @@ class ConvertToArray extends Parser
             if ($this->convertNonArrays === true) {
                 $value = (array) $value;
             } elseif ($this->convertNonArrays === false) {
-                throw new ParsingException($value, 'Value is not of type array and array casting not active', $path);
+                throw new ParsingException($value, $this->typeExceptionMessage, $path);
             } else {
                 $value = [$this->convertNonArrays => $value];
             }
@@ -164,11 +191,20 @@ class ConvertToArray extends Parser
             $value += $this->forcedKeys;
         }
 
-        if($this->withElement) {
+        if($this->withKeyConvertingValue) {
             $keys = array_keys($value);
-            foreach ($this->withElement as $key => $parser) {
+            /**
+             * @var int|string $key
+             * @var Parser $parser
+             * @var string $exceptionMessage
+             */
+            foreach ($this->withKeyConvertingValue as $key => [$parser, $exceptionMessage]) {
                 if (!in_array($key, $keys)) {
-                    throw new ParsingException($value, 'Array does not contain the requested key ' . var_export($key, true), $path);
+                    throw new ParsingException(
+                        $value,
+                        strtr($exceptionMessage, ['{key}' => var_export($key, true)]),
+                        $path
+                    );
                 }
 
                 $value[$key] = $parser->parse($value[$key], $path->index((string) $key));

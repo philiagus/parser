@@ -71,4 +71,16 @@ class AssertInfiniteTest extends TestCase
         self::assertSame($value, $result);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
+    public function testWithExceptionMessage(): void
+    {
+        $msg = 'msg';
+        self::expectException(ParsingException::class);
+        self::expectExceptionMessage($msg);
+        (new AssertInfinite())->withExceptionMessage($msg)->parse(false);
+    }
+
 }

@@ -22,18 +22,18 @@ class AssertSame
 {
 
     /**
-     * @var bool
+     * @var null|string
      */
-    private $valueSet = false;
+    private $exceptionMessage = null;
 
     /**
      * @var mixed
      */
     private $targetValue;
 
-    public function withValue($equalsValue): self
+    public function withValue($equalsValue, string $exceptionMessage = 'The value is not the same as the expected value'): self
     {
-        $this->valueSet = true;
+        $this->exceptionMessage = $exceptionMessage;
         $this->targetValue = $equalsValue;
 
         return $this;
@@ -44,12 +44,12 @@ class AssertSame
      */
     protected function execute($value, Path $path)
     {
-        if(!$this->valueSet) {
+        if($this->exceptionMessage === null) {
             throw new ParserConfigurationException('Called AssertSame parse without a value set');
         }
 
         if($value !== $this->targetValue) {
-            throw new ParsingException($value, 'The value is not the same as the expected value', $path);
+            throw new ParsingException($value, $this->exceptionMessage, $path);
         }
 
         return $value;

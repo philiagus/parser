@@ -19,13 +19,23 @@ use Philiagus\Parser\Exception\ParsingException;
 class AssertNan extends Parser
 {
 
+    private $exceptionMessage = 'Provided value is not NAN';
+
+    public function withExceptionMessage(string $message): self
+    {
+        $this->exceptionMessage = $message;
+
+        return $this;
+    }
+
     /**
      * @inheritdoc
      */
     protected function execute($value, Path $path)
     {
+
         if (is_float($value) && is_nan($value)) return NAN;
 
-        throw new ParsingException($value, 'Provided value is not NaN', $path);
+        throw new ParsingException($value, $this->exceptionMessage, $path);
     }
 }

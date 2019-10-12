@@ -22,19 +22,19 @@ class AssertEquals
 {
 
     /**
-     * @var bool
+     * @var string|null
      */
-    private $valueSet = false;
+    private $exceptionMessage = null;
 
     /**
      * @var mixed
      */
     private $targetValue;
 
-    public function withValue($equalsValue): self
+    public function withValue($equalsValue, string $exceptionMessage = 'The value is not equal to the expected value'): self
     {
-        $this->valueSet = true;
         $this->targetValue = $equalsValue;
+        $this->exceptionMessage = $exceptionMessage;
 
         return $this;
     }
@@ -44,12 +44,12 @@ class AssertEquals
      */
     protected function execute($value, Path $path)
     {
-        if(!$this->valueSet) {
+        if($this->exceptionMessage === null) {
             throw new ParserConfigurationException('Called AssertEquals parse without a value set');
         }
 
         if($value != $this->targetValue) {
-            throw new ParsingException($value, 'The value is not equal to the expected value', $path);
+            throw new ParsingException($value, $this->exceptionMessage, $path);
         }
 
         return $value;

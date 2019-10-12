@@ -19,6 +19,16 @@ use Philiagus\Parser\Exception\ParsingException;
 class AssertInfinite extends Parser
 {
 
+
+    private $exceptionMessage = 'Provided value is not INF';
+
+    public function withExceptionMessage(string $message): self
+    {
+        $this->exceptionMessage = $message;
+
+        return $this;
+    }
+
     /**
      * @inheritdoc
      */
@@ -26,6 +36,6 @@ class AssertInfinite extends Parser
     {
         if (is_float($value) && is_infinite($value)) return INF;
 
-        throw new ParsingException($value, 'Provided value is not INF', $path);
+        throw new ParsingException($value, $this->exceptionMessage, $path);
     }
 }

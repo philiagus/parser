@@ -72,4 +72,16 @@ class AssertSameTest extends TestCase
         (new AssertSame())->parse(0);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
+    public function testExceptionMessage(): void
+    {
+        $msg = 'msg';
+        self::expectException(ParsingException::class);
+        self::expectExceptionMessage($msg);
+        (new AssertSame())->withValue(1, $msg)->parse('1');
+    }
+
 }

@@ -17,8 +17,18 @@ use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParsingException;
 use function json_decode;
 
-class ParseJson extends Parser
+class ConvertFromJson extends Parser
 {
+
+    /**
+     * @var string
+     */
+    private $conversionExceptionMessage = 'Provided string is not a valid JSON: {msg}';
+
+    /**
+     * @var string
+     */
+    private $typeExceptionMessage = 'Provided value is not a string and thus not a valid JSON';
 
     /**
      * @var bool
@@ -34,6 +44,37 @@ class ParseJson extends Parser
      * @var bool
      */
     private $bigintAsString = false;
+
+    /**
+     * Sets the exception message if the json is invalid or parsing failed
+     * Available replacers:
+     * {msg} = the json parser error message
+     *
+     * @param string $message
+     *
+     * @return $this
+     */
+    public function withConversionExceptionMessage(string $message): self
+    {
+        $this->conversionExceptionMessage = $message;
+
+        return $this;
+    }
+
+    /**
+     * Sets the exception message thrown when the provided value is not a string
+     * Available replacers:
+     * {type} = gettype of the provided value
+     * @param string $message
+     *
+     * @return $this
+     */
+    public function withTypeExceptionMessage(string $message): self
+    {
+        $this->typeExceptionMessage = $message;
+
+        return $this;
+    }
 
     public function withObjectsAsArrays(): self
     {
@@ -69,7 +110,11 @@ class ParseJson extends Parser
     protected function execute($value, Path $path)
     {
         if (!is_string($value)) {
-            throw new ParsingException($value, 'Provided value is not a string and thus not a valid JSON', $path);
+            throw new ParsingException(
+                $value,
+                strtr($this->typeExceptionMessage, ['{type}' => gettype($value)]),
+                $path
+            );
         }
 
         $options = 0;
@@ -79,7 +124,11 @@ class ParseJson extends Parser
 
         $result = @json_decode($value, $this->objectAsArrays, $this->maxDepth, $options);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new ParsingException($value, 'Provided string is not a valid JSON: ' . json_last_error_msg(), $path);
+            throw new ParsingException(
+                $value,
+                strtr($this->conversionExceptionMessage, ['{msg}' => json_last_error_msg()]),
+                $path
+            );
         }
 
         return $result;

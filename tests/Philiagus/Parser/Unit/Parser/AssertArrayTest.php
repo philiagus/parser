@@ -151,6 +151,10 @@ class AssertArrayTest extends TestCase
         (new AssertArray())->withEachKey($parser->reveal())->parse($array);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testWithKeys(): void
     {
         $keyParser = $this->prophesize(Parser::class);
@@ -304,6 +308,20 @@ class AssertArrayTest extends TestCase
      * @throws ParserConfigurationException
      * @throws ParsingException
      */
+    public function testWithKeyHavingValueExceptionMessageOnMissingKey(): void
+    {
+        $message = 'This is an error message';
+        self::expectException(ParsingException::class);
+        self::expectExceptionMessage($message);
+        (new AssertArray())
+            ->withKeyHavingValue('key', (new AssertArray()), $message)
+            ->parse([]);
+    }
+
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testWithDefaultedElement(): void
     {
         $parser = $this->prophesize(Parser::class);
@@ -378,6 +396,30 @@ class AssertArrayTest extends TestCase
         $array = [1 => 1, 2 => 2, 3 => 3];
         self::expectException(ParsingException::class);
         (new AssertArray())->withSequentialKeys()->parse($array);
+    }
+
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
+    public function testThatSequentialArraysUseExceptionMessage(): void
+    {
+        $message = 'msg';
+        self::expectException(ParsingException::class);
+        self::expectExceptionMessage($message);
+        (new AssertArray())->withSequentialKeys($message)->parse(['a' => 1]);
+    }
+
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
+    public function testWithTypeExceptionMessage(): void
+    {
+        $message = 'msg';
+        self::expectException(ParsingException::class);
+        self::expectExceptionMessage($message);
+        (new AssertArray())->withTypeExceptionMessage($message)->parse('no');
     }
 
 }

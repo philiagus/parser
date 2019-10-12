@@ -72,4 +72,16 @@ class AssertNanTest extends TestCase
         self::assertNan($result);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
+    public function testWithExceptionMessage(): void
+    {
+        $msg = 'msg';
+        self::expectException(ParsingException::class);
+        self::expectExceptionMessage($msg);
+        (new AssertNan())->withExceptionMessage($msg)->parse(false);
+    }
+
 }

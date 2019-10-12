@@ -146,46 +146,134 @@ class AssertIntegerTest extends TestCase
         self::assertSame(PHP_INT_MIN, $parser->parse(PHP_INT_MIN));
     }
 
+    public function provideValidMultipleOfs(): array
+    {
+        return [
+            '0 is multiple of 0' => [0, 0],
+            '10 is multiple of 5' => [10, 5],
+            '-10 is multiple of -5' => [10, 5],
+        ];
+    }
+
     /**
+     * @param int $value
+     * @param int $base
+     *
+     * @dataProvider provideValidMultipleOfs
      * @throws ParserConfigurationException
      * @throws ParsingException
      */
-    public function testDivisibleBy(): void
+    public function testIsMultipleOf(int $value, int $base): void
     {
         self::assertSame(
-            10,
+            $value,
             (new AssertInteger())
-                ->withDivisibleBy(5)
-                ->parse(10)
+                ->isMultipleOf($base)
+                ->parse($value)
         );
     }
 
     /**
      * @throws ParserConfigurationException
+     * @throws ParsingException
      */
-    public function testDivisibleByDivisorZeroException(): void
+    public function testisMultipleOfWrongValueException(): void
     {
-        self::expectException(ParserConfigurationException::class);
-        (new AssertInteger())->withDivisibleBy(0);
-    }
-
-    /**
-     * @throws ParserConfigurationException
-     */
-    public function testDivisibleByDivisorNegativeException(): void
-    {
-        self::expectException(ParserConfigurationException::class);
-        (new AssertInteger())->withDivisibleBy(-1);
+        self::expectException(ParsingException::class);
+        (new AssertInteger())->isMultipleOf(10)->parse(9);
     }
 
     /**
      * @throws ParserConfigurationException
      * @throws ParsingException
      */
-    public function testDivisibleByWrongValueException(): void
+    public function testWithTypeExceptionMessage(): void
+    {
+        $msg = 'msg';
+        self::expectException(ParsingException::class);
+        self::expectExceptionMessage($msg);
+        (new AssertInteger())->withTypeExceptionMessage($msg)->parse(false);
+    }
+
+    public function provideMinExceptionTestMessages(): array
+    {
+        return [
+            'no replaces' => ['this is the message', 'this is the message', 10, 11],
+            'min replace' => ['minimum {min} was expected', 'minimum 11 was expected', 10, 11],
+            'min & value replace' => ['min {min} value {value}', 'min 11 value 10', 10, 11],
+            'value replace' => ['value {value}', 'value 10', 10, 11],
+        ];
+    }
+
+    /**
+     * @param string $base
+     * @param string $expectedMsg
+     * @param int $value
+     * @param int $min
+     *
+     * @dataProvider provideMinExceptionTestMessages
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
+    public function testThatMinExceptionMessageIsUsed(string $base, string $expectedMsg, int $value, int $min): void
     {
         self::expectException(ParsingException::class);
-        (new AssertInteger())->withDivisibleBy(10)->parse(9);
+        self::expectExceptionMessage($expectedMsg);
+        (new AssertInteger())->withMinimum($min, $base)->parse($value);
+    }
+
+    public function provideMaxExceptionTestMessages(): array
+    {
+        return [
+            'no replaces' => ['this is the message', 'this is the message', 16, 11],
+            'max replace' => ['max {max} was expected', 'max 11 was expected', 16, 11],
+            'max & value replace' => ['max {max} value {value}', 'max 11 value 16', 16, 11],
+            'value replace' => ['value {value}', 'value 16', 16, 11],
+        ];
+    }
+
+    /**
+     * @param string $base
+     * @param string $expectedMsg
+     * @param int $value
+     * @param int $max
+     *
+     * @dataProvider provideMaxExceptionTestMessages
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
+    public function testThatMaxExceptionMessageIsUsed(string $base, string $expectedMsg, int $value, int $max): void
+    {
+        self::expectException(ParsingException::class);
+        self::expectExceptionMessage($expectedMsg);
+        (new AssertInteger())->withMaximum($max, $base)->parse($value);
+    }
+
+    public function provideBaseExceptionTestMessages(): array
+    {
+        return [
+            'no replaces' => ['this is the message', 'this is the message', 10, 4],
+            'base replace' => ['base {base} was expected', 'base 4 was expected', 10, 4],
+            'base & value replace' => ['base {base} value {value}', 'base 4 value 10', 10, 4],
+            'value replace' => ['value {value}', 'value 10', 10, 4],
+        ];
+    }
+
+    /**
+     * @param string $baseMsg
+     * @param string $expectedMsg
+     * @param int $value
+     * @param int $base
+     *
+     * @dataProvider provideBaseExceptionTestMessages
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
+    public function testIsMultipleOfExceptionMessageIsUsed(string $baseMsg, string $expectedMsg, int $value, int $base): void
+    {
+        self::expectException(ParsingException::class);
+        self::expectExceptionMessage($expectedMsg);
+        (new AssertInteger())->isMultipleOf($base, $baseMsg)->parse($value);
     }
 
 }

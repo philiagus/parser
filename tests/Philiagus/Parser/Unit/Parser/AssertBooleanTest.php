@@ -72,4 +72,16 @@ class AssertBooleanTest extends TestCase
         self::assertSame($value, $result);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
+    public function testThatItUsesTheSpecifiedExceptionMessage(): void
+    {
+        $message = 'This is an error msg';
+        self::expectException(ParsingException::class);
+        self::expectExceptionMessage($message);
+        (new AssertBoolean())->withTypeExceptionMessage($message)->parse('yes');
+    }
+
 }

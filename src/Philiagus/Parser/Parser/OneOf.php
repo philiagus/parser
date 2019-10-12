@@ -21,6 +21,11 @@ class OneOf extends Parser
 {
 
     /**
+     * @var string
+     */
+    private $exceptionMessage = 'Provided value does not match any of the expected formats';
+
+    /**
      * @var Parser[]
      */
     private $options = [];
@@ -28,6 +33,13 @@ class OneOf extends Parser
     public function addOption(Parser $parser): self
     {
         $this->options[] = $parser;
+
+        return $this;
+    }
+
+    public function withNonOfExceptionMessage(string $message): self
+    {
+        $this->exceptionMessage = $message;
 
         return $this;
     }
@@ -54,7 +66,7 @@ class OneOf extends Parser
 
         throw new Exception\MultipleParsingException(
             $value,
-            'Provided value does not match any of the expected formats',
+            $this->exceptionMessage,
             $path,
             $exceptions
         );

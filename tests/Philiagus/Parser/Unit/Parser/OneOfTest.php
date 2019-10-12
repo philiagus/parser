@@ -93,4 +93,26 @@ class OneOfTest extends TestCase
             ->parse(null);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
+    public function testNonOfExceptionMessage(): void
+    {
+        $msg = 'msg';
+        self::expectException(MultipleParsingException::class);
+        self::expectExceptionMessage($msg);
+        (new OneOf())
+            ->addOption(
+                new class() extends Parser {
+                    protected function execute($value, Path $path)
+                    {
+                        throw new ParsingException($value, 'muh', $path);
+                    }
+                }
+            )
+            ->withNonOfExceptionMessage($msg)
+            ->parse(null);
+    }
+
 }

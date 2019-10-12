@@ -22,6 +22,24 @@ use Philiagus\Parser\Exception;
 class ConvertToInteger
     extends Parser
 {
+
+    private $conversionExceptionMessage = 'Variable of type {type} could not be converted to an integer';
+
+    /**
+     * Available replacers:
+     * {type} = gettype of the provided variable
+     *
+     * @param string $message
+     *
+     * @return $this
+     */
+    public function withExceptionMessage(string $message): self
+    {
+        $this->conversionExceptionMessage = $message;
+
+        return $this;
+    }
+
     /**
      * @inheritdoc
      */
@@ -32,12 +50,6 @@ class ConvertToInteger
                 // float conversion
                 if ((string) $value == (string) (int) $value) {
                     $value = (int) $value;
-                }
-
-                if (!is_int($value)) {
-                    throw new Exception\ParsingException(
-                        $value, sprintf('The provided float value %s could not be converted to an integer', $value), $path
-                    );
                 }
             } elseif (is_string($value)) {
                 // string conversion
@@ -52,18 +64,20 @@ class ConvertToInteger
                         $value = $compareInteger;
                     }
                 }
+            }
 
-                if (!is_int($value)) {
-                    throw new Exception\ParsingException(
-                        $value, 'The provided string value could not be converted to an integer', $path
-                    );
-                }
-            } else {
+            if (!is_int($value)) {
                 throw new Exception\ParsingException(
-                    $value, sprintf('Variable of type %s could not be converted to an integer', gettype($value)), $path
+                    $value,
+                    strtr($this->conversionExceptionMessage, ['{type}' => gettype($value)]),
+                    $path
                 );
             }
         }
+
+
+
+
 
         return $value;
     }

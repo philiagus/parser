@@ -32,7 +32,7 @@ class AssertFloatTest extends TestCase
      */
     public function provideInvalidValues(): array
     {
-        return DataProvider::provide((int)~DataProvider::TYPE_FLOAT);
+        return DataProvider::provide((int) ~DataProvider::TYPE_FLOAT);
     }
 
     /**
@@ -46,6 +46,18 @@ class AssertFloatTest extends TestCase
     {
         self::expectException(ParsingException::class);
         (new AssertFloat())->parse($value);
+    }
+
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
+    public function testThatTypeExceptionMessageIsThrown(): void
+    {
+        $msg = 'msg';
+        self::expectException(ParsingException::class);
+        self::expectExceptionMessage($msg);
+        (new AssertFloat())->withTypeExceptionMessage($msg)->parse('yes');
     }
 
     /**
@@ -145,6 +157,60 @@ class AssertFloatTest extends TestCase
         self::assertSame(10.0, $parser->parse(10.0));
         self::assertSame(1.0, $parser->parse(1.0));
         self::assertSame((float) PHP_INT_MIN, $parser->parse((float) PHP_INT_MIN));
+    }
+
+    public function provideMinExceptionTestMessages(): array
+    {
+        return [
+            'no replaces' => ['this is the message', 'this is the message', 10, 11],
+            'min replace' => ['minimum {min} was expected', 'minimum 11 was expected', 10, 11],
+            'min & value replace' => ['min {min} value {value}', 'min 11 value 10', 10, 11],
+            'value replace' => ['value {value}', 'value 10', 10, 11],
+        ];
+    }
+
+    /**
+     * @param string $base
+     * @param string $expectedMsg
+     * @param float $value
+     * @param float $min
+     *
+     * @dataProvider provideMinExceptionTestMessages
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
+    public function testThatMinExceptionMessageIsUsed(string $base, string $expectedMsg, float $value, float $min): void
+    {
+        self::expectException(ParsingException::class);
+        self::expectExceptionMessage($expectedMsg);
+        (new AssertFloat())->withMinimum($min, $base)->parse($value);
+    }
+
+    public function provideMaxExceptionTestMessages(): array
+    {
+        return [
+            'no replaces' => ['this is the message', 'this is the message', 16, 11],
+            'max replace' => ['max {max} was expected', 'max 11 was expected', 16, 11],
+            'max & value replace' => ['max {max} value {value}', 'max 11 value 16', 16, 11],
+            'value replace' => ['value {value}', 'value 16', 16, 11],
+        ];
+    }
+
+    /**
+     * @param string $base
+     * @param string $expectedMsg
+     * @param float $value
+     * @param float $max
+     *
+     * @dataProvider provideMaxExceptionTestMessages
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
+    public function testThatMaxExceptionMessageIsUsed(string $base, string $expectedMsg, float $value, float $max): void
+    {
+        self::expectException(ParsingException::class);
+        self::expectExceptionMessage($expectedMsg);
+        (new AssertFloat())->withMaximum($max, $base)->parse($value);
     }
 
 }

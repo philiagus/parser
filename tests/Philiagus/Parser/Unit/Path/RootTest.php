@@ -18,12 +18,12 @@ class RootTest extends TestCase
     public function testStringConcat()
     {
         $parent = new Root('parent');
-        $path = new Root('child', $parent);
+        $path = new Root('Child', $parent);
         self::assertSame([$parent, $path], $path->flat());
-        self::assertSame('child', $path->getName());
+        self::assertSame('Child', $path->getName());
         self::assertSame($parent, $path->getParent());
-        self::assertSame('parentchild', $path->toString());
-        self::assertSame('parentchild', (string) $path);
+        self::assertSame('parentChild', $path->toString());
+        self::assertSame('parentChild', (string) $path);
     }
 
 }
