@@ -16,7 +16,7 @@ use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Path\Root;
 
-abstract class Parser implements ParserInterface
+abstract class Parser
 {
     /**
      * @var mixed
@@ -39,7 +39,12 @@ abstract class Parser implements ParserInterface
     }
 
     /**
-     * @inheritdoc
+     * @param mixed $value
+     * @param Path|null $path
+     *
+     * @return mixed
+     * @throws ParserConfigurationException
+     * @throws ParsingException
      */
     final public function parse($value, Path $path = null)
     {
