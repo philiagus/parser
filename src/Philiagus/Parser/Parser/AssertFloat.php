@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use http\Exception\InvalidArgumentException;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception;
@@ -63,7 +62,7 @@ class AssertFloat extends Parser
     public function withMinimum(float $minimum, string $exceptionMessage = 'Provided value of {value} is lower than the defined minimum of {min}'): self
     {
         if(is_nan($minimum) || is_infinite($minimum)) {
-            throw new Exception\ParserConfigurationException('Minimum must be set as a float number value. NAN and INF are not allowd');
+            throw new Exception\ParserConfigurationException('Minimum must be set as a float number value. NAN and INF are not allowed');
         }
 
         if ($this->maximumValue !== null && $this->maximumValue[0] < $minimum) {
@@ -92,7 +91,7 @@ class AssertFloat extends Parser
     public function withMaximum(float $maximum, string $exceptionMessage = 'Provided value of {value} is greater than the defined maximum of {max}}'): self
     {
         if(is_nan($maximum) || is_infinite($maximum)) {
-            throw new Exception\ParserConfigurationException('Maximum must be set as a float number value. NAN and INF are not allowd');
+            throw new Exception\ParserConfigurationException('Maximum must be set as a float number value. NAN and INF are not allowed');
         }
 
         if ($this->minimumValue !== null && $this->minimumValue[0] > $maximum) {
