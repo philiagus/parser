@@ -104,7 +104,8 @@ class OneOfTest extends TestCase
         $this->expectExceptionMessage($msg);
         (new OneOf())
             ->addOption(
-                new class() extends Parser {
+                new class() extends Parser
+                {
                     protected function execute($value, Path $path)
                     {
                         throw new ParsingException($value, 'muh', $path);

@@ -49,6 +49,7 @@ class ConvertToArray extends Parser
 
     /**
      * Defines the exception message thrown when the input value is not an array and no conversion is active
+     *
      * @param string $message
      *
      * @return $this
@@ -187,11 +188,11 @@ class ConvertToArray extends Parser
             $value = array_intersect_key($value, array_flip($this->reduceToKeys));
         }
 
-        if($this->forcedKeys) {
+        if ($this->forcedKeys) {
             $value += $this->forcedKeys;
         }
 
-        if($this->withKeyConvertingValue) {
+        if ($this->withKeyConvertingValue) {
             $keys = array_keys($value);
             /**
              * @var int|string $key
@@ -211,7 +212,7 @@ class ConvertToArray extends Parser
             }
         }
 
-        if($this->sequentialKeys) {
+        if ($this->sequentialKeys) {
             $value = array_values($value);
         }
 

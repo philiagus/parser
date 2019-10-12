@@ -36,6 +36,7 @@ class AssertFloat extends Parser
 
     /**
      * Sets the exception message thrown when the type does not match
+     *
      * @param string $exceptionMessage
      *
      * @return $this
@@ -61,7 +62,7 @@ class AssertFloat extends Parser
      */
     public function withMinimum(float $minimum, string $exceptionMessage = 'Provided value of {value} is lower than the defined minimum of {min}'): self
     {
-        if(is_nan($minimum) || is_infinite($minimum)) {
+        if (is_nan($minimum) || is_infinite($minimum)) {
             throw new Exception\ParserConfigurationException('Minimum must be set as a float number value. NAN and INF are not allowed');
         }
 
@@ -90,7 +91,7 @@ class AssertFloat extends Parser
      */
     public function withMaximum(float $maximum, string $exceptionMessage = 'Provided value of {value} is greater than the defined maximum of {max}}'): self
     {
-        if(is_nan($maximum) || is_infinite($maximum)) {
+        if (is_nan($maximum) || is_infinite($maximum)) {
             throw new Exception\ParserConfigurationException('Maximum must be set as a float number value. NAN and INF are not allowed');
         }
 
@@ -129,13 +130,13 @@ class AssertFloat extends Parser
             }
         }
 
-        if($this->maximumValue !== null) {
+        if ($this->maximumValue !== null) {
             /**
              * @var float $maximum
              * @var string $exception
              */
             [$maximum, $exception] = $this->maximumValue;
-            if($maximum < $value) {
+            if ($maximum < $value) {
                 throw new Exception\ParsingException(
                     $value,
                     strtr($exception, ['{value}' => $value, '{max}' => $maximum]),

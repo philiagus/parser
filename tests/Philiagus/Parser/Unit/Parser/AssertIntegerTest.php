@@ -31,7 +31,7 @@ class AssertIntegerTest extends TestCase
      */
     public function provideInvalidValues(): array
     {
-        return DataProvider::provide((int)~DataProvider::TYPE_INTEGER);
+        return DataProvider::provide((int) ~DataProvider::TYPE_INTEGER);
     }
 
     /**

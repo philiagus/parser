@@ -22,6 +22,14 @@ class Pipe extends Parser
      */
     private $parsers = [];
 
+    /**
+     * Adds a parser to the pipe that's appended to the chain of parsers
+     * The $value is altered by every parsers return value
+     *
+     * @param Parser $parser
+     *
+     * @return $this
+     */
     public function add(Parser $parser): self
     {
         $this->parsers[] = $parser;
@@ -35,7 +43,7 @@ class Pipe extends Parser
      */
     protected function execute($value, Path $path)
     {
-        foreach($this->parsers as $index => $parser) {
+        foreach ($this->parsers as $index => $parser) {
             $value = $parser->parse($value, $path);
         }
 

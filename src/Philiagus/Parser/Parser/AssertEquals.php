@@ -44,11 +44,11 @@ class AssertEquals
      */
     protected function execute($value, Path $path)
     {
-        if($this->exceptionMessage === null) {
+        if ($this->exceptionMessage === null) {
             throw new ParserConfigurationException('Called AssertEquals parse without a value set');
         }
 
-        if($value != $this->targetValue) {
+        if ($value != $this->targetValue) {
             throw new ParsingException($value, $this->exceptionMessage, $path);
         }
 

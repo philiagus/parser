@@ -30,6 +30,13 @@ class OneOf extends Parser
      */
     private $options = [];
 
+    /**
+     * Adds another potential parser the provided value might match
+     *
+     * @param Parser $parser
+     *
+     * @return $this
+     */
     public function addOption(Parser $parser): self
     {
         $this->options[] = $parser;
@@ -37,6 +44,13 @@ class OneOf extends Parser
         return $this;
     }
 
+    /**
+     * Defines the exception message to use if none of the provided parsers matches
+     *
+     * @param string $message
+     *
+     * @return $this
+     */
     public function withNonOfExceptionMessage(string $message): self
     {
         $this->exceptionMessage = $message;

@@ -152,15 +152,15 @@ class AssertInteger extends Parser
             }
         }
 
-        if($this->divisibleByValue !== null) {
+        if ($this->divisibleByValue !== null) {
             /**
              * @var int $base
              * @var string $exception
              */
             [$base, $exception] = $this->divisibleByValue;
-            if(
-            ($base === 0 && $value !== 0) ||
-            ($base !== 0 && $value % $base !== 0)
+            if (
+                ($base === 0 && $value !== 0) ||
+                ($base !== 0 && $value % $base !== 0)
             ) {
                 throw new Exception\ParsingException(
                     $value,

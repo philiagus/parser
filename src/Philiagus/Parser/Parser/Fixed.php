@@ -16,12 +16,32 @@ use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 
+/**
+ * Class Fixed
+ *
+ * The Fixed parser ignores its received value and replaces it with a predefined value
+ *
+ * @package Philiagus\Parser\Parser
+ */
 class Fixed extends Parser
 {
+    /**
+     * @var mixed
+     */
     private $value = null;
 
+    /**
+     * @var bool
+     */
     private $defined = false;
 
+    /**
+     * Sets the value this parser is defined as
+     *
+     * @param $value
+     *
+     * @return $this
+     */
     public function withValue($value): self
     {
         $this->value = $value;
@@ -35,9 +55,10 @@ class Fixed extends Parser
      */
     protected function execute($value, Path $path)
     {
-        if(!$this->defined) {
+        if (!$this->defined) {
             throw new ParserConfigurationException('Fixed value was not defined');
         }
+
         return $this->value;
     }
 }

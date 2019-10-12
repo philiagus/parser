@@ -137,6 +137,7 @@ class AssertNumericTest extends TestCase
 
     /**
      * @param $value
+     *
      * @dataProvider provideInvalidValues
      *
      * @throws ParserConfigurationException
@@ -185,9 +186,9 @@ class AssertNumericTest extends TestCase
     }
 
 
-
     /**
      * @param $value
+     *
      * @dataProvider provideInvalidValues
      *
      * @throws ParserConfigurationException

@@ -37,7 +37,7 @@ class ConvertToIntegerTest extends TestCase
     {
         return
             array_merge(
-                DataProvider::provide((int)~(DataProvider::TYPE_INTEGER | DataProvider::TYPE_FLOAT | DataProvider::TYPE_STRING)),
+                DataProvider::provide((int) ~(DataProvider::TYPE_INTEGER | DataProvider::TYPE_FLOAT | DataProvider::TYPE_STRING)),
                 [
                     'string non numeric' => ['abc'],
                     'string almost numeric' => ['0abc'],
@@ -102,7 +102,7 @@ class ConvertToIntegerTest extends TestCase
         return [
             'string' => ['its {type}', 'its string', 'abc'],
             'object' => ['its {type}', 'its object', new stdClass()],
-            'array' => ['its {type}', 'its array', []]
+            'array' => ['its {type}', 'its array', []],
         ];
     }
 

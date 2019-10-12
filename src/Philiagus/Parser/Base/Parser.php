@@ -48,22 +48,24 @@ abstract class Parser
      */
     final public function parse($value, Path $path = null)
     {
-        if($path === null) {
+        if ($path === null) {
             $path = new Root('root');
         }
 
-        if($this->then) {
+        if ($this->then) {
             return $this->target = $this->then->parse(
                 $this->execute($value, $path),
                 $path
             );
         }
+
         return $this->target = $this->execute($value, $path);
     }
 
     /**
      * Appends a parser to execute once this parser has done its job
      * The result of this parser is identical to the result of the chained parser
+     *
      * @param Parser $parser
      *
      * @return $this

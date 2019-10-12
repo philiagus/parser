@@ -159,6 +159,7 @@ class AssertArray
 
     /**
      * Specifies that this array is expected to have numeric keys starting at 0, incrementing by 1
+     *
      * @param string $exceptionMessage
      *
      * @return $this
@@ -197,7 +198,7 @@ class AssertArray
 
         $keys = array_keys($value);
 
-        if($this->keys) {
+        if ($this->keys) {
             $this->keys->parse($keys, $path->meta('keys'));
         }
 

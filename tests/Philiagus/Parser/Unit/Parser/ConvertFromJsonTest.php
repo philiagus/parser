@@ -35,7 +35,7 @@ class ConvertFromJsonTest extends TestCase
      */
     public function provideNonStringValues(): array
     {
-        return DataProvider::provide((int)~DataProvider::TYPE_STRING);
+        return DataProvider::provide((int) ~DataProvider::TYPE_STRING);
     }
 
     /**
@@ -68,7 +68,7 @@ class ConvertFromJsonTest extends TestCase
     public function testMaxDepth(): void
     {
         $json = [
-            'a'
+            'a',
         ];
         $jsonString = json_encode($json);
         self::assertSame($json, (new ConvertFromJson())->withMaxDepth(10)->parse($jsonString));

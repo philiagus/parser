@@ -22,7 +22,8 @@ class PathTest extends TestCase
 {
     public function testClass(): void
     {
-        $parent = new class('parent') extends Path {
+        $parent = new class('parent') extends Path
+        {
 
             protected function getDelimiter(): string
             {
@@ -30,7 +31,8 @@ class PathTest extends TestCase
             }
         };
 
-        $path = new class('path', $parent) extends Path {
+        $path = new class('path', $parent) extends Path
+        {
 
             protected function getDelimiter(): string
             {
@@ -41,12 +43,13 @@ class PathTest extends TestCase
         self::assertSame('path', $path->getName());
         self::assertSame($parent, $path->getParent());
         self::assertSame('parent||path', $path->toString());
-        self::assertSame('parent||path', (string)$path);
+        self::assertSame('parent||path', (string) $path);
     }
 
     public function testIndexChain(): void
     {
-        $path = new class('parent') extends Path {
+        $path = new class('parent') extends Path
+        {
             protected function getDelimiter(): string
             {
                 return ':';
@@ -61,7 +64,8 @@ class PathTest extends TestCase
 
     public function testPropertyChain(): void
     {
-        $path = new class('parent') extends Path {
+        $path = new class('parent') extends Path
+        {
             protected function getDelimiter(): string
             {
                 return ':';
@@ -76,7 +80,8 @@ class PathTest extends TestCase
 
     public function testMetaChain(): void
     {
-        $path = new class('parent') extends Path {
+        $path = new class('parent') extends Path
+        {
             protected function getDelimiter(): string
             {
                 return ':';
@@ -91,7 +96,8 @@ class PathTest extends TestCase
 
     public function testKeyChain(): void
     {
-        $path = new class('parent') extends Path {
+        $path = new class('parent') extends Path
+        {
             protected function getDelimiter(): string
             {
                 return ':';

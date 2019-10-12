@@ -36,6 +36,7 @@ class AssertNumeric extends Parser
 
     /**
      * Sets the exception message thrown when the type does not match
+     *
      * @param string $exceptionMessage
      *
      * @return $this
@@ -61,7 +62,7 @@ class AssertNumeric extends Parser
      */
     public function withMinimum($minimum, string $exceptionMessage = 'Provided value of {value} is lower than the defined minimum of {min}'): self
     {
-        if(
+        if (
             (!is_int($minimum) && !is_float($minimum)) ||
             is_nan($minimum) ||
             is_infinite($minimum)
@@ -93,7 +94,7 @@ class AssertNumeric extends Parser
      */
     public function withMaximum($maximum, string $exceptionMessage = 'Provided value of {value} is greater than the defined maximum of {max}}'): self
     {
-        if(
+        if (
             (!is_int($maximum) && !is_float($maximum)) ||
             is_nan($maximum) ||
             is_infinite($maximum)
@@ -139,13 +140,13 @@ class AssertNumeric extends Parser
             }
         }
 
-        if($this->maximumValue !== null) {
+        if ($this->maximumValue !== null) {
             /**
              * @var float|int $maximum
              * @var string $exception
              */
             [$maximum, $exception] = $this->maximumValue;
-            if($maximum < $value) {
+            if ($maximum < $value) {
                 throw new Exception\ParsingException(
                     $value,
                     strtr($exception, ['{value}' => $value, '{max}' => $maximum]),

@@ -51,7 +51,7 @@ class ForkTest extends TestCase
         $path = new Root('root');
         for ($parsers = 0; $parsers < 3; $parsers++) {
             $child = $this->prophesize(Parser::class);
-            $argument = Argument::that(function($provided) use ($value) {
+            $argument = Argument::that(function ($provided) use ($value) {
                 return DataProvider::isSame($value, $provided);
             });
             $child->execute($argument, $path)->shouldBeCalledOnce();
@@ -75,7 +75,7 @@ class ForkTest extends TestCase
 
         $child = $this->prophesize(Parser::class);
         $child->execute(1, Argument::any())->shouldBeCalledOnce()->will(
-            function($args) {
+            function ($args) {
                 [$value, $path] = $args;
                 throw new ParsingException($value, 'error', $path);
             }

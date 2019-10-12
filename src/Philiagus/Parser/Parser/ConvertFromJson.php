@@ -65,6 +65,7 @@ class ConvertFromJson extends Parser
      * Sets the exception message thrown when the provided value is not a string
      * Available replacers:
      * {type} = gettype of the provided value
+     *
      * @param string $message
      *
      * @return $this

@@ -19,7 +19,7 @@ class Index extends Path
 
     protected function getDelimiter(): string
     {
-        if(is_numeric($this->getName())) {
+        if (is_numeric($this->getName())) {
             return ' #';
         }
 

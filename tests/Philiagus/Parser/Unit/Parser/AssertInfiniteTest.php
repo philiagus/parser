@@ -33,7 +33,7 @@ class AssertInfiniteTest extends TestCase
      */
     public function provideInvalidValues(): array
     {
-        return DataProvider::provide((int)~DataProvider::TYPE_INFINITE);
+        return DataProvider::provide((int) ~DataProvider::TYPE_INFINITE);
     }
 
     /**

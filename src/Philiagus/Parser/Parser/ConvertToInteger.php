@@ -76,9 +76,6 @@ class ConvertToInteger
         }
 
 
-
-
-
         return $value;
     }
 }

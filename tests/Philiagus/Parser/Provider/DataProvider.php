@@ -172,6 +172,7 @@ class DataProvider
 
     /**
      * Asserts that the two values are the same, treating NAN === NAN
+     *
      * @param mixed $expected
      * @param mixed $value
      */

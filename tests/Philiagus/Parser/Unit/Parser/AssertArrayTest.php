@@ -44,7 +44,7 @@ class AssertArrayTest extends TestCase
      */
     public function provideInvalidValues(): array
     {
-        return DataProvider::provide((int)~DataProvider::TYPE_ARRAY);
+        return DataProvider::provide((int) ~DataProvider::TYPE_ARRAY);
     }
 
     /**
@@ -167,7 +167,7 @@ class AssertArrayTest extends TestCase
                 'a' => 1,
                 2 => 2,
                 'b' => 3,
-                0 => 4
+                0 => 4,
             ]
         );
     }
@@ -262,7 +262,7 @@ class AssertArrayTest extends TestCase
      */
     public function provideInvalidArrayKeys(): array
     {
-        return DataProvider::provide((int)~(DataProvider::TYPE_STRING | DataProvider::TYPE_INTEGER));
+        return DataProvider::provide((int) ~(DataProvider::TYPE_STRING | DataProvider::TYPE_INTEGER));
     }
 
     /**
@@ -382,7 +382,7 @@ class AssertArrayTest extends TestCase
      */
     public function testThatItAllowsSequentialArrays(): void
     {
-        $array = [1,2,3,4,5];
+        $array = [1, 2, 3, 4, 5];
         $after = (new AssertArray())->withSequentialKeys()->parse($array);
         self::assertSame($array, $after);
     }

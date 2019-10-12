@@ -25,6 +25,7 @@ class Fork extends Parser
 
     /**
      * Adds a parser to fork the value to without alteration
+     *
      * @param Parser $parser
      *
      * @return $this
@@ -41,7 +42,7 @@ class Fork extends Parser
      */
     protected function execute($value, Path $path)
     {
-        foreach($this->parsers as $parser) {
+        foreach ($this->parsers as $parser) {
             $parser->parse($value, $path);
         }
 

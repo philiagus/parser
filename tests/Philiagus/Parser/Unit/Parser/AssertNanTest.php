@@ -34,7 +34,7 @@ class AssertNanTest extends TestCase
      */
     public function provideInvalidValues(): array
     {
-        return DataProvider::provide((int)~DataProvider::TYPE_NAN);
+        return DataProvider::provide((int) ~DataProvider::TYPE_NAN);
     }
 
     /**

@@ -34,7 +34,7 @@ class AssertBooleanTest extends TestCase
      */
     public function provideInvalidValues(): array
     {
-        return DataProvider::provide((int)~DataProvider::TYPE_BOOLEAN);
+        return DataProvider::provide((int) ~DataProvider::TYPE_BOOLEAN);
     }
 
     /**

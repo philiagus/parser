@@ -52,6 +52,7 @@ class ParsingExceptionTest extends TestCase
 
     /**
      * @param $value
+     *
      * @dataProvider provideAllTypes
      */
     public function testGetValue($value): void

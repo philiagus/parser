@@ -34,7 +34,7 @@ class AssertNullTest extends TestCase
      */
     public function provideInvalidValues(): array
     {
-        return DataProvider::provide((int)~DataProvider::TYPE_NULL);
+        return DataProvider::provide((int) ~DataProvider::TYPE_NULL);
     }
 
     /**

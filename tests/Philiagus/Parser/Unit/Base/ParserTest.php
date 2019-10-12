@@ -80,19 +80,23 @@ class ParserTest extends TestCase
     public function testThatChainingWorks(): void
     {
         $resultA = $resultB = $resultC = null;
-        $baseParser = new class($resultA) extends Parser {
+        $baseParser = new class($resultA) extends Parser
+        {
             protected function execute($value, Path $path)
             {
                 Assert::assertSame(1, $value);
+
                 return 2;
             }
         };
 
         $baseParser->then(
-            new class($resultB) extends Parser {
+            new class($resultB) extends Parser
+            {
                 protected function execute($value, Path $path)
                 {
                     Assert::assertSame(2, $value);
+
                     return 3;
                 }
             }
