@@ -86,10 +86,11 @@ class OneOfTest extends TestCase
         $exception = new ParsingException('value', 'Exception', new Root(''));
         $option = $this->prophesize(Parser::class);
         $option->execute(null, Argument::type(Path::class))->willThrow($exception);
-
+        /** @var Parser $parser */
+        $parser = $option->reveal();
         $this->expectException(MultipleParsingException::class);
         (new OneOf())
-            ->addOption($option->reveal())
+            ->addOption($parser)
             ->parse(null);
     }
 

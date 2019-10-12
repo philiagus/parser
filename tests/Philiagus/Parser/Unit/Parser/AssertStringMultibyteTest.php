@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Test\Parser\Unit\Parser;
 
+use Exception;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
@@ -29,11 +30,19 @@ class AssertStringMultibyteTest extends TestCase
         self::assertTrue((new AssertStringMultibyte()) instanceof Parser);
     }
 
+    /**
+     * @return array
+     * @throws Exception
+     */
     public function provideValidValues(): array
     {
         return DataProvider::provide(DataProvider::TYPE_STRING);
     }
 
+    /**
+     * @return array
+     * @throws Exception
+     */
     public function provideInvalidValues(): array
     {
         return DataProvider::provide((int) ~DataProvider::TYPE_STRING);
@@ -84,14 +93,20 @@ class AssertStringMultibyteTest extends TestCase
     {
         $parser = $this->prophesize(Parser::class);
         $parser->execute(9, Argument::type(MetaInformation::class))->shouldBeCalledOnce();
+        /** @var Parser $lengthParser */
         $lengthParser = $parser->reveal();
         (new AssertStringMultibyte())->withLength($lengthParser)->parse('012345678');
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testWithLengthMultibyte(): void
     {
         $parser = $this->prophesize(Parser::class);
         $parser->execute(1, Argument::type(MetaInformation::class))->shouldBeCalledOnce();
+        /** @var Parser $lengthParser */
         $lengthParser = $parser->reveal();
         (new AssertStringMultibyte())->withLength($lengthParser)->parse('ö');
     }
@@ -181,6 +196,15 @@ class AssertStringMultibyteTest extends TestCase
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($message);
         self::assertSame($value, (new AssertStringMultibyte())->withEncoding('UTF-8', $message)->parse($value));
+    }
+
+    /**
+     * @throws ParserConfigurationException
+     */
+    public function testWithEncodingOnlyAcceptsValidEncoding(): void
+    {
+        $this->expectException(ParserConfigurationException::class);
+        (new AssertStringMultibyte())->withEncoding('this is not an encoding');
     }
 
 }

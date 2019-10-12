@@ -66,18 +66,18 @@ class AssertString extends Parser
      * Performs substr on the string and executes the parser on that part of the string
      *
      * @param int $start
-     * @param int $end
+     * @param int|null $length
      * @param Parser $stringParser
      *
      * @return $this
      */
     public function withSubstring(
         int $start,
-        ?int $end,
+        ?int $length,
         Parser $stringParser
     ): self
     {
-        $this->substring[] = [$start, $end, $stringParser];
+        $this->substring[] = [$start, $length, $stringParser];
 
         return $this;
     }
@@ -98,16 +98,16 @@ class AssertString extends Parser
         if ($this->substring) {
             /**
              * @var int $start
-             * @var int $end
+             * @var int|null $length
              * @var Parser $parser
              */
-            foreach ($this->substring as [$start, $end, $parser]) {
+            foreach ($this->substring as [$start, $length, $parser]) {
                 if ($value === '') {
                     $part = '';
                 } else {
-                    $part = (string)substr($value, $start, $end);
+                    $part = (string)substr($value, $start, $length);
                 }
-                $parser->parse($part, $path->meta("$start:$end"));
+                $parser->parse($part, $path->meta("$start:$length"));
             }
         }
 

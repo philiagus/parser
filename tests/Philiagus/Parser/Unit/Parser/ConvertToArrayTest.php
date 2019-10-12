@@ -226,11 +226,14 @@ class ConvertToArrayTest extends TestCase
      */
     public function testThatForcedKeysUseParser(): void
     {
-        $childParser = $this->prophesize(Parser::class);
-        $childParser->execute('value', Argument::type(Path::class))
+        $child = $this->prophesize(Parser::class);
+        $child->execute('value', Argument::type(Path::class))
             ->shouldBeCalledOnce()
             ->willReturn('parsedValue');
-        $parser = (new ConvertToArray())->withDefaultedKeyConvertingValue('key', 'value', $childParser->reveal());
+
+        /** @var Parser $childParser */
+        $childParser = $child->reveal();
+        $parser = (new ConvertToArray())->withDefaultedKeyConvertingValue('key', 'value', $childParser);
         $result = $parser->parse([]);
         self::assertSame(
             [
@@ -246,11 +249,14 @@ class ConvertToArrayTest extends TestCase
      */
     public function testThatForcedKeysUseParserEvenIfValueIsAlreadyPresent(): void
     {
-        $childParser = $this->prophesize(Parser::class);
-        $childParser->execute('value', Argument::type(Path::class))
+        $child = $this->prophesize(Parser::class);
+        $child->execute('value', Argument::type(Path::class))
             ->shouldBeCalledOnce()
             ->willReturn('parsedValue');
-        $parser = (new ConvertToArray())->withDefaultedKeyConvertingValue('key', 'will not be used', $childParser->reveal());
+
+        /** @var Parser $childParser */
+        $childParser = $child->reveal();
+        $parser = (new ConvertToArray())->withDefaultedKeyConvertingValue('key', 'will not be used', $childParser);
         $result = $parser->parse(['key' => 'value']);
         self::assertSame(
             [
@@ -331,8 +337,13 @@ class ConvertToArrayTest extends TestCase
      */
     public function testThatForcedElementsMustExist(): void
     {
-        $childParser = $this->prophesize(Parser::class);
-        $parser = (new ConvertToArray())->withKeyConvertingValue('key', $childParser->reveal());
+        $childParser = new class() extends Parser
+        {
+            protected function execute($value, Path $path)
+            {
+            }
+        };
+        $parser = (new ConvertToArray())->withKeyConvertingValue('key', $childParser);
         $this->expectException(ParsingException::class);
         $parser->parse([]);
     }
@@ -343,11 +354,13 @@ class ConvertToArrayTest extends TestCase
      */
     public function testThatForcedElementsAreParsedAndOverwriteReturn(): void
     {
-        $childParser = $this->prophesize(Parser::class);
-        $childParser->execute('value', Argument::type(Path::class))
+        $child = $this->prophesize(Parser::class);
+        $child->execute('value', Argument::type(Path::class))
             ->shouldBeCalledOnce()
             ->willReturn('parsedValue');
-        $parser = (new ConvertToArray())->withKeyConvertingValue('key', $childParser->reveal());
+        /** @var Parser $childParser */
+        $childParser = $child->reveal();
+        $parser = (new ConvertToArray())->withKeyConvertingValue('key', $childParser);
         self::assertSame(
             ['key' => 'parsedValue'],
             $parser->parse(['key' => 'value'])
@@ -363,11 +376,14 @@ class ConvertToArrayTest extends TestCase
      */
     public function testThatForcedElementKeysCanBeIntegerOrString($key): void
     {
-        $childParser = $this->prophesize(Parser::class);
-        $childParser->execute('value', Argument::type(Path::class))
+        $child = $this->prophesize(Parser::class);
+        $child->execute('value', Argument::type(Path::class))
             ->shouldBeCalledOnce()
             ->willReturn('parsedValue');
-        $parser = (new ConvertToArray())->withKeyConvertingValue($key, $childParser->reveal());
+
+        /** @var Parser $childParser */
+        $childParser = $child->reveal();
+        $parser = (new ConvertToArray())->withKeyConvertingValue($key, $childParser);
         self::assertSame(
             [$key => 'parsedValue'],
             $parser->parse([$key => 'value'])
@@ -382,9 +398,14 @@ class ConvertToArrayTest extends TestCase
      */
     public function testThatForcedElementKeysMustBeIntegerOrString($key): void
     {
-        $childParser = $this->prophesize(Parser::class);
+        $childParser = new class() extends Parser
+        {
+            protected function execute($value, Path $path)
+            {
+            }
+        };
         $this->expectException(ParserConfigurationException::class);
-        (new ConvertToArray())->withKeyConvertingValue($key, $childParser->reveal());
+        (new ConvertToArray())->withKeyConvertingValue($key, $childParser);
     }
 
     /**

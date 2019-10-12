@@ -14,6 +14,7 @@ namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 
 class AssertStringMultibyte extends Parser
@@ -71,18 +72,18 @@ class AssertStringMultibyte extends Parser
      * Performs mb_substr on the string and executes the parser on that part of the string
      *
      * @param int $start
-     * @param int $end
+     * @param null|int $length
      * @param Parser $stringParser
      *
      * @return $this
      */
     public function withSubstring(
         int $start,
-        ?int $end,
+        ?int $length,
         Parser $stringParser
     ): self
     {
-        $this->substring[] = [$start, $end, $stringParser];
+        $this->substring[] = [$start, $length, $stringParser];
 
         return $this;
     }
@@ -92,9 +93,17 @@ class AssertStringMultibyte extends Parser
      * @param string $exception
      *
      * @return $this
+     * @throws ParserConfigurationException
      */
     public function withEncoding(string $encoding, string $exception = 'Multibyte string does not appear to be of the requested encoding'): self
     {
+        static $encodings = null;
+        if($encodings === null) {
+            $encodings = mb_list_encodings();
+        }
+        if(!in_array($encoding, $encodings)) {
+            throw new ParserConfigurationException("The encoding $encoding is unknown to the system");
+        }
         $this->encoding = [$encoding, $exception];
 
         return $this;
@@ -109,30 +118,32 @@ class AssertStringMultibyte extends Parser
             throw new ParsingException($value, $this->typeExceptionMessage, $path);
         }
 
+        if($this->encoding) {
+            [$encoding, $exception] = $this->encoding;
+            if(!mb_check_encoding($value, $encoding)) {
+                throw new ParsingException($value, $exception, $path);
+            }
+        } else {
+            $encoding = mb_detect_encoding($value);
+        }
+
         if ($this->length) {
-            $this->length->parse(mb_strlen($value), $path->meta('length'));
+            $this->length->parse(mb_strlen($value, $encoding), $path->meta('length'));
         }
 
         if ($this->substring) {
             /**
              * @var int $start
-             * @var int $end
+             * @var null|int $length
              * @var Parser $parser
              */
-            foreach ($this->substring as [$start, $end, $parser]) {
+            foreach ($this->substring as [$start, $length, $parser]) {
                 if ($value === '') {
                     $part = '';
                 } else {
-                    $part = (string)mb_substr($value, $start, $end);
+                    $part = (string)mb_substr($value, $start, $length, $encoding);
                 }
-                $parser->parse($part, $path->meta("$start:$end"));
-            }
-        }
-
-        if($this->encoding) {
-            [$encoding, $exception] = $this->encoding;
-            if(!mb_check_encoding($value, $encoding)) {
-                throw new ParsingException($value, $exception, $path);
+                $parser->parse($part, $path->meta("$start:$length"));
             }
         }
 

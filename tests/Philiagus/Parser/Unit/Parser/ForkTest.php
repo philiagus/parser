@@ -55,7 +55,9 @@ class ForkTest extends TestCase
                 return DataProvider::isSame($value, $provided);
             });
             $child->execute($argument, $path)->shouldBeCalledOnce();
-            $parser->addParser($child->reveal());
+            /** @var Parser $childParser */
+            $childParser = $child->reveal();
+            $parser->addParser($childParser);
         }
 
         $parser->parse($value, $path);
@@ -71,7 +73,9 @@ class ForkTest extends TestCase
 
         $child = $this->prophesize(Parser::class);
         $child->execute(1, Argument::any())->shouldBeCalledOnce();
-        $parser->addParser($child->reveal());
+        /** @var Parser $childParser */
+        $childParser = $child->reveal();
+        $parser->addParser($childParser);
 
         $child = $this->prophesize(Parser::class);
         $child->execute(1, Argument::any())->shouldBeCalledOnce()->will(
@@ -80,11 +84,17 @@ class ForkTest extends TestCase
                 throw new ParsingException($value, 'error', $path);
             }
         );
-        $parser->addParser($child->reveal());
+
+        /** @var Parser $childParser */
+        $childParser = $child->reveal();
+        $parser->addParser($childParser);
 
         $child = $this->prophesize(Parser::class);
         $child->execute(1, Argument::any())->shouldBeCalledTimes(0);
-        $parser->addParser($child->reveal());
+
+        /** @var Parser $childParser */
+        $childParser = $child->reveal();
+        $parser->addParser($childParser);
 
         $this->expectException(ParsingException::class);
         $parser->parse(1);

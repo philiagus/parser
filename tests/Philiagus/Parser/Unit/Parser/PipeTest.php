@@ -63,6 +63,7 @@ class PipeTest extends TestCase
         $pipeParser->execute(3, $path)->shouldBeCalledOnce()->willReturn('last');
         $pipeParser->execute('last', $path)->shouldBeCalledOnce()->willReturn('end value');
         $pipeParser = $pipeParser->reveal();
+        /** @var Parser $pipeParser */
         $result = (new Pipe())
             ->add($pipeParser)
             ->add($pipeParser)
