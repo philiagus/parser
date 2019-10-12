@@ -1,29 +1,19 @@
 <?php
-/**
- * This file is part of philiagus/parser
- *
- * (c) Andreas Bittner <philiagus@philiagus.de>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use http\Exception\InvalidArgumentException;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception;
 use Philiagus\Parser\Exception\ParsingException;
 
-class AssertFloat extends Parser
+class AssertNumeric extends Parser
 {
     /**
      * @var string
      */
-    private $typeExceptionMessage = 'Provided value is not of type float';
+    private $typeExceptionMessage = 'Provided value is not of float or integer';
 
     /**
      * @var array|null
@@ -54,18 +44,21 @@ class AssertFloat extends Parser
      * {value} = parsed value
      * {min} = currently set minimum
      *
-     * @param float $minimum
+     * @param float|int $minimum
      * @param string $exceptionMessage
      *
-     * @return AssertFloat
+     * @return AssertNumeric
      * @throws Exception\ParserConfigurationException
      */
-    public function withMinimum(float $minimum, string $exceptionMessage = 'Provided value of {value} is lower than the defined minimum of {min}'): self
+    public function withMinimum($minimum, string $exceptionMessage = 'Provided value of {value} is lower than the defined minimum of {min}'): self
     {
-        if(is_nan($minimum) || is_infinite($minimum)) {
-            throw new Exception\ParserConfigurationException('Minimum must be set as a float number value. NAN and INF are not allowd');
+        if(
+            (!is_int($minimum) && !is_float($minimum)) ||
+            is_nan($minimum) ||
+            is_infinite($minimum)
+        ) {
+            throw new Exception\ParserConfigurationException('The minimum for a numeric value must be provided as integer or float');
         }
-
         if ($this->maximumValue !== null && $this->maximumValue[0] < $minimum) {
             throw new Exception\ParserConfigurationException(
                 sprintf('Trying to set minimum of %s to a higher value than the maximum of %s', $minimum, $this->maximumValue)
@@ -83,16 +76,20 @@ class AssertFloat extends Parser
      * {value} = parsed value
      * {max} = currently set maximum
      *
-     * @param float $maximum
+     * @param float|int $maximum
      * @param string $exceptionMessage
      *
-     * @return AssertFloat
+     * @return AssertNumeric
      * @throws Exception\ParserConfigurationException
      */
-    public function withMaximum(float $maximum, string $exceptionMessage = 'Provided value of {value} is greater than the defined maximum of {max}}'): self
+    public function withMaximum($maximum, string $exceptionMessage = 'Provided value of {value} is greater than the defined maximum of {max}}'): self
     {
-        if(is_nan($maximum) || is_infinite($maximum)) {
-            throw new Exception\ParserConfigurationException('Maximum must be set as a float number value. NAN and INF are not allowd');
+        if(
+            (!is_int($maximum) && !is_float($maximum)) ||
+            is_nan($maximum) ||
+            is_infinite($maximum)
+        ) {
+            throw new Exception\ParserConfigurationException('The maximum for a numeric value must be provided as integer or float');
         }
 
         if ($this->minimumValue !== null && $this->minimumValue[0] > $maximum) {
@@ -111,13 +108,16 @@ class AssertFloat extends Parser
      */
     protected function execute($value, Path $path)
     {
-        if (!is_float($value) || is_nan($value) || is_infinite($value)) {
+        if (
+            (!is_float($value) && !is_int($value)) ||
+            is_nan($value) ||
+            is_infinite($value)) {
             throw new ParsingException($value, $this->typeExceptionMessage, $path);
         }
 
         if ($this->minimumValue !== null) {
             /**
-             * @var float $minimum
+             * @var float|int $minimum
              * @var string $exception
              */
             [$minimum, $exception] = $this->minimumValue;
@@ -132,7 +132,7 @@ class AssertFloat extends Parser
 
         if($this->maximumValue !== null) {
             /**
-             * @var float $maximum
+             * @var float|int $maximum
              * @var string $exception
              */
             [$maximum, $exception] = $this->maximumValue;
@@ -147,4 +147,5 @@ class AssertFloat extends Parser
 
         return $value;
     }
+
 }
