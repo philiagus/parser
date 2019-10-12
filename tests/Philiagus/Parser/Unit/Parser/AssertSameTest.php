@@ -48,7 +48,7 @@ class AssertSameTest extends TestCase
      */
     public function testThatItBlocksNotSameValue($value): void
     {
-        self::expectException(ParsingException::class);
+        $this->expectException(ParsingException::class);
         (new AssertSame())->withValue(0)->parse($value);
     }
 
@@ -68,7 +68,7 @@ class AssertSameTest extends TestCase
      */
     public function testExceptionOnMissingConfiguration(): void
     {
-        self::expectException(ParserConfigurationException::class);
+        $this->expectException(ParserConfigurationException::class);
         (new AssertSame())->parse(0);
     }
 
@@ -79,8 +79,8 @@ class AssertSameTest extends TestCase
     public function testExceptionMessage(): void
     {
         $msg = 'msg';
-        self::expectException(ParsingException::class);
-        self::expectExceptionMessage($msg);
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage($msg);
         (new AssertSame())->withValue(1, $msg)->parse('1');
     }
 

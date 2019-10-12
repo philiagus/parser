@@ -46,7 +46,7 @@ class AssertNanTest extends TestCase
      */
     public function testThatItBlocksNonNanValues($value): void
     {
-        self::expectException(ParsingException::class);
+        $this->expectException(ParsingException::class);
         (new AssertNan())->parse($value);
     }
 
@@ -79,8 +79,8 @@ class AssertNanTest extends TestCase
     public function testWithExceptionMessage(): void
     {
         $msg = 'msg';
-        self::expectException(ParsingException::class);
-        self::expectExceptionMessage($msg);
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage($msg);
         (new AssertNan())->withExceptionMessage($msg)->parse(false);
     }
 

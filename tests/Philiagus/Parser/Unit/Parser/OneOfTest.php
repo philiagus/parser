@@ -73,7 +73,7 @@ class OneOfTest extends TestCase
      */
     public function testThatItThrowsExceptionWhenNoOptionsAreDefined(): void
     {
-        self::expectException(ParserConfigurationException::class);
+        $this->expectException(ParserConfigurationException::class);
         (new OneOf())->parse(null);
     }
 
@@ -87,7 +87,7 @@ class OneOfTest extends TestCase
         $option = $this->prophesize(Parser::class);
         $option->execute(null, Argument::type(Path::class))->willThrow($exception);
 
-        self::expectException(MultipleParsingException::class);
+        $this->expectException(MultipleParsingException::class);
         (new OneOf())
             ->addOption($option->reveal())
             ->parse(null);
@@ -100,8 +100,8 @@ class OneOfTest extends TestCase
     public function testNonOfExceptionMessage(): void
     {
         $msg = 'msg';
-        self::expectException(MultipleParsingException::class);
-        self::expectExceptionMessage($msg);
+        $this->expectException(MultipleParsingException::class);
+        $this->expectExceptionMessage($msg);
         (new OneOf())
             ->addOption(
                 new class() extends Parser {

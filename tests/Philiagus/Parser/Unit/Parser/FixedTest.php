@@ -53,11 +53,7 @@ class FixedTest extends TestCase
     {
         $instance = new stdClass();
         $result = (new Fixed())->withValue($value)->parse($instance);
-        if(is_float($value) && is_nan($value)) {
-            self::assertNan($result);
-        } else {
-            self::assertSame($value, $result);
-        }
+        DataProvider::assertSame($value, $result);
     }
 
     /**
@@ -66,7 +62,7 @@ class FixedTest extends TestCase
      */
     public function testThatItThrowsAnExceptionIfNoValueIsDefined(): void
     {
-        self::expectException(ParserConfigurationException::class);
+        $this->expectException(ParserConfigurationException::class);
         (new Fixed())->parse(null);
     }
 

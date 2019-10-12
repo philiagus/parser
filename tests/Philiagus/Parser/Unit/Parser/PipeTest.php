@@ -47,11 +47,7 @@ class PipeTest extends TestCase
     public function testThatEmptyPipeReturnsWithoutAlteration($value): void
     {
         $result = (new Pipe())->parse($value);
-        if (is_float($value) && is_nan($value)) {
-            self::assertNan($result);
-        } else {
-            self::assertSame($value, $result);
-        }
+        DataProvider::assertSame($value, $result);
     }
 
     /**

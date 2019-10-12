@@ -56,7 +56,7 @@ class ConvertToIntegerTest extends TestCase
      */
     public function testThatItDoesNotAcceptIncompatibleValues($incompatibleValue): void
     {
-        self::expectException(ParsingException::class);
+        $this->expectException(ParsingException::class);
         (new ConvertToInteger())->parse($incompatibleValue);
     }
 
@@ -117,8 +117,8 @@ class ConvertToIntegerTest extends TestCase
      */
     public function testExceptionMessage(string $baseMsg, string $expected, $value): void
     {
-        self::expectException(ParsingException::class);
-        self::expectExceptionMessage($expected);
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage($expected);
         (new ConvertToInteger())->withExceptionMessage($baseMsg)->parse($value);
     }
 

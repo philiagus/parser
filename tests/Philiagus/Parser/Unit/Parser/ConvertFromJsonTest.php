@@ -47,7 +47,7 @@ class ConvertFromJsonTest extends TestCase
      */
     public function testExceptionOnNonStringValues($value): void
     {
-        self::expectException(ParsingException::class);
+        $this->expectException(ParsingException::class);
         (new ConvertFromJson())->parse($value);
     }
 
@@ -57,7 +57,7 @@ class ConvertFromJsonTest extends TestCase
      */
     public function testExceptionOnNonJsonString(): void
     {
-        self::expectException(ParsingException::class);
+        $this->expectException(ParsingException::class);
         (new ConvertFromJson())->parse('not a json');
     }
 
@@ -80,7 +80,7 @@ class ConvertFromJsonTest extends TestCase
      */
     public function testMaxDepthException(): void
     {
-        self::expectException(ParsingException::class);
+        $this->expectException(ParsingException::class);
         (new ConvertFromJson())->withMaxDepth(1)->parse('[[[[[[[[[[[[[1]]]]]]]]]]]]]');
     }
 
@@ -116,8 +116,8 @@ class ConvertFromJsonTest extends TestCase
     public function testWithConversionExceptionMessage(): void
     {
         $msg = 'msg';
-        self::expectException(ParsingException::class);
-        self::expectExceptionMessage($msg);
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage($msg);
         (new ConvertFromJson())->withConversionExceptionMessage($msg)->parse('u');
     }
 
@@ -127,8 +127,8 @@ class ConvertFromJsonTest extends TestCase
      */
     public function testWithConversionExceptionMessageWithReplacement(): void
     {
-        self::expectException(ParsingException::class);
-        self::expectExceptionMessage('msg Syntax error');
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('msg Syntax error');
         (new ConvertFromJson())->withConversionExceptionMessage('msg {msg}')->parse('u');
     }
 
@@ -139,8 +139,8 @@ class ConvertFromJsonTest extends TestCase
     public function testWithTypeException(): void
     {
         $msg = 'msg';
-        self::expectException(ParsingException::class);
-        self::expectExceptionMessage($msg);
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage($msg);
         (new ConvertFromJson())->withTypeExceptionMessage($msg)->parse(false);
     }
 
@@ -150,8 +150,8 @@ class ConvertFromJsonTest extends TestCase
      */
     public function testWithTypeExceptionWithReplace(): void
     {
-        self::expectException(ParsingException::class);
-        self::expectExceptionMessage('msg boolean');
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('msg boolean');
         (new ConvertFromJson())->withTypeExceptionMessage('msg {type}')->parse(false);
     }
 

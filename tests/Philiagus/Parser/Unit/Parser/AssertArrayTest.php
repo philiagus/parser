@@ -56,7 +56,7 @@ class AssertArrayTest extends TestCase
      */
     public function testThatItBlocksNonArrayValues($value): void
     {
-        self::expectException(ParsingException::class);
+        $this->expectException(ParsingException::class);
         (new AssertArray())->parse($value);
     }
 
@@ -127,7 +127,7 @@ class AssertArrayTest extends TestCase
             }
         }
 
-        self::expectException(ParsingException::class);
+        $this->expectException(ParsingException::class);
         (new AssertArray())->withEachValue($parser->reveal())->parse($array);
     }
 
@@ -197,7 +197,7 @@ class AssertArrayTest extends TestCase
             }
         }
 
-        self::expectException(ParsingException::class);
+        $this->expectException(ParsingException::class);
         (new AssertArray())->withEachKey($parser->reveal())->parse($array);
     }
 
@@ -224,7 +224,7 @@ class AssertArrayTest extends TestCase
             ->shouldBeCalledOnce()
             ->willThrow(new ParsingException(2, 'message', new Root('root')));
 
-        self::expectException(ParsingException::class);
+        $this->expectException(ParsingException::class);
         (new AssertArray())->withLength($parser->reveal())->parse([1, 2]);
     }
 
@@ -250,7 +250,7 @@ class AssertArrayTest extends TestCase
     {
         $parser = $this->prophesize(Parser::class);
 
-        self::expectException(ParsingException::class);
+        $this->expectException(ParsingException::class);
         (new AssertArray())
             ->withKeyHavingValue('key', $parser->reveal())
             ->parse([]);
@@ -283,7 +283,7 @@ class AssertArrayTest extends TestCase
     public function testWithKeyHavingValueWithWrongConfiguration($notStringInt): void
     {
         $parser = $this->prophesize(Parser::class)->reveal();
-        self::expectException(ParserConfigurationException::class);
+        $this->expectException(ParserConfigurationException::class);
         (new AssertArray())->withKeyHavingValue($notStringInt, $parser);
     }
 
@@ -311,8 +311,8 @@ class AssertArrayTest extends TestCase
     public function testWithKeyHavingValueExceptionMessageOnMissingKey(): void
     {
         $message = 'This is an error message';
-        self::expectException(ParsingException::class);
-        self::expectExceptionMessage($message);
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage($message);
         (new AssertArray())
             ->withKeyHavingValue('key', (new AssertArray()), $message)
             ->parse([]);
@@ -355,7 +355,7 @@ class AssertArrayTest extends TestCase
     public function testWithDefaultedElementWrongConfiguration($notStringInt): void
     {
         $parser = $this->prophesize(Parser::class)->reveal();
-        self::expectException(ParserConfigurationException::class);
+        $this->expectException(ParserConfigurationException::class);
         (new AssertArray())->withDefaultedElement($notStringInt, 'default', $parser);
     }
 
@@ -394,7 +394,7 @@ class AssertArrayTest extends TestCase
     public function testThatItBlocksNotSequentialArrays(): void
     {
         $array = [1 => 1, 2 => 2, 3 => 3];
-        self::expectException(ParsingException::class);
+        $this->expectException(ParsingException::class);
         (new AssertArray())->withSequentialKeys()->parse($array);
     }
 
@@ -405,8 +405,8 @@ class AssertArrayTest extends TestCase
     public function testThatSequentialArraysUseExceptionMessage(): void
     {
         $message = 'msg';
-        self::expectException(ParsingException::class);
-        self::expectExceptionMessage($message);
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage($message);
         (new AssertArray())->withSequentialKeys($message)->parse(['a' => 1]);
     }
 
@@ -417,8 +417,8 @@ class AssertArrayTest extends TestCase
     public function testWithTypeExceptionMessage(): void
     {
         $message = 'msg';
-        self::expectException(ParsingException::class);
-        self::expectExceptionMessage($message);
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage($message);
         (new AssertArray())->withTypeExceptionMessage($message)->parse('no');
     }
 

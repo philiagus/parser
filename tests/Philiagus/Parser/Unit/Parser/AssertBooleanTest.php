@@ -46,7 +46,7 @@ class AssertBooleanTest extends TestCase
      */
     public function testThatItBlocksNonBooleanValues($value): void
     {
-        self::expectException(ParsingException::class);
+        $this->expectException(ParsingException::class);
         (new AssertBoolean())->parse($value);
     }
 
@@ -79,8 +79,8 @@ class AssertBooleanTest extends TestCase
     public function testThatItUsesTheSpecifiedExceptionMessage(): void
     {
         $message = 'This is an error msg';
-        self::expectException(ParsingException::class);
-        self::expectExceptionMessage($message);
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage($message);
         (new AssertBoolean())->withTypeExceptionMessage($message)->parse('yes');
     }
 

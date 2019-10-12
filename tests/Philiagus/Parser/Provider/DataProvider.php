@@ -14,6 +14,7 @@ namespace Philiagus\Test\Parser\Provider;
 
 use DateTime;
 use Exception;
+use PHPUnit\Framework\Assert;
 use stdClass;
 
 class DataProvider
@@ -63,12 +64,12 @@ class DataProvider
                     -1.5,
                     -1.0,
                     -.5,
-                    -1/3,
+                    -1 / 3,
                     -.3333,
                     -0.0,
                     0.0,
                     .3333,
-                    1/3,
+                    1 / 3,
                     .5,
                     1.0,
                     1.5,
@@ -140,6 +141,43 @@ class DataProvider
         }
 
         return $result;
+    }
+
+    /**
+     * Checks if the two values are the same but treats NAN === NAN
+     *
+     * @param mixed $expected
+     * @param mixed $value
+     *
+     * @return bool
+     */
+    public static function isSame($expected, $value): bool
+    {
+        if (is_float($expected) && is_nan($expected)) {
+            return is_float($value) && is_nan($value);
+        }
+
+        if (is_array($expected)) {
+            if (!is_array($value)) return false;
+            if (array_keys($expected) !== array_keys($value)) return false;
+            foreach ($expected as $key => $expectedValue) {
+                if (!self::isSame($expectedValue, $value[$key])) return false;
+            }
+
+            return true;
+        }
+
+        return $expected === $value;
+    }
+
+    /**
+     * Asserts that the two values are the same, treating NAN === NAN
+     * @param mixed $expected
+     * @param mixed $value
+     */
+    public static function assertSame($expected, $value): void
+    {
+        Assert::assertTrue(self::isSame($expected, $value));
     }
 
 }

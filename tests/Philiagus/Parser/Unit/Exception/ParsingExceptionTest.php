@@ -57,10 +57,6 @@ class ParsingExceptionTest extends TestCase
     public function testGetValue($value): void
     {
         $exceptionValue = (new ParsingException($value, 'message', new Root('')))->getValue();
-        if(is_float($value) && is_nan($value)) {
-            self::assertNan($exceptionValue);
-        } else {
-            self::assertSame($value, $exceptionValue);
-        }
+        DataProvider::assertSame($value, $exceptionValue);
     }
 }

@@ -32,7 +32,7 @@ class AssertEqualsTest extends TestCase
      */
     public function testThatItBlocksNotEqualValues(): void
     {
-        self::expectException(ParsingException::class);
+        $this->expectException(ParsingException::class);
         (new AssertEquals())->withValue(1)->parse(2);
     }
 
@@ -55,7 +55,7 @@ class AssertEqualsTest extends TestCase
      */
     public function testExceptionOnMissingConfiguration(): void
     {
-        self::expectException(ParserConfigurationException::class);
+        $this->expectException(ParserConfigurationException::class);
         (new AssertEquals())->parse(0);
     }
 
@@ -66,8 +66,8 @@ class AssertEqualsTest extends TestCase
     public function testExceptionMessage(): void
     {
         $msg = 'msg';
-        self::expectException(ParsingException::class);
-        self::expectExceptionMessage($msg);
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage($msg);
         (new AssertEquals())->withValue(false, $msg)->parse(true);
     }
 

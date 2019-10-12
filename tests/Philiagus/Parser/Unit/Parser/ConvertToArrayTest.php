@@ -39,7 +39,7 @@ class ConvertToArrayTest extends TestCase
      */
     public function testThatItBlocksNonArrayValues($value): void
     {
-        self::expectException(ParsingException::class);
+        $this->expectException(ParsingException::class);
         (new ConvertToArray())->parse($value);
     }
 
@@ -80,10 +80,8 @@ class ConvertToArrayTest extends TestCase
         if (count($result)) {
             if (is_object($value)) {
                 self::assertSame((array) $value, $result);
-            } elseif (is_float($value) && is_nan($value)) {
-                self::assertNan($result[0]);
             } else {
-                self::assertSame($value, $result[0]);
+                DataProvider::assertSame($value, $result[0]);
             }
         }
     }
@@ -101,11 +99,7 @@ class ConvertToArrayTest extends TestCase
         self::assertIsArray($result);
         self::assertCount(1, $result);
         self::assertTrue(array_key_exists('key', $result));
-        if (is_float($value) && is_nan($value)) {
-            self::assertNan($result['key']);
-        } else {
-            self::assertSame($value, $result['key']);
-        }
+        DataProvider::assertSame($value, $result['key']);
     }
 
     /**
@@ -150,7 +144,7 @@ class ConvertToArrayTest extends TestCase
      */
     public function testThatConvertNonArraysBlocksNonStringInteger($wrongKey): void
     {
-        self::expectException(ParserConfigurationException::class);
+        $this->expectException(ParserConfigurationException::class);
         (new ConvertToArray())->convertNonArraysWithKey($wrongKey);
     }
 
@@ -213,7 +207,7 @@ class ConvertToArrayTest extends TestCase
      */
     public function testThatForcedKeysDoNotExceptNonIntegerOrString($key): void
     {
-        self::expectException(ParserConfigurationException::class);
+        $this->expectException(ParserConfigurationException::class);
         (new ConvertToArray())->withDefaultedKeyConvertingValue($key, 'value');
     }
 
@@ -308,7 +302,7 @@ class ConvertToArrayTest extends TestCase
      */
     public function testThatElementWhitelistDoesNotAcceptNonIntegerString($key): void
     {
-        self::expectException(ParserConfigurationException::class);
+        $this->expectException(ParserConfigurationException::class);
         (new ConvertToArray())->withElementWhitelist([$key]);
     }
 
@@ -330,7 +324,7 @@ class ConvertToArrayTest extends TestCase
     {
         $childParser = $this->prophesize(Parser::class);
         $parser = (new ConvertToArray())->withKeyConvertingValue('key', $childParser->reveal());
-        self::expectException(ParsingException::class);
+        $this->expectException(ParsingException::class);
         $parser->parse([]);
     }
 
@@ -380,7 +374,7 @@ class ConvertToArrayTest extends TestCase
     public function testThatForcedElementKeysMustBeIntegerOrString($key): void
     {
         $childParser = $this->prophesize(Parser::class);
-        self::expectException(ParserConfigurationException::class);
+        $this->expectException(ParserConfigurationException::class);
         (new ConvertToArray())->withKeyConvertingValue($key, $childParser->reveal());
     }
 
@@ -406,8 +400,8 @@ class ConvertToArrayTest extends TestCase
     public function testWithTypeExceptionMessage(): void
     {
         $msg = 'msg';
-        self::expectException(ParsingException::class);
-        self::expectExceptionMessage($msg);
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage($msg);
         (new ConvertToArray())->withTypeExceptionMessage($msg)->parse(false);
     }
 
@@ -434,8 +428,8 @@ class ConvertToArrayTest extends TestCase
      */
     public function testWithKeyConvertingValueExceptionMessage(string $exception, string $expected, $key): void
     {
-        self::expectException(ParsingException::class);
-        self::expectExceptionMessage($expected);
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage($expected);
         (new ConvertToArray())->withKeyConvertingValue($key, (new ConvertToArray()), $exception)->parse([]);
     }
 

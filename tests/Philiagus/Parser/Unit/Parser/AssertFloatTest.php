@@ -44,7 +44,7 @@ class AssertFloatTest extends TestCase
      */
     public function testThatNonFloatsAreBlocked($value): void
     {
-        self::expectException(ParsingException::class);
+        $this->expectException(ParsingException::class);
         (new AssertFloat())->parse($value);
     }
 
@@ -55,8 +55,8 @@ class AssertFloatTest extends TestCase
     public function testThatTypeExceptionMessageIsThrown(): void
     {
         $msg = 'msg';
-        self::expectException(ParsingException::class);
-        self::expectExceptionMessage($msg);
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage($msg);
         (new AssertFloat())->withTypeExceptionMessage($msg)->parse('yes');
     }
 
@@ -87,7 +87,7 @@ class AssertFloatTest extends TestCase
      */
     public function testThatMinimumCannotBeGreaterThanMaximum(): void
     {
-        self::expectException(ParserConfigurationException::class);
+        $this->expectException(ParserConfigurationException::class);
         (new AssertFloat())->withMaximum(100)->withMinimum(1000);
     }
 
@@ -96,7 +96,7 @@ class AssertFloatTest extends TestCase
      */
     public function testThatMaximumCannotBeLowerThanMinimum(): void
     {
-        self::expectException(ParserConfigurationException::class);
+        $this->expectException(ParserConfigurationException::class);
         (new AssertFloat())->withMinimum(1000.0)->withMaximum(100.0);
     }
 
@@ -106,7 +106,7 @@ class AssertFloatTest extends TestCase
      */
     public function testThatValueMustBeGreaterThanMinimum(): void
     {
-        self::expectException(ParsingException::class);
+        $this->expectException(ParsingException::class);
         (new AssertFloat())
             ->withMinimum(10.0)
             ->parse(0.0);
@@ -118,7 +118,7 @@ class AssertFloatTest extends TestCase
      */
     public function testThatValueMustBeLowerThanMaximum(): void
     {
-        self::expectException(ParsingException::class);
+        $this->expectException(ParsingException::class);
         (new AssertFloat())
             ->withMaximum(0.0)
             ->parse(10.0);
@@ -181,8 +181,8 @@ class AssertFloatTest extends TestCase
      */
     public function testThatMinExceptionMessageIsUsed(string $base, string $expectedMsg, float $value, float $min): void
     {
-        self::expectException(ParsingException::class);
-        self::expectExceptionMessage($expectedMsg);
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage($expectedMsg);
         (new AssertFloat())->withMinimum($min, $base)->parse($value);
     }
 
@@ -208,8 +208,8 @@ class AssertFloatTest extends TestCase
      */
     public function testThatMaxExceptionMessageIsUsed(string $base, string $expectedMsg, float $value, float $max): void
     {
-        self::expectException(ParsingException::class);
-        self::expectExceptionMessage($expectedMsg);
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage($expectedMsg);
         (new AssertFloat())->withMaximum($max, $base)->parse($value);
     }
 

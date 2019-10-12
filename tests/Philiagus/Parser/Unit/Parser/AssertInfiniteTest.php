@@ -45,7 +45,7 @@ class AssertInfiniteTest extends TestCase
      */
     public function testThatItBlocksNonInfiniteValues($value): void
     {
-        self::expectException(ParsingException::class);
+        $this->expectException(ParsingException::class);
         (new AssertInfinite())->parse($value);
     }
 
@@ -78,8 +78,8 @@ class AssertInfiniteTest extends TestCase
     public function testWithExceptionMessage(): void
     {
         $msg = 'msg';
-        self::expectException(ParsingException::class);
-        self::expectExceptionMessage($msg);
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage($msg);
         (new AssertInfinite())->withExceptionMessage($msg)->parse(false);
     }
 

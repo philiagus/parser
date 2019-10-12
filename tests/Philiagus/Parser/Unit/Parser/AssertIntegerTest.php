@@ -43,7 +43,7 @@ class AssertIntegerTest extends TestCase
      */
     public function testThatNonIntegersAreBlocked($value): void
     {
-        self::expectException(ParsingException::class);
+        $this->expectException(ParsingException::class);
         (new AssertInteger())->parse($value);
     }
 
@@ -74,7 +74,7 @@ class AssertIntegerTest extends TestCase
      */
     public function testThatMinimumCannotBeGreaterThanMaximum(): void
     {
-        self::expectException(ParserConfigurationException::class);
+        $this->expectException(ParserConfigurationException::class);
         (new AssertInteger())->withMaximum(100)->withMinimum(1000);
     }
 
@@ -83,7 +83,7 @@ class AssertIntegerTest extends TestCase
      */
     public function testThatMaximumCannotBeLowerThanMinimum(): void
     {
-        self::expectException(ParserConfigurationException::class);
+        $this->expectException(ParserConfigurationException::class);
         (new AssertInteger())->withMinimum(1000)->withMaximum(100);
     }
 
@@ -93,7 +93,7 @@ class AssertIntegerTest extends TestCase
      */
     public function testThatValueMustBeGreaterThanMinimum(): void
     {
-        self::expectException(ParsingException::class);
+        $this->expectException(ParsingException::class);
         (new AssertInteger())
             ->withMinimum(10)
             ->parse(0);
@@ -105,7 +105,7 @@ class AssertIntegerTest extends TestCase
      */
     public function testThatValueMustBeLowerThanMaximum(): void
     {
-        self::expectException(ParsingException::class);
+        $this->expectException(ParsingException::class);
         (new AssertInteger())
             ->withMaximum(0)
             ->parse(10);
@@ -179,7 +179,7 @@ class AssertIntegerTest extends TestCase
      */
     public function testisMultipleOfWrongValueException(): void
     {
-        self::expectException(ParsingException::class);
+        $this->expectException(ParsingException::class);
         (new AssertInteger())->isMultipleOf(10)->parse(9);
     }
 
@@ -190,8 +190,8 @@ class AssertIntegerTest extends TestCase
     public function testWithTypeExceptionMessage(): void
     {
         $msg = 'msg';
-        self::expectException(ParsingException::class);
-        self::expectExceptionMessage($msg);
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage($msg);
         (new AssertInteger())->withTypeExceptionMessage($msg)->parse(false);
     }
 
@@ -217,8 +217,8 @@ class AssertIntegerTest extends TestCase
      */
     public function testThatMinExceptionMessageIsUsed(string $base, string $expectedMsg, int $value, int $min): void
     {
-        self::expectException(ParsingException::class);
-        self::expectExceptionMessage($expectedMsg);
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage($expectedMsg);
         (new AssertInteger())->withMinimum($min, $base)->parse($value);
     }
 
@@ -244,8 +244,8 @@ class AssertIntegerTest extends TestCase
      */
     public function testThatMaxExceptionMessageIsUsed(string $base, string $expectedMsg, int $value, int $max): void
     {
-        self::expectException(ParsingException::class);
-        self::expectExceptionMessage($expectedMsg);
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage($expectedMsg);
         (new AssertInteger())->withMaximum($max, $base)->parse($value);
     }
 
@@ -271,8 +271,8 @@ class AssertIntegerTest extends TestCase
      */
     public function testIsMultipleOfExceptionMessageIsUsed(string $baseMsg, string $expectedMsg, int $value, int $base): void
     {
-        self::expectException(ParsingException::class);
-        self::expectExceptionMessage($expectedMsg);
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage($expectedMsg);
         (new AssertInteger())->isMultipleOf($base, $baseMsg)->parse($value);
     }
 

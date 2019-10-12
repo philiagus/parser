@@ -46,7 +46,7 @@ class AssertNullTest extends TestCase
      */
     public function testThatItBlocksNonNullValues($value): void
     {
-        self::expectException(ParsingException::class);
+        $this->expectException(ParsingException::class);
         (new AssertNull())->parse($value);
     }
 
@@ -79,8 +79,8 @@ class AssertNullTest extends TestCase
     public function testWithExceptionMessage(): void
     {
         $msg = 'msg';
-        self::expectException(ParsingException::class);
-        self::expectExceptionMessage($msg);
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage($msg);
         (new AssertNull())->withExceptionMessage($msg)->parse(false);
     }
 

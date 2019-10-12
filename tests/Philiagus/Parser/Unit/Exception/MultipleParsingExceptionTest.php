@@ -38,7 +38,7 @@ class MultipleParsingExceptionTest extends TestCase
 
     public function testConstructException(): void
     {
-        self::expectException(LogicException::class);
+        $this->expectException(LogicException::class);
         new MultipleParsingException('value', 'message', new Root(''), [false]);
     }
 

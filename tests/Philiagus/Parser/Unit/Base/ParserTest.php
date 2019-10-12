@@ -68,23 +68,9 @@ class ParserTest extends TestCase
         $result = $parser->parse($value);
 
         self::assertTrue($parser->wasCalled());
-        if (is_float($value) && is_nan($value)) {
-            // assert reference target
-            self::assertTrue(is_array($target));
-            self::assertSame([0, 1], array_keys($target));
-            self::assertTrue(is_nan($target[0]));
-            self::assertSame(ParserTest::ANOTHER_VALUE, $target[1]);
-
-            // assert result
-            self::assertTrue(is_array($result));
-            self::assertSame([0, 1], array_keys($result));
-            self::assertTrue(is_nan($result[0]));
-            self::assertSame(ParserTest::ANOTHER_VALUE, $result[1]);
-        } else {
-            self::assertSame([$value, ParserTest::ANOTHER_VALUE], $target);
-            self::assertSame([$value, ParserTest::ANOTHER_VALUE], $result);
-            self::assertSame($target, $result);
-        }
+        DataProvider::assertSame([$value, ParserTest::ANOTHER_VALUE], $target);
+        DataProvider::assertSame([$value, ParserTest::ANOTHER_VALUE], $result);
+        DataProvider::assertSame($target, $result);
     }
 
     /**
