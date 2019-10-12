@@ -5,8 +5,6 @@ namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Exception\ParserConfigurationException;
-use Philiagus\Parser\Exception\ParsingException;
 
 class Fork extends Parser
 {

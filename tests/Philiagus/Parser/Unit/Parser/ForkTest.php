@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Philiagus\Test\Parser;
 
 use Philiagus\Parser\Base\Parser;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\Fork;
 use Philiagus\Parser\Path\Root;
@@ -14,12 +14,15 @@ use Prophecy\Argument;
 
 class ForkTest extends TestCase
 {
-
     public function testItExtendsBaseParser(): void
     {
         self::assertTrue(new Fork() instanceof Parser);
     }
 
+    /**
+     * @return array
+     * @throws \Exception
+     */
     public function provideAllValues(): array
     {
         return DataProvider::provide(DataProvider::TYPE_ALL);
@@ -29,8 +32,8 @@ class ForkTest extends TestCase
      * @param $value
      *
      * @dataProvider provideAllValues
-     * @throws \Philiagus\Parser\Exception\ParserConfigurationException
-     * @throws \Philiagus\Parser\Exception\ParsingException
+     * @throws ParserConfigurationException
+     * @throws ParsingException
      */
     public function testThatItForksAnyValueToEveryParser($value): void
     {
@@ -48,6 +51,10 @@ class ForkTest extends TestCase
         $parser->parse($value, $path);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
     public function testThatItStopsAtFirstErrorParser(): void
     {
         $parser = new Fork();
