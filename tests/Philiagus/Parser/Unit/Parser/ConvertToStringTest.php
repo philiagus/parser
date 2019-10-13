@@ -18,6 +18,7 @@ use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\ConvertToString;
 use Philiagus\Test\Parser\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class ConvertToStringTest extends TestCase
 {
@@ -27,6 +28,10 @@ class ConvertToStringTest extends TestCase
         self::assertInstanceOf(Parser::class, new ConvertToString());
     }
 
+    /**
+     * @return array
+     * @throws \Exception
+     */
     public function provideInvalidValues(): array
     {
         return DataProvider::provide(
@@ -36,7 +41,7 @@ class ConvertToStringTest extends TestCase
                 DataProvider::TYPE_NULL |
                 DataProvider::TYPE_ARRAY
             ) + [
-                'object without __toString' => [new \stdClass()],
+                'object without __toString' => [new stdClass()],
             ];
     }
 
@@ -68,6 +73,7 @@ class ConvertToStringTest extends TestCase
 
     /**
      * @param $invalid
+     *
      * @dataProvider provideInvalidValues
      * @throws ParserConfigurationException
      * @throws ParsingException
@@ -79,6 +85,10 @@ class ConvertToStringTest extends TestCase
         (new ConvertToString())->withTypeExceptionMessage('type {type}')->parse($invalid);
     }
 
+    /**
+     * @return array
+     * @throws \Exception
+     */
     public function provideValueWithExpectedStrings(): array
     {
         $tests = [];
@@ -128,7 +138,7 @@ class ConvertToStringTest extends TestCase
     {
         self::assertSame(
             '1.2.3.4',
-            (new ConvertToString())->withImplodeOfArrays('.')->parse(['1','2','3','4'])
+            (new ConvertToString())->withImplodeOfArrays('.')->parse(['1', '2', '3', '4'])
         );
     }
 
@@ -139,7 +149,7 @@ class ConvertToStringTest extends TestCase
     public function testWithImplodeOfArraysWithoutStringValues(): void
     {
         $this->expectException(ParsingException::class);
-        (new ConvertToString())->withImplodeOfArrays('.')->parse([1,2,3]);
+        (new ConvertToString())->withImplodeOfArrays('.')->parse([1, 2, 3]);
     }
 
     public function provideForWithImplodeOfArraysExceptionMessage(): array
@@ -172,7 +182,7 @@ class ConvertToStringTest extends TestCase
     {
         return [
             'true case' => ['yes', 'no', 'yes', true],
-            'false case' => ['yes', 'no', 'no', false]
+            'false case' => ['yes', 'no', 'no', false],
         ];
     }
 
