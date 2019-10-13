@@ -163,7 +163,7 @@ class ConvertToArrayTest extends TestCase
      */
     public function testTestThatItForcesKeysWithValue(): void
     {
-        $parser = (new ConvertToArray())->withDefaultedElement('forced', 1);
+        $parser = (new ConvertToArray())->withDefaultedKey('forced', 1);
         $result = $parser->parse(['original' => 1]);
         self::assertSame(
             [
@@ -180,7 +180,7 @@ class ConvertToArrayTest extends TestCase
      */
     public function testTestThatForcedKeysDoNotOverwriteExistingKeys(): void
     {
-        $parser = (new ConvertToArray())->withDefaultedElement('forced', 1);
+        $parser = (new ConvertToArray())->withDefaultedKey('forced', 1);
         $result = $parser->parse(['forced' => 666]);
         self::assertSame(
             [
@@ -199,7 +199,7 @@ class ConvertToArrayTest extends TestCase
      */
     public function testThatForcedKeysAcceptIntegerAndString($key): void
     {
-        $parser = (new ConvertToArray())->withDefaultedElement($key, 'value');
+        $parser = (new ConvertToArray())->withDefaultedKey($key, 'value');
         self::assertSame(
             [
                 $key => 'value',
@@ -217,7 +217,7 @@ class ConvertToArrayTest extends TestCase
     public function testThatForcedKeysDoNotExceptNonIntegerOrString($key): void
     {
         $this->expectException(ParserConfigurationException::class);
-        (new ConvertToArray())->withDefaultedElement($key, 'value');
+        (new ConvertToArray())->withDefaultedKey($key, 'value');
     }
 
     /**
@@ -233,7 +233,7 @@ class ConvertToArrayTest extends TestCase
 
         /** @var Parser $childParser */
         $childParser = $child->reveal();
-        $parser = (new ConvertToArray())->withDefaultedElement('key', 'value', $childParser);
+        $parser = (new ConvertToArray())->withDefaultedKey('key', 'value', $childParser);
         $result = $parser->parse([]);
         self::assertSame(
             [
@@ -256,7 +256,7 @@ class ConvertToArrayTest extends TestCase
 
         /** @var Parser $childParser */
         $childParser = $child->reveal();
-        $parser = (new ConvertToArray())->withDefaultedElement('key', 'will not be used', $childParser);
+        $parser = (new ConvertToArray())->withDefaultedKey('key', 'will not be used', $childParser);
         $result = $parser->parse(['key' => 'value']);
         self::assertSame(
             [
@@ -270,7 +270,7 @@ class ConvertToArrayTest extends TestCase
      * @throws ParserConfigurationException
      * @throws ParsingException
      */
-    public function testWithElementWhitelist(): void
+    public function testWithKeyWhitelist(): void
     {
         $parser = (new ConvertToArray())->withKeyWhitelist(['key1', 2]);
         self::assertSame(
@@ -295,7 +295,7 @@ class ConvertToArrayTest extends TestCase
      * @throws ParserConfigurationException
      * @throws ParsingException
      */
-    public function testThatElementWhitelistAcceptsIntegersAndStrings($key): void
+    public function testThatKeyWhitelistAcceptsIntegersAndStrings($key): void
     {
         $parser = (new ConvertToArray())->withKeyWhitelist([$key]);
         self::assertSame(
@@ -315,7 +315,7 @@ class ConvertToArrayTest extends TestCase
      * @dataProvider provideInvalidKeys
      * @throws ParserConfigurationException
      */
-    public function testThatElementWhitelistDoesNotAcceptNonIntegerString($key): void
+    public function testThatKeyWhitelistDoesNotAcceptNonIntegerString($key): void
     {
         $this->expectException(ParserConfigurationException::class);
         (new ConvertToArray())->withKeyWhitelist([$key]);
@@ -335,7 +335,7 @@ class ConvertToArrayTest extends TestCase
      * @throws ParserConfigurationException
      * @throws ParsingException
      */
-    public function testThatForcedElementsMustExist(): void
+    public function testThatForcedKeysMustExist(): void
     {
         $childParser = new class() extends Parser
         {
@@ -343,7 +343,7 @@ class ConvertToArrayTest extends TestCase
             {
             }
         };
-        $parser = (new ConvertToArray())->withElement('key', $childParser);
+        $parser = (new ConvertToArray())->withKey('key', $childParser);
         $this->expectException(ParsingException::class);
         $parser->parse([]);
     }
@@ -352,7 +352,7 @@ class ConvertToArrayTest extends TestCase
      * @throws ParserConfigurationException
      * @throws ParsingException
      */
-    public function testThatForcedElementsAreParsedAndOverwriteReturn(): void
+    public function testThatForcedKeysAreParsedAndOverwriteReturn(): void
     {
         $child = $this->prophesize(Parser::class);
         $child->execute('value', Argument::type(Path::class))
@@ -360,7 +360,7 @@ class ConvertToArrayTest extends TestCase
             ->willReturn('parsedValue');
         /** @var Parser $childParser */
         $childParser = $child->reveal();
-        $parser = (new ConvertToArray())->withElement('key', $childParser);
+        $parser = (new ConvertToArray())->withKey('key', $childParser);
         self::assertSame(
             ['key' => 'parsedValue'],
             $parser->parse(['key' => 'value'])
@@ -374,7 +374,7 @@ class ConvertToArrayTest extends TestCase
      * @throws ParserConfigurationException*@throws ParsingException
      * @throws ParsingException
      */
-    public function testThatForcedElementKeysCanBeIntegerOrString($key): void
+    public function testThatForcedKeysCanBeIntegerOrString($key): void
     {
         $child = $this->prophesize(Parser::class);
         $child->execute('value', Argument::type(Path::class))
@@ -383,7 +383,7 @@ class ConvertToArrayTest extends TestCase
 
         /** @var Parser $childParser */
         $childParser = $child->reveal();
-        $parser = (new ConvertToArray())->withElement($key, $childParser);
+        $parser = (new ConvertToArray())->withKey($key, $childParser);
         self::assertSame(
             [$key => 'parsedValue'],
             $parser->parse([$key => 'value'])
@@ -396,7 +396,7 @@ class ConvertToArrayTest extends TestCase
      * @dataProvider provideInvalidKeys
      * @throws ParserConfigurationException
      */
-    public function testThatForcedElementKeysMustBeIntegerOrString($key): void
+    public function testThatForcedKeysMustBeIntegerOrString($key): void
     {
         $childParser = new class() extends Parser
         {
@@ -405,7 +405,7 @@ class ConvertToArrayTest extends TestCase
             }
         };
         $this->expectException(ParserConfigurationException::class);
-        (new ConvertToArray())->withElement($key, $childParser);
+        (new ConvertToArray())->withKey($key, $childParser);
     }
 
     /**
@@ -460,7 +460,7 @@ class ConvertToArrayTest extends TestCase
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($expected);
-        (new ConvertToArray())->withElement($key, (new ConvertToArray()), $exception)->parse([]);
+        (new ConvertToArray())->withKey($key, (new ConvertToArray()), $exception)->parse([]);
     }
 
 }

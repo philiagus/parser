@@ -47,12 +47,12 @@ class AssertArray
     /**
      * @var array[]
      */
-    private $withElement = [];
+    private $withKey = [];
 
     /**
      * @var Parser[]
      */
-    private $withDefaultedElement = [];
+    private $withDefaultedKey = [];
 
     /**
      * @var null|string
@@ -127,13 +127,13 @@ class AssertArray
      * @return $this
      * @throws ParserConfigurationException
      */
-    public function withElement($key, Parser $parser, string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'): self
+    public function withKey($key, Parser $parser, string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'): self
     {
         if (!is_string($key) && !is_int($key)) {
             throw new ParserConfigurationException('Arrays only accept string or integer keys');
         }
 
-        $this->withElement[$key] = [$parser, $missingKeyExceptionMessage];
+        $this->withKey[$key] = [$parser, $missingKeyExceptionMessage];
 
         return $this;
     }
@@ -146,13 +146,13 @@ class AssertArray
      * @return $this
      * @throws ParserConfigurationException
      */
-    public function withDefaultedElement($key, $default, Parser $parser): self
+    public function withDefaultedKey($key, $default, Parser $parser): self
     {
         if (!is_string($key) && !is_int($key)) {
             throw new ParserConfigurationException('Arrays only accept string or integer keys');
         }
 
-        $this->withDefaultedElement[$key] = [$default, $parser];
+        $this->withDefaultedKey[$key] = [$default, $parser];
 
         return $this;
     }
@@ -207,7 +207,7 @@ class AssertArray
          * @var Parser $parser
          * @var string $exceptionMessage
          */
-        foreach ($this->withElement as $key => [$parser, $exceptionMessage]) {
+        foreach ($this->withKey as $key => [$parser, $exceptionMessage]) {
             if (!in_array($key, $keys)) {
                 throw new ParsingException(
                     $value,
@@ -219,7 +219,7 @@ class AssertArray
             $parser->parse($value[$key], $path->index((string) $key));
         }
 
-        foreach ($this->withDefaultedElement as $key => [$element, $parser]) {
+        foreach ($this->withDefaultedKey as $key => [$element, $parser]) {
             if (in_array($key, $keys)) {
                 $element = $value[$key];
             }

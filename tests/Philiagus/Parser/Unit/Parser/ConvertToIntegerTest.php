@@ -119,7 +119,7 @@ class ConvertToIntegerTest extends TestCase
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($expected);
-        (new ConvertToInteger())->withExceptionMessage($baseMsg)->parse($value);
+        (new ConvertToInteger())->withTypeExceptionMessage($baseMsg)->parse($value);
     }
 
 }

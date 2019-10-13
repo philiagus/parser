@@ -23,7 +23,7 @@ class ConvertToInteger
     extends Parser
 {
 
-    private $conversionExceptionMessage = 'Variable of type {type} could not be converted to an integer';
+    private $typeExceptionMessage = 'Variable of type {type} could not be converted to an integer';
 
     /**
      * Available replacers:
@@ -33,9 +33,9 @@ class ConvertToInteger
      *
      * @return $this
      */
-    public function withExceptionMessage(string $message): self
+    public function withTypeExceptionMessage(string $message): self
     {
-        $this->conversionExceptionMessage = $message;
+        $this->typeExceptionMessage = $message;
 
         return $this;
     }
@@ -69,7 +69,7 @@ class ConvertToInteger
             if (!is_int($value)) {
                 throw new Exception\ParsingException(
                     $value,
-                    strtr($this->conversionExceptionMessage, ['{type}' => gettype($value)]),
+                    strtr($this->typeExceptionMessage, ['{type}' => gettype($value)]),
                     $path
                 );
             }
