@@ -127,7 +127,7 @@ class AssertArray
      * @return $this
      * @throws ParserConfigurationException
      */
-    public function withKeyHavingValue($key, Parser $parser, string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'): self
+    public function withElement($key, Parser $parser, string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'): self
     {
         if (!is_string($key) && !is_int($key)) {
             throw new ParserConfigurationException('Arrays only accept string or integer keys');

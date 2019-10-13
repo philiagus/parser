@@ -260,7 +260,7 @@ class AssertArrayTest extends TestCase
         $valueParser = $parser->reveal();
 
         (new AssertArray())
-            ->withKeyHavingValue('key', $valueParser)
+            ->withElement('key', $valueParser)
             ->parse(['key' => 'value']);
     }
 
@@ -278,7 +278,7 @@ class AssertArrayTest extends TestCase
 
         $this->expectException(ParsingException::class);
         (new AssertArray())
-            ->withKeyHavingValue('key', $parser)
+            ->withElement('key', $parser)
             ->parse([]);
     }
 
@@ -314,7 +314,7 @@ class AssertArrayTest extends TestCase
             }
         };
         $this->expectException(ParserConfigurationException::class);
-        (new AssertArray())->withKeyHavingValue($notStringInt, $parser);
+        (new AssertArray())->withElement($notStringInt, $parser);
     }
 
     /**
@@ -333,7 +333,7 @@ class AssertArrayTest extends TestCase
         $valueParser = $parser->reveal();
 
         (new AssertArray())
-            ->withKeyHavingValue($stringInt, $valueParser)
+            ->withElement($stringInt, $valueParser)
             ->parse([$stringInt => 'value'], new Root('root'));
     }
 
@@ -347,7 +347,7 @@ class AssertArrayTest extends TestCase
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($message);
         (new AssertArray())
-            ->withKeyHavingValue('key', (new AssertArray()), $message)
+            ->withElement('key', (new AssertArray()), $message)
             ->parse([]);
     }
 

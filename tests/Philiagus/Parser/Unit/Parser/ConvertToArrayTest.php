@@ -163,7 +163,7 @@ class ConvertToArrayTest extends TestCase
      */
     public function testTestThatItForcesKeysWithValue(): void
     {
-        $parser = (new ConvertToArray())->withDefaultedKeyConvertingValue('forced', 1);
+        $parser = (new ConvertToArray())->withDefaultedElement('forced', 1);
         $result = $parser->parse(['original' => 1]);
         self::assertSame(
             [
@@ -180,7 +180,7 @@ class ConvertToArrayTest extends TestCase
      */
     public function testTestThatForcedKeysDoNotOverwriteExistingKeys(): void
     {
-        $parser = (new ConvertToArray())->withDefaultedKeyConvertingValue('forced', 1);
+        $parser = (new ConvertToArray())->withDefaultedElement('forced', 1);
         $result = $parser->parse(['forced' => 666]);
         self::assertSame(
             [
@@ -199,7 +199,7 @@ class ConvertToArrayTest extends TestCase
      */
     public function testThatForcedKeysAcceptIntegerAndString($key): void
     {
-        $parser = (new ConvertToArray())->withDefaultedKeyConvertingValue($key, 'value');
+        $parser = (new ConvertToArray())->withDefaultedElement($key, 'value');
         self::assertSame(
             [
                 $key => 'value',
@@ -217,7 +217,7 @@ class ConvertToArrayTest extends TestCase
     public function testThatForcedKeysDoNotExceptNonIntegerOrString($key): void
     {
         $this->expectException(ParserConfigurationException::class);
-        (new ConvertToArray())->withDefaultedKeyConvertingValue($key, 'value');
+        (new ConvertToArray())->withDefaultedElement($key, 'value');
     }
 
     /**
@@ -233,7 +233,7 @@ class ConvertToArrayTest extends TestCase
 
         /** @var Parser $childParser */
         $childParser = $child->reveal();
-        $parser = (new ConvertToArray())->withDefaultedKeyConvertingValue('key', 'value', $childParser);
+        $parser = (new ConvertToArray())->withDefaultedElement('key', 'value', $childParser);
         $result = $parser->parse([]);
         self::assertSame(
             [
@@ -256,7 +256,7 @@ class ConvertToArrayTest extends TestCase
 
         /** @var Parser $childParser */
         $childParser = $child->reveal();
-        $parser = (new ConvertToArray())->withDefaultedKeyConvertingValue('key', 'will not be used', $childParser);
+        $parser = (new ConvertToArray())->withDefaultedElement('key', 'will not be used', $childParser);
         $result = $parser->parse(['key' => 'value']);
         self::assertSame(
             [
@@ -272,7 +272,7 @@ class ConvertToArrayTest extends TestCase
      */
     public function testWithElementWhitelist(): void
     {
-        $parser = (new ConvertToArray())->withElementWhitelist(['key1', 2]);
+        $parser = (new ConvertToArray())->withKeyWhitelist(['key1', 2]);
         self::assertSame(
             [
                 'key1' => 123,
@@ -297,7 +297,7 @@ class ConvertToArrayTest extends TestCase
      */
     public function testThatElementWhitelistAcceptsIntegersAndStrings($key): void
     {
-        $parser = (new ConvertToArray())->withElementWhitelist([$key]);
+        $parser = (new ConvertToArray())->withKeyWhitelist([$key]);
         self::assertSame(
             [
                 $key => 'exists',
@@ -318,7 +318,7 @@ class ConvertToArrayTest extends TestCase
     public function testThatElementWhitelistDoesNotAcceptNonIntegerString($key): void
     {
         $this->expectException(ParserConfigurationException::class);
-        (new ConvertToArray())->withElementWhitelist([$key]);
+        (new ConvertToArray())->withKeyWhitelist([$key]);
     }
 
     /**
@@ -327,7 +327,7 @@ class ConvertToArrayTest extends TestCase
      */
     public function testThatWhitelistIgnoresIfKeysAreNotPresent(): void
     {
-        $parser = (new ConvertToArray())->withElementWhitelist(['ignored', 'as well']);
+        $parser = (new ConvertToArray())->withKeyWhitelist(['ignored', 'as well']);
         self::assertSame([], $parser->parse(['something', 'or', 'other']));
     }
 
@@ -343,7 +343,7 @@ class ConvertToArrayTest extends TestCase
             {
             }
         };
-        $parser = (new ConvertToArray())->withKeyConvertingValue('key', $childParser);
+        $parser = (new ConvertToArray())->withElement('key', $childParser);
         $this->expectException(ParsingException::class);
         $parser->parse([]);
     }
@@ -360,7 +360,7 @@ class ConvertToArrayTest extends TestCase
             ->willReturn('parsedValue');
         /** @var Parser $childParser */
         $childParser = $child->reveal();
-        $parser = (new ConvertToArray())->withKeyConvertingValue('key', $childParser);
+        $parser = (new ConvertToArray())->withElement('key', $childParser);
         self::assertSame(
             ['key' => 'parsedValue'],
             $parser->parse(['key' => 'value'])
@@ -383,7 +383,7 @@ class ConvertToArrayTest extends TestCase
 
         /** @var Parser $childParser */
         $childParser = $child->reveal();
-        $parser = (new ConvertToArray())->withKeyConvertingValue($key, $childParser);
+        $parser = (new ConvertToArray())->withElement($key, $childParser);
         self::assertSame(
             [$key => 'parsedValue'],
             $parser->parse([$key => 'value'])
@@ -405,7 +405,7 @@ class ConvertToArrayTest extends TestCase
             }
         };
         $this->expectException(ParserConfigurationException::class);
-        (new ConvertToArray())->withKeyConvertingValue($key, $childParser);
+        (new ConvertToArray())->withElement($key, $childParser);
     }
 
     /**
@@ -460,7 +460,7 @@ class ConvertToArrayTest extends TestCase
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($expected);
-        (new ConvertToArray())->withKeyConvertingValue($key, (new ConvertToArray()), $exception)->parse([]);
+        (new ConvertToArray())->withElement($key, (new ConvertToArray()), $exception)->parse([]);
     }
 
 }

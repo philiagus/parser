@@ -35,10 +35,12 @@ class DataProvider
     /**
      * @param int $types
      *
+     * @param callable $filter
+     *
      * @return array
      * @throws Exception
      */
-    public static function provide(int $types): array
+    public static function provide(int $types, callable $filter = null): array
     {
         $cases = [];
 
@@ -137,6 +139,9 @@ class DataProvider
 
         $result = [];
         foreach ($cases as $name => $value) {
+            if($filter && !$filter($value)) {
+                continue;
+            }
             $result[$name] = [$value];
         }
 

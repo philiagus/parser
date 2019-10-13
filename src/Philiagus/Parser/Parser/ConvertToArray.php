@@ -98,7 +98,7 @@ class ConvertToArray extends Parser
      * @return $this
      * @throws ParserConfigurationException
      */
-    public function withDefaultedKeyConvertingValue(
+    public function withDefaultedElement(
         $key, $forcedValue,
         Parser $andParse = null,
         string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'
@@ -122,7 +122,7 @@ class ConvertToArray extends Parser
      * @return $this
      * @throws ParserConfigurationException
      */
-    public function withElementWhitelist(array $keys): self
+    public function withKeyWhitelist(array $keys): self
     {
         foreach ($keys as $key) {
             if (!is_string($key) && !is_int($key)) {
@@ -148,7 +148,7 @@ class ConvertToArray extends Parser
      * @return $this
      * @throws ParserConfigurationException
      */
-    public function withKeyConvertingValue($key, Parser $parser, string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'): self
+    public function withElement($key, Parser $parser, string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'): self
     {
         if (!is_string($key) && !is_int($key)) {
             throw new ParserConfigurationException('Arrays only accept string or integer keys');
