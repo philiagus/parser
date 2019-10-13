@@ -15,7 +15,6 @@ namespace Philiagus\Parser\Parser;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParsingException;
-use function json_decode;
 
 class ConvertFromJson extends Parser
 {

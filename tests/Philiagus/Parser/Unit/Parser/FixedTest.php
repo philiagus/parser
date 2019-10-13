@@ -12,14 +12,12 @@ declare(strict_types=1);
 
 namespace Philiagus\Test\Parser\Unit\Parser;
 
-use Exception;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\Fixed;
 use Philiagus\Test\Parser\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 
 class FixedTest extends TestCase
 {
@@ -31,7 +29,7 @@ class FixedTest extends TestCase
 
     /**
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
     public function provideAllTypes(): array
     {
@@ -47,7 +45,7 @@ class FixedTest extends TestCase
      */
     public function testThatItIgnoresAnyInputAndReturnsTheDefinedValue($value): void
     {
-        $instance = new stdClass();
+        $instance = new \stdClass();
         self::assertSame($instance, (new Fixed())->withValue($instance)->parse($value));
     }
 
@@ -60,7 +58,7 @@ class FixedTest extends TestCase
      */
     public function testThatItAcceptsAnyValueAsFixed($value): void
     {
-        $instance = new stdClass();
+        $instance = new \stdClass();
         $result = (new Fixed())->withValue($value)->parse($instance);
         DataProvider::assertSame($value, $result);
     }

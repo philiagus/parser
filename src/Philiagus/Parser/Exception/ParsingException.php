@@ -12,15 +12,13 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Exception;
 
-use Exception;
 use Philiagus\Parser\Base\Path;
-use Throwable;
 
 /**
  * This exception is supposed to be thrown, when the value as provided by the input does not conform with the parser
  * e.g. when the value could not be converted to the target type or when the provided type is not of the correct type
  */
-class ParsingException extends Exception
+class ParsingException extends \Exception
 {
 
     /**
@@ -39,9 +37,9 @@ class ParsingException extends Exception
      * @param $value
      * @param string $message
      * @param Path $path
-     * @param Throwable|null $previous
+     * @param \Throwable|null $previous
      */
-    public function __construct($value, string $message, Path $path, Throwable $previous = null)
+    public function __construct($value, string $message, Path $path, \Throwable $previous = null)
     {
         $this->value = $value;
         $this->path = $path;

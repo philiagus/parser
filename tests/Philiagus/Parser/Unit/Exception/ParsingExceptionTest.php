@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Philiagus\Test\Parser\Unit\Exception;
 
-use Exception;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Path\Root;
 use Philiagus\Test\Parser\Provider\DataProvider;
@@ -32,7 +31,7 @@ class ParsingExceptionTest extends TestCase
 
     public function testWithPrevious(): void
     {
-        $previous = new Exception();
+        $previous = new \Exception();
         $path = new Root('');
         $exception = new ParsingException('value', 'message', $path, $previous);
         self::assertSame('message', $exception->getMessage());
@@ -43,7 +42,7 @@ class ParsingExceptionTest extends TestCase
 
     /**
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
     public function provideAllTypes(): array
     {

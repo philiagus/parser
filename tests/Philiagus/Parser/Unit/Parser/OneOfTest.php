@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Philiagus\Test\Parser\Unit\Parser;
 
-use LogicException;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\MultipleParsingException;
@@ -61,7 +60,7 @@ class OneOfTest extends TestCase
                 {
                     public function execute($value, Path $path = null)
                     {
-                        throw new LogicException('This code should never be reached');
+                        throw new \LogicException('This code should never be reached');
                     }
                 }
             )->parse(null));

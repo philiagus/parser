@@ -12,14 +12,12 @@ declare(strict_types=1);
 
 namespace Philiagus\Test\Parser\Unit\Parser;
 
-use Exception;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\ConvertFromJson;
 use Philiagus\Test\Parser\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 
 class ConvertFromJsonTest extends TestCase
 {
@@ -31,7 +29,7 @@ class ConvertFromJsonTest extends TestCase
 
     /**
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
     public function provideNonStringValues(): array
     {
@@ -91,7 +89,7 @@ class ConvertFromJsonTest extends TestCase
     public function testWithObjectsAsArrays(): void
     {
         $parser = (new ConvertFromJson());
-        self::assertInstanceOf(stdClass::class, $parser->parse('{}'));
+        self::assertInstanceOf(\stdClass::class, $parser->parse('{}'));
         $parser->withObjectsAsArrays();
         self::assertSame([], $parser->parse('{}'));
     }

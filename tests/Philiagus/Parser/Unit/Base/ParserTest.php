@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Philiagus\Test\Parser\Unit\Base;
 
-use Exception;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParserConfigurationException;
@@ -28,7 +27,7 @@ class ParserTest extends TestCase
 
     /**
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
     public function allValuesProvider(): array
     {

@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Philiagus\Test\Parser\Unit\Parser;
 
-use Exception;
 use Philiagus\Parser\Parser\AssertSame;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
@@ -30,7 +29,7 @@ class AssertSameTest extends TestCase
 
     /**
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
     public function provideEverything(): array
     {
@@ -39,7 +38,7 @@ class AssertSameTest extends TestCase
 
     /**
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
     public function provideEverythingExceptNAN(): array
     {

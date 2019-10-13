@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Philiagus\Test\Parser;
 
-use Exception;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
@@ -31,7 +30,7 @@ class ForkTest extends TestCase
 
     /**
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
     public function provideAllValues(): array
     {

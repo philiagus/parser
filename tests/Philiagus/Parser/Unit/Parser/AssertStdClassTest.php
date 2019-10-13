@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Philiagus\Test\Parser\Unit\Parser;
 
-use Exception;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParserConfigurationException;
@@ -22,7 +21,6 @@ use Philiagus\Parser\Path\Property;
 use Philiagus\Test\Parser\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use stdClass;
 
 class AssertStdClassTest extends TestCase
 {
@@ -34,12 +32,12 @@ class AssertStdClassTest extends TestCase
 
     /**
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
     public function provideInvalidValues(): array
     {
         return DataProvider::provide(DataProvider::TYPE_ALL, function ($element) {
-            return !is_object($element) || get_class($element) !== stdClass::class;
+            return !is_object($element) || get_class($element) !== \stdClass::class;
         });
     }
 
@@ -63,7 +61,7 @@ class AssertStdClassTest extends TestCase
      */
     public function testThatItAllowsStdClass(): void
     {
-        $object = new stdClass();
+        $object = new \stdClass();
         self::assertSame($object, ((new AssertStdClass())->parse($object)));
     }
 

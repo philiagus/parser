@@ -10,7 +10,7 @@
 
 namespace Philiagus\Test\Parser\Unit\Parser;
 
-use Exception;
+
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
@@ -27,7 +27,7 @@ class AssertIntegerTest extends TestCase
 
     /**
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
     public function provideInvalidValues(): array
     {
@@ -49,7 +49,7 @@ class AssertIntegerTest extends TestCase
 
     /**
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
     public function provideValidValues(): array
     {

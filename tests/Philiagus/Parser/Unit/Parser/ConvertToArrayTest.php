@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Philiagus\Test\Parser\Unit\Parser;
 
-use Exception;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParserConfigurationException;
@@ -32,7 +31,7 @@ class ConvertToArrayTest extends TestCase
 
     /**
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
     public function provideInvalidValues(): array
     {
@@ -54,7 +53,7 @@ class ConvertToArrayTest extends TestCase
 
     /**
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
     public function provideValidValues(): array
     {
@@ -113,7 +112,7 @@ class ConvertToArrayTest extends TestCase
 
     /**
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
     public function provideValidKeys(): array
     {
@@ -137,7 +136,7 @@ class ConvertToArrayTest extends TestCase
 
     /**
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
     public function provideInvalidKeys(): array
     {

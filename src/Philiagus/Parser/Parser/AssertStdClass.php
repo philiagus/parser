@@ -16,7 +16,6 @@ use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception;
 use Philiagus\Parser\Exception\ParsingException;
-use stdClass;
 
 class AssertStdClass
     extends Parser
@@ -79,7 +78,7 @@ class AssertStdClass
      */
     protected function execute($value, Path $path)
     {
-        if (!is_object($value) || get_class($value) !== stdClass::class) {
+        if (!is_object($value) || get_class($value) !== \stdClass::class) {
             throw new Exception\ParsingException($value, $this->typeExceptionMessage, $path);
         }
 

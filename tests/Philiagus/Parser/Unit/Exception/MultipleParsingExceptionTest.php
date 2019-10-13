@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Philiagus\Test\Parser\Unit\Exception;
 
-use LogicException;
 use Philiagus\Parser\Exception\MultipleParsingException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Path\Root;
@@ -38,7 +37,7 @@ class MultipleParsingExceptionTest extends TestCase
 
     public function testConstructException(): void
     {
-        $this->expectException(LogicException::class);
+        $this->expectException(\LogicException::class);
         new MultipleParsingException('value', 'message', new Root(''), [false]);
     }
 

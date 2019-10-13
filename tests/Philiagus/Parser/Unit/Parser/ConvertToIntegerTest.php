@@ -12,14 +12,12 @@ declare(strict_types=1);
 
 namespace Philiagus\Test\Parser\Unit\Parser;
 
-use Exception;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\ConvertToInteger;
 use Philiagus\Test\Parser\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 
 class ConvertToIntegerTest extends TestCase
 {
@@ -31,7 +29,7 @@ class ConvertToIntegerTest extends TestCase
 
     /**
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
     public function provideIncompatibleValues(): array
     {
@@ -101,7 +99,7 @@ class ConvertToIntegerTest extends TestCase
     {
         return [
             'string' => ['its {type}', 'its string', 'abc'],
-            'object' => ['its {type}', 'its object', new stdClass()],
+            'object' => ['its {type}', 'its object', new \stdClass()],
             'array' => ['its {type}', 'its array', []],
         ];
     }

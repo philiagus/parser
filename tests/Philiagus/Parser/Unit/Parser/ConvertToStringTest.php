@@ -18,7 +18,6 @@ use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\ConvertToString;
 use Philiagus\Test\Parser\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 
 class ConvertToStringTest extends TestCase
 {
@@ -41,7 +40,7 @@ class ConvertToStringTest extends TestCase
                 DataProvider::TYPE_NULL |
                 DataProvider::TYPE_ARRAY
             ) + [
-                'object without __toString' => [new stdClass()],
+                'object without __toString' => [new \stdClass()],
             ];
     }
 

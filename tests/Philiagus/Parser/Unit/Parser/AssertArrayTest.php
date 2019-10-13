@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Philiagus\Test\Parser\Unit\Parser;
 
-use Exception;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Parser\AssertArray;
@@ -41,7 +40,7 @@ class AssertArrayTest extends TestCase
 
     /**
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
     public function provideInvalidValues(): array
     {
@@ -63,7 +62,7 @@ class AssertArrayTest extends TestCase
 
     /**
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
     public function provideValidValues(): array
     {
@@ -122,7 +121,7 @@ class AssertArrayTest extends TestCase
 
         $parser = $this->prophesize(Parser::class);
         foreach ($array as $key => $value) {
-            if ($value instanceof Exception) {
+            if ($value instanceof \Exception) {
                 $parser->execute($value, Argument::type(Index::class))
                     ->shouldBeCalledOnce()
                     ->willThrow($value);
@@ -198,7 +197,7 @@ class AssertArrayTest extends TestCase
 
         $parser = $this->prophesize(Parser::class);
         foreach ($array as $key => $value) {
-            if ($value instanceof Exception) {
+            if ($value instanceof \Exception) {
                 $parser->execute($key, Argument::type(Key::class))
                     ->shouldBeCalledOnce()
                     ->willThrow($value);
@@ -284,7 +283,7 @@ class AssertArrayTest extends TestCase
 
     /**
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
     public function provideInvalidArrayKeys(): array
     {
@@ -293,7 +292,7 @@ class AssertArrayTest extends TestCase
 
     /**
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
     public function provideValidArrayKeys(): array
     {
