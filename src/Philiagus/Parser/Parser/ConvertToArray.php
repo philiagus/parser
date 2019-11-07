@@ -93,16 +93,10 @@ class ConvertToArray extends Parser
      * @param $forcedValue
      * @param Parser|null $andParse
      *
-     * @param string $missingKeyExceptionMessage
-     *
      * @return $this
      * @throws ParserConfigurationException
      */
-    public function withDefaultedKey(
-        $key, $forcedValue,
-        Parser $andParse = null,
-        string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'
-    ): self
+    public function withDefaultedKey($key, $forcedValue, Parser $andParse = null): self
     {
         if (!is_string($key) && !is_int($key)) {
             throw new ParserConfigurationException('Arrays only accept string or integer keys');
@@ -110,7 +104,7 @@ class ConvertToArray extends Parser
 
         $this->forcedKeys[$key] = $forcedValue;
         if ($andParse) {
-            $this->withKeyConvertingValue[$key] = [$andParse, $missingKeyExceptionMessage];
+            $this->withKeyConvertingValue[$key] = [$andParse, null];
         }
 
         return $this;
@@ -193,14 +187,13 @@ class ConvertToArray extends Parser
         }
 
         if ($this->withKeyConvertingValue) {
-            $keys = array_keys($value);
             /**
              * @var int|string $key
              * @var Parser $parser
-             * @var string $exceptionMessage
+             * @var string|null $exceptionMessage
              */
             foreach ($this->withKeyConvertingValue as $key => [$parser, $exceptionMessage]) {
-                if (!in_array($key, $keys)) {
+                if ($exceptionMessage !== null && !array_key_exists($key, $value)) {
                     throw new ParsingException(
                         $value,
                         strtr($exceptionMessage, ['{key}' => var_export($key, true)]),
