@@ -462,4 +462,156 @@ class ConvertToArrayTest extends TestCase
         (new ConvertToArray())->withKey($key, (new ConvertToArray()), $exception)->parse([]);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
+    public function testWithEachKeyConversion(): void
+    {
+        self::assertSame(
+            [
+                'something 0' => 1,
+                'another thing 1' => 2,
+                '0 2' => 3,
+                '1 3' => 4,
+                '2 4' => 5,
+                '3 5' => 6,
+            ],
+            (new ConvertToArray())
+                ->withEachKey(
+                    new class() extends Parser
+                    {
+                        private $counter = 0;
+
+                        protected function execute($value, Path $path)
+                        {
+                            return $value . ' ' . $this->counter++;
+                    }
+                    }
+                )
+                ->parse(
+                    [
+                        'something' => 1,
+                        'another thing' => 2,
+                        3,
+                        4,
+                        5,
+                        6,
+                    ]
+                )
+        );
+    }
+
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
+    public function testThatLastValueWithSameKeyIsPreserved(): void
+    {
+        self::assertSame(
+            ['last' => 7],
+            (new ConvertToArray())
+                ->withEachKey(
+                    new class() extends Parser
+                    {
+                        protected function execute($value, Path $path)
+                        {
+                            return 'last';
+                        }
+                    }
+                )
+                ->parse(
+                    [
+                        'something' => 1,
+                        'another thing' => 2,
+                        3,
+                        4,
+                        5,
+                        6,
+                        7,
+                    ]
+                )
+        );
+    }
+
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
+    public function testThatConvertOfEachValueChangesValues(): void
+    {
+        self::assertSame(
+            [
+                'key1' => '2a',
+                4 => '3a',
+                'foo' => 'somethinga'
+            ],
+            (new ConvertToArray())
+                ->withEachValue(
+                    new class() extends Parser
+                    {
+                        protected function execute($value, Path $path)
+                        {
+                            return $value . 'a';
+                        }
+                    }
+                )
+                ->parse(
+                    [
+                        'key1' => 2,
+                        4 => 3,
+                        'foo' => 'something'
+                    ]
+                )
+        );
+    }
+
+    /**
+     * @return array
+     * @throws \Exception
+     */
+    public function provideEachKeyCases(): array
+    {
+        $cases = [];
+        foreach(DataProvider::provide((int)~DataProvider::TYPE_SCALAR) as $case => [$value]) {
+            $cases[$case] = [
+                4,
+                $value,
+                '4 => ' . gettype($value),
+                '{oldKey} => {newType}'
+            ];
+        }
+
+        return $cases;
+    }
+
+    /**
+     * @param $oldKey
+     * @param $newKey
+     * @param string $expectedMessage
+     * @param string $msg
+     *
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     * @dataProvider provideEachKeyCases
+     */
+    public function testThatEachKeyDoesNotAcceptNonScalarValues(
+        $oldKey,
+        $newKey,
+        string $expectedMessage,
+        string $msg
+    ): void
+    {
+        $parser = $this->prophesize(Parser::class);
+        $parser->execute($oldKey, Argument::any())->willReturn($newKey);
+
+        /** @var Parser $childParser */
+        $childParser = $parser->reveal();
+        $this->expectException(ParserConfigurationException::class);
+        $this->expectExceptionMessage($expectedMessage);
+        (new ConvertToArray())
+            ->withEachKey($childParser, $msg)
+            ->parse([$oldKey => 'a']);
+    }
+
 }

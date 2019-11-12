@@ -48,6 +48,16 @@ class ConvertToArray extends Parser
     private $sequentialKeys = false;
 
     /**
+     * @var null|mixed[]
+     */
+    private $eachKey = null;
+
+    /**
+     * @var null|Parser
+     */
+    private $eachValue = null;
+
+    /**
      * Defines the exception message thrown when the input value is not an array and no conversion is active
      *
      * @param string $message
@@ -164,6 +174,46 @@ class ConvertToArray extends Parser
     }
 
     /**
+     * Forwards each value to the specified parser and overwrites the value with the result of the parser
+     * @param Parser $parser
+     *
+     * @return $this
+     */
+    public function withEachValue(Parser $parser): self
+    {
+        $this->eachValue = $parser;
+
+        return $this;
+    }
+
+    /**
+     * Forwards each of the keys to the specified parser and changes the key to the return value of the parser
+     * The return value of the parser must be a scalar value. If not, the provided exception message
+     * will be thrown as ParserConfigurationException
+     * If two keys are the same the last value is preserved but ordered at the first occurrence of the key
+     *
+     * Replacers in the exception message:
+     * {oldKey} = var_export($key, true)
+     * {newType} = gettype of the new key
+     *
+     *
+     * @param Parser $parser
+     *
+     * @param string $exceptionMessageOnInvalidArrayKey
+     *
+     * @return $this
+     */
+    public function withEachKey(
+        Parser $parser,
+        string $exceptionMessageOnInvalidArrayKey = 'The index {oldKey} was converted by a parser to a value of type {newType} not supported as an array index'
+    ): self
+    {
+        $this->eachKey = [$parser, $exceptionMessageOnInvalidArrayKey];
+
+        return $this;
+    }
+
+    /**
      * @inheritdoc
      */
     protected function execute($value, Path $path)
@@ -203,6 +253,43 @@ class ConvertToArray extends Parser
 
                 $value[$key] = $parser->parse($value[$key], $path->index((string) $key));
             }
+        }
+
+        if ($this->eachKey || $this->eachValue) {
+            $newValue = [];
+            /** @var Parser|null $eachKeyParser */
+            $eachKeyParser = null;
+            $eachKeyExceptionMessage = null;
+            if($this->eachKey) {
+                [$eachKeyParser, $eachKeyExceptionMessage] = $this->eachKey;
+            }
+            foreach ($value as $index => $element) {
+                if ($eachKeyParser) {
+                    $newIndex = $eachKeyParser->parse($index, $path->index((string) $index));
+                    if(!is_scalar($newIndex)) {
+                        throw new ParserConfigurationException(
+                            strtr(
+                                $eachKeyExceptionMessage,
+                                [
+                                    '{oldKey}' => $index,
+                                    '{newType}' => gettype($newIndex)
+                                ]
+                            )
+                        );
+                    }
+                } else {
+                    $newIndex = $index;
+                }
+                if ($this->eachValue) {
+                    $newElement = $this->eachValue->parse($element, $path->index((string) $index));
+                } else {
+                    $newElement = $element;
+                }
+                $newValue[$newIndex] = $newElement;
+            }
+
+            $value = $newValue;
+            unset($newValue);
         }
 
         if ($this->sequentialKeys) {

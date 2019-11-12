@@ -69,7 +69,7 @@ class AssertArray
     /**
      * @param Parser $parser
      *
-     * @return AssertArray
+     * @return $this
      */
     public function withEachValue(Parser $parser): self
     {

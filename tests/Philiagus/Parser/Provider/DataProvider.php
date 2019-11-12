@@ -28,6 +28,7 @@ class DataProvider
     public const TYPE_NAN = 1 << 8;
     public const TYPE_INFINITE = 1 << 9;
     public const TYPE_ALL = PHP_INT_MAX;
+    public const TYPE_SCALAR = self::TYPE_BOOLEAN | self::TYPE_INTEGER | self::TYPE_FLOAT | self::TYPE_STRING | self::TYPE_NAN | self::TYPE_INFINITE;
 
     /**
      * @param int $types
@@ -136,7 +137,7 @@ class DataProvider
 
         $result = [];
         foreach ($cases as $name => $value) {
-            if($filter && !$filter($value)) {
+            if ($filter && !$filter($value)) {
                 continue;
             }
             $result[$name] = [$value];
