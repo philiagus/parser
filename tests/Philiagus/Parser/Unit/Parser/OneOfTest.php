@@ -37,6 +37,8 @@ class OneOfTest extends TestCase
     public function testThatItStopsAtTheFirstMatchingParser(): void
     {
         self::assertEquals('matched!', (new OneOf())
+            ->addSameOption(INF)
+            ->addEqualsOption(NAN)
             ->addOption(
                 new class() extends Parser
                 {
@@ -114,6 +116,63 @@ class OneOfTest extends TestCase
             )
             ->withNonOfExceptionMessage($msg)
             ->parse(null);
+    }
+
+    /**
+     * @return array
+     */
+    public function provideEqualsValues(): array
+    {
+        return [
+            ['1', 1],
+            [true, 1],
+            [false, 0],
+            ['1.0', 1.0]
+        ];
+    }
+
+    /**
+     * @param $provided
+     * @param $expected
+     *
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     * @dataProvider  provideEqualsValues
+     */
+    public function testEqualsOption($provided, $expected): void
+    {
+        self::assertSame($expected, (new OneOf())->addEqualsOption($provided)->parse($expected));
+        self::assertSame($provided, (new OneOf())->addEqualsOption($expected)->parse($provided));
+    }
+
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
+    public function testSameOption(): void
+    {
+        self::assertSame(1, (new OneOf())->addEqualsOption(1)->parse(1));
+    }
+
+
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
+    public function testEqualsException(): void
+    {
+        $this->expectException(MultipleParsingException::class);
+        (new OneOf())->addEqualsOption(100)->parse(0);
+    }
+
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
+    public function testSameException(): void
+    {
+        $this->expectException(MultipleParsingException::class);
+        (new OneOf())->addSameOption(100)->parse(0);
     }
 
 }

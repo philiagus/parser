@@ -45,6 +45,32 @@ class OneOf extends Parser
     }
 
     /**
+     * Adds an option that is compared via == against the provided value
+     * @param mixed $option
+     *
+     * @return $this
+     */
+    public function addEqualsOption($option): self
+    {
+        $this->options[] = (new AssertEquals())->withValue($option);
+
+        return $this;
+    }
+
+    /**
+     * Adds an option that is compared via === against the provided value
+     * @param mixed $option
+     *
+     * @return $this
+     */
+    public function addSameOption($option): self
+    {
+        $this->options[] = (new AssertSame())->withValue($option);
+
+        return $this;
+    }
+
+    /**
      * Defines the exception message to use if none of the provided parsers matches
      *
      * @param string $message
