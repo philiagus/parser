@@ -8,7 +8,7 @@ Making sure your inputs are what they should be is one of the core principles of
 
 Obviously there are more, but we must tackle them one step at a time.
 
-The basic idea of the converters are, that the developer defines a structure through code and later a set of data is throw against this validation and conversion structure.
+The basic idea of the converters are, that the developer defines a structure through code and later a set of data is thrown against this validation and conversion structure.
 
 A simple example:
 
