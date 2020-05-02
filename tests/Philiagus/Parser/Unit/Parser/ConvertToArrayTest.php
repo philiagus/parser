@@ -82,7 +82,9 @@ class ConvertToArrayTest extends TestCase
      */
     public function testThatItConvertsValuesToArrays($value): void
     {
-        $result = (new ConvertToArray())->convertNonArraysWithArrayCast()->parse($value);
+        $result = (new ConvertToArray())
+            ->setConvertNonArrays(ConvertToArray::CONVERSION_ARRAY_CAST)
+            ->parse($value);
         self::assertIsArray($result);
         self::assertCount(count((array) $value), $result);
         if (count($result)) {
@@ -103,7 +105,9 @@ class ConvertToArrayTest extends TestCase
      */
     public function testThatItConvertsValuesWithDedicatedStringKey($value): void
     {
-        $result = (new ConvertToArray())->convertNonArraysWithKey('key')->parse($value);
+        $result = (new ConvertToArray())
+            ->setConvertNonArrays(ConvertToArray::CONVERSION_ARRAY_WITH_KEY, 'key')
+            ->parse($value);
         self::assertIsArray($result);
         self::assertCount(1, $result);
         self::assertTrue(array_key_exists('key', $result));
@@ -130,7 +134,9 @@ class ConvertToArrayTest extends TestCase
     {
         self::assertSame(
             [$key => 'value'],
-            (new ConvertToArray())->convertNonArraysWithKey($key)->parse('value')
+            (new ConvertToArray())
+                ->setConvertNonArrays(ConvertToArray::CONVERSION_ARRAY_WITH_KEY, $key)
+                ->parse('value')
         );
     }
 
@@ -153,7 +159,8 @@ class ConvertToArrayTest extends TestCase
     public function testThatConvertNonArraysBlocksNonStringInteger($wrongKey): void
     {
         $this->expectException(ParserConfigurationException::class);
-        (new ConvertToArray())->convertNonArraysWithKey($wrongKey);
+        (new ConvertToArray())
+            ->setConvertNonArrays(ConvertToArray::CONVERSION_ARRAY_WITH_KEY, $wrongKey);
     }
 
     /**
@@ -431,7 +438,7 @@ class ConvertToArrayTest extends TestCase
         $msg = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
-        (new ConvertToArray())->withTypeExceptionMessage($msg)->parse(false);
+        (new ConvertToArray())->overwriteTypeExceptionMessage($msg)->parse(false);
     }
 
     /**

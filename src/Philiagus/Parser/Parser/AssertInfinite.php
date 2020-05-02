@@ -22,7 +22,7 @@ class AssertInfinite extends Parser
 
     private $exceptionMessage = 'Provided value is not INF';
 
-    public function withExceptionMessage(string $message): self
+    public function overwriteExceptionMessage(string $message): self
     {
         $this->exceptionMessage = $message;
 

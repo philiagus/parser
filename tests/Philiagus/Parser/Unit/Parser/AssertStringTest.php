@@ -81,7 +81,7 @@ class AssertStringTest extends TestCase
         $msg = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
-        (new AssertString())->withTypeExceptionMessage($msg)->parse(false);
+        (new AssertString())->overwriteTypeExceptionMessage($msg)->parse(false);
     }
 
     /**

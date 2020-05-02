@@ -17,49 +17,30 @@ use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
+use SplStack;
 
 class AssertArray
     extends Parser
 {
-
+    /**
+     * The exception message thrown when the provided value is not an array
+     * @var string|null
+     */
     private $typeExceptionMessage = 'Provided value is not an array';
 
     /**
-     * @var null|Parser
+     * List of assertions to be performed in order
+     * @var callable[]
      */
-    private $eachValue = null;
+    private $assertionList = [];
 
     /**
-     * @var null|Parser
+     * Defines the exception message to be thrown on type exception
+     * @param string $message
+     *
+     * @return $this
      */
-    private $eachKey = null;
-
-    /**
-     * @var null|Parser
-     */
-    private $keys = null;
-
-    /**
-     * @var null|Parser
-     */
-    private $length = null;
-
-    /**
-     * @var array[]
-     */
-    private $withKey = [];
-
-    /**
-     * @var Parser[]
-     */
-    private $withDefaultedKey = [];
-
-    /**
-     * @var null|string
-     */
-    private $sequentialKeys = null;
-
-    public function withTypeExceptionMessage(string $message): self
+    public function overwriteTypeExceptionMessage(string $message): self
     {
         $this->typeExceptionMessage = $message;
 
@@ -73,7 +54,11 @@ class AssertArray
      */
     public function withEachValue(Parser $parser): self
     {
-        $this->eachValue = $parser;
+        $this->assertionList[] = function (array $value, array $keys, Path $path) use ($parser) {
+            foreach ($value as $index => $element) {
+                $parser->parse($element, $path->index((string) $index));
+            }
+        };
 
         return $this;
     }
@@ -85,7 +70,11 @@ class AssertArray
      */
     public function withEachKey(Parser $parser): self
     {
-        $this->eachKey = $parser;
+        $this->assertionList[] = function (array $value, array $keys, Path $path) use ($parser) {
+            foreach ($keys as $key) {
+                $parser->parse($key, $path->key((string) $key));
+            }
+        };
 
         return $this;
     }
@@ -97,7 +86,9 @@ class AssertArray
      */
     public function withKeys(Parser $arrayParser): self
     {
-        $this->keys = $arrayParser;
+        $this->assertionList[] = function (array $value, array $keys, Path $path) use ($arrayParser) {
+            $arrayParser->parse($keys, $path->meta('keys'));
+        };
 
         return $this;
     }
@@ -109,7 +100,9 @@ class AssertArray
      */
     public function withLength(Parser $integerParser): self
     {
-        $this->length = $integerParser;
+        $this->assertionList[] = function (array $value, array $keys, Path $path) use ($integerParser) {
+            $integerParser->parse(count($value), $path->meta('length'));
+        };
 
         return $this;
     }
@@ -133,7 +126,16 @@ class AssertArray
             throw new ParserConfigurationException('Arrays only accept string or integer keys');
         }
 
-        $this->withKey[$key] = [$parser, $missingKeyExceptionMessage];
+        $this->assertionList[] = function(array $value, array $keys, Path $path) use ($key, $parser, $missingKeyExceptionMessage) {
+            if(!array_key_exists($key, $value)) {
+                throw new ParsingException(
+                    $value,
+                    strtr($missingKeyExceptionMessage, ['{key}' => var_export($key, true)]),
+                    $path
+                );
+            }
+            $parser->parse($value[$key], $path->index((string) $key));
+        };
 
         return $this;
     }
@@ -152,7 +154,15 @@ class AssertArray
             throw new ParserConfigurationException('Arrays only accept string or integer keys');
         }
 
-        $this->withDefaultedKey[$key] = [$default, $parser];
+        $this->assertionList[] = function(array $value, array $keys, Path $path) use ($key, $default, $parser) {
+            if (in_array($key, $keys)) {
+                $element = $value[$key];
+            } else {
+                $element = $default;
+            }
+
+            $parser->parse($element, $path->index((string) $key));
+        };
 
         return $this;
     }
@@ -166,7 +176,15 @@ class AssertArray
      */
     public function withSequentialKeys(string $exceptionMessage = 'The array is not a sequential numerical array starting at 0'): self
     {
-        $this->sequentialKeys = $exceptionMessage;
+        $this->assertionList[] = function(array $value, array $keys, Path $path) use ($exceptionMessage) {
+            $assumedKey = 0;
+            foreach(array_keys($value) as $key) {
+                if($key !== $assumedKey) {
+                    throw new ParsingException($value, $exceptionMessage, $path);
+                }
+                $assumedKey++;
+            }
+        };
 
         return $this;
     }
@@ -177,54 +195,12 @@ class AssertArray
     protected function execute($value, Path $path)
     {
         if (!is_array($value)) {
-            throw new Exception\ParsingException($value, $this->typeExceptionMessage, $path);
-        }
-
-        if ($this->length) {
-            $this->length->parse(count($value), $path->meta('length'));
-        }
-
-        if ($this->eachValue || $this->eachKey || $this->sequentialKeys) {
-            $expectedSequenceKey = 0;
-            foreach ($value as $index => $element) {
-                if ($this->sequentialKeys && $index !== $expectedSequenceKey) {
-                    throw new ParsingException($value, $this->sequentialKeys, $path);
-                }
-                if ($this->eachKey) $this->eachKey->parse($index, $path->key((string) $index));
-                if ($this->eachValue) $this->eachValue->parse($element, $path->index((string) $index));
-                $expectedSequenceKey++;
-            }
+            throw new Exception\ParsingException($value, $this->typeExceptionMessage ?? self::DEFAULT_TYPE_EXCEPTION_MESSAGE, $path);
         }
 
         $keys = array_keys($value);
-
-        if ($this->keys) {
-            $this->keys->parse($keys, $path->meta('keys'));
-        }
-
-        /**
-         * @var string|int $key
-         * @var Parser $parser
-         * @var string $exceptionMessage
-         */
-        foreach ($this->withKey as $key => [$parser, $exceptionMessage]) {
-            if (!in_array($key, $keys)) {
-                throw new ParsingException(
-                    $value,
-                    strtr($exceptionMessage, ['{key}' => var_export($key, true)]),
-                    $path
-                );
-            }
-
-            $parser->parse($value[$key], $path->index((string) $key));
-        }
-
-        foreach ($this->withDefaultedKey as $key => [$element, $parser]) {
-            if (in_array($key, $keys)) {
-                $element = $value[$key];
-            }
-
-            $parser->parse($element, $path->index((string) $key));
+        foreach($this->assertionList as $parser) {
+            $parser($value, $keys, $path);
         }
 
         return $value;

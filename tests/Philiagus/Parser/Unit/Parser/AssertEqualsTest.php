@@ -34,7 +34,7 @@ class AssertEqualsTest extends TestCase
     public function testThatItBlocksNotEqualValues(): void
     {
         $this->expectException(ParsingException::class);
-        (new AssertEquals())->withValue(1)->parse(2);
+        (new AssertEquals())->setValue(1)->parse(2);
     }
 
     /**
@@ -43,7 +43,7 @@ class AssertEqualsTest extends TestCase
      */
     public function testThatItAllowsEqualValues(): void
     {
-        $parser = (new AssertEquals())->withValue(0);
+        $parser = (new AssertEquals())->setValue(0);
         self::assertSame(0, $parser->parse(0));
         self::assertSame(null, $parser->parse(null));
         self::assertSame('', $parser->parse(''));
@@ -69,7 +69,7 @@ class AssertEqualsTest extends TestCase
         $msg = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
-        (new AssertEquals())->withValue(false, $msg)->parse(true);
+        (new AssertEquals())->setValue(false, $msg)->parse(true);
     }
 
     /**
@@ -98,8 +98,8 @@ class AssertEqualsTest extends TestCase
     {
         $message = 'hello';
         self::assertSame(
-            serialize((new AssertEquals())->withValue($value, $message)),
-            serialize(AssertEquals::with($value, $message))
+            serialize((new AssertEquals())->setValue($value, $message)),
+            serialize(AssertEquals::value($value, $message))
         );
     }
 
@@ -112,7 +112,7 @@ class AssertEqualsTest extends TestCase
      */
     public function testThatItAcceptsAllValues($value): void
     {
-        DataProvider::assertSame($value, (new AssertEquals())->withValue($value)->parse($value));
+        DataProvider::assertSame($value, (new AssertEquals())->setValue($value)->parse($value));
     }
 
 }

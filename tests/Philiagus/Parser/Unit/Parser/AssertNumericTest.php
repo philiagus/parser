@@ -13,7 +13,7 @@ namespace Philiagus\Test\Parser\Unit\Parser;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Parser\AssertNumeric;
+use Philiagus\Parser\Parser\AssertNumber;
 use Philiagus\Test\Parser\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -22,7 +22,7 @@ class AssertNumericTest extends TestCase
 
     public function testThatItExtendsBaseParser(): void
     {
-        self::assertTrue((new AssertNumeric()) instanceof Parser);
+        self::assertTrue((new AssertNumber()) instanceof Parser);
     }
 
     /**
@@ -44,7 +44,7 @@ class AssertNumericTest extends TestCase
     public function testThatNonFloatsAreBlocked($value): void
     {
         $this->expectException(ParsingException::class);
-        (new AssertNumeric())->parse($value);
+        (new AssertNumber())->parse($value);
     }
 
     /**
@@ -56,7 +56,7 @@ class AssertNumericTest extends TestCase
         $msg = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
-        (new AssertNumeric())->withTypeExceptionMessage($msg)->parse('yes');
+        (new AssertNumber())->overwriteTypeExceptionMessage($msg)->parse('yes');
     }
 
     /**
@@ -77,26 +77,8 @@ class AssertNumericTest extends TestCase
      */
     public function testThatFloatsAreAllowed($value): void
     {
-        $result = (new AssertNumeric())->parse($value);
+        $result = (new AssertNumber())->parse($value);
         self::assertSame($result, $value);
-    }
-
-    /**
-     * @throws ParserConfigurationException
-     */
-    public function testThatMinimumCannotBeGreaterThanMaximum(): void
-    {
-        $this->expectException(ParserConfigurationException::class);
-        (new AssertNumeric())->withMaximum(100)->withMinimum(1000);
-    }
-
-    /**
-     * @throws ParserConfigurationException
-     */
-    public function testThatMaximumCannotBeLowerThanMinimum(): void
-    {
-        $this->expectException(ParserConfigurationException::class);
-        (new AssertNumeric())->withMinimum(1000.0)->withMaximum(100.0);
     }
 
     /**
@@ -106,7 +88,7 @@ class AssertNumericTest extends TestCase
     public function testThatValueMustBeGreaterThanMinimum(): void
     {
         $this->expectException(ParsingException::class);
-        (new AssertNumeric())
+        (new AssertNumber())
             ->withMinimum(10.0)
             ->parse(0.0);
     }
@@ -118,7 +100,7 @@ class AssertNumericTest extends TestCase
     public function testThatValueMustBeLowerThanMaximum(): void
     {
         $this->expectException(ParsingException::class);
-        (new AssertNumeric())
+        (new AssertNumber())
             ->withMaximum(0.0)
             ->parse(10.0);
     }
@@ -144,7 +126,7 @@ class AssertNumericTest extends TestCase
     public function testThatMinimumDisallowsNonFloatOrInt($value): void
     {
         self::expectException(ParserConfigurationException::class);
-        (new AssertNumeric())->withMinimum($value);
+        (new AssertNumber())->withMinimum($value);
     }
 
     /**
@@ -157,7 +139,7 @@ class AssertNumericTest extends TestCase
      */
     public function testThatMinimumAllowsFloatOrInt($value): void
     {
-        self::assertSame($value, (new AssertNumeric())->withMinimum($value)->parse($value));
+        self::assertSame($value, (new AssertNumber())->withMinimum($value)->parse($value));
     }
 
     /**
@@ -166,7 +148,7 @@ class AssertNumericTest extends TestCase
      */
     public function testThatValueOverMinimumPasses(): void
     {
-        $parser = (new AssertNumeric())->withMinimum(0.0);
+        $parser = (new AssertNumber())->withMinimum(0.0);
         self::assertSame(10.0, $parser->parse(10.0));
         self::assertSame(0.0, $parser->parse(0.0));
         self::assertSame(PHP_INT_MAX, $parser->parse(PHP_INT_MAX));
@@ -178,7 +160,7 @@ class AssertNumericTest extends TestCase
      */
     public function testThatValueUnderMaximumPasses(): void
     {
-        $parser = (new AssertNumeric())->withMaximum(10.0);
+        $parser = (new AssertNumber())->withMaximum(10.0);
         self::assertSame(10.0, $parser->parse(10.0));
         self::assertSame(1.0, $parser->parse(1.0));
         self::assertSame(PHP_INT_MIN, $parser->parse(PHP_INT_MIN));
@@ -195,7 +177,7 @@ class AssertNumericTest extends TestCase
     public function testThatMaximumDisallowsNonFloatOrInt($value): void
     {
         self::expectException(ParserConfigurationException::class);
-        (new AssertNumeric())->withMaximum($value);
+        (new AssertNumber())->withMaximum($value);
     }
 
     /**
@@ -208,7 +190,7 @@ class AssertNumericTest extends TestCase
      */
     public function testThatMaximumAllowsFloatOrInt($value): void
     {
-        self::assertSame($value, (new AssertNumeric())->withMaximum($value)->parse($value));
+        self::assertSame($value, (new AssertNumber())->withMaximum($value)->parse($value));
     }
 
     public function provideMinExceptionTestMessages(): array
@@ -235,7 +217,7 @@ class AssertNumericTest extends TestCase
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($expectedMsg);
-        (new AssertNumeric())->withMinimum($min, $base)->parse($value);
+        (new AssertNumber())->withMinimum($min, $base)->parse($value);
     }
 
     public function provideMaxExceptionTestMessages(): array
@@ -262,7 +244,7 @@ class AssertNumericTest extends TestCase
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($expectedMsg);
-        (new AssertNumeric())->withMaximum($max, $base)->parse($value);
+        (new AssertNumber())->withMaximum($max, $base)->parse($value);
     }
 
 }

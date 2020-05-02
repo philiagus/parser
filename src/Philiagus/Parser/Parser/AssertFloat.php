@@ -25,14 +25,9 @@ class AssertFloat extends Parser
     private $typeExceptionMessage = 'Provided value is not of type float';
 
     /**
-     * @var array|null
+     * @var callable[]
      */
-    private $minimumValue = null;
-
-    /**
-     * @var array|null
-     */
-    private $maximumValue = null;
+    private $assertionList = [];
 
     /**
      * Sets the exception message thrown when the type does not match
@@ -41,7 +36,7 @@ class AssertFloat extends Parser
      *
      * @return $this
      */
-    public function withTypeExceptionMessage(string $exceptionMessage): self
+    public function overwriteTypeExceptionMessage(string $exceptionMessage): self
     {
         $this->typeExceptionMessage = $exceptionMessage;
 
@@ -66,13 +61,15 @@ class AssertFloat extends Parser
             throw new Exception\ParserConfigurationException('Minimum must be set as a float number value. NAN and INF are not allowed');
         }
 
-        if ($this->maximumValue !== null && $this->maximumValue[0] < $minimum) {
-            throw new Exception\ParserConfigurationException(
-                sprintf('Trying to set minimum of %s to a higher value than the maximum of %s', $minimum, $this->maximumValue)
-            );
-        }
-
-        $this->minimumValue = [$minimum, $exceptionMessage];
+        $this->assertionList[] = function (float $value, Path $path) use ($minimum, $exceptionMessage) {
+            if ($minimum > $value) {
+                throw new Exception\ParsingException(
+                    $value,
+                    strtr($exceptionMessage, ['{value}' => $value, '{min}' => $minimum]),
+                    $path
+                );
+            }
+        };
 
         return $this;
     }
@@ -95,13 +92,15 @@ class AssertFloat extends Parser
             throw new Exception\ParserConfigurationException('Maximum must be set as a float number value. NAN and INF are not allowed');
         }
 
-        if ($this->minimumValue !== null && $this->minimumValue[0] > $maximum) {
-            throw new Exception\ParserConfigurationException(
-                sprintf('Trying to set maximum of %s to a lower value than the minimum of %s', $maximum, $this->minimumValue)
-            );
-        }
-
-        $this->maximumValue = [$maximum, $exceptionMessage];
+        $this->assertionList[] = function (float $value, Path $path) use ($maximum, $exceptionMessage) {
+            if ($maximum < $value) {
+                throw new Exception\ParsingException(
+                    $value,
+                    strtr($exceptionMessage, ['{value}' => $value, '{max}' => $maximum]),
+                    $path
+                );
+            }
+        };
 
         return $this;
     }
@@ -115,34 +114,8 @@ class AssertFloat extends Parser
             throw new ParsingException($value, $this->typeExceptionMessage, $path);
         }
 
-        if ($this->minimumValue !== null) {
-            /**
-             * @var float $minimum
-             * @var string $exception
-             */
-            [$minimum, $exception] = $this->minimumValue;
-            if ($minimum > $value) {
-                throw new Exception\ParsingException(
-                    $value,
-                    strtr($exception, ['{value}' => $value, '{min}' => $minimum]),
-                    $path
-                );
-            }
-        }
-
-        if ($this->maximumValue !== null) {
-            /**
-             * @var float $maximum
-             * @var string $exception
-             */
-            [$maximum, $exception] = $this->maximumValue;
-            if ($maximum < $value) {
-                throw new Exception\ParsingException(
-                    $value,
-                    strtr($exception, ['{value}' => $value, '{max}' => $maximum]),
-                    $path
-                );
-            }
+        foreach ($this->assertionList as $assertion) {
+            $assertion($value, $path);
         }
 
         return $value;

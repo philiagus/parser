@@ -46,26 +46,28 @@ class OneOf extends Parser
 
     /**
      * Adds an option that is compared via == against the provided value
+     *
      * @param mixed $option
      *
      * @return $this
      */
     public function addEqualsOption($option): self
     {
-        $this->options[] = (new AssertEquals())->withValue($option);
+        $this->options[] = AssertEquals::value($option);
 
         return $this;
     }
 
     /**
      * Adds an option that is compared via === against the provided value
-     * @param mixed $option
+     *
+     * @param mixed $value
      *
      * @return $this
      */
-    public function addSameOption($option): self
+    public function addSameOption($value): self
     {
-        $this->options[] = (new AssertSame())->withValue($option);
+        $this->options[] = AssertSame::value($value);
 
         return $this;
     }
@@ -77,7 +79,7 @@ class OneOf extends Parser
      *
      * @return $this
      */
-    public function withNonOfExceptionMessage(string $message): self
+    public function overwriteNonOfExceptionMessage(string $message): self
     {
         $this->exceptionMessage = $message;
 

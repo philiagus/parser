@@ -80,7 +80,7 @@ class AssertNanTest extends TestCase
         $msg = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
-        (new AssertNan())->withExceptionMessage($msg)->parse(false);
+        (new AssertNan())->overwriteExceptionMessage($msg)->parse(false);
     }
 
 }

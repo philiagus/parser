@@ -33,8 +33,21 @@ class AssertEquals
      */
     private $targetValue;
 
-    public function withValue($equalsValue, string $exceptionMessage = self::DEFAULT_MESSAGE): self
+    /**
+     * Sets the value to be == compared against
+     * @param $equalsValue
+     * @param string $exceptionMessage
+     *
+     * @return $this
+     * @throws ParserConfigurationException
+     */
+    public function setValue($equalsValue, string $exceptionMessage = self::DEFAULT_MESSAGE): self
     {
+        if($this->exceptionMessage !== null) {
+            throw new ParserConfigurationException(
+                'Tried to overwrite value of configured equals parser'
+            );
+        }
         $this->targetValue = $equalsValue;
         $this->exceptionMessage = $exceptionMessage;
 
@@ -47,7 +60,7 @@ class AssertEquals
     protected function execute($value, Path $path)
     {
         if ($this->exceptionMessage === null) {
-            throw new ParserConfigurationException('Called AssertEquals parse without a value set');
+            throw new ParserConfigurationException('Called AssertEquals parser without a value set');
         }
 
         if ($value != $this->targetValue) {
@@ -64,8 +77,12 @@ class AssertEquals
      *
      * @return static
      */
-    public static function with($value, string $exceptionMessage = self::DEFAULT_MESSAGE): self
+    public static function value($value, string $exceptionMessage = self::DEFAULT_MESSAGE): self
     {
-        return (new self())->withValue($value, $exceptionMessage);
+        $instance = new self();
+        $instance->targetValue = $value;
+        $instance->exceptionMessage = $exceptionMessage;
+
+        return $instance;
     }
 }

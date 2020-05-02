@@ -114,7 +114,7 @@ class OneOfTest extends TestCase
                     }
                 }
             )
-            ->withNonOfExceptionMessage($msg)
+            ->overwriteNonOfExceptionMessage($msg)
             ->parse(null);
     }
 

@@ -75,7 +75,7 @@ class AssertStdClassTest extends TestCase
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
         (new AssertStdClass())
-            ->withTypeExceptionMessage($msg)
+            ->overwriteTypeExceptionMessage($msg)
             ->parse(1);
     }
 

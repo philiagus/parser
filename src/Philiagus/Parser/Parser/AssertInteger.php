@@ -18,24 +18,24 @@ use Philiagus\Parser\Exception;
 
 class AssertInteger extends Parser
 {
+    /**
+     * @var string
+     */
     private $typeExceptionMessage = 'Provided value is not of type integer';
 
     /**
-     * @var array|null
+     * @var callable[]
      */
-    private $minimumValue = null;
+    private $assertionList = [];
 
     /**
-     * @var array|null
+     * Sets the exception message thrown when the type does not match
+     *
+     * @param string $message
+     *
+     * @return $this
      */
-    private $maximumValue = null;
-
-    /**
-     * @var null|int
-     */
-    private $divisibleByValue = null;
-
-    public function withTypeExceptionMessage(string $message): self
+    public function overwriteTypeExceptionMessage(string $message): self
     {
         $this->typeExceptionMessage = $message;
 
@@ -52,17 +52,18 @@ class AssertInteger extends Parser
      * @param string $exceptionMessage
      *
      * @return AssertInteger
-     * @throws Exception\ParserConfigurationException
      */
     public function withMinimum(int $minimum, string $exceptionMessage = 'Provided value of {value} is lower than the defined minimum of {min}'): self
     {
-        if ($this->maximumValue !== null && $this->maximumValue[0] < $minimum) {
-            throw new Exception\ParserConfigurationException(
-                sprintf('Trying to set minimum of %s to a higher value than the maximum of %s', $minimum, $this->maximumValue)
-            );
-        }
-
-        $this->minimumValue = [$minimum, $exceptionMessage];
+        $this->assertionList[] = function (int $value, Path $path) use ($minimum, $exceptionMessage) {
+            if ($minimum > $value) {
+                throw new Exception\ParsingException(
+                    $value,
+                    strtr($exceptionMessage, ['{value}' => $value, '{min}' => $minimum]),
+                    $path
+                );
+            }
+        };
 
         return $this;
     }
@@ -77,17 +78,18 @@ class AssertInteger extends Parser
      * @param string $exceptionMessage
      *
      * @return AssertInteger
-     * @throws Exception\ParserConfigurationException
      */
     public function withMaximum(int $maximum, string $exceptionMessage = 'Provided value of {value} is greater than the defined maximum of {max}}'): self
     {
-        if ($this->minimumValue !== null && $this->minimumValue[0] > $maximum) {
-            throw new Exception\ParserConfigurationException(
-                sprintf('Trying to set maximum of %s to a lower value than the minimum of %s', $maximum, $this->minimumValue)
-            );
-        }
-
-        $this->maximumValue = [$maximum, $exceptionMessage];
+        $this->assertionList[] = function (int $value, Path $path) use ($maximum, $exceptionMessage) {
+            if ($maximum < $value) {
+                throw new Exception\ParsingException(
+                    $value,
+                    strtr($exceptionMessage, ['{value}' => $value, '{max}' => $maximum]),
+                    $path
+                );
+            }
+        };
 
         return $this;
     }
@@ -102,13 +104,28 @@ class AssertInteger extends Parser
      * @param string $exceptionMessage
      *
      * @return AssertInteger
+     * @throws Exception\ParserConfigurationException
      */
     public function isMultipleOf(
         int $base,
         string $exceptionMessage = 'Provided value of {value} is not a multiple of {base}'
     ): self
     {
-        $this->divisibleByValue = [$base, $exceptionMessage];
+        if ($base === 0) {
+            throw new Exception\ParserConfigurationException(
+                'No value can be valid multiple of 0'
+            );
+        }
+
+        $this->assertionList[] = function (int $value, Path $path) use ($base, $exceptionMessage) {
+            if (($value % $base) !== 0) {
+                throw new Exception\ParsingException(
+                    $value,
+                    strtr($exceptionMessage, ['{value}' => $value, '{base}' => $base]),
+                    $path
+                );
+            }
+        };
 
         return $this;
     }
@@ -122,52 +139,8 @@ class AssertInteger extends Parser
             throw new Exception\ParsingException($value, $this->typeExceptionMessage, $path);
         }
 
-        if ($this->minimumValue !== null) {
-            /**
-             * @var int $minimum
-             * @var string $exception
-             */
-            [$minimum, $exception] = $this->minimumValue;
-            if ($minimum > $value) {
-                throw new Exception\ParsingException(
-                    $value,
-                    strtr($exception, ['{value}' => $value, '{min}' => $minimum]),
-                    $path
-                );
-            }
-        }
-
-        if ($this->maximumValue !== null) {
-            /**
-             * @var int $maximum
-             * @var string $exception
-             */
-            [$maximum, $exception] = $this->maximumValue;
-            if ($maximum < $value) {
-                throw new Exception\ParsingException(
-                    $value,
-                    strtr($exception, ['{value}' => $value, '{max}' => $maximum]),
-                    $path
-                );
-            }
-        }
-
-        if ($this->divisibleByValue !== null) {
-            /**
-             * @var int $base
-             * @var string $exception
-             */
-            [$base, $exception] = $this->divisibleByValue;
-            if (
-                ($base === 0 && $value !== 0) ||
-                ($base !== 0 && $value % $base !== 0)
-            ) {
-                throw new Exception\ParsingException(
-                    $value,
-                    strtr($exception, ['{value}' => $value, '{base}' => $base]),
-                    $path
-                );
-            }
+        foreach($this->assertionList as $assertion) {
+            $assertion($value, $path);
         }
 
         return $value;

@@ -1,0 +1,164 @@
+# Migration document
+## v1.0.0-RC4 to v1.0.0-RC5
+### All Parsers
+
+A naming convention was added to the system:
+- `withXYZ` or `addXYZ`
+    - adds a configuration or a parser without overwriting already existing configuration of the same type. Example: calling `withLength` twice will not cause the second defined length to overwrite the previous one. Instead both definitions will be kept and the parser will execute both
+    - All configuration added with `with` methods will be executed in order of configuration
+- `setXYZ`
+    - sets specific configurations that can only be set once and will not be overwritten
+    - Configuration defined with `set` will be executed at a defined time outside the order of `with` configuration as they are most times crucial for the system to work correctly
+- `overwriteXYZ`
+    - sets a specific configuration, silently overwriting any previously set configuration for the same field
+
+### AssertArray
+- `withTypeExceptionMessage`
+    - renamed to `overwriteTypeExceptionMessage`
+
+### AssertBoolean
+- `withExceptionMessage`
+    - renamed to `overwriteExceptionMessage`
+
+### AssertEquals
+- `withValue`
+    - renamed to `setValue`
+    - can only be called once
+- static `with`
+    - renamed to `value`
+
+### AssertFloat
+- `withTypeExceptionMessage`
+    - renamed to `overwriteTypeExceptionMessage`
+- `withMinimum`
+    - no longer checks the provided value to be valid against an already set maximum, so no `ParserConfigruationException` is thrown anymore
+    - adds another minimum instead of overwriting the previously set minimum
+- `withMaximum`
+    - no longer checks the provided value to be valid against an already set minimum, so no `ParserConfigruationException` is thrown anymore
+    - adds another maximum indestad over overwriting the previously set maximum
+
+### AssertInfinite
+- `withExceptionMessage`
+    - renamed to `overwriteExceptionMessage`
+
+### AssertInteger
+- `withTypeExceptionMessage`
+    - renamed to `overwriteTypeExceptionMessage`
+- `withMinimum`
+    - no longer checks the provided value to be valid against an already set maximum, so no `ParserConfigruationException` is thrown anymore
+    - adds another minimum instead of overwriting the previously set minimum
+- `withMaximum`
+    - no longer checks the provided value to be valid against an already set minimum, so no `ParserConfigruationException` is thrown anymore
+    - adds another maximum indestad over overwriting the previously set maximum
+- `isMultipleOf`
+    - A ParserConfigurationException is thrown, when isMultipleOf is called with 0 as first parameter, as no value can be a multiple of 0
+
+### AssertNan
+- `withExceptionMessage`
+    - renamed to `overwriteExceptionMessage`
+
+### AssertNull
+- `withExceptionMessage`
+    - renamed to `overwriteExceptionMessage`
+
+### AssertNummeric
+- renamed to `AssertNumber`
+- `withTypeExceptionMessage`
+    - renamed to `overwriteTypeExceptionMessage`
+- `withMinimum`
+    - no longer checks the provided value to be valid against an already set maximum, so no `ParserConfigruationException` is thrown anymore
+    - adds another minimum instead of overwriting the previously set minimum
+- `withMaximum`
+    - no longer checks the provided value to be valid against an already set minimum, so no `ParserConfigruationException` is thrown anymore
+    - adds another maximum indestad over overwriting the previously set maximum
+
+### AssertSame
+- `withValue`
+    - renamed to `setValue`
+    - can only be called once
+- static `with`
+    - renamed to `value`
+
+### AssertScalar
+- `withExceptionMessage`
+    - renamed to `overwriteExceptionMessage`
+
+### AssertStdClass
+- `withTypeExceptionMessage`
+    - renamed to `overwriteTypeExceptionMessage`
+- `withProperty`
+    - expects first parameter to be a string
+
+### AssertString
+- `withTypeExceptionMessage`
+    - renamed to `overwriteTypeExceptionMessage`
+- `withLength`
+    - no longer overwrites previously set withLength, instead adds a new parser to validate the length against
+
+### AssertStringMultibyte
+- `withTypeExceptionMessage`
+    - renamed to `overwriteTypeExceptionMessage`
+- `withLength`
+  - no longer overwrites previously set withLength, instead adds a new parser to validate the length against
+- `withEncoding` renamed to `setEncoding`
+    - This method will be executed before all `with` methods
+    - The defined encoding is used as the encoding for all followup parsing (such as substring cutting)
+    - If the provided string does not match this encoding a `ParsingException` is thrown
+
+
+### ConvertFromJson
+- `withConversionExceptionMessage`
+    - renamed to `overwriteConversionExceptionMessage`
+- `withTypeExceptionMessage`
+    - renamed to `overwriteTypeExceptionMessage`
+- `withObjectsAsArrays`
+    - renamed to `setObjectsAsArrays`
+    - added a boolean parameter, default `true`
+    - throws `ParserConfigurationException` if called twice
+- `withMaxDepth`
+    - renamed to `setMaxDepth`
+    - throws `ParserConfigurationException` if called twice
+- `withBigintAsString`
+    - renamed to `setBigintAsString`
+    - throws `ParserConfigurationException` if called twice
+    - added a boolean parameter, default `true`
+
+### ConvertToArray
+- `withTypeExceptionMessage`
+    - renamed to `overwriteTypeExceptionMessage`
+- `convertNonArraysWithArrayCast`
+    - removed in favor of `setConvertNonArrays`
+- `convertNonArraysWithKey`
+    - removed in favor of `setConvertNonArrays`
+- `setConvertNonArrays`
+    - added
+    - first parameter is one of these constants:
+        - ConvertToArray::CONVERSION_DO_NOT_CONVERT
+            - no conversion will be done and a type exception is thrown
+        - ConvertToArray::CONVERSION_ARRAY_CAST
+            - a simple (array) cast will be performed
+        - ConvertToArray::CONVERSION_ARRAY_WITH_KEY
+            - an array will be created with key being the second parameter of this method
+
+### ConvertToInteger
+- `withTypeExceptionMessage`
+    - renamed to `overwriteTypeExceptionMessage`
+
+### ConvertToString
+- `withTypeExceptionMessage`
+    - renamed to `overwriteTypeExceptionMessage`
+- `withBooleanValues`
+    - renamed to `setBooleanValues`
+    - throws `ParserConfigurationException` if called twice
+- `withImplodeOfArrays`
+    - renamed to `setImplodeOfArrays`
+    - throws `ParserConfigurationException` if called twice
+
+### Fixed
+- `withValue`
+    - renamed to `setValue`
+    - throws `ParserConfigurationException` if called twice
+
+### OneOf
+- `withNonOfExceptionMessage`
+    - renamed to `overwriteNonOfExceptionMessage` 

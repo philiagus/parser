@@ -41,9 +41,16 @@ class Fixed extends Parser
      * @param $value
      *
      * @return $this
+     * @throws ParserConfigurationException
      */
-    public function withValue($value): self
+    public function setValue($value): self
     {
+        if ($this->defined) {
+            throw new ParserConfigurationException(
+                'Value of Fixed cannot be overwritten'
+            );
+        }
+        
         $this->value = $value;
         $this->defined = true;
 

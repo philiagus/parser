@@ -19,9 +19,18 @@ use Philiagus\Parser\Exception\ParsingException;
 class AssertNan extends Parser
 {
 
+    /**
+     * @var string
+     */
     private $exceptionMessage = 'Provided value is not NAN';
 
-    public function withExceptionMessage(string $message): self
+    /**
+     * Sets the exception message to be thrown when the provided value is not NAN
+     * @param string $message
+     *
+     * @return $this
+     */
+    public function overwriteExceptionMessage(string $message): self
     {
         $this->exceptionMessage = $message;
 

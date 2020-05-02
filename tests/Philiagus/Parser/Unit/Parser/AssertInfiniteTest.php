@@ -79,7 +79,7 @@ class AssertInfiniteTest extends TestCase
         $msg = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
-        (new AssertInfinite())->withExceptionMessage($msg)->parse(false);
+        (new AssertInfinite())->overwriteExceptionMessage($msg)->parse(false);
     }
 
 }

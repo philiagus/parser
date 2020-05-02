@@ -83,7 +83,7 @@ class AssertScalarTest extends TestCase
         $msg = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
-        (new AssertScalar())->withExceptionMessage($msg)->parse(new \stdClass());
+        (new AssertScalar())->overwriteExceptionMessage($msg)->parse(new \stdClass());
     }
 
 }

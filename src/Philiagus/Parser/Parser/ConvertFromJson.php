@@ -14,6 +14,7 @@ namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 
 class ConvertFromJson extends Parser
@@ -30,19 +31,19 @@ class ConvertFromJson extends Parser
     private $typeExceptionMessage = 'Provided value is not a string and thus not a valid JSON';
 
     /**
-     * @var bool
+     * @var bool|null
      */
-    private $objectAsArrays = false;
+    private $objectAsArrays = null;
 
     /**
-     * @var int
+     * @var int|null
      */
-    private $maxDepth = 512;
+    private $maxDepth = null;
 
     /**
-     * @var bool
+     * @var bool|null
      */
-    private $bigintAsString = false;
+    private $bigintAsString = null;
 
     /**
      * Sets the exception message if the json is invalid or parsing failed
@@ -53,7 +54,7 @@ class ConvertFromJson extends Parser
      *
      * @return $this
      */
-    public function withConversionExceptionMessage(string $message): self
+    public function overwriteConversionExceptionMessage(string $message): self
     {
         $this->conversionExceptionMessage = $message;
 
@@ -69,30 +70,70 @@ class ConvertFromJson extends Parser
      *
      * @return $this
      */
-    public function withTypeExceptionMessage(string $message): self
+    public function overwriteTypeExceptionMessage(string $message): self
     {
         $this->typeExceptionMessage = $message;
 
         return $this;
     }
 
-    public function withObjectsAsArrays(): self
+    /**
+     * Configures the conversion to set $assoc parameter of json_parse
+     *
+     * @param bool $objectsAsArrays
+     *
+     * @return $this
+     * @throws ParserConfigurationException
+     * @see https://www.php.net/manual/de/function.json-decode.php
+     */
+    public function setObjectsAsArrays(bool $objectsAsArrays = true): self
     {
-        $this->objectAsArrays = true;
+        if($this->objectAsArrays !== null) {
+            throw new ParserConfigurationException(
+                'Cannot overwrite objectAsArray configuration once set'
+            );
+        }
+        $this->objectAsArrays = $objectsAsArrays;
 
         return $this;
     }
 
-    public function withMaxDepth(int $maxDepth = 512): self
+    /**
+     * @param int $maxDepth
+     *
+     * @return $this
+     * @throws ParserConfigurationException
+     * @see https://www.php.net/manual/de/function.json-decode.php
+     */
+    public function setMaxDepth(int $maxDepth = 512): self
     {
+        if($this->maxDepth !== null) {
+            throw new ParserConfigurationException(
+                'Cannot overwrite maxDepth configuration once set'
+            );
+        }
         $this->maxDepth = $maxDepth;
 
         return $this;
     }
 
-    public function withBigintAsString(): self
+    /**
+     * Configures the decoding to use bigints as strings
+     *
+     * @param bool $bigintAsString
+     *
+     * @return $this
+     * @throws ParserConfigurationException
+     * @see https://www.php.net/manual/de/function.json-decode.php
+     */
+    public function setBigintAsString(bool $bigintAsString = true): self
     {
-        $this->bigintAsString = true;
+        if($this->bigintAsString !== null) {
+            throw new ParserConfigurationException(
+                'Cannot overwrite bigintAsString configuration once set'
+            );
+        }
+        $this->bigintAsString = $bigintAsString;
 
         return $this;
     }
@@ -122,7 +163,12 @@ class ConvertFromJson extends Parser
             $options |= JSON_BIGINT_AS_STRING;
         }
 
-        $result = @json_decode($value, $this->objectAsArrays, $this->maxDepth, $options);
+        $result = @json_decode(
+            $value,
+            $this->objectAsArrays ?? false,
+            $this->maxDepth ?? 512,
+            $options
+        );
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new ParsingException(
                 $value,

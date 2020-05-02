@@ -56,7 +56,7 @@ class AssertFloatTest extends TestCase
         $msg = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
-        (new AssertFloat())->withTypeExceptionMessage($msg)->parse('yes');
+        (new AssertFloat())->overwriteTypeExceptionMessage($msg)->parse('yes');
     }
 
     /**
@@ -79,24 +79,6 @@ class AssertFloatTest extends TestCase
     {
         $result = (new AssertFloat())->parse($value);
         self::assertSame($result, $value);
-    }
-
-    /**
-     * @throws ParserConfigurationException
-     */
-    public function testThatMinimumCannotBeGreaterThanMaximum(): void
-    {
-        $this->expectException(ParserConfigurationException::class);
-        (new AssertFloat())->withMaximum(100)->withMinimum(1000);
-    }
-
-    /**
-     * @throws ParserConfigurationException
-     */
-    public function testThatMaximumCannotBeLowerThanMinimum(): void
-    {
-        $this->expectException(ParserConfigurationException::class);
-        (new AssertFloat())->withMinimum(1000.0)->withMaximum(100.0);
     }
 
     /**
