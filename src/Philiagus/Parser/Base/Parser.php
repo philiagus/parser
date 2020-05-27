@@ -40,6 +40,7 @@ abstract class Parser
 
     /**
      * Static version of the constructor for more readable creation when chaining calls
+     *
      * @param null $target
      *
      * @return static

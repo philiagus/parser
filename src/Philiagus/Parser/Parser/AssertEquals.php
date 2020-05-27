@@ -35,6 +35,7 @@ class AssertEquals
 
     /**
      * Sets the value to be == compared against
+     *
      * @param $equalsValue
      * @param string $exceptionMessage
      *
@@ -43,7 +44,7 @@ class AssertEquals
      */
     public function setValue($equalsValue, string $exceptionMessage = self::DEFAULT_MESSAGE): self
     {
-        if($this->exceptionMessage !== null) {
+        if ($this->exceptionMessage !== null) {
             throw new ParserConfigurationException(
                 'Tried to overwrite value of configured equals parser'
             );
@@ -72,6 +73,7 @@ class AssertEquals
 
     /**
      * Shortcut constructor for assertion against a value when no by-reference check is needed
+     *
      * @param $value
      * @param string $exceptionMessage
      *

@@ -88,7 +88,7 @@ class ConvertFromJson extends Parser
      */
     public function setObjectsAsArrays(bool $objectsAsArrays = true): self
     {
-        if($this->objectAsArrays !== null) {
+        if ($this->objectAsArrays !== null) {
             throw new ParserConfigurationException(
                 'Cannot overwrite objectAsArray configuration once set'
             );
@@ -107,7 +107,7 @@ class ConvertFromJson extends Parser
      */
     public function setMaxDepth(int $maxDepth = 512): self
     {
-        if($this->maxDepth !== null) {
+        if ($this->maxDepth !== null) {
             throw new ParserConfigurationException(
                 'Cannot overwrite maxDepth configuration once set'
             );
@@ -128,7 +128,7 @@ class ConvertFromJson extends Parser
      */
     public function setBigintAsString(bool $bigintAsString = true): self
     {
-        if($this->bigintAsString !== null) {
+        if ($this->bigintAsString !== null) {
             throw new ParserConfigurationException(
                 'Cannot overwrite bigintAsString configuration once set'
             );

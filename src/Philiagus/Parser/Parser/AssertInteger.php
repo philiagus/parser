@@ -111,7 +111,7 @@ class AssertInteger extends Parser
     ): self
     {
         $this->assertionList[] = function (int $value, Path $path) use ($base, $exceptionMessage) {
-            if($value === 0 && $base === 0) return;
+            if ($value === 0 && $base === 0) return;
             if (($value % $base) !== 0) {
                 throw new Exception\ParsingException(
                     $value,
@@ -133,7 +133,7 @@ class AssertInteger extends Parser
             throw new Exception\ParsingException($value, $this->typeExceptionMessage, $path);
         }
 
-        foreach($this->assertionList as $assertion) {
+        foreach ($this->assertionList as $assertion) {
             $assertion($value, $path);
         }
 

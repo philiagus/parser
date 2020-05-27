@@ -26,6 +26,7 @@ class AssertNull extends Parser
 
     /**
      * Sets the exception message to be thrown if the provided value is not NULL
+     *
      * @param string $message
      *
      * @return $this

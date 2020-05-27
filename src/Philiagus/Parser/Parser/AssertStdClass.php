@@ -30,6 +30,7 @@ class AssertStdClass
 
     /**
      * Defines the exception message if the provided value is not an instance of \stdClass
+     *
      * @param string $message
      *
      * @return $this
@@ -55,7 +56,7 @@ class AssertStdClass
      */
     public function withProperty(string $property, Parser $parser, string $missingKeyExceptionMessage = 'The object does not contain the requested property {property}'): self
     {
-        $this->assertionList[] = function(\stdClass $value, array $properties, Path $path) use ($property, $parser, $missingKeyExceptionMessage) {
+        $this->assertionList[] = function (\stdClass $value, array $properties, Path $path) use ($property, $parser, $missingKeyExceptionMessage) {
             if (!in_array($property, $properties)) {
                 throw new ParsingException(
                     $value,
@@ -72,6 +73,7 @@ class AssertStdClass
 
     /**
      * Puts the value of the property against the defined parser or the default, if the property does not exist
+     *
      * @param string $property
      * @param $default
      * @param Parser $parser
@@ -80,7 +82,7 @@ class AssertStdClass
      */
     public function withDefaultedProperty(string $property, $default, Parser $parser): self
     {
-        $this->assertionList[] = function(\stdClass $value, array $properties, Path $path) use ($property, $default, $parser) {
+        $this->assertionList[] = function (\stdClass $value, array $properties, Path $path) use ($property, $default, $parser) {
             if (in_array($property, $properties)) {
                 $element = $value->{$property};
             } else {
@@ -103,7 +105,7 @@ class AssertStdClass
         }
 
         $properties = array_keys((array) $value);
-        foreach($this->assertionList as $assertion) {
+        foreach ($this->assertionList as $assertion) {
             $assertion($value, $properties, $path);
         }
 

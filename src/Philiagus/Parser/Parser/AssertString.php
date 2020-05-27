@@ -52,7 +52,7 @@ class AssertString extends Parser
      */
     public function withLength(Parser $integerParser): self
     {
-        $this->assertionList[] = function(string $value, Path $path) use ($integerParser) {
+        $this->assertionList[] = function (string $value, Path $path) use ($integerParser) {
             $integerParser->parse(strlen($value), $path->meta('length'));
         };
 
@@ -74,11 +74,11 @@ class AssertString extends Parser
         Parser $stringParser
     ): self
     {
-        $this->assertionList[] = function(string $value, Path $path) use ($start, $length, $stringParser) {
+        $this->assertionList[] = function (string $value, Path $path) use ($start, $length, $stringParser) {
             if ($value === '') {
                 $part = '';
             } else {
-                $part = (string)substr($value, $start, $length);
+                $part = (string) substr($value, $start, $length);
             }
             $stringParser->parse($part, $path->meta("$start:$length"));
         };
@@ -95,7 +95,7 @@ class AssertString extends Parser
             throw new ParsingException($value, $this->typeExceptionMessage, $path);
         }
 
-        foreach($this->assertionList as $assertion) {
+        foreach ($this->assertionList as $assertion) {
             $assertion($value, $path);
         }
 

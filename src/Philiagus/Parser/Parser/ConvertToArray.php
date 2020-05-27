@@ -121,7 +121,7 @@ class ConvertToArray extends Parser
             );
         }
 
-        if($conversionType === self::CONVERSION_ARRAY_WITH_KEY) {
+        if ($conversionType === self::CONVERSION_ARRAY_WITH_KEY) {
             if (!is_string($option) && !is_int($option)) {
                 throw new ParserConfigurationException('Array key can only be string or integer');
             }
@@ -310,7 +310,7 @@ class ConvertToArray extends Parser
             }
         }
 
-        foreach($this->conversionList as $conversion) {
+        foreach ($this->conversionList as $conversion) {
             $conversion($value, $path);
         }
 

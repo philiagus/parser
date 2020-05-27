@@ -101,11 +101,11 @@ class OneOf extends Parser
      */
     protected function execute($value, Path $path)
     {
-        if(in_array($value, $this->sameOptions, true)) {
+        if (in_array($value, $this->sameOptions, true)) {
             return $value;
         }
 
-        if(in_array($value, $this->equalsOptions)) {
+        if (in_array($value, $this->equalsOptions)) {
             return $value;
         }
 

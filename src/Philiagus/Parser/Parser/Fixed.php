@@ -60,7 +60,7 @@ class Fixed extends Parser
                 'Value of Fixed cannot be overwritten'
             );
         }
-        
+
         $this->value = $value;
         $this->defined = true;
 

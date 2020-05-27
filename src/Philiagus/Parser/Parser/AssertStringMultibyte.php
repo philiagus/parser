@@ -103,7 +103,7 @@ class AssertStringMultibyte extends Parser
     {
         static $encodings = null;
 
-        if($this->encoding !== null) {
+        if ($this->encoding !== null) {
             throw new ParserConfigurationException(
                 'The encoding of AssertStringMultibyte has already been defined and cannot be overwritten'
             );

@@ -24,18 +24,21 @@ class AssertArray
 {
     /**
      * The exception message thrown when the provided value is not an array
+     *
      * @var string|null
      */
     private $typeExceptionMessage = 'Provided value is not an array';
 
     /**
      * List of assertions to be performed in order
+     *
      * @var callable[]
      */
     private $assertionList = [];
 
     /**
      * Defines the exception message to be thrown on type exception
+     *
      * @param string $message
      *
      * @return $this
@@ -126,8 +129,8 @@ class AssertArray
             throw new ParserConfigurationException('Arrays only accept string or integer keys');
         }
 
-        $this->assertionList[] = function(array $value, array $keys, Path $path) use ($key, $parser, $missingKeyExceptionMessage) {
-            if(!array_key_exists($key, $value)) {
+        $this->assertionList[] = function (array $value, array $keys, Path $path) use ($key, $parser, $missingKeyExceptionMessage) {
+            if (!array_key_exists($key, $value)) {
                 throw new ParsingException(
                     $value,
                     strtr($missingKeyExceptionMessage, ['{key}' => var_export($key, true)]),
@@ -154,7 +157,7 @@ class AssertArray
             throw new ParserConfigurationException('Arrays only accept string or integer keys');
         }
 
-        $this->assertionList[] = function(array $value, array $keys, Path $path) use ($key, $default, $parser) {
+        $this->assertionList[] = function (array $value, array $keys, Path $path) use ($key, $default, $parser) {
             if (in_array($key, $keys)) {
                 $element = $value[$key];
             } else {
@@ -176,10 +179,10 @@ class AssertArray
      */
     public function withSequentialKeys(string $exceptionMessage = 'The array is not a sequential numerical array starting at 0'): self
     {
-        $this->assertionList[] = function(array $value, array $keys, Path $path) use ($exceptionMessage) {
+        $this->assertionList[] = function (array $value, array $keys, Path $path) use ($exceptionMessage) {
             $assumedKey = 0;
-            foreach(array_keys($value) as $key) {
-                if($key !== $assumedKey) {
+            foreach (array_keys($value) as $key) {
+                if ($key !== $assumedKey) {
                     throw new ParsingException($value, $exceptionMessage, $path);
                 }
                 $assumedKey++;
@@ -199,7 +202,7 @@ class AssertArray
         }
 
         $keys = array_keys($value);
-        foreach($this->assertionList as $parser) {
+        foreach ($this->assertionList as $parser) {
             $parser($value, $keys, $path);
         }
 

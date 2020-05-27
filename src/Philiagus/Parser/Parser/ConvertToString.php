@@ -56,7 +56,7 @@ class ConvertToString extends Parser
      */
     public function setBooleanValues(string $true, string $false): self
     {
-        if($this->booleanValues !== null) {
+        if ($this->booleanValues !== null) {
             throw new ParserConfigurationException(
                 'Already set boolean value conversion configuration of ConvertToString cannot be overwritten'
             );
@@ -85,7 +85,7 @@ class ConvertToString extends Parser
         string $exceptionMessage = 'A value at index {index} was not of type string but of type {type}'
     ): self
     {
-        if($this->implode !== null) {
+        if ($this->implode !== null) {
             throw new ParserConfigurationException(
                 'Already set implode configuration of ConvertToString cannot be overwritten'
             );
@@ -110,6 +110,7 @@ class ConvertToString extends Parser
                 break;
             case is_float($value):
                 if (is_infinite($value) || is_nan($value)) break;
+
                 return (string) $value;
             case is_bool($value):
                 if ($this->booleanValues) {

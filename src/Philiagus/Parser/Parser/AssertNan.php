@@ -26,6 +26,7 @@ class AssertNan extends Parser
 
     /**
      * Sets the exception message to be thrown when the provided value is not NAN
+     *
      * @param string $message
      *
      * @return $this

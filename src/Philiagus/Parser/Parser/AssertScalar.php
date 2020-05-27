@@ -23,6 +23,7 @@ class AssertScalar extends Parser
 
     /**
      * Defines the exception message to be thrown if the value is not scalar
+     *
      * @param string $message
      *
      * @return $this
