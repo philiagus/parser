@@ -174,7 +174,6 @@ class ConvertFromJsonTest extends TestCase
     }
 
 
-
     /**
      * @throws ParserConfigurationException
      */

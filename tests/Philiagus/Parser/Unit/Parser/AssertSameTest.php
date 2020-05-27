@@ -42,7 +42,7 @@ class AssertSameTest extends TestCase
      */
     public function provideEverythingExceptNAN(): array
     {
-        return DataProvider::provide((int)~DataProvider::TYPE_NAN);
+        return DataProvider::provide((int) ~DataProvider::TYPE_NAN);
     }
 
     /**

@@ -33,7 +33,7 @@ class AssertScalarTest extends TestCase
      */
     public function provideInvalidValues(): array
     {
-        return DataProvider::provide(DataProvider::TYPE_ALL, function($value) {
+        return DataProvider::provide(DataProvider::TYPE_ALL, function ($value) {
             return !is_scalar($value);
         });
     }
@@ -57,7 +57,7 @@ class AssertScalarTest extends TestCase
      */
     public function provideValidValues(): array
     {
-        return DataProvider::provide((int) ~DataProvider::TYPE_NAN, function($value) {
+        return DataProvider::provide((int) ~DataProvider::TYPE_NAN, function ($value) {
             return is_scalar($value);
         });
     }

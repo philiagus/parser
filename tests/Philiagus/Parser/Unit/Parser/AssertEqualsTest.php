@@ -87,11 +87,12 @@ class AssertEqualsTest extends TestCase
      */
     public function provideEverythingExceptNAN(): array
     {
-        return DataProvider::provide((int)~DataProvider::TYPE_NAN);
+        return DataProvider::provide((int) ~DataProvider::TYPE_NAN);
     }
 
     /**
      * @dataProvider provideEverything
+     *
      * @param $value
      */
     public function testStaticConstructor($value): void
