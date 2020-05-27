@@ -36,6 +36,16 @@ class Fixed extends Parser
     private $defined = false;
 
     /**
+     * @param $value
+     *
+     * @return static
+     */
+    public static function value($value): self
+    {
+        return self::new()->setValue($value);
+    }
+
+    /**
      * Sets the value this parser is defined as
      *
      * @param $value

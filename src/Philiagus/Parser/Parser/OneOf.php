@@ -31,15 +31,25 @@ class OneOf extends Parser
     private $options = [];
 
     /**
+     * @var mixed[]
+     */
+    private $sameOptions = [];
+
+    /**
+     * @var mixed[]
+     */
+    private $equalsOptions = [];
+
+    /**
      * Adds another potential parser the provided value might match
      *
-     * @param Parser $parser
+     * @param Parser ...$parser
      *
      * @return $this
      */
-    public function addOption(Parser $parser): self
+    public function addOption(Parser ...$parser): self
     {
-        $this->options[] = $parser;
+        $this->options = array_merge($this->options, $parser);
 
         return $this;
     }
@@ -47,13 +57,13 @@ class OneOf extends Parser
     /**
      * Adds an option that is compared via == against the provided value
      *
-     * @param mixed $option
+     * @param mixed ...$options
      *
      * @return $this
      */
-    public function addEqualsOption($option): self
+    public function addEqualsOption(...$options): self
     {
-        $this->options[] = AssertEquals::value($option);
+        $this->equalsOptions = array_merge($this->sameOptions, $options);
 
         return $this;
     }
@@ -61,13 +71,13 @@ class OneOf extends Parser
     /**
      * Adds an option that is compared via === against the provided value
      *
-     * @param mixed $value
+     * @param mixed ...$options
      *
      * @return $this
      */
-    public function addSameOption($value): self
+    public function addSameOption(...$options): self
     {
-        $this->options[] = AssertSame::value($value);
+        $this->sameOptions = array_merge($this->sameOptions, $options);
 
         return $this;
     }
@@ -91,13 +101,15 @@ class OneOf extends Parser
      */
     protected function execute($value, Path $path)
     {
-        if (empty($this->options)) {
-            throw new Exception\ParserConfigurationException('OneOf parser was not provided with any options');
+        if(in_array($value, $this->sameOptions, true)) {
+            return $value;
+        }
+
+        if(in_array($value, $this->equalsOptions)) {
+            return $value;
         }
 
         $exceptions = [];
-
-        /** @var Parser $option */
         foreach ($this->options as $option) {
             try {
                 return $option->parse($value, $path);
@@ -106,11 +118,13 @@ class OneOf extends Parser
             }
         }
 
-        throw new Exception\MultipleParsingException(
+        throw new Exception\OneOfParsingException(
             $value,
             $this->exceptionMessage,
             $path,
-            $exceptions
+            $exceptions,
+            $this->sameOptions,
+            $this->equalsOptions
         );
     }
 }

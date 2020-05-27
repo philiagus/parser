@@ -206,4 +206,14 @@ class AssertStringMultibyteTest extends TestCase
         (new AssertStringMultibyte())->setEncoding('this is not an encoding');
     }
 
+    /**
+     * @throws ParserConfigurationException
+     */
+    public function testThatEncodingCannotBeOverwritten(): void
+    {
+        $parser = AssertStringMultibyte::new()->setEncoding('UTF-8');
+        self::expectException(ParserConfigurationException::class);
+        $parser->setEncoding('ISO-8859-1');
+    }
+
 }

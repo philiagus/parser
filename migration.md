@@ -50,8 +50,6 @@ A naming convention was added to the system:
 - `withMaximum`
     - no longer checks the provided value to be valid against an already set minimum, so no `ParserConfigruationException` is thrown anymore
     - adds another maximum indestad over overwriting the previously set maximum
-- `isMultipleOf`
-    - A ParserConfigurationException is thrown, when isMultipleOf is called with 0 as first parameter, as no value can be a multiple of 0
 
 ### AssertNan
 - `withExceptionMessage`
@@ -155,10 +153,34 @@ A naming convention was added to the system:
     - throws `ParserConfigurationException` if called twice
 
 ### Fixed
+- static `value`
+    - added
 - `withValue`
     - renamed to `setValue`
     - throws `ParserConfigurationException` if called twice
 
 ### OneOf
+- throws `OneOfParsingException` (extends `MultipleParsingException`) instead of `MultipleParsingException`
+- no longer throws a `ParserConfigurationException` if not options are provided
 - `withNonOfExceptionMessage`
-    - renamed to `overwriteNonOfExceptionMessage` 
+    - renamed to `overwriteNonOfExceptionMessage`
+- `addOption`
+    - is now a variadic function
+- `addSameOption`
+    - is now a variadic function
+    - no longer adds a `AssertSame` internally, instead uses internal methods to assert identity (high performance improvement). This does not change the behaviour of this method
+- `addEqualsOption`
+    - is now a variadic function
+    - no longer adds a `AssertSame` internally, instead uses internal methods to assert equality (high performance improvement). This does not change the behaviour of this method
+
+### OneOfParsingException
+- added, extends `MultipleParsingException`
+- differences to `MultipleParsingException`
+    - `getParsingExceptions`
+        - no longer contains exception for `addSameOption` and `addEqualsOption` options
+    - `getSameOptions`
+        - added
+        - lists the options added to `OneOf` Parser via `addSameOption`
+    - `getEqualsOptions`
+        - added
+        - lists the options added to `OneOf` Parser via `addEqualsOption`

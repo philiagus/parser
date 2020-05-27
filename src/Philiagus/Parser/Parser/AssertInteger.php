@@ -104,20 +104,14 @@ class AssertInteger extends Parser
      * @param string $exceptionMessage
      *
      * @return AssertInteger
-     * @throws Exception\ParserConfigurationException
      */
     public function isMultipleOf(
         int $base,
         string $exceptionMessage = 'Provided value of {value} is not a multiple of {base}'
     ): self
     {
-        if ($base === 0) {
-            throw new Exception\ParserConfigurationException(
-                'No value can be valid multiple of 0'
-            );
-        }
-
         $this->assertionList[] = function (int $value, Path $path) use ($base, $exceptionMessage) {
+            if($value === 0 && $base === 0) return;
             if (($value % $base) !== 0) {
                 throw new Exception\ParsingException(
                     $value,

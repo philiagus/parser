@@ -64,6 +64,20 @@ class FixedTest extends TestCase
     }
 
     /**
+     * @param $value
+     *
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     * @dataProvider provideAllTypes
+     */
+    public function testStaticValue($value): void
+    {
+        $instance = new \stdClass();
+        $result = Fixed::value($value)->parse($instance);
+        DataProvider::assertSame($value, $result);
+    }
+
+    /**
      * @throws ParserConfigurationException
      * @throws ParsingException
      */
@@ -71,6 +85,16 @@ class FixedTest extends TestCase
     {
         $this->expectException(ParserConfigurationException::class);
         (new Fixed())->parse(null);
+    }
+
+    /**
+     * @throws ParserConfigurationException
+     */
+    public function testThatValueCannotBeOverwritten(): void
+    {
+        $instance = Fixed::new()->setValue('asdf');
+        self::expectException(ParserConfigurationException::class);
+        $instance->setValue('b');
     }
 
 }

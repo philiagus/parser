@@ -129,4 +129,14 @@ class AssertSameTest extends TestCase
         DataProvider::assertSame($value, (new AssertSame())->setValue($value)->parse($value));
     }
 
+    /**
+     * @throws ParserConfigurationException
+     */
+    public function testThatItDoesNotAcceptsOverwrites(): void
+    {
+        $parser = AssertSame::new()->setValue('a');
+        self::expectException(ParserConfigurationException::class);
+        $parser->setValue('b');
+    }
+
 }

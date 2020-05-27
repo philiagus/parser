@@ -141,6 +141,26 @@ class ConvertToArrayTest extends TestCase
     }
 
     /**
+     * @throws ParserConfigurationException
+     */
+    public function testThatConvertNonArraysThrowsExceptionOnUnknownConversion(): void
+    {
+        self::expectException(ParserConfigurationException::class);
+        ConvertToArray::new()->setConvertNonArrays(66);
+    }
+
+    /**
+     * @throws ParserConfigurationException
+     */
+    public function testThatConvertNonArraysCannotBeOverwritten(): void
+    {
+        $parser = ConvertToArray::new()
+            ->setConvertNonArrays(ConvertToArray::CONVERSION_ARRAY_WITH_KEY, 'asdf');
+        self::expectException(ParserConfigurationException::class);
+        $parser->setConvertNonArrays(ConvertToArray::CONVERSION_ARRAY_WITH_KEY, 'asdf');
+    }
+
+    /**
      * @return array
      * @throws \Exception
      */
@@ -343,8 +363,7 @@ class ConvertToArrayTest extends TestCase
      */
     public function testThatForcedKeysMustExist(): void
     {
-        $childParser = new class() extends Parser
-        {
+        $childParser = new class() extends Parser {
             protected function execute($value, Path $path)
             {
             }
@@ -404,8 +423,7 @@ class ConvertToArrayTest extends TestCase
      */
     public function testThatForcedKeysMustBeIntegerOrString($key): void
     {
-        $childParser = new class() extends Parser
-        {
+        $childParser = new class() extends Parser {
             protected function execute($value, Path $path)
             {
             }
@@ -486,14 +504,13 @@ class ConvertToArrayTest extends TestCase
             ],
             (new ConvertToArray())
                 ->withEachKey(
-                    new class() extends Parser
-                    {
+                    new class() extends Parser {
                         private $counter = 0;
 
                         protected function execute($value, Path $path)
                         {
                             return $value . ' ' . $this->counter++;
-                    }
+                        }
                     }
                 )
                 ->parse(
@@ -519,8 +536,7 @@ class ConvertToArrayTest extends TestCase
             ['last' => 7],
             (new ConvertToArray())
                 ->withEachKey(
-                    new class() extends Parser
-                    {
+                    new class() extends Parser {
                         protected function execute($value, Path $path)
                         {
                             return 'last';
@@ -551,12 +567,11 @@ class ConvertToArrayTest extends TestCase
             [
                 'key1' => '2a',
                 4 => '3a',
-                'foo' => 'somethinga'
+                'foo' => 'somethinga',
             ],
             (new ConvertToArray())
                 ->withEachValue(
-                    new class() extends Parser
-                    {
+                    new class() extends Parser {
                         protected function execute($value, Path $path)
                         {
                             return $value . 'a';
@@ -567,7 +582,7 @@ class ConvertToArrayTest extends TestCase
                     [
                         'key1' => 2,
                         4 => 3,
-                        'foo' => 'something'
+                        'foo' => 'something',
                     ]
                 )
         );
@@ -580,12 +595,12 @@ class ConvertToArrayTest extends TestCase
     public function provideEachKeyCases(): array
     {
         $cases = [];
-        foreach(DataProvider::provide((int)~DataProvider::TYPE_SCALAR) as $case => [$value]) {
+        foreach (DataProvider::provide((int) ~DataProvider::TYPE_SCALAR) as $case => [$value]) {
             $cases[$case] = [
                 4,
                 $value,
                 '4 => ' . gettype($value),
-                '{oldKey} => {newType}'
+                '{oldKey} => {newType}',
             ];
         }
 

@@ -153,4 +153,36 @@ class ConvertFromJsonTest extends TestCase
         (new ConvertFromJson())->overwriteTypeExceptionMessage('msg {type}')->parse(false);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     */
+    public function testThatObjectsAsArrayCannotBeOverwritten(): void
+    {
+        $parser = ConvertFromJson::new()->setObjectsAsArrays();
+        self::expectException(ParserConfigurationException::class);
+        $parser->setObjectsAsArrays(false);
+    }
+
+    /**
+     * @throws ParserConfigurationException
+     */
+    public function testThatMaxDepthCannotBeOverwritten(): void
+    {
+        $parser = ConvertFromJson::new()->setMaxDepth(100);
+        self::expectException(ParserConfigurationException::class);
+        $parser->setMaxDepth(500);
+    }
+
+
+
+    /**
+     * @throws ParserConfigurationException
+     */
+    public function testThatBigintAsStringCannotBeOverwritten(): void
+    {
+        $parser = ConvertFromJson::new()->setBigintAsString();
+        self::expectException(ParserConfigurationException::class);
+        $parser->setBigintAsString(false);
+    }
+
 }

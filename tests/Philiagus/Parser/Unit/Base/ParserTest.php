@@ -107,4 +107,13 @@ class ParserTest extends TestCase
         self::assertSame(3, $resultC);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
+    public function testThatStaticConstructorReturnsWorkingInstance(): void
+    {
+        \Philiagus\Test\Parser\Mock\Parser::new($target)->parse('result');
+        self::assertSame('result', $target);
+    }
 }

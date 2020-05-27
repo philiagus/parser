@@ -102,8 +102,7 @@ class ConvertToStringTest extends TestCase
         }
 
         $tests['object with __toString'] = [
-            new class()
-            {
+            new class() {
                 public function __toString()
                 {
                     return 'my string';
@@ -199,5 +198,25 @@ class ConvertToStringTest extends TestCase
     public function testWithBooleanValues(string $true, string $false, string $expected, bool $input): void
     {
         self::assertSame($expected, (new ConvertToString())->setBooleanValues($true, $false)->parse($input));
+    }
+
+    /**
+     * @throws ParserConfigurationException
+     */
+    public function testThatSetBooleanValuesCannotBeOverwritten(): void
+    {
+        $parser = ConvertToString::new()->setBooleanValues('a', 'b');
+        self::expectException(ParserConfigurationException::class);
+        $parser->setBooleanValues('a', 'b');
+    }
+
+    /**
+     * @throws ParserConfigurationException
+     */
+    public function testThatImplodeOfArraysCannotBeOverwritten(): void
+    {
+        $parser = ConvertToString::new()->setImplodeOfArrays('a', 'b');
+        self::expectException(ParserConfigurationException::class);
+        $parser->setImplodeOfArrays('a', 'b');
     }
 }

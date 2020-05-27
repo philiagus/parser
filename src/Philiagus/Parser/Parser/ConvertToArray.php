@@ -102,6 +102,12 @@ class ConvertToArray extends Parser
      */
     public function setConvertNonArrays(int $conversionType, $option = ''): self
     {
+        if ($this->convertNonArrays !== null) {
+            throw new ParserConfigurationException(
+                'Configuration for conversion of non array cannot be overwritten'
+            );
+        }
+
         if (!in_array(
             $conversionType,
             [
@@ -119,12 +125,6 @@ class ConvertToArray extends Parser
             if (!is_string($option) && !is_int($option)) {
                 throw new ParserConfigurationException('Array key can only be string or integer');
             }
-        }
-
-        if ($this->convertNonArrays !== null) {
-            throw new ParserConfigurationException(
-                'Configuration for conversion of non array cannot be overwritten'
-            );
         }
 
         $this->convertNonArrays = $conversionType;

@@ -14,7 +14,7 @@ namespace Philiagus\Test\Parser\Unit\Parser;
 
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Exception\MultipleParsingException;
+use Philiagus\Parser\Exception\OneOfParsingException;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\OneOf;
@@ -40,8 +40,7 @@ class OneOfTest extends TestCase
             ->addSameOption(INF)
             ->addEqualsOption(NAN)
             ->addOption(
-                new class() extends Parser
-                {
+                new class() extends Parser {
                     public function execute($value, Path $path = null)
                     {
                         throw new ParsingException('value', 'Exception', $path);
@@ -49,8 +48,7 @@ class OneOfTest extends TestCase
                 }
             )
             ->addOption(
-                new class() extends Parser
-                {
+                new class() extends Parser {
                     public function execute($value, Path $path = null)
                     {
                         return 'matched!';
@@ -58,24 +56,13 @@ class OneOfTest extends TestCase
                 }
             )
             ->addOption(
-                new class() extends Parser
-                {
+                new class() extends Parser {
                     public function execute($value, Path $path = null)
                     {
                         throw new \LogicException('This code should never be reached');
                     }
                 }
             )->parse(null));
-    }
-
-    /**
-     * @throws ParserConfigurationException
-     * @throws ParsingException
-     */
-    public function testThatItThrowsExceptionWhenNoOptionsAreDefined(): void
-    {
-        $this->expectException(ParserConfigurationException::class);
-        (new OneOf())->parse(null);
     }
 
     /**
@@ -89,7 +76,7 @@ class OneOfTest extends TestCase
         $option->execute(null, Argument::type(Path::class))->willThrow($exception);
         /** @var Parser $parser */
         $parser = $option->reveal();
-        $this->expectException(MultipleParsingException::class);
+        $this->expectException(OneOfParsingException::class);
         (new OneOf())
             ->addOption($parser)
             ->parse(null);
@@ -102,12 +89,11 @@ class OneOfTest extends TestCase
     public function testNonOfExceptionMessage(): void
     {
         $msg = 'msg';
-        $this->expectException(MultipleParsingException::class);
+        $this->expectException(OneOfParsingException::class);
         $this->expectExceptionMessage($msg);
         (new OneOf())
             ->addOption(
-                new class() extends Parser
-                {
+                new class() extends Parser {
                     protected function execute($value, Path $path)
                     {
                         throw new ParsingException($value, 'muh', $path);
@@ -127,7 +113,7 @@ class OneOfTest extends TestCase
             ['1', 1],
             [true, 1],
             [false, 0],
-            ['1.0', 1.0]
+            ['1.0', 1.0],
         ];
     }
 
@@ -151,7 +137,7 @@ class OneOfTest extends TestCase
      */
     public function testSameOption(): void
     {
-        self::assertSame(1, (new OneOf())->addEqualsOption(1)->parse(1));
+        self::assertSame(1, (new OneOf())->addSameOption(1)->parse(1));
     }
 
 
@@ -161,7 +147,7 @@ class OneOfTest extends TestCase
      */
     public function testEqualsException(): void
     {
-        $this->expectException(MultipleParsingException::class);
+        $this->expectException(OneOfParsingException::class);
         (new OneOf())->addEqualsOption(100)->parse(0);
     }
 
@@ -171,8 +157,34 @@ class OneOfTest extends TestCase
      */
     public function testSameException(): void
     {
-        $this->expectException(MultipleParsingException::class);
+        $this->expectException(OneOfParsingException::class);
         (new OneOf())->addSameOption(100)->parse(0);
+    }
+
+    public function testAllTypesException(): void
+    {
+        self::expectException(ParsingException::class);
+        OneOf::new()
+            ->addOption(
+                new class extends Parser {
+                    protected function execute($value, Path $path)
+                    {
+                        throw new ParsingException($value, 'no 1', $path);
+                    }
+                },
+                new class extends Parser {
+                    protected function execute($value, Path $path)
+                    {
+                        throw new ParsingException($value, 'no 2', $path);
+                    }
+                }
+            )
+            ->addSameOption(
+                1, 2, 3
+            )
+            ->addEqualsOption(
+                1, 2, 3
+            )->parse('not existing');
     }
 
 }
