@@ -33,7 +33,7 @@ class ConvertToInteger
      *
      * @return $this
      */
-    public function withTypeExceptionMessage(string $message): self
+    public function overwriteTypeExceptionMessage(string $message): self
     {
         $this->typeExceptionMessage = $message;
 

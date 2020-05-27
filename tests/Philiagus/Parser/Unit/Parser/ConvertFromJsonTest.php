@@ -69,7 +69,7 @@ class ConvertFromJsonTest extends TestCase
             'a',
         ];
         $jsonString = json_encode($json);
-        self::assertSame($json, (new ConvertFromJson())->withMaxDepth(10)->parse($jsonString));
+        self::assertSame($json, (new ConvertFromJson())->setMaxDepth(10)->parse($jsonString));
     }
 
     /**
@@ -79,7 +79,7 @@ class ConvertFromJsonTest extends TestCase
     public function testMaxDepthException(): void
     {
         $this->expectException(ParsingException::class);
-        (new ConvertFromJson())->withMaxDepth(1)->parse('[[[[[[[[[[[[[1]]]]]]]]]]]]]');
+        (new ConvertFromJson())->setMaxDepth(1)->parse('[[[[[[[[[[[[[1]]]]]]]]]]]]]');
     }
 
     /**
@@ -90,7 +90,7 @@ class ConvertFromJsonTest extends TestCase
     {
         $parser = (new ConvertFromJson());
         self::assertInstanceOf(\stdClass::class, $parser->parse('{}'));
-        $parser->withObjectsAsArrays();
+        $parser->setObjectsAsArrays();
         self::assertSame([], $parser->parse('{}'));
     }
 
@@ -103,7 +103,7 @@ class ConvertFromJsonTest extends TestCase
         $parser = (new ConvertFromJson());
         $int = PHP_INT_MAX . '0';
         self::assertIsFloat($parser->parse($int));
-        $parser->withBigintAsString();
+        $parser->setBigintAsString();
         self::assertSame($int, $parser->parse($int));
     }
 
@@ -116,7 +116,7 @@ class ConvertFromJsonTest extends TestCase
         $msg = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
-        (new ConvertFromJson())->withConversionExceptionMessage($msg)->parse('u');
+        (new ConvertFromJson())->overwriteConversionExceptionMessage($msg)->parse('u');
     }
 
     /**
@@ -127,7 +127,7 @@ class ConvertFromJsonTest extends TestCase
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage('msg Syntax error');
-        (new ConvertFromJson())->withConversionExceptionMessage('msg {msg}')->parse('u');
+        (new ConvertFromJson())->overwriteConversionExceptionMessage('msg {msg}')->parse('u');
     }
 
     /**
@@ -139,7 +139,7 @@ class ConvertFromJsonTest extends TestCase
         $msg = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
-        (new ConvertFromJson())->withTypeExceptionMessage($msg)->parse(false);
+        (new ConvertFromJson())->overwriteTypeExceptionMessage($msg)->parse(false);
     }
 
     /**
@@ -150,7 +150,38 @@ class ConvertFromJsonTest extends TestCase
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage('msg boolean');
-        (new ConvertFromJson())->withTypeExceptionMessage('msg {type}')->parse(false);
+        (new ConvertFromJson())->overwriteTypeExceptionMessage('msg {type}')->parse(false);
+    }
+
+    /**
+     * @throws ParserConfigurationException
+     */
+    public function testThatObjectsAsArrayCannotBeOverwritten(): void
+    {
+        $parser = ConvertFromJson::new()->setObjectsAsArrays();
+        self::expectException(ParserConfigurationException::class);
+        $parser->setObjectsAsArrays(false);
+    }
+
+    /**
+     * @throws ParserConfigurationException
+     */
+    public function testThatMaxDepthCannotBeOverwritten(): void
+    {
+        $parser = ConvertFromJson::new()->setMaxDepth(100);
+        self::expectException(ParserConfigurationException::class);
+        $parser->setMaxDepth(500);
+    }
+
+
+    /**
+     * @throws ParserConfigurationException
+     */
+    public function testThatBigintAsStringCannotBeOverwritten(): void
+    {
+        $parser = ConvertFromJson::new()->setBigintAsString();
+        self::expectException(ParserConfigurationException::class);
+        $parser->setBigintAsString(false);
     }
 
 }

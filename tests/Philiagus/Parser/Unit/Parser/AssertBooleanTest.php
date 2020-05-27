@@ -80,7 +80,7 @@ class AssertBooleanTest extends TestCase
         $message = 'This is an error msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($message);
-        (new AssertBoolean())->withTypeExceptionMessage($message)->parse('yes');
+        (new AssertBoolean())->overwriteTypeExceptionMessage($message)->parse('yes');
     }
 
 }

@@ -39,6 +39,18 @@ abstract class Parser
     }
 
     /**
+     * Static version of the constructor for more readable creation when chaining calls
+     *
+     * @param null $target
+     *
+     * @return static
+     */
+    public static function new(&$target = null): self
+    {
+        return new static($target);
+    }
+
+    /**
      * @param mixed $value
      * @param Path|null $path
      *

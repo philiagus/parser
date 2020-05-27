@@ -460,7 +460,7 @@ class AssertArrayTest extends TestCase
         $message = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($message);
-        (new AssertArray())->withTypeExceptionMessage($message)->parse('no');
+        (new AssertArray())->overwriteTypeExceptionMessage($message)->parse('no');
     }
 
 }

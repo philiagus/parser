@@ -36,14 +36,31 @@ class Fixed extends Parser
     private $defined = false;
 
     /**
+     * @param $value
+     *
+     * @return static
+     */
+    public static function value($value): self
+    {
+        return self::new()->setValue($value);
+    }
+
+    /**
      * Sets the value this parser is defined as
      *
      * @param $value
      *
      * @return $this
+     * @throws ParserConfigurationException
      */
-    public function withValue($value): self
+    public function setValue($value): self
     {
+        if ($this->defined) {
+            throw new ParserConfigurationException(
+                'Value of Fixed cannot be overwritten'
+            );
+        }
+
         $this->value = $value;
         $this->defined = true;
 

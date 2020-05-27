@@ -14,6 +14,7 @@ namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 
 class ConvertToString extends Parser
@@ -39,7 +40,7 @@ class ConvertToString extends Parser
      *
      * @return $this
      */
-    public function withTypeExceptionMessage(string $message): self
+    public function overwriteTypeExceptionMessage(string $message): self
     {
         $this->typeExceptionMessage = $message;
 
@@ -51,9 +52,16 @@ class ConvertToString extends Parser
      * @param string $false
      *
      * @return $this
+     * @throws ParserConfigurationException
      */
-    public function withBooleanValues(string $true, string $false): self
+    public function setBooleanValues(string $true, string $false): self
     {
+        if ($this->booleanValues !== null) {
+            throw new ParserConfigurationException(
+                'Already set boolean value conversion configuration of ConvertToString cannot be overwritten'
+            );
+        }
+
         $this->booleanValues = [$false, $true];
 
         return $this;
@@ -70,12 +78,18 @@ class ConvertToString extends Parser
      * @param string $exceptionMessage
      *
      * @return $this
+     * @throws ParserConfigurationException
      */
-    public function withImplodeOfArrays(
+    public function setImplodeOfArrays(
         string $delimiter,
         string $exceptionMessage = 'A value at index {index} was not of type string but of type {type}'
     ): self
     {
+        if ($this->implode !== null) {
+            throw new ParserConfigurationException(
+                'Already set implode configuration of ConvertToString cannot be overwritten'
+            );
+        }
         $this->implode = [$delimiter, $exceptionMessage];
 
         return $this;
@@ -96,6 +110,7 @@ class ConvertToString extends Parser
                 break;
             case is_float($value):
                 if (is_infinite($value) || is_nan($value)) break;
+
                 return (string) $value;
             case is_bool($value):
                 if ($this->booleanValues) {

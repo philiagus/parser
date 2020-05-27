@@ -24,16 +24,18 @@ class AssertStdClass
     private $typeExceptionMessage = 'Provided value is not an instance of \stdClass';
 
     /**
-     * @var array[]
+     * @var callable[]
      */
-    private $withProperty = [];
+    private $assertionList = [];
 
     /**
-     * @var Parser[]
+     * Defines the exception message if the provided value is not an instance of \stdClass
+     *
+     * @param string $message
+     *
+     * @return $this
      */
-    private $withDefaultedProperty = [];
-
-    public function withTypeExceptionMessage(string $message): self
+    public function overwriteTypeExceptionMessage(string $message): self
     {
         $this->typeExceptionMessage = $message;
 
@@ -46,20 +48,32 @@ class AssertStdClass
      * Replacers in the exception message:
      * {key} = var_export($key, true)
      *
-     * @param $property
-     * @param Parser $value
+     * @param string $property
+     * @param Parser $parser
      * @param string $missingKeyExceptionMessage
      *
      * @return $this
      */
-    public function withProperty($property, Parser $value, string $missingKeyExceptionMessage = 'The object does not contain the requested property {property}'): self
+    public function withProperty(string $property, Parser $parser, string $missingKeyExceptionMessage = 'The object does not contain the requested property {property}'): self
     {
-        $this->withProperty[$property] = [$value, $missingKeyExceptionMessage];
+        $this->assertionList[] = function (\stdClass $value, array $properties, Path $path) use ($property, $parser, $missingKeyExceptionMessage) {
+            if (!in_array($property, $properties)) {
+                throw new ParsingException(
+                    $value,
+                    strtr($missingKeyExceptionMessage, ['{property}' => var_export($property, true)]),
+                    $path
+                );
+            }
+
+            $parser->parse($value->{$property}, $path->property((string) $property));
+        };
 
         return $this;
     }
 
     /**
+     * Puts the value of the property against the defined parser or the default, if the property does not exist
+     *
      * @param string $property
      * @param $default
      * @param Parser $parser
@@ -68,7 +82,15 @@ class AssertStdClass
      */
     public function withDefaultedProperty(string $property, $default, Parser $parser): self
     {
-        $this->withDefaultedProperty[$property] = [$default, $parser];
+        $this->assertionList[] = function (\stdClass $value, array $properties, Path $path) use ($property, $default, $parser) {
+            if (in_array($property, $properties)) {
+                $element = $value->{$property};
+            } else {
+                $element = $default;
+            }
+
+            $parser->parse($element, $path->property((string) $property));
+        };
 
         return $this;
     }
@@ -83,30 +105,8 @@ class AssertStdClass
         }
 
         $properties = array_keys((array) $value);
-
-        /**
-         * @var string|int $property
-         * @var Parser $parser
-         * @var string $exceptionMessage
-         */
-        foreach ($this->withProperty as $property => [$parser, $exceptionMessage]) {
-            if (!in_array($property, $properties)) {
-                throw new ParsingException(
-                    $value,
-                    strtr($exceptionMessage, ['{property}' => var_export($property, true)]),
-                    $path
-                );
-            }
-
-            $parser->parse($value->{$property}, $path->property((string) $property));
-        }
-
-        foreach ($this->withDefaultedProperty as $property => [$element, $parser]) {
-            if (in_array($property, $properties)) {
-                $element = $value->{$property};
-            }
-
-            $parser->parse($element, $path->property((string) $property));
+        foreach ($this->assertionList as $assertion) {
+            $assertion($value, $properties, $path);
         }
 
         return $value;

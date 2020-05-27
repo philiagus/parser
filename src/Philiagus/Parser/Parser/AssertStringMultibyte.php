@@ -26,19 +26,14 @@ class AssertStringMultibyte extends Parser
     private $typeExceptionMessage = 'Provided value is not of type string';
 
     /**
-     * @var null|Parser
+     * @var string[]|null
      */
-    private $length = null;
+    private $encoding = null;
 
     /**
-     * @var mixed[]
+     * @var callable[]
      */
-    private $substring = [];
-
-    /**
-     * @var string[]
-     */
-    private $encoding = [];
+    private $assertionList = [];
 
     /**
      * Defines the exception message to use if the value is not a string
@@ -47,7 +42,7 @@ class AssertStringMultibyte extends Parser
      *
      * @return $this
      */
-    public function withTypeExceptionMessage(string $message): self
+    public function overwriteTypeExceptionMessage(string $message): self
     {
         $this->typeExceptionMessage = $message;
 
@@ -63,7 +58,9 @@ class AssertStringMultibyte extends Parser
      */
     public function withLength(Parser $integerParser): self
     {
-        $this->length = $integerParser;
+        $this->assertionList[] = function (string $value, $encoding, Path $path) use ($integerParser) {
+            $integerParser->parse(mb_strlen($value, $encoding), $path->meta('length'));
+        };
 
         return $this;
     }
@@ -83,7 +80,14 @@ class AssertStringMultibyte extends Parser
         Parser $stringParser
     ): self
     {
-        $this->substring[] = [$start, $length, $stringParser];
+        $this->assertionList[] = function (string $value, $encoding, Path $path) use ($start, $length, $stringParser) {
+            if ($value === '') {
+                $part = '';
+            } else {
+                $part = (string) mb_substr($value, $start, $length, $encoding);
+            }
+            $stringParser->parse($part, $path->meta("$start:$length"));
+        };
 
         return $this;
     }
@@ -95,15 +99,24 @@ class AssertStringMultibyte extends Parser
      * @return $this
      * @throws ParserConfigurationException
      */
-    public function withEncoding(string $encoding, string $exception = 'Multibyte string does not appear to be of the requested encoding'): self
+    public function setEncoding(string $encoding, string $exception = 'Multibyte string does not appear to be of the requested encoding'): self
     {
         static $encodings = null;
-        if($encodings === null) {
+
+        if ($this->encoding !== null) {
+            throw new ParserConfigurationException(
+                'The encoding of AssertStringMultibyte has already been defined and cannot be overwritten'
+            );
+        }
+
+        if ($encodings === null) {
             $encodings = mb_list_encodings();
         }
-        if(!in_array($encoding, $encodings)) {
+
+        if (!in_array($encoding, $encodings)) {
             throw new ParserConfigurationException("The encoding $encoding is unknown to the system");
         }
+
         $this->encoding = [$encoding, $exception];
 
         return $this;
@@ -118,33 +131,17 @@ class AssertStringMultibyte extends Parser
             throw new ParsingException($value, $this->typeExceptionMessage, $path);
         }
 
-        if($this->encoding) {
+        if ($this->encoding) {
             [$encoding, $exception] = $this->encoding;
-            if(!mb_check_encoding($value, $encoding)) {
+            if (!mb_check_encoding($value, $encoding)) {
                 throw new ParsingException($value, $exception, $path);
             }
         } else {
             $encoding = mb_detect_encoding($value);
         }
 
-        if ($this->length) {
-            $this->length->parse(mb_strlen($value, $encoding), $path->meta('length'));
-        }
-
-        if ($this->substring) {
-            /**
-             * @var int $start
-             * @var null|int $length
-             * @var Parser $parser
-             */
-            foreach ($this->substring as [$start, $length, $parser]) {
-                if ($value === '') {
-                    $part = '';
-                } else {
-                    $part = (string)mb_substr($value, $start, $length, $encoding);
-                }
-                $parser->parse($part, $path->meta("$start:$length"));
-            }
+        foreach ($this->assertionList as $assertion) {
+            $assertion($value, $encoding, $path);
         }
 
         return $value;

@@ -17,22 +17,14 @@ use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception;
 use Philiagus\Parser\Exception\ParsingException;
 
-class AssertNumeric extends Parser
+class AssertNumber extends Parser
 {
     /**
      * @var string
      */
     private $typeExceptionMessage = 'Provided value is not of float or integer';
 
-    /**
-     * @var array|null
-     */
-    private $minimumValue = null;
-
-    /**
-     * @var array|null
-     */
-    private $maximumValue = null;
+    private $assertionList = [];
 
     /**
      * Sets the exception message thrown when the type does not match
@@ -41,7 +33,7 @@ class AssertNumeric extends Parser
      *
      * @return $this
      */
-    public function withTypeExceptionMessage(string $exceptionMessage): self
+    public function overwriteTypeExceptionMessage(string $exceptionMessage): self
     {
         $this->typeExceptionMessage = $exceptionMessage;
 
@@ -57,7 +49,7 @@ class AssertNumeric extends Parser
      * @param float|int $minimum
      * @param string $exceptionMessage
      *
-     * @return AssertNumeric
+     * @return AssertNumber
      * @throws Exception\ParserConfigurationException
      */
     public function withMinimum($minimum, string $exceptionMessage = 'Provided value of {value} is lower than the defined minimum of {min}'): self
@@ -69,13 +61,16 @@ class AssertNumeric extends Parser
         ) {
             throw new Exception\ParserConfigurationException('The minimum for a numeric value must be provided as integer or float');
         }
-        if ($this->maximumValue !== null && $this->maximumValue[0] < $minimum) {
-            throw new Exception\ParserConfigurationException(
-                sprintf('Trying to set minimum of %s to a higher value than the maximum of %s', $minimum, $this->maximumValue)
-            );
-        }
 
-        $this->minimumValue = [$minimum, $exceptionMessage];
+        $this->assertionList[] = function ($value, Path $path) use ($minimum, $exceptionMessage) {
+            if ($minimum > $value) {
+                throw new Exception\ParsingException(
+                    $value,
+                    strtr($exceptionMessage, ['{value}' => $value, '{min}' => $minimum]),
+                    $path
+                );
+            }
+        };
 
         return $this;
     }
@@ -89,7 +84,7 @@ class AssertNumeric extends Parser
      * @param float|int $maximum
      * @param string $exceptionMessage
      *
-     * @return AssertNumeric
+     * @return AssertNumber
      * @throws Exception\ParserConfigurationException
      */
     public function withMaximum($maximum, string $exceptionMessage = 'Provided value of {value} is greater than the defined maximum of {max}}'): self
@@ -102,13 +97,15 @@ class AssertNumeric extends Parser
             throw new Exception\ParserConfigurationException('The maximum for a numeric value must be provided as integer or float');
         }
 
-        if ($this->minimumValue !== null && $this->minimumValue[0] > $maximum) {
-            throw new Exception\ParserConfigurationException(
-                sprintf('Trying to set maximum of %s to a lower value than the minimum of %s', $maximum, $this->minimumValue)
-            );
-        }
-
-        $this->maximumValue = [$maximum, $exceptionMessage];
+        $this->assertionList[] = function ($value, Path $path) use ($maximum, $exceptionMessage) {
+            if ($maximum < $value) {
+                throw new Exception\ParsingException(
+                    $value,
+                    strtr($exceptionMessage, ['{value}' => $value, '{max}' => $maximum]),
+                    $path
+                );
+            }
+        };
 
         return $this;
     }
@@ -125,34 +122,8 @@ class AssertNumeric extends Parser
             throw new ParsingException($value, $this->typeExceptionMessage, $path);
         }
 
-        if ($this->minimumValue !== null) {
-            /**
-             * @var float|int $minimum
-             * @var string $exception
-             */
-            [$minimum, $exception] = $this->minimumValue;
-            if ($minimum > $value) {
-                throw new Exception\ParsingException(
-                    $value,
-                    strtr($exception, ['{value}' => $value, '{min}' => $minimum]),
-                    $path
-                );
-            }
-        }
-
-        if ($this->maximumValue !== null) {
-            /**
-             * @var float|int $maximum
-             * @var string $exception
-             */
-            [$maximum, $exception] = $this->maximumValue;
-            if ($maximum < $value) {
-                throw new Exception\ParsingException(
-                    $value,
-                    strtr($exception, ['{value}' => $value, '{max}' => $maximum]),
-                    $path
-                );
-            }
+        foreach ($this->assertionList as $assertion) {
+            $assertion($value, $path);
         }
 
         return $value;

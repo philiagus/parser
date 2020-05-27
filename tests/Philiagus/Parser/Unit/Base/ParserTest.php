@@ -45,8 +45,7 @@ class ParserTest extends TestCase
     public function testThatItWritesByReferenceAndReturnsValue($value): void
     {
         $target = null;
-        $parser = new class($target) extends Parser
-        {
+        $parser = new class($target) extends Parser {
 
             private $wasCalled = false;
 
@@ -79,8 +78,7 @@ class ParserTest extends TestCase
     public function testThatChainingWorks(): void
     {
         $resultA = $resultB = $resultC = null;
-        $baseParser = new class($resultA) extends Parser
-        {
+        $baseParser = new class($resultA) extends Parser {
             protected function execute($value, Path $path)
             {
                 Assert::assertSame(1, $value);
@@ -90,8 +88,7 @@ class ParserTest extends TestCase
         };
 
         $baseParser->then(
-            new class($resultB) extends Parser
-            {
+            new class($resultB) extends Parser {
                 protected function execute($value, Path $path)
                 {
                     Assert::assertSame(2, $value);
@@ -107,4 +104,13 @@ class ParserTest extends TestCase
         self::assertSame(3, $resultC);
     }
 
+    /**
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     */
+    public function testThatStaticConstructorReturnsWorkingInstance(): void
+    {
+        \Philiagus\Test\Parser\Mock\Parser::new($target)->parse('result');
+        self::assertSame('result', $target);
+    }
 }

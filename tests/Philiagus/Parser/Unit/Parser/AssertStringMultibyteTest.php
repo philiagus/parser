@@ -81,7 +81,7 @@ class AssertStringMultibyteTest extends TestCase
         $msg = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
-        (new AssertStringMultibyte())->withTypeExceptionMessage($msg)->parse(false);
+        (new AssertStringMultibyte())->overwriteTypeExceptionMessage($msg)->parse(false);
     }
 
     /**
@@ -167,43 +167,53 @@ class AssertStringMultibyteTest extends TestCase
      * @throws ParserConfigurationException
      * @throws ParsingException
      */
-    public function testWithEncoding(): void
+    public function testSetEncoding(): void
     {
         $value = 'This is a UTF-8 string äöü';
-        self::assertSame($value, (new AssertStringMultibyte())->withEncoding('UTF-8')->parse($value));
+        self::assertSame($value, (new AssertStringMultibyte())->setEncoding('UTF-8')->parse($value));
     }
 
     /**
      * @throws ParserConfigurationException
      * @throws ParsingException
      */
-    public function testWithEncodingException(): void
+    public function testSetEncodingException(): void
     {
         $value = utf8_decode('This is a UTF-8 string äöü decoded to ISO-8859-1');
         $this->expectException(ParsingException::class);
-        self::assertSame($value, (new AssertStringMultibyte())->withEncoding('UTF-8')->parse($value));
+        self::assertSame($value, (new AssertStringMultibyte())->setEncoding('UTF-8')->parse($value));
     }
 
     /**
      * @throws ParserConfigurationException
      * @throws ParsingException
      */
-    public function testWithEncodingExceptionMessage(): void
+    public function testSetEncodingExceptionMessage(): void
     {
         $message = 'msg';
         $value = utf8_decode('This is a UTF-8 string äöü decoded to ISO-8859-1');
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($message);
-        self::assertSame($value, (new AssertStringMultibyte())->withEncoding('UTF-8', $message)->parse($value));
+        self::assertSame($value, (new AssertStringMultibyte())->setEncoding('UTF-8', $message)->parse($value));
     }
 
     /**
      * @throws ParserConfigurationException
      */
-    public function testWithEncodingOnlyAcceptsValidEncoding(): void
+    public function testSetEncodingOnlyAcceptsValidEncoding(): void
     {
         $this->expectException(ParserConfigurationException::class);
-        (new AssertStringMultibyte())->withEncoding('this is not an encoding');
+        (new AssertStringMultibyte())->setEncoding('this is not an encoding');
+    }
+
+    /**
+     * @throws ParserConfigurationException
+     */
+    public function testThatEncodingCannotBeOverwritten(): void
+    {
+        $parser = AssertStringMultibyte::new()->setEncoding('UTF-8');
+        self::expectException(ParserConfigurationException::class);
+        $parser->setEncoding('ISO-8859-1');
     }
 
 }

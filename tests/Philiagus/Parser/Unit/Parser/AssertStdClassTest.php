@@ -75,7 +75,7 @@ class AssertStdClassTest extends TestCase
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
         (new AssertStdClass())
-            ->withTypeExceptionMessage($msg)
+            ->overwriteTypeExceptionMessage($msg)
             ->parse(1);
     }
 
@@ -104,8 +104,7 @@ class AssertStdClassTest extends TestCase
      */
     public function testThatItThrowsAnExceptionOnMissingProperty(): void
     {
-        $child = new class() extends Parser
-        {
+        $child = new class() extends Parser {
             protected function execute($value, Path $path)
             {
             }
@@ -138,8 +137,7 @@ class AssertStdClassTest extends TestCase
      */
     public function testThatItRespectsDefinedExceptionMessage(string $baseMsg, string $expected, string $propName): void
     {
-        $child = new class() extends Parser
-        {
+        $child = new class() extends Parser {
             protected function execute($value, Path $path)
             {
             }

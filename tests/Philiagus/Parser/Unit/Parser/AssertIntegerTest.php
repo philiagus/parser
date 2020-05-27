@@ -71,24 +71,6 @@ class AssertIntegerTest extends TestCase
 
     /**
      * @throws ParserConfigurationException
-     */
-    public function testThatMinimumCannotBeGreaterThanMaximum(): void
-    {
-        $this->expectException(ParserConfigurationException::class);
-        (new AssertInteger())->withMaximum(100)->withMinimum(1000);
-    }
-
-    /**
-     * @throws ParserConfigurationException
-     */
-    public function testThatMaximumCannotBeLowerThanMinimum(): void
-    {
-        $this->expectException(ParserConfigurationException::class);
-        (new AssertInteger())->withMinimum(1000)->withMaximum(100);
-    }
-
-    /**
-     * @throws ParserConfigurationException
      * @throws ParsingException
      */
     public function testThatValueMustBeGreaterThanMinimum(): void
@@ -149,7 +131,6 @@ class AssertIntegerTest extends TestCase
     public function provideValidMultipleOfs(): array
     {
         return [
-            '0 is multiple of 0' => [0, 0],
             '10 is multiple of 5' => [10, 5],
             '-10 is multiple of -5' => [10, 5],
         ];
@@ -192,7 +173,7 @@ class AssertIntegerTest extends TestCase
         $msg = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
-        (new AssertInteger())->withTypeExceptionMessage($msg)->parse(false);
+        (new AssertInteger())->overwriteTypeExceptionMessage($msg)->parse(false);
     }
 
     public function provideMinExceptionTestMessages(): array

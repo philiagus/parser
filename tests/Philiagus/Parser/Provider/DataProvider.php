@@ -73,6 +73,7 @@ class DataProvider
                     .5,
                     1.0,
                     1.5,
+                    M_PI,
                     666.0,
                     PHP_INT_MAX + .5,
                 ] as $floatValue

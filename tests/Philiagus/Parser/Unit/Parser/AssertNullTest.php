@@ -80,7 +80,7 @@ class AssertNullTest extends TestCase
         $msg = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
-        (new AssertNull())->withExceptionMessage($msg)->parse(false);
+        (new AssertNull())->overwriteExceptionMessage($msg)->parse(false);
     }
 
 }

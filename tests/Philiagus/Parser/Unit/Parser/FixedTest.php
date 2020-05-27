@@ -46,7 +46,7 @@ class FixedTest extends TestCase
     public function testThatItIgnoresAnyInputAndReturnsTheDefinedValue($value): void
     {
         $instance = new \stdClass();
-        self::assertSame($instance, (new Fixed())->withValue($instance)->parse($value));
+        self::assertSame($instance, (new Fixed())->setValue($instance)->parse($value));
     }
 
     /**
@@ -59,7 +59,21 @@ class FixedTest extends TestCase
     public function testThatItAcceptsAnyValueAsFixed($value): void
     {
         $instance = new \stdClass();
-        $result = (new Fixed())->withValue($value)->parse($instance);
+        $result = (new Fixed())->setValue($value)->parse($instance);
+        DataProvider::assertSame($value, $result);
+    }
+
+    /**
+     * @param $value
+     *
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     * @dataProvider provideAllTypes
+     */
+    public function testStaticValue($value): void
+    {
+        $instance = new \stdClass();
+        $result = Fixed::value($value)->parse($instance);
         DataProvider::assertSame($value, $result);
     }
 
@@ -71,6 +85,16 @@ class FixedTest extends TestCase
     {
         $this->expectException(ParserConfigurationException::class);
         (new Fixed())->parse(null);
+    }
+
+    /**
+     * @throws ParserConfigurationException
+     */
+    public function testThatValueCannotBeOverwritten(): void
+    {
+        $instance = Fixed::new()->setValue('asdf');
+        self::expectException(ParserConfigurationException::class);
+        $instance->setValue('b');
     }
 
 }

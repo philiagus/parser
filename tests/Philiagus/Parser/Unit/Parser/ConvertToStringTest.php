@@ -67,7 +67,7 @@ class ConvertToStringTest extends TestCase
         $msg = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
-        (new ConvertToString())->withTypeExceptionMessage($msg)->parse(null);
+        (new ConvertToString())->overwriteTypeExceptionMessage($msg)->parse(null);
     }
 
     /**
@@ -81,7 +81,7 @@ class ConvertToStringTest extends TestCase
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage('type ' . gettype($invalid));
-        (new ConvertToString())->withTypeExceptionMessage('type {type}')->parse($invalid);
+        (new ConvertToString())->overwriteTypeExceptionMessage('type {type}')->parse($invalid);
     }
 
     /**
@@ -102,8 +102,7 @@ class ConvertToStringTest extends TestCase
         }
 
         $tests['object with __toString'] = [
-            new class()
-            {
+            new class() {
                 public function __toString()
                 {
                     return 'my string';
@@ -137,7 +136,7 @@ class ConvertToStringTest extends TestCase
     {
         self::assertSame(
             '1.2.3.4',
-            (new ConvertToString())->withImplodeOfArrays('.')->parse(['1', '2', '3', '4'])
+            (new ConvertToString())->setImplodeOfArrays('.')->parse(['1', '2', '3', '4'])
         );
     }
 
@@ -148,7 +147,7 @@ class ConvertToStringTest extends TestCase
     public function testWithImplodeOfArraysWithoutStringValues(): void
     {
         $this->expectException(ParsingException::class);
-        (new ConvertToString())->withImplodeOfArrays('.')->parse([1, 2, 3]);
+        (new ConvertToString())->setImplodeOfArrays('.')->parse([1, 2, 3]);
     }
 
     public function provideForWithImplodeOfArraysExceptionMessage(): array
@@ -174,7 +173,7 @@ class ConvertToStringTest extends TestCase
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($expected);
-        (new ConvertToString())->withImplodeOfArrays('.', $msg)->parse($values);
+        (new ConvertToString())->setImplodeOfArrays('.', $msg)->parse($values);
     }
 
     public function provideBooleanConversionValues(): array
@@ -198,6 +197,26 @@ class ConvertToStringTest extends TestCase
      */
     public function testWithBooleanValues(string $true, string $false, string $expected, bool $input): void
     {
-        self::assertSame($expected, (new ConvertToString())->withBooleanValues($true, $false)->parse($input));
+        self::assertSame($expected, (new ConvertToString())->setBooleanValues($true, $false)->parse($input));
+    }
+
+    /**
+     * @throws ParserConfigurationException
+     */
+    public function testThatSetBooleanValuesCannotBeOverwritten(): void
+    {
+        $parser = ConvertToString::new()->setBooleanValues('a', 'b');
+        self::expectException(ParserConfigurationException::class);
+        $parser->setBooleanValues('a', 'b');
+    }
+
+    /**
+     * @throws ParserConfigurationException
+     */
+    public function testThatImplodeOfArraysCannotBeOverwritten(): void
+    {
+        $parser = ConvertToString::new()->setImplodeOfArrays('a', 'b');
+        self::expectException(ParserConfigurationException::class);
+        $parser->setImplodeOfArrays('a', 'b');
     }
 }

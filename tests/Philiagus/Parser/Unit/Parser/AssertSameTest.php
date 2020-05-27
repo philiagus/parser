@@ -42,7 +42,7 @@ class AssertSameTest extends TestCase
      */
     public function provideEverythingExceptNAN(): array
     {
-        return DataProvider::provide((int)~DataProvider::TYPE_NAN);
+        return DataProvider::provide((int) ~DataProvider::TYPE_NAN);
     }
 
     /**
@@ -68,7 +68,7 @@ class AssertSameTest extends TestCase
     public function testThatItBlocksNotSameValue($value): void
     {
         $this->expectException(ParsingException::class);
-        (new AssertSame())->withValue(0)->parse($value);
+        (new AssertSame())->setValue(0)->parse($value);
     }
 
     /**
@@ -77,7 +77,7 @@ class AssertSameTest extends TestCase
      */
     public function testThatItAllowsSameValue(): void
     {
-        $parser = (new AssertSame())->withValue(0);
+        $parser = (new AssertSame())->setValue(0);
         self::assertSame(0, $parser->parse(0));
     }
 
@@ -100,7 +100,7 @@ class AssertSameTest extends TestCase
         $msg = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
-        (new AssertSame())->withValue(1, $msg)->parse('1');
+        (new AssertSame())->setValue(1, $msg)->parse('1');
     }
 
     /**
@@ -112,8 +112,8 @@ class AssertSameTest extends TestCase
     {
         $message = 'hello';
         self::assertEquals(
-            serialize((new AssertSame())->withValue($value, $message)),
-            serialize(AssertSame::with($value, $message))
+            serialize((new AssertSame())->setValue($value, $message)),
+            serialize(AssertSame::value($value, $message))
         );
     }
 
@@ -126,7 +126,17 @@ class AssertSameTest extends TestCase
      */
     public function testThatItAcceptsAllValues($value): void
     {
-        DataProvider::assertSame($value, (new AssertSame())->withValue($value)->parse($value));
+        DataProvider::assertSame($value, (new AssertSame())->setValue($value)->parse($value));
+    }
+
+    /**
+     * @throws ParserConfigurationException
+     */
+    public function testThatItDoesNotAcceptsOverwrites(): void
+    {
+        $parser = AssertSame::new()->setValue('a');
+        self::expectException(ParserConfigurationException::class);
+        $parser->setValue('b');
     }
 
 }

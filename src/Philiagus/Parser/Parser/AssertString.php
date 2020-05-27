@@ -25,14 +25,9 @@ class AssertString extends Parser
     private $typeExceptionMessage = 'Provided value is not of type string';
 
     /**
-     * @var null|Parser
+     * @var callable[]
      */
-    private $length = null;
-
-    /**
-     * @var mixed[]
-     */
-    private $substring = [];
+    private $assertionList = [];
 
     /**
      * Defines the exception message to use if the value is not a string
@@ -41,7 +36,7 @@ class AssertString extends Parser
      *
      * @return $this
      */
-    public function withTypeExceptionMessage(string $message): self
+    public function overwriteTypeExceptionMessage(string $message): self
     {
         $this->typeExceptionMessage = $message;
 
@@ -57,7 +52,9 @@ class AssertString extends Parser
      */
     public function withLength(Parser $integerParser): self
     {
-        $this->length = $integerParser;
+        $this->assertionList[] = function (string $value, Path $path) use ($integerParser) {
+            $integerParser->parse(strlen($value), $path->meta('length'));
+        };
 
         return $this;
     }
@@ -77,7 +74,14 @@ class AssertString extends Parser
         Parser $stringParser
     ): self
     {
-        $this->substring[] = [$start, $length, $stringParser];
+        $this->assertionList[] = function (string $value, Path $path) use ($start, $length, $stringParser) {
+            if ($value === '') {
+                $part = '';
+            } else {
+                $part = (string) substr($value, $start, $length);
+            }
+            $stringParser->parse($part, $path->meta("$start:$length"));
+        };
 
         return $this;
     }
@@ -91,24 +95,8 @@ class AssertString extends Parser
             throw new ParsingException($value, $this->typeExceptionMessage, $path);
         }
 
-        if ($this->length) {
-            $this->length->parse(strlen($value), $path->meta('length'));
-        }
-
-        if ($this->substring) {
-            /**
-             * @var int $start
-             * @var int|null $length
-             * @var Parser $parser
-             */
-            foreach ($this->substring as [$start, $length, $parser]) {
-                if ($value === '') {
-                    $part = '';
-                } else {
-                    $part = (string)substr($value, $start, $length);
-                }
-                $parser->parse($part, $path->meta("$start:$length"));
-            }
+        foreach ($this->assertionList as $assertion) {
+            $assertion($value, $path);
         }
 
         return $value;

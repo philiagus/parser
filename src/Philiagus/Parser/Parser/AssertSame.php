@@ -33,8 +33,22 @@ class AssertSame
      */
     private $targetValue;
 
-    public function withValue($equalsValue, string $exceptionMessage = self::DEFAULT_MESSAGE): self
+    /**
+     * Sets the value to be === compared against
+     *
+     * @param $equalsValue
+     * @param string $exceptionMessage
+     *
+     * @return $this
+     * @throws ParserConfigurationException
+     */
+    public function setValue($equalsValue, string $exceptionMessage = self::DEFAULT_MESSAGE): self
     {
+        if ($this->exceptionMessage !== null) {
+            throw new ParserConfigurationException(
+                'Tried to overwrite value of configured same parser'
+            );
+        }
         $this->exceptionMessage = $exceptionMessage;
         $this->targetValue = $equalsValue;
 
@@ -59,13 +73,18 @@ class AssertSame
 
     /**
      * Shortcut constructor for assertion against a value when no by-reference check is needed
+     *
      * @param $value
      * @param string $exceptionMessage
      *
      * @return static
      */
-    public static function with($value, string $exceptionMessage = self::DEFAULT_MESSAGE): self
+    public static function value($value, string $exceptionMessage = self::DEFAULT_MESSAGE): self
     {
-        return (new self())->withValue($value, $exceptionMessage);
+        $instance = new self();
+        $instance->targetValue = $value;
+        $instance->exceptionMessage = $exceptionMessage;
+
+        return $instance;
     }
 }

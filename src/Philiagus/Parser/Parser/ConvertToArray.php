@@ -19,13 +19,21 @@ use Philiagus\Parser\Exception\ParsingException;
 
 class ConvertToArray extends Parser
 {
+    public const CONVERSION_DO_NOT_CONVERT = 0;
+    public const CONVERSION_ARRAY_CAST = 1;
+    public const CONVERSION_ARRAY_WITH_KEY = 2;
 
     private $typeExceptionMessage = 'Provided value is not an array';
 
     /**
      * @var bool|string|int
      */
-    private $convertNonArrays = false;
+    private $convertNonArrays = null;
+
+    /**
+     * @var string|int|null
+     */
+    private $convertNonArraysOption = null;
 
     /**
      * @var array
@@ -58,13 +66,18 @@ class ConvertToArray extends Parser
     private $eachValue = null;
 
     /**
+     * @var callable[]
+     */
+    private $conversionList = [];
+
+    /**
      * Defines the exception message thrown when the input value is not an array and no conversion is active
      *
      * @param string $message
      *
      * @return $this
      */
-    public function withTypeExceptionMessage(string $message): self
+    public function overwriteTypeExceptionMessage(string $message): self
     {
         $this->typeExceptionMessage = $message;
 
@@ -72,28 +85,50 @@ class ConvertToArray extends Parser
     }
 
     /**
-     * @return $this
-     */
-    public function convertNonArraysWithArrayCast(): self
-    {
-        $this->convertNonArrays = true;
-
-        return $this;
-    }
-
-    /**
-     * @param $key
+     * Configures whether non-arrays should be converted to arrays
+     * The $conversionType can be
+     * - ConvertToArray::CONVERSION_DO_NOT_CONVERT
+     *      -> no conversion will be done and a type exception is thrown
+     * - ConvertToArray::CONVERSION_ARRAY_CAST
+     *      -> a simple (array) cast will be performed
+     * - ConvertToArray::CONVERSION_ARRAY_WITH_KEY
+     *      -> an array will be created with key being the second parameter
+     *
+     * @param int $conversionType
+     * @param string|int|null $option
      *
      * @return $this
      * @throws ParserConfigurationException
      */
-    public function convertNonArraysWithKey($key): self
+    public function setConvertNonArrays(int $conversionType, $option = ''): self
     {
-        if (!is_string($key) && !is_int($key)) {
-            throw new ParserConfigurationException('Array key can only be string or integer');
+        if ($this->convertNonArrays !== null) {
+            throw new ParserConfigurationException(
+                'Configuration for conversion of non array cannot be overwritten'
+            );
         }
 
-        $this->convertNonArrays = $key;
+        if (!in_array(
+            $conversionType,
+            [
+                self::CONVERSION_DO_NOT_CONVERT,
+                self::CONVERSION_ARRAY_CAST,
+                self::CONVERSION_ARRAY_WITH_KEY,
+            ]
+        )) {
+            throw new ParserConfigurationException(
+                'Unknown conversion type was provided to setConvertNonArrays'
+            );
+        }
+
+        if ($conversionType === self::CONVERSION_ARRAY_WITH_KEY) {
+            if (!is_string($option) && !is_int($option)) {
+                throw new ParserConfigurationException('Array key can only be string or integer');
+            }
+        }
+
+        $this->convertNonArrays = $conversionType;
+        $this->convertNonArraysOption = $option;
 
         return $this;
     }
@@ -108,14 +143,17 @@ class ConvertToArray extends Parser
      */
     public function withDefaultedKey($key, $forcedValue, Parser $andParse = null): self
     {
+
         if (!is_string($key) && !is_int($key)) {
             throw new ParserConfigurationException('Arrays only accept string or integer keys');
         }
 
-        $this->forcedKeys[$key] = $forcedValue;
-        if ($andParse) {
-            $this->withKeyConvertingValue[$key] = [$andParse, null];
-        }
+        $this->conversionList[] = function (array &$value, Path $path) use ($key, $forcedValue, $andParse) {
+            $value += [$key => $forcedValue];
+            if ($andParse) {
+                $value[$key] = $andParse->parse($value[$key], $path->index((string) $key));
+            }
+        };
 
         return $this;
     }
@@ -128,13 +166,17 @@ class ConvertToArray extends Parser
      */
     public function withKeyWhitelist(array $keys): self
     {
+        $intersectList = [];
         foreach ($keys as $key) {
             if (!is_string($key) && !is_int($key)) {
                 throw new ParserConfigurationException('Arrays only accept string or integer keys');
             }
+            $intersectList[$key] = null;
         }
 
-        $this->reduceToKeys = $keys;
+        $this->conversionList[] = function (array &$value) use ($intersectList) {
+            $value = array_intersect_key($value, $intersectList);
+        };
 
         return $this;
     }
@@ -158,7 +200,17 @@ class ConvertToArray extends Parser
             throw new ParserConfigurationException('Arrays only accept string or integer keys');
         }
 
-        $this->withKeyConvertingValue[$key] = [$parser, $missingKeyExceptionMessage];
+        $this->conversionList[] = function (array &$value, Path $path) use ($key, $parser, $missingKeyExceptionMessage) {
+            if (!array_key_exists($key, $value)) {
+                throw new ParsingException(
+                    $value,
+                    strtr($missingKeyExceptionMessage, ['{key}' => var_export($key, true)]),
+                    $path
+                );
+            }
+
+            $value[$key] = $parser->parse($value[$key], $path->index((string) $key));
+        };
 
         return $this;
     }
@@ -168,20 +220,27 @@ class ConvertToArray extends Parser
      */
     public function withSequentialKeys(): self
     {
-        $this->sequentialKeys = true;
+        $this->conversionList[] = function (array &$value) {
+            $value = array_values($value);
+        };
 
         return $this;
     }
 
     /**
      * Forwards each value to the specified parser and overwrites the value with the result of the parser
+     *
      * @param Parser $parser
      *
      * @return $this
      */
     public function withEachValue(Parser $parser): self
     {
-        $this->eachValue = $parser;
+        $this->conversionList[] = function (array &$value, Path $path) use ($parser) {
+            foreach ($value as &$item) {
+                $item = $parser->parse($item);
+            }
+        };
 
         return $this;
     }
@@ -208,6 +267,26 @@ class ConvertToArray extends Parser
         string $exceptionMessageOnInvalidArrayKey = 'The index {oldKey} was converted by a parser to a value of type {newType} not supported as an array index'
     ): self
     {
+        $this->conversionList[] = function (array &$value, Path $path) use ($parser, $exceptionMessageOnInvalidArrayKey) {
+            $result = [];
+            foreach ($value as $key => $item) {
+                $newIndex = $parser->parse($key, $path->index((string) $key));
+                if (!is_scalar($newIndex)) {
+                    throw new ParserConfigurationException(
+                        strtr(
+                            $exceptionMessageOnInvalidArrayKey,
+                            [
+                                '{oldKey}' => $key,
+                                '{newType}' => gettype($newIndex),
+                            ]
+                        )
+                    );
+                }
+                $result[$newIndex] = $item;
+            }
+
+            $value = $result;
+        };
         $this->eachKey = [$parser, $exceptionMessageOnInvalidArrayKey];
 
         return $this;
@@ -219,81 +298,20 @@ class ConvertToArray extends Parser
     protected function execute($value, Path $path)
     {
         if (!is_array($value)) {
-            if ($this->convertNonArrays === true) {
-                $value = (array) $value;
-            } elseif ($this->convertNonArrays === false) {
-                throw new ParsingException($value, $this->typeExceptionMessage, $path);
-            } else {
-                $value = [$this->convertNonArrays => $value];
+            switch ($this->convertNonArrays) {
+                case self::CONVERSION_ARRAY_CAST:
+                    $value = (array) $value;
+                    break;
+                case self::CONVERSION_ARRAY_WITH_KEY:
+                    $value = [$this->convertNonArraysOption => $value];
+                    break;
+                default:
+                    throw new ParsingException($value, $this->typeExceptionMessage, $path);
             }
         }
 
-        if ($this->reduceToKeys !== null) {
-            $value = array_intersect_key($value, array_flip($this->reduceToKeys));
-        }
-
-        if ($this->forcedKeys) {
-            $value += $this->forcedKeys;
-        }
-
-        if ($this->withKeyConvertingValue) {
-            /**
-             * @var int|string $key
-             * @var Parser $parser
-             * @var string|null $exceptionMessage
-             */
-            foreach ($this->withKeyConvertingValue as $key => [$parser, $exceptionMessage]) {
-                if ($exceptionMessage !== null && !array_key_exists($key, $value)) {
-                    throw new ParsingException(
-                        $value,
-                        strtr($exceptionMessage, ['{key}' => var_export($key, true)]),
-                        $path
-                    );
-                }
-
-                $value[$key] = $parser->parse($value[$key], $path->index((string) $key));
-            }
-        }
-
-        if ($this->eachKey || $this->eachValue) {
-            $newValue = [];
-            /** @var Parser|null $eachKeyParser */
-            $eachKeyParser = null;
-            $eachKeyExceptionMessage = null;
-            if($this->eachKey) {
-                [$eachKeyParser, $eachKeyExceptionMessage] = $this->eachKey;
-            }
-            foreach ($value as $index => $element) {
-                if ($eachKeyParser) {
-                    $newIndex = $eachKeyParser->parse($index, $path->index((string) $index));
-                    if(!is_scalar($newIndex)) {
-                        throw new ParserConfigurationException(
-                            strtr(
-                                $eachKeyExceptionMessage,
-                                [
-                                    '{oldKey}' => $index,
-                                    '{newType}' => gettype($newIndex)
-                                ]
-                            )
-                        );
-                    }
-                } else {
-                    $newIndex = $index;
-                }
-                if ($this->eachValue) {
-                    $newElement = $this->eachValue->parse($element, $path->index((string) $index));
-                } else {
-                    $newElement = $element;
-                }
-                $newValue[$newIndex] = $newElement;
-            }
-
-            $value = $newValue;
-            unset($newValue);
-        }
-
-        if ($this->sequentialKeys) {
-            $value = array_values($value);
+        foreach ($this->conversionList as $conversion) {
+            $conversion($value, $path);
         }
 
         return $value;

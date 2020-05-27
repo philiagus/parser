@@ -21,7 +21,14 @@ class AssertScalar extends Parser
 
     private $exceptionMessage = 'Provided value is not scalar';
 
-    public function withExceptionMessage(string $message): self
+    /**
+     * Defines the exception message to be thrown if the value is not scalar
+     *
+     * @param string $message
+     *
+     * @return $this
+     */
+    public function overwriteExceptionMessage(string $message): self
     {
         $this->exceptionMessage = $message;
 
