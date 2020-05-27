@@ -23,7 +23,7 @@ class OneOf extends Parser
     /**
      * @var string
      */
-    private $exceptionMessage = 'Provided value does not match any of the expected formats';
+    private $exceptionMessage = 'Provided value does not match any of the expected formats or values';
 
     /**
      * @var Parser[]
