@@ -161,6 +161,7 @@ A naming convention was added to the system:
 
 ### OneOf
 - throws `OneOfParsingException` (extends `MultipleParsingException`) instead of `MultipleParsingException`
+- default exception message change from `Provided value does not match any of the expected formats` to `Provided value does not match any of the expected formats or values`
 - no longer throws a `ParserConfigurationException` if not options are provided
 - `withNonOfExceptionMessage`
     - renamed to `overwriteNonOfExceptionMessage`
