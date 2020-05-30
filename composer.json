@@ -3,6 +3,11 @@
     "description": "PHP converter classes for asserting, parsing and converting of inputs.",
     "type": "library",
     "license": "MIT",
+    "keywords": [
+        "php",
+        "parse",
+        "sanitize"
+    ],
     "authors": [
         {
             "name": "Andreas Bittner",
@@ -14,6 +19,9 @@
         "php": ">=7.2",
         "ext-json": "*",
         "ext-mbstring": "*"
+    },
+    "support": {
+        "issues": "https://github.com/philiagus/parser/issues"
     },
     "require-dev": {
         "phpunit/phpunit": "*",

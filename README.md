@@ -1,14 +1,14 @@
-# !!! NOT READY FOR PRODUCTION USE !!!
-
-# philiagus/validator
-PHP converter classes for asserting, parsing and converting of inputs.
+# philiagus/parser
+PHP classes to assert, convert and parse data.
 
 ## Why?
-Making sure your inputs are what they should be is one of the core principles of not falling into a hackers trap.
+Making sure your inputs are what they should be is one of the core principles of secure coding.
 
 Obviously there are more, but we must tackle them one step at a time.
 
-The basic idea of the converters are, that the developer defines a structure through code and later a set of data is thrown against this validation and conversion structure.
+The basic idea of the parsers is, that the developer defines a structure through code and later throws a set of data against it. The parsers make sure, that the data is following the rules of defined in the structure.
+
+## How?
 
 A simple example:
 
@@ -30,7 +30,7 @@ $parsingResult = (new AssertInteger())
     ->parse($integer);
 ```
 
-The real fun begins, when you start stacking the methods:
+The real fun begins, when you start stacking parsers into one another:
 
 ```php
 <?php
@@ -52,3 +52,7 @@ $parser = (new AssertArray())
             )
     );
 ```
+
+## What if something is missing?
+
+Fear not! All parsers extend `Philiagus\Parser\Base\Parser`, so you can easily write your own to fit your specific need.
