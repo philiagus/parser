@@ -39,6 +39,7 @@ class Fixed extends Parser
      * @param $value
      *
      * @return static
+     * @throws ParserConfigurationException
      */
     public static function value($value): self
     {

@@ -17,7 +17,6 @@ use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
-use SplStack;
 
 class AssertArray
     extends Parser
@@ -198,7 +197,7 @@ class AssertArray
     protected function execute($value, Path $path)
     {
         if (!is_array($value)) {
-            throw new Exception\ParsingException($value, $this->typeExceptionMessage ?? self::DEFAULT_TYPE_EXCEPTION_MESSAGE, $path);
+            throw new Exception\ParsingException($value, $this->typeExceptionMessage, $path);
         }
 
         $keys = array_keys($value);

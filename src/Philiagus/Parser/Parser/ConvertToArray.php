@@ -36,36 +36,6 @@ class ConvertToArray extends Parser
     private $convertNonArraysOption = null;
 
     /**
-     * @var array
-     */
-    private $forcedKeys = [];
-
-    /**
-     * @var array
-     */
-    private $reduceToKeys = null;
-
-    /**
-     * @var array
-     */
-    private $withKeyConvertingValue = [];
-
-    /**
-     * @var bool
-     */
-    private $sequentialKeys = false;
-
-    /**
-     * @var null|mixed[]
-     */
-    private $eachKey = null;
-
-    /**
-     * @var null|Parser
-     */
-    private $eachValue = null;
-
-    /**
      * @var callable[]
      */
     private $conversionList = [];
@@ -236,7 +206,7 @@ class ConvertToArray extends Parser
      */
     public function withEachValue(Parser $parser): self
     {
-        $this->conversionList[] = function (array &$value, Path $path) use ($parser) {
+        $this->conversionList[] = function (array &$value) use ($parser) {
             foreach ($value as &$item) {
                 $item = $parser->parse($item);
             }
@@ -287,7 +257,6 @@ class ConvertToArray extends Parser
 
             $value = $result;
         };
-        $this->eachKey = [$parser, $exceptionMessageOnInvalidArrayKey];
 
         return $this;
     }
