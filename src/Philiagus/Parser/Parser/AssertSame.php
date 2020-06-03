@@ -34,6 +34,23 @@ class AssertSame
     private $targetValue;
 
     /**
+     * Shortcut constructor for assertion against a value when no by-reference check is needed
+     *
+     * @param $value
+     * @param string $exceptionMessage
+     *
+     * @return static
+     */
+    public static function value($value, string $exceptionMessage = self::DEFAULT_MESSAGE): self
+    {
+        $instance = new self();
+        $instance->targetValue = $value;
+        $instance->exceptionMessage = $exceptionMessage;
+
+        return $instance;
+    }
+
+    /**
      * Sets the value to be === compared against
      *
      * @param $equalsValue
@@ -69,22 +86,5 @@ class AssertSame
         }
 
         return $value;
-    }
-
-    /**
-     * Shortcut constructor for assertion against a value when no by-reference check is needed
-     *
-     * @param $value
-     * @param string $exceptionMessage
-     *
-     * @return static
-     */
-    public static function value($value, string $exceptionMessage = self::DEFAULT_MESSAGE): self
-    {
-        $instance = new self();
-        $instance->targetValue = $value;
-        $instance->exceptionMessage = $exceptionMessage;
-
-        return $instance;
     }
 }

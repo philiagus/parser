@@ -66,6 +66,11 @@ abstract class Path
         return $return;
     }
 
+    final public function __toString(): string
+    {
+        return $this->toString();
+    }
+
     final public function toString(): string
     {
         if (!$this->parent) {
@@ -73,11 +78,6 @@ abstract class Path
         }
 
         return $this->parent->toString() . $this->getDelimiter() . $this->name;
-    }
-
-    final public function __toString(): string
-    {
-        return $this->toString();
     }
 
     abstract protected function getDelimiter(): string;

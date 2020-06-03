@@ -34,7 +34,7 @@ class AssertInfinite extends Parser
      */
     protected function execute($value, Path $path)
     {
-        if (is_float($value) && is_infinite($value)) return INF;
+        if (is_float($value) && is_infinite($value)) return $value;
 
         throw new ParsingException($value, $this->exceptionMessage, $path);
     }

@@ -1,4 +1,12 @@
 # Migration document
+## v1.0.0-RC5 to v1.0.0-RC6
+
+### AssertInfinite
+- `-INF` is now correctly returned, previously `-INF` passed but `INF` was returned
+
+Internal:
+- Namespace of test cases has been renamed and moved
+
 ## v1.0.0-RC4 to v1.0.0-RC5
 ### All Parsers
 

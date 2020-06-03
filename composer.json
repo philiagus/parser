@@ -34,7 +34,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Philiagus\\Test\\Parser\\": "tests/Philiagus/Parser"
+            "Philiagus\\Parser\\Test\\": "tests/Philiagus/Parser/Test"
         }
     }
 }

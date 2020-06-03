@@ -75,6 +75,19 @@ abstract class Parser
     }
 
     /**
+     * Real conversion of the provided value into the target value
+     * This must be individually implemented by the implementing parser class
+     *
+     * @param mixed $value
+     * @param Path $path
+     *
+     * @return mixed
+     * @throws ParsingException
+     * @throws ParserConfigurationException
+     */
+    abstract protected function execute($value, Path $path);
+
+    /**
      * Appends a parser to execute once this parser has done its job
      * The result of this parser is identical to the result of the chained parser
      *
@@ -88,18 +101,5 @@ abstract class Parser
 
         return $this;
     }
-
-    /**
-     * Real conversion of the provided value into the target value
-     * This must be individually implemented by the implementing parser class
-     *
-     * @param mixed $value
-     * @param Path $path
-     *
-     * @return mixed
-     * @throws ParsingException
-     * @throws ParserConfigurationException
-     */
-    abstract protected function execute($value, Path $path);
 
 }
