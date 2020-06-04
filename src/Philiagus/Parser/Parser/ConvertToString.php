@@ -16,11 +16,12 @@ use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Util\Debug;
 
 class ConvertToString extends Parser
 {
 
-    private $typeExceptionMessage = 'Variable of type {type} could not be converted to a string';
+    private $typeExceptionMessage = 'Variable of type {value.type} could not be converted to a string';
 
     /**
      * @var array|null
@@ -33,12 +34,17 @@ class ConvertToString extends Parser
     private $implode = null;
 
     /**
-     * Available replacers:
-     * {type} = gettype of the provided variable
+     * Overwrites the exception message when the value could not be converted to a string
+     *
+     *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
      *
      * @param string $message
      *
      * @return $this
+     * @see Debug::parseMessage()
+     *
      */
     public function overwriteTypeExceptionMessage(string $message): self
     {
@@ -69,20 +75,24 @@ class ConvertToString extends Parser
 
     /**
      * Specifies a value to implode the array with. Before performing this implode every element inside the array
-     * is checked to be a string. If non strings are found an exception is thrown
-     * Exception replacers:
-     * {index} = The index of the value that wan't a string
-     * {type} = Thy gettype of the value that wasn't a string
+     * is checked to be a string. If violating elements are found, an exception is thrown
+     *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     * - key: The key of the value that was not a string
+     * - culprit: The value of the index that wasn't a string
      *
      * @param string $delimiter
      * @param string $exceptionMessage
      *
      * @return $this
      * @throws ParserConfigurationException
+     * @see Debug::parseMessage()
+     *
      */
     public function setImplodeOfArrays(
         string $delimiter,
-        string $exceptionMessage = 'A value at index {index} was not of type string but of type {type}'
+        string $exceptionMessage = 'A value at index {key} was not of type string but of type {culprit.type}'
     ): self
     {
         if ($this->implode !== null) {
@@ -124,11 +134,12 @@ class ConvertToString extends Parser
                         if (!is_string($element)) {
                             throw new ParsingException(
                                 $value,
-                                strtr(
+                                Debug::parseMessage(
                                     $this->implode[1],
                                     [
-                                        '{key}' => var_export($key, true),
-                                        '{type}' => gettype($element),
+                                        'value' => $value,
+                                        'key' => $key,
+                                        'culprit' => $element,
                                     ]
                                 ),
                                 $path
@@ -148,10 +159,10 @@ class ConvertToString extends Parser
 
         throw new ParsingException(
             $value,
-            strtr(
+            Debug::parseMessage(
                 $this->typeExceptionMessage,
                 [
-                    '{type}' => gettype($value),
+                    'value' => $value,
                 ]
             ),
             $path

@@ -15,6 +15,7 @@ namespace Philiagus\Parser\Parser;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Util\Debug;
 
 class AssertInfinite extends Parser
 {
@@ -22,6 +23,16 @@ class AssertInfinite extends Parser
 
     private $exceptionMessage = 'Provided value is not INF';
 
+    /**
+     * Overwrites the exception message sent when the input value is not an infinite value
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     *
+     * @param string $message
+     *
+     * @return $this
+     * @see Debug::parseMessage()
+     */
     public function overwriteExceptionMessage(string $message): self
     {
         $this->exceptionMessage = $message;
@@ -36,6 +47,10 @@ class AssertInfinite extends Parser
     {
         if (is_float($value) && is_infinite($value)) return $value;
 
-        throw new ParsingException($value, $this->exceptionMessage, $path);
+        throw new ParsingException(
+            $value,
+            Debug::parseMessage($this->exceptionMessage, ['value' => $value]),
+            $path
+        );
     }
 }

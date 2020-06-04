@@ -16,6 +16,7 @@ use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Util\Debug;
 
 class AssertStringMultibyte extends Parser
 {
@@ -38,9 +39,14 @@ class AssertStringMultibyte extends Parser
     /**
      * Defines the exception message to use if the value is not a string
      *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     *
      * @param string $message
      *
      * @return $this
+     * @see Debug::parseMessage()
+     *
      */
     public function overwriteTypeExceptionMessage(string $message): self
     {
@@ -51,6 +57,7 @@ class AssertStringMultibyte extends Parser
 
     /**
      * Executes mb_strlen on the string and hands the result over to the parser
+     * The encoding will be guessed if not defined using setEncoding
      *
      * @param Parser $integerParser
      *
@@ -67,6 +74,7 @@ class AssertStringMultibyte extends Parser
 
     /**
      * Performs mb_substr on the string and executes the parser on that part of the string
+     * The encoding will be guessed if not defined using setEncoding
      *
      * @param int $start
      * @param null|int $length
@@ -93,11 +101,20 @@ class AssertStringMultibyte extends Parser
     }
 
     /**
+     * Defines the encoding of the string. The code is checked to have this encoding
+     * and every other method uses this encoding.
+     *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     * - encoding: The specified encoding
+     *
      * @param string $encoding
      * @param string $exception
      *
      * @return $this
      * @throws ParserConfigurationException
+     * @see Debug::parseMessage()
+     *
      */
     public function setEncoding(string $encoding, string $exception = 'Multibyte string does not appear to be of the requested encoding'): self
     {
@@ -128,13 +145,21 @@ class AssertStringMultibyte extends Parser
     protected function execute($value, Path $path)
     {
         if (!is_string($value)) {
-            throw new ParsingException($value, $this->typeExceptionMessage, $path);
+            throw new ParsingException(
+                $value,
+                Debug::parseMessage($this->typeExceptionMessage, ['value' => $value]),
+                $path
+            );
         }
 
         if ($this->encoding) {
             [$encoding, $exception] = $this->encoding;
             if (!mb_check_encoding($value, $encoding)) {
-                throw new ParsingException($value, $exception, $path);
+                throw new ParsingException(
+                    $value,
+                    Debug::parseMessage($exception, ['value' => $value, 'encoding' => $encoding]),
+                    $path
+                );
             }
         } else {
             $encoding = mb_detect_encoding($value);

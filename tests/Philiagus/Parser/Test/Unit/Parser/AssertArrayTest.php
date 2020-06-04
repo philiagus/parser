@@ -463,4 +463,37 @@ class AssertArrayTest extends TestCase
         (new AssertArray())->overwriteTypeExceptionMessage($message)->parse('no');
     }
 
+    public function testAllOverwriteTypeExceptionMessageReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage(
+            'hello string string<ASCII>(5)"hello"'
+        );
+        (new AssertArray())
+            ->overwriteTypeExceptionMessage('{value} {value.type} {value.debug}')
+            ->parse('hello');
+    }
+
+    public function testAllWithKeyExceptionMessageReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage(
+            'Array array array<integer,string>(3) | hello string string<ASCII>(5)"hello"'
+        );
+        (new AssertArray())
+            ->withKey('hello', new AssertArray(), '{value} {value.type} {value.debug} | {key} {key.type} {key.debug}')
+            ->parse(['a', '', '']);
+    }
+
+    public function testAllWithSequentialKeysExceptionMessageReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage(
+            'Array array array<integer,string>(3)'
+        );
+        (new AssertArray())
+            ->withSequentialKeys('{value} {value.type} {value.debug}')
+            ->parse(['a', 5 => '', '']);
+    }
+
 }

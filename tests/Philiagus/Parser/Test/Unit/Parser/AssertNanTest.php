@@ -83,4 +83,15 @@ class AssertNanTest extends TestCase
         (new AssertNan())->overwriteExceptionMessage($msg)->parse(false);
     }
 
+    public function testAllOverwriteTypeExceptionMessageReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage(
+            'hello string string<ASCII>(5)"hello"'
+        );
+        (new AssertNan())
+            ->overwriteExceptionMessage('{value} {value.type} {value.debug}')
+            ->parse('hello');
+    }
+
 }

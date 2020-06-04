@@ -17,7 +17,7 @@ use Philiagus\Parser\Parser\AssertNumber;
 use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-class AssertNumericTest extends TestCase
+class AssertNumberTest extends TestCase
 {
 
     public function testThatItExtendsBaseParser(): void
@@ -125,7 +125,7 @@ class AssertNumericTest extends TestCase
      */
     public function testThatMinimumDisallowsNonFloatOrInt($value): void
     {
-        self::expectException(ParserConfigurationException::class);
+        $this->expectException(ParserConfigurationException::class);
         (new AssertNumber())->withMinimum($value);
     }
 
@@ -176,7 +176,7 @@ class AssertNumericTest extends TestCase
      */
     public function testThatMaximumDisallowsNonFloatOrInt($value): void
     {
-        self::expectException(ParserConfigurationException::class);
+        $this->expectException(ParserConfigurationException::class);
         (new AssertNumber())->withMaximum($value);
     }
 
@@ -245,6 +245,39 @@ class AssertNumericTest extends TestCase
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($expectedMsg);
         (new AssertNumber())->withMaximum($max, $base)->parse($value);
+    }
+
+    public function testAllOverwriteTypeExceptionMessageReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage(
+            'hello string string<ASCII>(5)"hello"'
+        );
+        (new AssertNumber())
+            ->overwriteTypeExceptionMessage('{value} {value.type} {value.debug}')
+            ->parse('hello');
+    }
+
+    public function testAllWithMinimumMessageReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage(
+            '0 integer integer 0 | 10 integer integer 10'
+        );
+        (new AssertNumber())
+            ->withMinimum(10, '{value} {value.type} {value.debug} | {min} {min.type} {min.debug}')
+            ->parse(0);
+    }
+
+    public function testAllWithMaximumMessageReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage(
+            '100 integer integer 100 | 10 integer integer 10'
+        );
+        (new AssertNumber())
+            ->withMaximum(10, '{value} {value.type} {value.debug} | {max} {max.type} {max.debug}')
+            ->parse(100);
     }
 
 }

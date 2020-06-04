@@ -93,7 +93,7 @@ class FixedTest extends TestCase
     public function testThatValueCannotBeOverwritten(): void
     {
         $instance = Fixed::new()->setValue('asdf');
-        self::expectException(ParserConfigurationException::class);
+        $this->expectException(ParserConfigurationException::class);
         $instance->setValue('b');
     }
 

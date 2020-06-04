@@ -16,6 +16,7 @@ use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Util\Debug;
 
 class OneOf extends Parser
 {
@@ -85,9 +86,14 @@ class OneOf extends Parser
     /**
      * Defines the exception message to use if none of the provided parsers matches
      *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     *
      * @param string $message
      *
      * @return $this
+     * @see Debug::parseMessage()
+     *
      */
     public function overwriteNonOfExceptionMessage(string $message): self
     {
@@ -120,7 +126,7 @@ class OneOf extends Parser
 
         throw new Exception\OneOfParsingException(
             $value,
-            $this->exceptionMessage,
+            Debug::parseMessage($this->exceptionMessage, ['value' => $value]),
             $path,
             $exceptions,
             $this->sameOptions,

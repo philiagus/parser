@@ -122,7 +122,7 @@ class AssertStdClassTest extends TestCase
     {
         return [
             'no replace' => ['msg', 'msg', 'prop'],
-            'replace property' => ['prop {property}', 'prop \'prop\'', 'prop'],
+            'replace property' => ['prop \'{property}\'', 'prop \'prop\'', 'prop'],
         ];
     }
 
@@ -186,6 +186,28 @@ class AssertStdClassTest extends TestCase
                     'prop' => 1,
                 ]
             );
+    }
+
+    public function testAllOverwriteTypeExceptionMessageReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage(
+            'hello string string<ASCII>(5)"hello"'
+        );
+        (new AssertStdClass())
+            ->overwriteTypeExceptionMessage('{value} {value.type} {value.debug}')
+            ->parse('hello');
+    }
+
+    public function testAllWithPropertyExceptionMessageReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage(
+            'Object object<stdClass> object<stdClass> | hello string string<ASCII>(5)"hello"'
+        );
+        (new AssertStdClass())
+            ->withProperty('hello', new AssertStdClass(), '{value} {value.type} {value.debug} | {property} {property.type} {property.debug}')
+            ->parse((object) []);
     }
 
 

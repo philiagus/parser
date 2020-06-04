@@ -17,6 +17,7 @@ use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Util\Debug;
 
 class AssertArray
     extends Parser
@@ -38,9 +39,14 @@ class AssertArray
     /**
      * Defines the exception message to be thrown on type exception
      *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     *
      * @param string $message
      *
      * @return $this
+     * @see Debug::parseMessage()
+     *
      */
     public function overwriteTypeExceptionMessage(string $message): self
     {
@@ -96,6 +102,8 @@ class AssertArray
     }
 
     /**
+     * Defines a parser that the number of elements in the array gets forwarded to
+     *
      * @param Parser $integerParser
      *
      * @return $this
@@ -112,8 +120,11 @@ class AssertArray
     /**
      * Tests that the key exists and performs the parser on the value if present
      * If the key does not exist an exception with the specified message is thrown.
-     * Replacers in the exception message:
-     * {key} = var_export($key, true)
+     *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - key: The missing key
+     * - value: The value currently being parsed
+     *
      *
      * @param $key
      * @param Parser $parser
@@ -121,6 +132,7 @@ class AssertArray
      *
      * @return $this
      * @throws ParserConfigurationException
+     * @see Debug::parseMessage()
      */
     public function withKey($key, Parser $parser, string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'): self
     {
@@ -132,7 +144,7 @@ class AssertArray
             if (!array_key_exists($key, $value)) {
                 throw new ParsingException(
                     $value,
-                    strtr($missingKeyExceptionMessage, ['{key}' => var_export($key, true)]),
+                    Debug::parseMessage($missingKeyExceptionMessage, ['key' => $key, 'value' => $value,]),
                     $path
                 );
             }
@@ -143,6 +155,9 @@ class AssertArray
     }
 
     /**
+     * Performs a parser on the value of a key or the $default if the given key does not exist
+     * in the array
+     *
      * @param $key
      * @param $default
      * @param Parser $parser
@@ -172,9 +187,13 @@ class AssertArray
     /**
      * Specifies that this array is expected to have numeric keys starting at 0, incrementing by 1
      *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     *
      * @param string $exceptionMessage
      *
      * @return $this
+     * @see Debug::parseMessage()
      */
     public function withSequentialKeys(string $exceptionMessage = 'The array is not a sequential numerical array starting at 0'): self
     {
@@ -182,7 +201,7 @@ class AssertArray
             $assumedKey = 0;
             foreach (array_keys($value) as $key) {
                 if ($key !== $assumedKey) {
-                    throw new ParsingException($value, $exceptionMessage, $path);
+                    throw new ParsingException($value, Debug::parseMessage($exceptionMessage, ['value' => $value]), $path);
                 }
                 $assumedKey++;
             }
@@ -197,7 +216,11 @@ class AssertArray
     protected function execute($value, Path $path)
     {
         if (!is_array($value)) {
-            throw new Exception\ParsingException($value, $this->typeExceptionMessage, $path);
+            throw new Exception\ParsingException(
+                $value,
+                Debug::parseMessage($this->typeExceptionMessage, ['value' => $value]),
+                $path
+            );
         }
 
         $keys = array_keys($value);

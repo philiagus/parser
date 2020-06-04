@@ -15,6 +15,7 @@ namespace Philiagus\Parser\Parser;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Util\Debug;
 
 class AssertNan extends Parser
 {
@@ -26,10 +27,14 @@ class AssertNan extends Parser
 
     /**
      * Sets the exception message to be thrown when the provided value is not NAN
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
      *
      * @param string $message
      *
      * @return $this
+     * @see Debug::parseMessage()
+     *
      */
     public function overwriteExceptionMessage(string $message): self
     {
@@ -46,6 +51,10 @@ class AssertNan extends Parser
 
         if (is_float($value) && is_nan($value)) return NAN;
 
-        throw new ParsingException($value, $this->exceptionMessage, $path);
+        throw new ParsingException(
+            $value,
+            Debug::parseMessage($this->exceptionMessage, ['value' => $value]),
+            $path
+        );
     }
 }

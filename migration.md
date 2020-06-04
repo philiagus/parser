@@ -1,10 +1,60 @@
 # Migration document
 ## v1.0.0-RC5 to v1.0.0-RC6
 
-### AssertInfinite
-- `-INF` is now correctly returned, previously `-INF` passed but `INF` was returned
+### General
 
-Internal:
+A more customizable way of string preparation for exception messages was added. This unfortunately means, that some defined exception messages will no longer have the expected string result.
+
+This change brings lots of potential for the future, as it offers a better way of selecting the level of information provided in the exception strings.
+
+In some cases replacers such as `{type}` are now replaced with the more clear `{value.type}` and the older replacer will simply not be replaced.
+
+**If you are already using custom exception messages or are relying on the string representation of an already existing exception message please align your code correspondingly.**
+
+### AssertInteger
+- `withMultipleOf`
+    - renamed from `isMultipleOf`
+
+### New Class \Philiagus\Parser\Util\Debug
+
+The class `\Philiagus\Parser\Util\Debug` was added. As the namespace suggests it is a utility class, not a parser. The class is static.
+
+- `getType($value): string`
+    - Returns a string representation of the type of the provided variable
+    - NAN, INF and -INF are represented as corresponding strings `NAN`, `INF` and `-INF`
+    - objects are represented as `object<className>`
+    - float are represented as `float`
+    - all other values will simply return whatever gettype returns
+- `stringify($value): string`
+    - creates a string representation of the value
+    - `integer` will be `integer 1234`
+    - not-special `float` will be `float 3214.15`
+    - `NAN` will be `NAN`
+    - `INF` will be `INF`
+    - `-INF` will be `-INF`
+    - `boolean` are `boolean TRUE` or `boolean FALSE` respectively
+    - `string` will be represented as `string<encoding>(length)"characters"`
+        - encoding can be `ASCII`, `UTF8` or `binary`
+        - length is the amount of characters in bytes, _not_ the length of the string in the encoding
+        - `characters` contains the first up to 32 characters, or 31 followed by ellipsis
+        - control characters are replaced by a corresponding visual placeholder
+    - arrays are displayed as `array<keyType,valueType>(length)`
+        - `keyType` can be `integer`, `string` or `mixed`
+        - `valueType` can be any type provided by `Debug::getType`, as long as the are all the same. If not, `valueType` will be `mixed`
+        - `length` is the number of elements in the array
+    - all other types are simply returned as `Debug::getType` representation
+- `parseMessage(string $message, array $replacers): string`
+    - Uses $message as a string and $replacers as an array of elements to be replaced into it
+    - The replacement elements look like this `{arrayKey}`"`, performing a raw replacement, or `{arrayKey.infoType}`, transforming the value before replacing.
+        - `infoType` can be one of the following:
+            - `gettype`: The result of a call to gettype on the replacers element
+            - `type`: the same as gettype for anything but objects. For objects its "object<className>"
+            - `debug`: a string representation of the value, tying to show as much of the content as possible, see Debug::stringify
+            - `export`: the result of var_export of the value
+            - `raw`: the raw value form the replacers
+    - Only valid replacers are replaced. If the key or the infoType is not known that replacer won't be replaced.
+
+### Internal
 - Namespace of test cases has been renamed and moved
 
 ## v1.0.0-RC4 to v1.0.0-RC5

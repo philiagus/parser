@@ -15,6 +15,7 @@ namespace Philiagus\Parser\Parser;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Util\Debug;
 
 /**
  * Class BooleanPrimitive
@@ -27,6 +28,18 @@ class AssertBoolean
 
     private $typeExceptionMessage = 'Provided value is not a boolean';
 
+    /**
+     * Overwrites the exception message sent when the input value is not a booll
+     *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     *
+     * @param string $message
+     *
+     * @return $this
+     * @see Debug::parseMessage()
+     *
+     */
     public function overwriteTypeExceptionMessage(string $message): self
     {
         $this->typeExceptionMessage = $message;
@@ -42,6 +55,11 @@ class AssertBoolean
     {
         if (is_bool($value)) return $value;
 
-        throw new ParsingException($value, $this->typeExceptionMessage, $path);
+        throw new ParsingException(
+            $value,
+            Debug::parseMessage($this->typeExceptionMessage, ['value' => $value]),
+            $path
+        );
+
     }
 }

@@ -16,6 +16,7 @@ use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Util\Debug;
 
 class ConvertToArray extends Parser
 {
@@ -43,9 +44,14 @@ class ConvertToArray extends Parser
     /**
      * Defines the exception message thrown when the input value is not an array and no conversion is active
      *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     *
      * @param string $message
      *
      * @return $this
+     * @see Debug::parseMessage()
+     *
      */
     public function overwriteTypeExceptionMessage(string $message): self
     {
@@ -154,8 +160,10 @@ class ConvertToArray extends Parser
     /**
      * Tests that the key exists and performs the parser on the value if present
      * If the key does not exist an exception with the specified message is thrown.
-     * Replacers in the exception message:
-     * {key} = var_export($key, true)
+     *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     * - key: The key that was expected to be present
      *
      * @param $key
      * @param Parser $parser
@@ -163,6 +171,8 @@ class ConvertToArray extends Parser
      *
      * @return $this
      * @throws ParserConfigurationException
+     * @see Debug::parseMessage()
+     *
      */
     public function withKey($key, Parser $parser, string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'): self
     {
@@ -174,7 +184,7 @@ class ConvertToArray extends Parser
             if (!array_key_exists($key, $value)) {
                 throw new ParsingException(
                     $value,
-                    strtr($missingKeyExceptionMessage, ['{key}' => var_export($key, true)]),
+                    Debug::parseMessage($missingKeyExceptionMessage, ['key' => $key, 'value' => $value]),
                     $path
                 );
             }
@@ -275,7 +285,11 @@ class ConvertToArray extends Parser
                     $value = [$this->convertNonArraysOption => $value];
                     break;
                 default:
-                    throw new ParsingException($value, $this->typeExceptionMessage, $path);
+                    throw new ParsingException(
+                        $value,
+                        Debug::parseMessage($this->typeExceptionMessage, ['value' => $value]),
+                        $path
+                    );
             }
         }
 

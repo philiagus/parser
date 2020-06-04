@@ -98,9 +98,9 @@ class ConvertToIntegerTest extends TestCase
     public function provideExceptionMessageData(): array
     {
         return [
-            'string' => ['its {type}', 'its string', 'abc'],
-            'object' => ['its {type}', 'its object', new \stdClass()],
-            'array' => ['its {type}', 'its array', []],
+            'string' => ['its {value.gettype}', 'its string', 'abc'],
+            'object' => ['its {value.gettype}', 'its object', new \stdClass()],
+            'array' => ['its {value.gettype}', 'its array', []],
         ];
     }
 
@@ -118,6 +118,18 @@ class ConvertToIntegerTest extends TestCase
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($expected);
         (new ConvertToInteger())->overwriteTypeExceptionMessage($baseMsg)->parse($value);
+    }
+
+
+    public function testAllOverwriteTypeExceptionMessageReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage(
+            '. string string<ASCII>(1)"."'
+        );
+        (new ConvertToInteger())
+            ->overwriteTypeExceptionMessage('{value} {value.type} {value.debug}')
+            ->parse('.');
     }
 
 }

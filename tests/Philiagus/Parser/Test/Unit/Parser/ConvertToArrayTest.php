@@ -145,7 +145,7 @@ class ConvertToArrayTest extends TestCase
      */
     public function testThatConvertNonArraysThrowsExceptionOnUnknownConversion(): void
     {
-        self::expectException(ParserConfigurationException::class);
+        $this->expectException(ParserConfigurationException::class);
         ConvertToArray::new()->setConvertNonArrays(66);
     }
 
@@ -156,7 +156,7 @@ class ConvertToArrayTest extends TestCase
     {
         $parser = ConvertToArray::new()
             ->setConvertNonArrays(ConvertToArray::CONVERSION_ARRAY_WITH_KEY, 'asdf');
-        self::expectException(ParserConfigurationException::class);
+        $this->expectException(ParserConfigurationException::class);
         $parser->setConvertNonArrays(ConvertToArray::CONVERSION_ARRAY_WITH_KEY, 'asdf');
     }
 
@@ -465,7 +465,7 @@ class ConvertToArrayTest extends TestCase
     public function provideWithKeyConvertingValueExceptionCases(): array
     {
         return [
-            'replaced string' => ['Key {key}', 'Key \'key\'', 'key'],
+            'replaced string' => ['Key \'{key}\'', 'Key \'key\'', 'key'],
             'replaced int' => ['Key {key}', 'Key 1', 1],
             'fixed' => ['Key', 'Key', 'key'],
         ];
@@ -634,6 +634,17 @@ class ConvertToArrayTest extends TestCase
         (new ConvertToArray())
             ->withEachKey($childParser, $msg)
             ->parse([$oldKey => 'a']);
+    }
+
+    public function testAllOverwriteTypeExceptionMessageReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage(
+            '5 integer integer 5'
+        );
+        (new ConvertToArray())
+            ->overwriteTypeExceptionMessage('{value} {value.type} {value.debug}')
+            ->parse(5);
     }
 
 }

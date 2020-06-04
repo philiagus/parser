@@ -16,6 +16,7 @@ use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Util\Debug;
 
 class AssertSame
     extends Parser
@@ -36,10 +37,16 @@ class AssertSame
     /**
      * Shortcut constructor for assertion against a value when no by-reference check is needed
      *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     * - expected: The expected value the provided value was compared against
+     *
      * @param $value
      * @param string $exceptionMessage
      *
      * @return static
+     * @see Debug::parseMessage()
+     *
      */
     public static function value($value, string $exceptionMessage = self::DEFAULT_MESSAGE): self
     {
@@ -53,11 +60,17 @@ class AssertSame
     /**
      * Sets the value to be === compared against
      *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     * - expected: The expected value the provided value was compared against
+     *
      * @param $equalsValue
      * @param string $exceptionMessage
      *
      * @return $this
      * @throws ParserConfigurationException
+     * @see Debug::parseMessage()
+     *
      */
     public function setValue($equalsValue, string $exceptionMessage = self::DEFAULT_MESSAGE): self
     {
@@ -82,7 +95,11 @@ class AssertSame
         }
 
         if ($value !== $this->targetValue) {
-            throw new ParsingException($value, $this->exceptionMessage, $path);
+            throw new ParsingException(
+                $value,
+                Debug::parseMessage($this->exceptionMessage, ['value' => $value, 'expected' => $this->targetValue]),
+                $path
+            );
         }
 
         return $value;
