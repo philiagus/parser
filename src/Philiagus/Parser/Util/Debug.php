@@ -151,6 +151,8 @@ class Debug
 
                 return 'INF';
             }
+
+            return 'float';
         }
 
         return gettype($value);

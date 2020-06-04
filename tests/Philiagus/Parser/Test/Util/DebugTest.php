@@ -234,6 +234,13 @@ class DebugTest extends TestCase
                 ],
                 '1 boolean boolean boolean TRUE true 1',
             ],
+            'resource raw' => [
+                '{key} {key.raw}',
+                [
+                    'key' => fopen('php://memory', 'r')
+                ],
+                'resource resource'
+            ]
         ];
     }
 

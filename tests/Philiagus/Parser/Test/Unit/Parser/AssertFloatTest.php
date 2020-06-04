@@ -242,7 +242,7 @@ class AssertFloatTest extends TestCase
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage(
-            '0 double float 0 | 10 double float 10'
+            '0 float float 0 | 10 float float 10'
         );
         (new AssertFloat())
             ->withMinimum(10, '{value} {value.type} {value.debug} | {min} {min.type} {min.debug}')
@@ -253,7 +253,7 @@ class AssertFloatTest extends TestCase
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage(
-            '1000 double float 1000 | 10 double float 10'
+            '1000 float float 1000 | 10 float float 10'
         );
         (new AssertFloat())
             ->withMaximum(10, '{value} {value.type} {value.debug} | {max} {max.type} {max.debug}')

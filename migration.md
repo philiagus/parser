@@ -21,8 +21,9 @@ The class `\Philiagus\Parser\Util\Debug` was added. As the namespace suggests it
 
 - `getType($value): string`
     - Returns a string representation of the type of the provided variable
-    - NAN, INF and -INF are represented as corresponding strings
-    - objects are represented as "object<className>"
+    - NAN, INF and -INF are represented as corresponding strings `NAN`, `INF` and `-INF`
+    - objects are represented as `object<className>`
+    - float are represented as `float`
     - all other values will simply return whatever gettype returns
 - `stringify($value): string`
     - creates a string representation of the value
