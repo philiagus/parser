@@ -81,7 +81,7 @@ class ConvertToStringTest extends TestCase
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage('type ' . gettype($invalid));
-        (new ConvertToString())->overwriteTypeExceptionMessage('type {type}')->parse($invalid);
+        (new ConvertToString())->overwriteTypeExceptionMessage('type {value.gettype}')->parse($invalid);
     }
 
     /**
@@ -155,7 +155,7 @@ class ConvertToStringTest extends TestCase
         return [
             'test no replacer' => ['msg', 'msg', [1]],
             'test with index replacer' => ['index {key}', 'index 1', ['a', 1]],
-            'test with index and type replacer' => ['index {key} type {type}', 'index \'a\' type integer', ['a', 'a' => 1]],
+            'test with index and type replacer' => ['index {key} type {culprit.type}', 'index a type integer', ['a', 'a' => 1]],
         ];
     }
 

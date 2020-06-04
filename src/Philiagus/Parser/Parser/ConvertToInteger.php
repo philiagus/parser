@@ -15,6 +15,7 @@ namespace Philiagus\Parser\Parser;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception;
+use Philiagus\Parser\Util\Debug;
 
 /**
  * Takes any input and attempts a loss free conversion of the provided value into a valid integer value
@@ -23,15 +24,19 @@ class ConvertToInteger
     extends Parser
 {
 
-    private $typeExceptionMessage = 'Variable of type {type} could not be converted to an integer';
+    private $typeExceptionMessage = 'Variable of type {value.type} could not be converted to an integer';
 
     /**
-     * Available replacers:
-     * {type} = gettype of the provided variable
+     * Overwrites the message of the exception thrown when the provided value could not be converted to an integer
+     *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
      *
      * @param string $message
      *
      * @return $this
+     * @see Debug::parseMessage()
+     *
      */
     public function overwriteTypeExceptionMessage(string $message): self
     {
@@ -69,7 +74,7 @@ class ConvertToInteger
             if (!is_int($value)) {
                 throw new Exception\ParsingException(
                     $value,
-                    strtr($this->typeExceptionMessage, ['{type}' => gettype($value)]),
+                    Debug::parseMessage($this->typeExceptionMessage, ['value' => $value]),
                     $path
                 );
             }

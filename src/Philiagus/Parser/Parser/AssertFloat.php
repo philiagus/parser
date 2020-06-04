@@ -16,6 +16,7 @@ use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Util\Debug;
 
 class AssertFloat extends Parser
 {
@@ -32,6 +33,11 @@ class AssertFloat extends Parser
     /**
      * Sets the exception message thrown when the type does not match
      *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     *
+     * @see Debug::parseMessage()
+     *
      * @param string $exceptionMessage
      *
      * @return $this
@@ -45,15 +51,18 @@ class AssertFloat extends Parser
 
     /**
      * Asserts that the value is >= the provided minimum
-     * Replacers in the exception message:
-     * {value} = parsed value
-     * {min} = currently set minimum
+     *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     * - min: the set minimum
      *
      * @param float $minimum
      * @param string $exceptionMessage
      *
      * @return AssertFloat
      * @throws Exception\ParserConfigurationException
+     * @see Debug::parseMessage()
+     *
      */
     public function withMinimum(float $minimum, string $exceptionMessage = 'Provided value of {value} is lower than the defined minimum of {min}'): self
     {
@@ -65,7 +74,7 @@ class AssertFloat extends Parser
             if ($minimum > $value) {
                 throw new Exception\ParsingException(
                     $value,
-                    strtr($exceptionMessage, ['{value}' => $value, '{min}' => $minimum]),
+                    Debug::parseMessage($exceptionMessage, ['value' => $value, 'min' => $minimum]),
                     $path
                 );
             }
@@ -76,15 +85,18 @@ class AssertFloat extends Parser
 
     /**
      * Asserts that the value is <= the provided maximum
-     * Replacers in the exception message:
-     * {value} = parsed value
-     * {max} = currently set maximum
+     *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     * - max: the set maximum
      *
      * @param float $maximum
      * @param string $exceptionMessage
      *
      * @return AssertFloat
      * @throws Exception\ParserConfigurationException
+     * @see Debug::parseMessage()
+     *
      */
     public function withMaximum(float $maximum, string $exceptionMessage = 'Provided value of {value} is greater than the defined maximum of {max}}'): self
     {
@@ -96,7 +108,7 @@ class AssertFloat extends Parser
             if ($maximum < $value) {
                 throw new Exception\ParsingException(
                     $value,
-                    strtr($exceptionMessage, ['{value}' => $value, '{max}' => $maximum]),
+                    Debug::parseMessage($exceptionMessage, ['value' => $value, 'max' => $maximum]),
                     $path
                 );
             }
@@ -111,7 +123,11 @@ class AssertFloat extends Parser
     protected function execute($value, Path $path)
     {
         if (!is_float($value) || is_nan($value) || is_infinite($value)) {
-            throw new ParsingException($value, $this->typeExceptionMessage, $path);
+            throw new ParsingException(
+                $value,
+                Debug::parseMessage($this->typeExceptionMessage, ['value' => $value]),
+                $path
+            );
         }
 
         foreach ($this->assertionList as $assertion) {

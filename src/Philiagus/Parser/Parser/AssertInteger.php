@@ -15,6 +15,7 @@ namespace Philiagus\Parser\Parser;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception;
+use Philiagus\Parser\Util\Debug;
 
 class AssertInteger extends Parser
 {
@@ -31,6 +32,11 @@ class AssertInteger extends Parser
     /**
      * Sets the exception message thrown when the type does not match
      *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     *
+     * @see Debug::parseMessage()
+     *
      * @param string $message
      *
      * @return $this
@@ -44,22 +50,24 @@ class AssertInteger extends Parser
 
     /**
      * Asserts that the value is >= the provided minimum
-     * Replacers in the exception message:
-     * {value} = parsed value
-     * {min} = currently set minimum
+     *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     * - min: The defined minimum value
+     * @see Debug::parseMessage()
      *
      * @param int $minimum
      * @param string $exceptionMessage
      *
      * @return AssertInteger
      */
-    public function withMinimum(int $minimum, string $exceptionMessage = 'Provided value of {value} is lower than the defined minimum of {min}'): self
+    public function withMinimum(int $minimum, string $exceptionMessage = 'Provided value {value.debug} is lower than the defined minimum of {min}'): self
     {
         $this->assertionList[] = function (int $value, Path $path) use ($minimum, $exceptionMessage) {
             if ($minimum > $value) {
                 throw new Exception\ParsingException(
                     $value,
-                    strtr($exceptionMessage, ['{value}' => $value, '{min}' => $minimum]),
+                    Debug::parseMessage($exceptionMessage, ['value' => $value, 'min' => $minimum]),
                     $path
                 );
             }
@@ -70,22 +78,25 @@ class AssertInteger extends Parser
 
     /**
      * Asserts that the value is <= the provided maximum
-     * Replacers in the exception message:
-     * {value} = parsed value
-     * {max} = currently set maximum
+     *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     * - max: The maximum value
+     *
+     * @see Debug::parseMessage()
      *
      * @param int $maximum
      * @param string $exceptionMessage
      *
      * @return AssertInteger
      */
-    public function withMaximum(int $maximum, string $exceptionMessage = 'Provided value of {value} is greater than the defined maximum of {max}}'): self
+    public function withMaximum(int $maximum, string $exceptionMessage = 'Provided value {value.debug} is greater than the defined maximum of {max}}'): self
     {
         $this->assertionList[] = function (int $value, Path $path) use ($maximum, $exceptionMessage) {
             if ($maximum < $value) {
                 throw new Exception\ParsingException(
                     $value,
-                    strtr($exceptionMessage, ['{value}' => $value, '{max}' => $maximum]),
+                    Debug::parseMessage($exceptionMessage, ['value' => $value, 'max' => $maximum]),
                     $path
                 );
             }
@@ -96,18 +107,21 @@ class AssertInteger extends Parser
 
     /**
      * Asserts that the value is a multiple of the base
-     * Replacers in the exception message:
-     * {value} = parsed value
-     * {base} = currently set base
+     *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     * - base: The base set by this call
      *
      * @param int $base
      * @param string $exceptionMessage
      *
      * @return AssertInteger
+     * @see Debug::parseMessage()
+     *
      */
     public function isMultipleOf(
         int $base,
-        string $exceptionMessage = 'Provided value of {value} is not a multiple of {base}'
+        string $exceptionMessage = 'Provided value {value.debug} is not a multiple of {base}'
     ): self
     {
         $this->assertionList[] = function (int $value, Path $path) use ($base, $exceptionMessage) {
@@ -115,7 +129,7 @@ class AssertInteger extends Parser
             if (($value % $base) !== 0) {
                 throw new Exception\ParsingException(
                     $value,
-                    strtr($exceptionMessage, ['{value}' => $value, '{base}' => $base]),
+                    Debug::parseMessage($exceptionMessage, ['value' => $value, 'base' => $base]),
                     $path
                 );
             }
@@ -130,7 +144,11 @@ class AssertInteger extends Parser
     protected function execute($value, Path $path)
     {
         if (!is_int($value)) {
-            throw new Exception\ParsingException($value, $this->typeExceptionMessage, $path);
+            throw new Exception\ParsingException(
+                $value,
+                Debug::parseMessage($this->typeExceptionMessage, ['value' => $value]),
+                $path
+            );
         }
 
         foreach ($this->assertionList as $assertion) {

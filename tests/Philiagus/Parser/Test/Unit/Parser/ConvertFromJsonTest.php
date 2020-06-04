@@ -150,7 +150,7 @@ class ConvertFromJsonTest extends TestCase
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage('msg boolean');
-        (new ConvertFromJson())->overwriteTypeExceptionMessage('msg {type}')->parse(false);
+        (new ConvertFromJson())->overwriteTypeExceptionMessage('msg {value.gettype}')->parse(false);
     }
 
     /**

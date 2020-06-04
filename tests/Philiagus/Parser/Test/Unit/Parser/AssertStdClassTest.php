@@ -122,7 +122,7 @@ class AssertStdClassTest extends TestCase
     {
         return [
             'no replace' => ['msg', 'msg', 'prop'],
-            'replace property' => ['prop {property}', 'prop \'prop\'', 'prop'],
+            'replace property' => ['prop \'{property}\'', 'prop \'prop\'', 'prop'],
         ];
     }
 

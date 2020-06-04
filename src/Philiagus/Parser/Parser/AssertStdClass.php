@@ -16,6 +16,7 @@ use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Util\Debug;
 
 class AssertStdClass
     extends Parser
@@ -31,9 +32,14 @@ class AssertStdClass
     /**
      * Defines the exception message if the provided value is not an instance of \stdClass
      *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     *
      * @param string $message
      *
      * @return $this
+     * @see Debug::parseMessage()
+     *
      */
     public function overwriteTypeExceptionMessage(string $message): self
     {
@@ -45,14 +51,18 @@ class AssertStdClass
     /**
      * Tests that the key exists and performs the parser on the value if present
      * If the key does not exist an exception with the specified message is thrown.
-     * Replacers in the exception message:
-     * {key} = var_export($key, true)
+     *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     * - property: The missing property as defined here
      *
      * @param string $property
      * @param Parser $parser
      * @param string $missingKeyExceptionMessage
      *
      * @return $this
+     * @see Debug::parseMessage()
+     *
      */
     public function withProperty(string $property, Parser $parser, string $missingKeyExceptionMessage = 'The object does not contain the requested property {property}'): self
     {
@@ -60,7 +70,7 @@ class AssertStdClass
             if (!in_array($property, $properties)) {
                 throw new ParsingException(
                     $value,
-                    strtr($missingKeyExceptionMessage, ['{property}' => var_export($property, true)]),
+                    Debug::parseMessage($missingKeyExceptionMessage, ['property' => $property, 'value' => $value]),
                     $path
                 );
             }
@@ -101,7 +111,11 @@ class AssertStdClass
     protected function execute($value, Path $path)
     {
         if (!is_object($value) || get_class($value) !== \stdClass::class) {
-            throw new Exception\ParsingException($value, $this->typeExceptionMessage, $path);
+            throw new Exception\ParsingException(
+                $value,
+                Debug::parseMessage($this->typeExceptionMessage, ['value' => $value]),
+                $path
+            );
         }
 
         $properties = array_keys((array) $value);

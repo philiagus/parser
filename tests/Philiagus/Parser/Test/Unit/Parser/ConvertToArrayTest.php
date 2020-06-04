@@ -465,7 +465,7 @@ class ConvertToArrayTest extends TestCase
     public function provideWithKeyConvertingValueExceptionCases(): array
     {
         return [
-            'replaced string' => ['Key {key}', 'Key \'key\'', 'key'],
+            'replaced string' => ['Key \'{key}\'', 'Key \'key\'', 'key'],
             'replaced int' => ['Key {key}', 'Key 1', 1],
             'fixed' => ['Key', 'Key', 'key'],
         ];

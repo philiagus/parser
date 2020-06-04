@@ -15,6 +15,7 @@ namespace Philiagus\Parser\Parser;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Util\Debug;
 
 class AssertString extends Parser
 {
@@ -32,9 +33,14 @@ class AssertString extends Parser
     /**
      * Defines the exception message to use if the value is not a string
      *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     *
      * @param string $message
      *
      * @return $this
+     * @see Debug::parseMessage()
+     *
      */
     public function overwriteTypeExceptionMessage(string $message): self
     {
@@ -92,7 +98,11 @@ class AssertString extends Parser
     protected function execute($value, Path $path)
     {
         if (!is_string($value)) {
-            throw new ParsingException($value, $this->typeExceptionMessage, $path);
+            throw new ParsingException(
+                $value,
+                Debug::parseMessage($this->typeExceptionMessage, ['value' => $value]),
+                $path
+            );
         }
 
         foreach ($this->assertionList as $assertion) {
