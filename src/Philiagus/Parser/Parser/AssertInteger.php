@@ -35,11 +35,11 @@ class AssertInteger extends Parser
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - value: The value currently being parsed
      *
-     * @see Debug::parseMessage()
-     *
      * @param string $message
      *
      * @return $this
+     * @see Debug::parseMessage()
+     *
      */
     public function overwriteTypeExceptionMessage(string $message): self
     {
@@ -54,12 +54,13 @@ class AssertInteger extends Parser
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - value: The value currently being parsed
      * - min: The defined minimum value
-     * @see Debug::parseMessage()
      *
      * @param int $minimum
      * @param string $exceptionMessage
      *
      * @return AssertInteger
+     * @see Debug::parseMessage()
+     *
      */
     public function withMinimum(int $minimum, string $exceptionMessage = 'Provided value {value.debug} is lower than the defined minimum of {min}'): self
     {
@@ -83,12 +84,12 @@ class AssertInteger extends Parser
      * - value: The value currently being parsed
      * - max: The maximum value
      *
-     * @see Debug::parseMessage()
-     *
      * @param int $maximum
      * @param string $exceptionMessage
      *
      * @return AssertInteger
+     * @see Debug::parseMessage()
+     *
      */
     public function withMaximum(int $maximum, string $exceptionMessage = 'Provided value {value.debug} is greater than the defined maximum of {max}}'): self
     {

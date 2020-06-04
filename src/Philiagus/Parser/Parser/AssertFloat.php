@@ -36,11 +36,11 @@ class AssertFloat extends Parser
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - value: The value currently being parsed
      *
-     * @see Debug::parseMessage()
-     *
      * @param string $exceptionMessage
      *
      * @return $this
+     * @see Debug::parseMessage()
+     *
      */
     public function overwriteTypeExceptionMessage(string $exceptionMessage): self
     {

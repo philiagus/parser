@@ -230,10 +230,10 @@ class DebugTest extends TestCase
             'all types' => [
                 '{key} {key.gettype} {key.type} {key.debug} {key.export} {key.raw}',
                 [
-                    'key' => true
+                    'key' => true,
                 ],
-                '1 boolean boolean boolean TRUE true 1'
-            ]
+                '1 boolean boolean boolean TRUE true 1',
+            ],
         ];
     }
 
