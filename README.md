@@ -26,7 +26,7 @@ $parsingResult = (new AssertInteger())
 // or, also possible:
 (new AssertInteger($parsingResult))
     ->withMinimum(0)
-    ->isMultipleOf(10)
+    ->withMultipleOf(10)
     ->parse($integer);
 ```
 

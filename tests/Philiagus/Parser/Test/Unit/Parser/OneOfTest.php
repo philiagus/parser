@@ -163,7 +163,7 @@ class OneOfTest extends TestCase
 
     public function testAllTypesException(): void
     {
-        self::expectException(ParsingException::class);
+        $this->expectException(ParsingException::class);
         OneOf::new()
             ->addOption(
                 new class extends Parser {
@@ -185,6 +185,18 @@ class OneOfTest extends TestCase
             ->addEqualsOption(
                 1, 2, 3
             )->parse('not existing');
+    }
+
+
+    public function testAllOverwriteNonOfExceptionMessageReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage(
+            '5 integer integer 5'
+        );
+        (new OneOf())
+            ->overwriteNonOfExceptionMessage('{value} {value.type} {value.debug}')
+            ->parse(5);
     }
 
 }

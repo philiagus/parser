@@ -211,7 +211,7 @@ class AssertFloatTest extends TestCase
      */
     public function testThatMinimumDisallowsNANAndINF($value): void
     {
-        self::expectException(ParserConfigurationException::class);
+        $this->expectException(ParserConfigurationException::class);
         (new AssertFloat())->withMinimum($value);
     }
 
@@ -223,8 +223,41 @@ class AssertFloatTest extends TestCase
      */
     public function testThatMaximumDisallowsNANAndINF($value): void
     {
-        self::expectException(ParserConfigurationException::class);
+        $this->expectException(ParserConfigurationException::class);
         (new AssertFloat())->withMaximum($value);
+    }
+
+    public function testAllOverwriteTypeExceptionMessageReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage(
+            'hello string string<ASCII>(5)"hello"'
+        );
+        (new AssertFloat())
+            ->overwriteTypeExceptionMessage('{value} {value.type} {value.debug}')
+            ->parse('hello');
+    }
+
+    public function testAllWithMinimumMessageReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage(
+            '0 double float 0 | 10 double float 10'
+        );
+        (new AssertFloat())
+            ->withMinimum(10, '{value} {value.type} {value.debug} | {min} {min.type} {min.debug}')
+            ->parse(0.0);
+    }
+
+    public function testAllWithMaximumMessageReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage(
+            '1000 double float 1000 | 10 double float 10'
+        );
+        (new AssertFloat())
+            ->withMaximum(10, '{value} {value.type} {value.debug} | {max} {max.type} {max.debug}')
+            ->parse(1000.0);
     }
 
 }

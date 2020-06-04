@@ -91,17 +91,30 @@ class Debug
                     return $matches[0];
                 }
                 $info = $matches['info'] ?? 'raw';
+                $value = $replacers[$key];
                 switch ($info) {
                     case 'gettype':
-                        return gettype($replacers[$key]);
+                        return gettype($value);
                     case 'type':
-                        return self::getType($replacers[$key]);
+                        return self::getType($value);
                     case 'debug':
-                        return self::stringify($replacers[$key]);
+                        return self::stringify($value);
                     case 'export':
-                        return var_export($replacers[$key], true);
+                        return var_export($value, true);
                     case 'raw':
-                        return (string) $replacers[$key];
+                        if (is_array($value)) {
+                            return 'Array';
+                        }
+
+                        if (is_object($value)) {
+                            return 'Object';
+                        }
+
+                        if (is_resource($value)) {
+                            return self::stringify($value);
+                        }
+
+                        return (string) $value;
                     default:
                         return $matches[0];
                 }
@@ -176,7 +189,7 @@ class Debug
 
                 return "$type FALSE";
             case 'string':
-                $encoding = mb_detect_encoding($value, 'ASCII, UTF8');
+                $encoding = mb_detect_encoding($value, 'ASCII, UTF8', true);
                 $length = strlen($value);
                 if ($encoding) {
                     // replace known control characters

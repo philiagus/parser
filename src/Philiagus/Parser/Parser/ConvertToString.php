@@ -75,7 +75,7 @@ class ConvertToString extends Parser
 
     /**
      * Specifies a value to implode the array with. Before performing this implode every element inside the array
-     * is checked to be a string. If non strings are found an exception is thrown
+     * is checked to be a string. If violating elements are found, an exception is thrown
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - value: The value currently being parsed

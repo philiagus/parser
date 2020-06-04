@@ -120,4 +120,16 @@ class ConvertToIntegerTest extends TestCase
         (new ConvertToInteger())->overwriteTypeExceptionMessage($baseMsg)->parse($value);
     }
 
+
+    public function testAllOverwriteTypeExceptionMessageReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage(
+            '. string string<ASCII>(1)"."'
+        );
+        (new ConvertToInteger())
+            ->overwriteTypeExceptionMessage('{value} {value.type} {value.debug}')
+            ->parse('.');
+    }
+
 }

@@ -149,7 +149,7 @@ class AssertIntegerTest extends TestCase
         self::assertSame(
             $value,
             (new AssertInteger())
-                ->isMultipleOf($base)
+                ->withMultipleOf($base)
                 ->parse($value)
         );
     }
@@ -161,7 +161,7 @@ class AssertIntegerTest extends TestCase
     public function testisMultipleOfWrongValueException(): void
     {
         $this->expectException(ParsingException::class);
-        (new AssertInteger())->isMultipleOf(10)->parse(9);
+        (new AssertInteger())->withMultipleOf(10)->parse(9);
     }
 
     /**
@@ -254,7 +254,51 @@ class AssertIntegerTest extends TestCase
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($expectedMsg);
-        (new AssertInteger())->isMultipleOf($base, $baseMsg)->parse($value);
+        (new AssertInteger())->withMultipleOf($base, $baseMsg)->parse($value);
+    }
+
+    public function testAllOverwriteTypeExceptionMessageReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage(
+            'hello string string<ASCII>(5)"hello"'
+        );
+        (new AssertInteger())
+            ->overwriteTypeExceptionMessage('{value} {value.type} {value.debug}')
+            ->parse('hello');
+    }
+
+    public function testAllWithMinimumMessageReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage(
+            '0 integer integer 0 | 10 integer integer 10'
+        );
+        (new AssertInteger())
+            ->withMinimum(10, '{value} {value.type} {value.debug} | {min} {min.type} {min.debug}')
+            ->parse(0);
+    }
+
+    public function testAllWithMaximumMessageReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage(
+            '100 integer integer 100 | 10 integer integer 10'
+        );
+        (new AssertInteger())
+            ->withMaximum(10, '{value} {value.type} {value.debug} | {max} {max.type} {max.debug}')
+            ->parse(100);
+    }
+
+    public function testAllWithMultipleOfMessageReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage(
+            '2 integer integer 2 | 10 integer integer 10'
+        );
+        (new AssertInteger())
+            ->withMultipleOf(10, '{value} {value.type} {value.debug} | {base} {base.type} {base.debug}')
+            ->parse(2);
     }
 
 }

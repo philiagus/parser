@@ -11,6 +11,10 @@ In some cases replacers such as `{type}` are now replaced with the more clear `{
 
 **If you are already using custom exception messages or are relying on the string representation of an already existing exception message please align your code correspondingly.**
 
+### AssertInteger
+- `withMultipleOf`
+    - renamed from `isMultipleOf`
+
 ### New Class \Philiagus\Parser\Util\Debug
 
 The class `\Philiagus\Parser\Util\Debug` was added. As the namespace suggests it is a utility class, not a parser. The class is static.

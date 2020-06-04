@@ -120,7 +120,7 @@ class AssertInteger extends Parser
      * @see Debug::parseMessage()
      *
      */
-    public function isMultipleOf(
+    public function withMultipleOf(
         int $base,
         string $exceptionMessage = 'Provided value {value.debug} is not a multiple of {base}'
     ): self

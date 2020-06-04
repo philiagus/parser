@@ -135,8 +135,19 @@ class AssertSameTest extends TestCase
     public function testThatItDoesNotAcceptsOverwrites(): void
     {
         $parser = AssertSame::new()->setValue('a');
-        self::expectException(ParserConfigurationException::class);
+        $this->expectException(ParserConfigurationException::class);
         $parser->setValue('b');
+    }
+
+    public function testAllOverwriteTypeExceptionMessageReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage(
+            'hello string string<ASCII>(5)"hello" | 6 integer integer 6'
+        );
+        (new AssertSame())
+            ->setValue(6, '{value} {value.type} {value.debug} | {expected} {expected.type} {expected.debug}')
+            ->parse('hello');
     }
 
 }

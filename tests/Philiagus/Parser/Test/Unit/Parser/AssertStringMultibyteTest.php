@@ -212,8 +212,31 @@ class AssertStringMultibyteTest extends TestCase
     public function testThatEncodingCannotBeOverwritten(): void
     {
         $parser = AssertStringMultibyte::new()->setEncoding('UTF-8');
-        self::expectException(ParserConfigurationException::class);
+        $this->expectException(ParserConfigurationException::class);
         $parser->setEncoding('ISO-8859-1');
+    }
+
+    public function testAllOverwriteTypeExceptionMessageReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage(
+            '5 integer integer 5'
+        );
+        (new AssertStringMultibyte())
+            ->overwriteTypeExceptionMessage('{value} {value.type} {value.debug}')
+            ->parse(5);
+    }
+
+    public function testAllSetEncodingExceptionMessageReplacers(): void
+    {
+        $char = mb_convert_encoding('Ü', 'ISO-8859-1', 'UTF-8');
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage(
+            $char . ' string string<binary>(1)"' . $char . '" | UTF-8 string string<ASCII>(5)"UTF-8"'
+        );
+        (new AssertStringMultibyte())
+            ->setEncoding('UTF-8', '{value} {value.type} {value.debug} | {encoding} {encoding.type} {encoding.debug}')
+            ->parse($char);
     }
 
 }

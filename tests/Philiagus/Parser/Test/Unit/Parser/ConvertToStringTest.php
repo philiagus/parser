@@ -206,7 +206,7 @@ class ConvertToStringTest extends TestCase
     public function testThatSetBooleanValuesCannotBeOverwritten(): void
     {
         $parser = ConvertToString::new()->setBooleanValues('a', 'b');
-        self::expectException(ParserConfigurationException::class);
+        $this->expectException(ParserConfigurationException::class);
         $parser->setBooleanValues('a', 'b');
     }
 
@@ -216,7 +216,29 @@ class ConvertToStringTest extends TestCase
     public function testThatImplodeOfArraysCannotBeOverwritten(): void
     {
         $parser = ConvertToString::new()->setImplodeOfArrays('a', 'b');
-        self::expectException(ParserConfigurationException::class);
+        $this->expectException(ParserConfigurationException::class);
         $parser->setImplodeOfArrays('a', 'b');
+    }
+
+    public function testAllOverwriteTypeExceptionMessageReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage(
+            'Object object<stdClass> object<stdClass>'
+        );
+        (new ConvertToString())
+            ->overwriteTypeExceptionMessage('{value} {value.type} {value.debug}')
+            ->parse((object) []);
+    }
+
+    public function testAllSetImplodeOfArraysExceptionMessageReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage(
+            'Array array array<integer,mixed>(2) | 1 integer integer 1 | 1 integer integer 1'
+        );
+        (new ConvertToString())
+            ->setImplodeOfArrays('', '{value} {value.type} {value.debug} | {key} {key.type} {key.debug} | {culprit} {culprit.type} {culprit.debug}')
+            ->parse(['a', 1]);
     }
 }
