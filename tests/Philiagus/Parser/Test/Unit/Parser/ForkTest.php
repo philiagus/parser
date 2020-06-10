@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\Fork;
@@ -49,12 +50,12 @@ class ForkTest extends TestCase
         $parser = new Fork();
         $path = new Root('root');
         for ($parsers = 0; $parsers < 3; $parsers++) {
-            $child = $this->prophesize(Parser::class);
+            $child = $this->prophesize(ParserContract::class);
             $argument = Argument::that(function ($provided) use ($value) {
                 return DataProvider::isSame($value, $provided);
             });
-            $child->execute($argument, $path)->shouldBeCalledOnce();
-            /** @var Parser $childParser */
+            $child->parse($argument, $path)->shouldBeCalledOnce();
+            /** @var ParserContract $childParser */
             $childParser = $child->reveal();
             $parser->addParser($childParser);
         }
@@ -70,28 +71,28 @@ class ForkTest extends TestCase
     {
         $parser = new Fork();
 
-        $child = $this->prophesize(Parser::class);
-        $child->execute(1, Argument::any())->shouldBeCalledOnce();
-        /** @var Parser $childParser */
+        $child = $this->prophesize(ParserContract::class);
+        $child->parse(1, Argument::any())->shouldBeCalledOnce();
+        /** @var ParserContract $childParser */
         $childParser = $child->reveal();
         $parser->addParser($childParser);
 
-        $child = $this->prophesize(Parser::class);
-        $child->execute(1, Argument::any())->shouldBeCalledOnce()->will(
+        $child = $this->prophesize(ParserContract::class);
+        $child->parse(1, Argument::any())->shouldBeCalledOnce()->will(
             function ($args) {
                 [$value, $path] = $args;
                 throw new ParsingException($value, 'error', $path);
             }
         );
 
-        /** @var Parser $childParser */
+        /** @var ParserContract $childParser */
         $childParser = $child->reveal();
         $parser->addParser($childParser);
 
-        $child = $this->prophesize(Parser::class);
-        $child->execute(1, Argument::any())->shouldBeCalledTimes(0);
+        $child = $this->prophesize(ParserContract::class);
+        $child->parse(1, Argument::any())->shouldBeCalledTimes(0);
 
-        /** @var Parser $childParser */
+        /** @var ParserContract $childParser */
         $childParser = $child->reveal();
         $parser->addParser($childParser);
 

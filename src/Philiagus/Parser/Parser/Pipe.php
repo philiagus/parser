@@ -14,11 +14,12 @@ namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Contract\Parser as ParserContract;
 
 class Pipe extends Parser
 {
     /**
-     * @var Parser[]
+     * @var ParserContract[]
      */
     private $parsers = [];
 
@@ -26,11 +27,11 @@ class Pipe extends Parser
      * Adds a parser to the pipe that's appended to the chain of parsers
      * The $value is altered by every parsers return value
      *
-     * @param Parser $parser
+     * @param ParserContract $parser
      *
      * @return $this
      */
-    public function add(Parser $parser): self
+    public function add(ParserContract $parser): self
     {
         $this->parsers[] = $parser;
 

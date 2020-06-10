@@ -14,6 +14,7 @@ namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
 
@@ -52,11 +53,11 @@ class AssertString extends Parser
     /**
      * Executes strlen on the string and hands the result over to the parser
      *
-     * @param Parser $integerParser
+     * @param ParserContract $integerParser
      *
      * @return $this
      */
-    public function withLength(Parser $integerParser): self
+    public function withLength(ParserContract $integerParser): self
     {
         $this->assertionList[] = function (string $value, Path $path) use ($integerParser) {
             $integerParser->parse(strlen($value), $path->meta('length'));
@@ -70,14 +71,14 @@ class AssertString extends Parser
      *
      * @param int $start
      * @param int|null $length
-     * @param Parser $stringParser
+     * @param ParserContract $stringParser
      *
      * @return $this
      */
     public function withSubstring(
         int $start,
         ?int $length,
-        Parser $stringParser
+        ParserContract $stringParser
     ): self
     {
         $this->assertionList[] = function (string $value, Path $path) use ($start, $length, $stringParser) {

@@ -14,23 +14,24 @@ namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Contract\Parser as ParserContract;
 
 class Fork extends Parser
 {
 
     /**
-     * @var Parser[]
+     * @var ParserContract[]
      */
     private $parsers = [];
 
     /**
      * Adds a parser to fork the value to without alteration
      *
-     * @param Parser $parser
+     * @param ParserContract $parser
      *
      * @return $this
      */
-    public function addParser(Parser $parser): self
+    public function addParser(ParserContract $parser): self
     {
         $this->parsers[] = $parser;
 

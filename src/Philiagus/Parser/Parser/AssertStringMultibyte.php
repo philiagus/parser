@@ -14,6 +14,7 @@ namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
@@ -59,11 +60,11 @@ class AssertStringMultibyte extends Parser
      * Executes mb_strlen on the string and hands the result over to the parser
      * The encoding will be guessed if not defined using setEncoding
      *
-     * @param Parser $integerParser
+     * @param ParserContract $integerParser
      *
      * @return $this
      */
-    public function withLength(Parser $integerParser): self
+    public function withLength(ParserContract $integerParser): self
     {
         $this->assertionList[] = function (string $value, $encoding, Path $path) use ($integerParser) {
             $integerParser->parse(mb_strlen($value, $encoding), $path->meta('length'));
@@ -78,14 +79,14 @@ class AssertStringMultibyte extends Parser
      *
      * @param int $start
      * @param null|int $length
-     * @param Parser $stringParser
+     * @param ParserContract $stringParser
      *
      * @return $this
      */
     public function withSubstring(
         int $start,
         ?int $length,
-        Parser $stringParser
+        ParserContract $stringParser
     ): self
     {
         $this->assertionList[] = function (string $value, $encoding, Path $path) use ($start, $length, $stringParser) {

@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\AssertStringMultibyte;
@@ -90,9 +91,9 @@ class AssertStringMultibyteTest extends TestCase
      */
     public function testWithLength(): void
     {
-        $parser = $this->prophesize(Parser::class);
-        $parser->execute(9, Argument::type(MetaInformation::class))->shouldBeCalledOnce();
-        /** @var Parser $lengthParser */
+        $parser = $this->prophesize(ParserContract::class);
+        $parser->parse(9, Argument::type(MetaInformation::class))->shouldBeCalledOnce();
+        /** @var ParserContract $lengthParser */
         $lengthParser = $parser->reveal();
         (new AssertStringMultibyte())->withLength($lengthParser)->parse('012345678');
     }
@@ -103,9 +104,9 @@ class AssertStringMultibyteTest extends TestCase
      */
     public function testWithLengthMultibyte(): void
     {
-        $parser = $this->prophesize(Parser::class);
-        $parser->execute(1, Argument::type(MetaInformation::class))->shouldBeCalledOnce();
-        /** @var Parser $lengthParser */
+        $parser = $this->prophesize(ParserContract::class);
+        $parser->parse(1, Argument::type(MetaInformation::class))->shouldBeCalledOnce();
+        /** @var ParserContract $lengthParser */
         $lengthParser = $parser->reveal();
         (new AssertStringMultibyte())->withLength($lengthParser)->parse('ö');
     }
@@ -116,9 +117,9 @@ class AssertStringMultibyteTest extends TestCase
      */
     public function testWithSubstring(): void
     {
-        $parser = $this->prophesize(Parser::class);
-        $parser->execute('bcd', Argument::type(MetaInformation::class))->shouldBeCalledOnce();
-        /** @var Parser $substringParser */
+        $parser = $this->prophesize(ParserContract::class);
+        $parser->parse('bcd', Argument::type(MetaInformation::class))->shouldBeCalledOnce();
+        /** @var ParserContract $substringParser */
         $substringParser = $parser->reveal();
         (new AssertStringMultibyte())->withSubstring(1, 3, $substringParser)->parse('abcdefg');
     }
@@ -130,9 +131,9 @@ class AssertStringMultibyteTest extends TestCase
     public function testEmptySubstringOnOutOfBounds(): void
     {
 
-        $parser = $this->prophesize(Parser::class);
-        $parser->execute('', Argument::type(MetaInformation::class))->shouldBeCalledOnce();
-        /** @var Parser $substringParser */
+        $parser = $this->prophesize(ParserContract::class);
+        $parser->parse('', Argument::type(MetaInformation::class))->shouldBeCalledOnce();
+        /** @var ParserContract $substringParser */
         $substringParser = $parser->reveal();
         (new AssertStringMultibyte())->withSubstring(100, 1000, $substringParser)->parse('abcdefg');
     }
@@ -143,9 +144,9 @@ class AssertStringMultibyteTest extends TestCase
      */
     public function testEmptySubstringOnEmptyValue(): void
     {
-        $parser = $this->prophesize(Parser::class);
-        $parser->execute('', Argument::type(MetaInformation::class))->shouldBeCalledOnce();
-        /** @var Parser $substringParser */
+        $parser = $this->prophesize(ParserContract::class);
+        $parser->parse('', Argument::type(MetaInformation::class))->shouldBeCalledOnce();
+        /** @var ParserContract $substringParser */
         $substringParser = $parser->reveal();
         (new AssertStringMultibyte())->withSubstring(0, 1, $substringParser)->parse('');
     }
@@ -156,9 +157,9 @@ class AssertStringMultibyteTest extends TestCase
      */
     public function testMultibyteSubstring(): void
     {
-        $parser = $this->prophesize(Parser::class);
-        $parser->execute('ä', Argument::type(MetaInformation::class))->shouldBeCalledOnce();
-        /** @var Parser $substringParser */
+        $parser = $this->prophesize(ParserContract::class);
+        $parser->parse('ä', Argument::type(MetaInformation::class))->shouldBeCalledOnce();
+        /** @var ParserContract $substringParser */
         $substringParser = $parser->reveal();
         (new AssertStringMultibyte())->withSubstring(1, 1, $substringParser)->parse('üäö');
     }

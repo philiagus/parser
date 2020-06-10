@@ -77,7 +77,7 @@ class ParserTest extends TestCase
      */
     public function testThatChainingWorks(): void
     {
-        $resultA = $resultB = $resultC = null;
+        $resultA = $resultB = $resultC = $resultD = null;
         $baseParser = new class($resultA) extends Parser {
             protected function execute($value, Path $path)
             {
@@ -98,10 +98,22 @@ class ParserTest extends TestCase
             }
         );
 
-        $resultC = $baseParser->parse(1);
-        self::assertSame(3, $resultA);
+        $baseParser->then(
+            new class($resultC) extends Parser {
+                protected function execute($value, Path $path)
+                {
+                    Assert::assertSame(3, $value);
+
+                    return 4;
+                }
+            }
+        );
+
+        $resultD = $baseParser->parse(1);
+        self::assertSame(4, $resultA);
         self::assertSame(3, $resultB);
-        self::assertSame(3, $resultC);
+        self::assertSame(4, $resultC);
+        self::assertSame(4, $resultD);
     }
 
     /**
@@ -112,5 +124,67 @@ class ParserTest extends TestCase
     {
         \Philiagus\Parser\Test\Mock\Parser::new($target)->parse('result');
         self::assertSame('result', $target);
+    }
+
+    public function testSetParsingExceptionOverwrite(): void
+    {
+        $parser = new class() extends Parser {
+
+            protected function execute($value, Path $path)
+            {
+                throw new ParsingException($value, 'some text', $path);
+            }
+        };
+
+        $parser->setParsingExceptionOverwrite('{value} {value.type} {value.debug}');
+
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('2 integer integer 2');
+        $parser->parse(2);
+    }
+
+    public function testSetParsingExceptionOverwriteNull(): void
+    {
+        $parser = new class() extends Parser {
+
+            protected function execute($value, Path $path)
+            {
+                throw new ParsingException($value, 'some text', $path);
+            }
+        };
+
+        $parser->setParsingExceptionOverwrite(null);
+
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('some text');
+        $parser->parse(2);
+    }
+
+    public function testSetParsingExceptionOverwriteNullBlockRecall(): void
+    {
+        $parser = new class() extends Parser {
+            protected function execute($value, Path $path)
+            {
+            }
+        };
+
+        $parser->setParsingExceptionOverwrite(null);
+        $this->expectException(ParserConfigurationException::class);
+        $this->expectExceptionMessage("The ParsingException overwrite for this parser was already set");
+        $parser->setParsingExceptionOverwrite('overwrite');
+    }
+
+    public function testSetParsingExceptionOverwriteBlockRecall(): void
+    {
+        $parser = new class() extends Parser {
+            protected function execute($value, Path $path)
+            {
+            }
+        };
+
+        $parser->setParsingExceptionOverwrite('set');
+        $this->expectException(ParserConfigurationException::class);
+        $this->expectExceptionMessage("The ParsingException overwrite for this parser was already set");
+        $parser->setParsingExceptionOverwrite('overwrite');
     }
 }

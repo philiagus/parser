@@ -14,6 +14,7 @@ namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\AssertStdClass;
@@ -85,8 +86,8 @@ class AssertStdClassTest extends TestCase
      */
     public function testThatItAssertsDefinedProperty(): void
     {
-        $parser = $this->prophesize(Parser::class);
-        $parser->execute(1, Argument::type(Property::class))->shouldBeCalledOnce();
+        $parser = $this->prophesize(ParserContract::class);
+        $parser->parse(1, Argument::type(Property::class))->shouldBeCalledOnce();
         /** @var Parser $child */
         $child = $parser->reveal();
         (new AssertStdClass())
@@ -158,8 +159,8 @@ class AssertStdClassTest extends TestCase
      */
     public function testDefaultingOfMissingProperty(): void
     {
-        $parser = $this->prophesize(Parser::class);
-        $parser->execute(1, Argument::type(Property::class))->shouldBeCalledOnce();
+        $parser = $this->prophesize(ParserContract::class);
+        $parser->parse(1, Argument::type(Property::class))->shouldBeCalledOnce();
         /** @var Parser $child */
         $child = $parser->reveal();
         (new AssertStdClass())
@@ -175,8 +176,8 @@ class AssertStdClassTest extends TestCase
      */
     public function testNotDefaultingOfPresentProperty(): void
     {
-        $parser = $this->prophesize(Parser::class);
-        $parser->execute(1, Argument::type(Property::class))->shouldBeCalledOnce();
+        $parser = $this->prophesize(ParserContract::class);
+        $parser->parse(1, Argument::type(Property::class))->shouldBeCalledOnce();
         /** @var Parser $child */
         $child = $parser->reveal();
         (new AssertStdClass())

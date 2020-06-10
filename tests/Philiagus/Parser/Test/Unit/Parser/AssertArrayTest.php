@@ -14,6 +14,7 @@ namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Parser\AssertArray;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
@@ -94,12 +95,12 @@ class AssertArrayTest extends TestCase
             'key3' => ['array'],
         ];
 
-        $parser = $this->prophesize(Parser::class);
+        $parser = $this->prophesize(ParserContract::class);
         foreach ($array as $key => $value) {
-            $parser->execute($value, Argument::type(Index::class))->shouldBeCalledOnce()->willReturn($value);
+            $parser->parse($value, Argument::type(Index::class))->shouldBeCalledOnce()->willReturn($value);
         }
 
-        /** @var Parser $valueParser */
+        /** @var ParserContract $valueParser */
         $valueParser = $parser->reveal();
 
         (new AssertArray())->withEachValue($valueParser)->parse($array);
@@ -119,18 +120,18 @@ class AssertArrayTest extends TestCase
             'key4' => $exception,
         ];
 
-        $parser = $this->prophesize(Parser::class);
+        $parser = $this->prophesize(ParserContract::class);
         foreach ($array as $key => $value) {
             if ($value instanceof \Exception) {
-                $parser->execute($value, Argument::type(Index::class))
+                $parser->parse($value, Argument::type(Index::class))
                     ->shouldBeCalledOnce()
                     ->willThrow($value);
             } else {
-                $parser->execute($value, Argument::type(Index::class))->shouldBeCalledOnce()->willReturn($value);
+                $parser->parse($value, Argument::type(Index::class))->shouldBeCalledOnce()->willReturn($value);
             }
         }
 
-        /** @var Parser $valueParser */
+        /** @var ParserContract $valueParser */
         $valueParser = $parser->reveal();
 
         $this->expectException(ParsingException::class);
@@ -149,12 +150,12 @@ class AssertArrayTest extends TestCase
             'key3' => ['array'],
         ];
 
-        $parser = $this->prophesize(Parser::class);
+        $parser = $this->prophesize(ParserContract::class);
         foreach ($array as $key => $value) {
-            $parser->execute($key, Argument::type(Key::class))->shouldBeCalledOnce()->willReturn($key);
+            $parser->parse($key, Argument::type(Key::class))->shouldBeCalledOnce()->willReturn($key);
         }
 
-        /** @var Parser $keyParser */
+        /** @var ParserContract $keyParser */
         $keyParser = $parser->reveal();
 
         (new AssertArray())->withEachKey($keyParser)->parse($array);
@@ -166,9 +167,9 @@ class AssertArrayTest extends TestCase
      */
     public function testWithKeys(): void
     {
-        $keyParser = $this->prophesize(Parser::class);
-        $keyParser->execute(['a', 2, 'b', 0], Argument::type(MetaInformation::class))->shouldBeCalledOnce();
-        /** @var Parser $parser */
+        $keyParser = $this->prophesize(ParserContract::class);
+        $keyParser->parse(['a', 2, 'b', 0], Argument::type(MetaInformation::class))->shouldBeCalledOnce();
+        /** @var ParserContract $parser */
         $parser = $keyParser->reveal();
 
         (new AssertArray())->withKeys($parser)->parse(
@@ -195,18 +196,18 @@ class AssertArrayTest extends TestCase
             'key4' => $exception,
         ];
 
-        $parser = $this->prophesize(Parser::class);
+        $parser = $this->prophesize(ParserContract::class);
         foreach ($array as $key => $value) {
             if ($value instanceof \Exception) {
-                $parser->execute($key, Argument::type(Key::class))
+                $parser->parse($key, Argument::type(Key::class))
                     ->shouldBeCalledOnce()
                     ->willThrow($value);
             } else {
-                $parser->execute($key, Argument::type(Key::class))->shouldBeCalledOnce()->willReturn($key);
+                $parser->parse($key, Argument::type(Key::class))->shouldBeCalledOnce()->willReturn($key);
             }
         }
 
-        /** @var Parser $keyParser */
+        /** @var ParserContract $keyParser */
         $keyParser = $parser->reveal();
 
         $this->expectException(ParsingException::class);
@@ -219,10 +220,10 @@ class AssertArrayTest extends TestCase
      */
     public function testWithLength(): void
     {
-        $parser = $this->prophesize(Parser::class);
-        $parser->execute(2, Argument::type(MetaInformation::class))->shouldBeCalledOnce();
+        $parser = $this->prophesize(ParserContract::class);
+        $parser->parse(2, Argument::type(MetaInformation::class))->shouldBeCalledOnce();
 
-        /** @var Parser $lengthParser */
+        /** @var ParserContract $lengthParser */
         $lengthParser = $parser->reveal();
 
         (new AssertArray())->withLength($lengthParser)->parse([1, 2]);
@@ -234,12 +235,12 @@ class AssertArrayTest extends TestCase
      */
     public function testWithLengthException(): void
     {
-        $parser = $this->prophesize(Parser::class);
-        $parser->execute(2, Argument::type(MetaInformation::class))
+        $parser = $this->prophesize(ParserContract::class);
+        $parser->parse(2, Argument::type(MetaInformation::class))
             ->shouldBeCalledOnce()
             ->willThrow(new ParsingException(2, 'message', new Root('root')));
 
-        /** @var Parser $lengthParser */
+        /** @var ParserContract $lengthParser */
         $lengthParser = $parser->reveal();
 
         $this->expectException(ParsingException::class);
@@ -252,10 +253,10 @@ class AssertArrayTest extends TestCase
      */
     public function testWithKeyHavingValue(): void
     {
-        $parser = $this->prophesize(Parser::class);
-        $parser->execute('value', Argument::type(Index::class))->shouldBeCalledOnce();
+        $parser = $this->prophesize(ParserContract::class);
+        $parser->parse('value', Argument::type(Index::class))->shouldBeCalledOnce();
 
-        /** @var Parser $valueParser */
+        /** @var ParserContract $valueParser */
         $valueParser = $parser->reveal();
 
         (new AssertArray())
@@ -325,10 +326,10 @@ class AssertArrayTest extends TestCase
      */
     public function testWithKeyHavingValueAcceptingValidKeys($stringInt): void
     {
-        $parser = $this->prophesize(Parser::class);
-        $parser->execute('value', Argument::type(Index::class))->shouldBeCalledOnce();
+        $parser = $this->prophesize(ParserContract::class);
+        $parser->parse('value', Argument::type(Index::class))->shouldBeCalledOnce();
 
-        /** @var Parser $valueParser */
+        /** @var ParserContract $valueParser */
         $valueParser = $parser->reveal();
 
         (new AssertArray())
@@ -356,9 +357,9 @@ class AssertArrayTest extends TestCase
      */
     public function testWithDefaultedKey(): void
     {
-        $parser = $this->prophesize(Parser::class);
-        $parser->execute('value', Argument::type(Index::class))->shouldBeCalledOnce();
-        /** @var Parser $valueParser */
+        $parser = $this->prophesize(ParserContract::class);
+        $parser->parse('value', Argument::type(Index::class))->shouldBeCalledOnce();
+        /** @var ParserContract $valueParser */
         $valueParser = $parser->reveal();
 
         (new AssertArray())
@@ -372,9 +373,9 @@ class AssertArrayTest extends TestCase
      */
     public function testWithMissingDefaultedKey(): void
     {
-        $parser = $this->prophesize(Parser::class);
-        $parser->execute('default', Argument::type(Index::class))->shouldBeCalledOnce();
-        /** @var Parser $valueParser */
+        $parser = $this->prophesize(ParserContract::class);
+        $parser->parse('default', Argument::type(Index::class))->shouldBeCalledOnce();
+        /** @var ParserContract $valueParser */
         $valueParser = $parser->reveal();
         (new AssertArray())
             ->withDefaultedKey('key', 'default', $valueParser)
@@ -407,9 +408,9 @@ class AssertArrayTest extends TestCase
      */
     public function testAcceptingValidKeysForWithDefaultedKey($stringInt): void
     {
-        $parser = $this->prophesize(Parser::class);
-        $parser->execute('value', Argument::type(Index::class))->shouldBeCalledOnce();
-        /** @var Parser $valueParser */
+        $parser = $this->prophesize(ParserContract::class);
+        $parser->parse('value', Argument::type(Index::class))->shouldBeCalledOnce();
+        /** @var ParserContract $valueParser */
         $valueParser = $parser->reveal();
 
         (new AssertArray())

@@ -14,6 +14,7 @@ namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\OneOfParsingException;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
@@ -72,9 +73,9 @@ class OneOfTest extends TestCase
     public function testThatItThrowsAnExceptionWhenNothingMatches(): void
     {
         $exception = new ParsingException('value', 'Exception', new Root(''));
-        $option = $this->prophesize(Parser::class);
-        $option->execute(null, Argument::type(Path::class))->willThrow($exception);
-        /** @var Parser $parser */
+        $option = $this->prophesize(ParserContract::class);
+        $option->parse(null, Argument::type(Path::class))->willThrow($exception);
+        /** @var ParserContract $parser */
         $parser = $option->reveal();
         $this->expectException(OneOfParsingException::class);
         (new OneOf())

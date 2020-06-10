@@ -1,4 +1,23 @@
 # Migration document
+## v1.0.0-RC6 to v1.0.0-RC7
+
+### Contract\Parser interface
+
+It has come to my attention that writing tests and prophecies for classes using the parsers is complicated.
+
+To target this issue, the Parser Contract has been created and the Base Parser implements that contract. All methods that take parsers as an argument expect instances of that interface from now on.
+
+### Base\Parser
+- `then`
+    - if called multiple times, instead of overwriting previously set then, now chains them to one another
+    - result of the main parser is the result of the last parser in the chain
+    - every parser in the chain receives the result of its previous element in the chain
+    
+- new method `setParsingExceptionOverwrite`
+    - if set every with a string: ParsingException thrown by this Parser or Parsers called inside its `execute` or `then` will be caught and replaced by a ParsingException with the given content.
+    - if `null` is provided: it blocks that any overwrite can be set
+
+
 ## v1.0.0-RC5 to v1.0.0-RC6
 
 ### General

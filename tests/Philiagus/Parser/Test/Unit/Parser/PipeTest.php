@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\Pipe;
@@ -56,13 +57,13 @@ class PipeTest extends TestCase
     public function testThatItPerformTheEntirePipe(): void
     {
         $path = new Root('root');
-        $pipeParser = $this->prophesize(Parser::class);
-        $pipeParser->execute(1, $path)->shouldBeCalledOnce()->willReturn(2);
-        $pipeParser->execute(2, $path)->shouldBeCalledOnce()->willReturn(3);
-        $pipeParser->execute(3, $path)->shouldBeCalledOnce()->willReturn('last');
-        $pipeParser->execute('last', $path)->shouldBeCalledOnce()->willReturn('end value');
+        $pipeParser = $this->prophesize(ParserContract::class);
+        $pipeParser->parse(1, $path)->shouldBeCalledOnce()->willReturn(2);
+        $pipeParser->parse(2, $path)->shouldBeCalledOnce()->willReturn(3);
+        $pipeParser->parse(3, $path)->shouldBeCalledOnce()->willReturn('last');
+        $pipeParser->parse('last', $path)->shouldBeCalledOnce()->willReturn('end value');
         $pipeParser = $pipeParser->reveal();
-        /** @var Parser $pipeParser */
+        /** @var ParserContract $pipeParser */
         $result = (new Pipe())
             ->add($pipeParser)
             ->add($pipeParser)

@@ -14,6 +14,7 @@ namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
@@ -27,7 +28,7 @@ class OneOf extends Parser
     private $exceptionMessage = 'Provided value does not match any of the expected formats or values';
 
     /**
-     * @var Parser[]
+     * @var ParserContract[]
      */
     private $options = [];
 
@@ -44,11 +45,11 @@ class OneOf extends Parser
     /**
      * Adds another potential parser the provided value might match
      *
-     * @param Parser ...$parser
+     * @param ParserContract ...$parser
      *
      * @return $this
      */
-    public function addOption(Parser ...$parser): self
+    public function addOption(ParserContract ...$parser): self
     {
         $this->options = array_merge($this->options, $parser);
 

@@ -14,6 +14,7 @@ namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
@@ -56,11 +57,11 @@ class AssertArray
     }
 
     /**
-     * @param Parser $parser
+     * @param ParserContract $parser
      *
      * @return $this
      */
-    public function withEachValue(Parser $parser): self
+    public function withEachValue(ParserContract $parser): self
     {
         $this->assertionList[] = function (array $value, array $keys, Path $path) use ($parser) {
             foreach ($value as $index => $element) {
@@ -72,11 +73,11 @@ class AssertArray
     }
 
     /**
-     * @param Parser $parser
+     * @param ParserContract $parser
      *
      * @return $this
      */
-    public function withEachKey(Parser $parser): self
+    public function withEachKey(ParserContract $parser): self
     {
         $this->assertionList[] = function (array $value, array $keys, Path $path) use ($parser) {
             foreach ($keys as $key) {
@@ -88,11 +89,11 @@ class AssertArray
     }
 
     /**
-     * @param Parser $arrayParser
+     * @param ParserContract $arrayParser
      *
      * @return $this
      */
-    public function withKeys(Parser $arrayParser): self
+    public function withKeys(ParserContract $arrayParser): self
     {
         $this->assertionList[] = function (array $value, array $keys, Path $path) use ($arrayParser) {
             $arrayParser->parse($keys, $path->meta('keys'));
@@ -104,11 +105,11 @@ class AssertArray
     /**
      * Defines a parser that the number of elements in the array gets forwarded to
      *
-     * @param Parser $integerParser
+     * @param ParserContract $integerParser
      *
      * @return $this
      */
-    public function withLength(Parser $integerParser): self
+    public function withLength(ParserContract $integerParser): self
     {
         $this->assertionList[] = function (array $value, array $keys, Path $path) use ($integerParser) {
             $integerParser->parse(count($value), $path->meta('length'));
@@ -127,14 +128,14 @@ class AssertArray
      *
      *
      * @param $key
-     * @param Parser $parser
+     * @param ParserContract $parser
      * @param string $missingKeyExceptionMessage
      *
      * @return $this
      * @throws ParserConfigurationException
      * @see Debug::parseMessage()
      */
-    public function withKey($key, Parser $parser, string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'): self
+    public function withKey($key, ParserContract $parser, string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'): self
     {
         if (!is_string($key) && !is_int($key)) {
             throw new ParserConfigurationException('Arrays only accept string or integer keys');
@@ -160,12 +161,12 @@ class AssertArray
      *
      * @param $key
      * @param $default
-     * @param Parser $parser
+     * @param ParserContract $parser
      *
      * @return $this
      * @throws ParserConfigurationException
      */
-    public function withDefaultedKey($key, $default, Parser $parser): self
+    public function withDefaultedKey($key, $default, ParserContract $parser): self
     {
         if (!is_string($key) && !is_int($key)) {
             throw new ParserConfigurationException('Arrays only accept string or integer keys');

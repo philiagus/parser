@@ -14,6 +14,7 @@ namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
@@ -57,14 +58,14 @@ class AssertStdClass
      * - property: The missing property as defined here
      *
      * @param string $property
-     * @param Parser $parser
+     * @param ParserContract $parser
      * @param string $missingKeyExceptionMessage
      *
      * @return $this
      * @see Debug::parseMessage()
      *
      */
-    public function withProperty(string $property, Parser $parser, string $missingKeyExceptionMessage = 'The object does not contain the requested property {property}'): self
+    public function withProperty(string $property, ParserContract $parser, string $missingKeyExceptionMessage = 'The object does not contain the requested property {property}'): self
     {
         $this->assertionList[] = function (\stdClass $value, array $properties, Path $path) use ($property, $parser, $missingKeyExceptionMessage) {
             if (!in_array($property, $properties)) {
@@ -86,11 +87,11 @@ class AssertStdClass
      *
      * @param string $property
      * @param $default
-     * @param Parser $parser
+     * @param ParserContract $parser
      *
      * @return $this
      */
-    public function withDefaultedProperty(string $property, $default, Parser $parser): self
+    public function withDefaultedProperty(string $property, $default, ParserContract $parser): self
     {
         $this->assertionList[] = function (\stdClass $value, array $properties, Path $path) use ($property, $default, $parser) {
             if (in_array($property, $properties)) {

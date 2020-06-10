@@ -14,6 +14,7 @@ namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\ConvertToArray;
@@ -252,12 +253,12 @@ class ConvertToArrayTest extends TestCase
      */
     public function testThatForcedKeysUseParser(): void
     {
-        $child = $this->prophesize(Parser::class);
-        $child->execute('value', Argument::type(Path::class))
+        $child = $this->prophesize(ParserContract::class);
+        $child->parse('value', Argument::type(Path::class))
             ->shouldBeCalledOnce()
             ->willReturn('parsedValue');
 
-        /** @var Parser $childParser */
+        /** @var ParserContract $childParser */
         $childParser = $child->reveal();
         $parser = (new ConvertToArray())->withDefaultedKey('key', 'value', $childParser);
         $result = $parser->parse([]);
@@ -275,12 +276,12 @@ class ConvertToArrayTest extends TestCase
      */
     public function testThatForcedKeysUseParserEvenIfValueIsAlreadyPresent(): void
     {
-        $child = $this->prophesize(Parser::class);
-        $child->execute('value', Argument::type(Path::class))
+        $child = $this->prophesize(ParserContract::class);
+        $child->parse('value', Argument::type(Path::class))
             ->shouldBeCalledOnce()
             ->willReturn('parsedValue');
 
-        /** @var Parser $childParser */
+        /** @var ParserContract $childParser */
         $childParser = $child->reveal();
         $parser = (new ConvertToArray())->withDefaultedKey('key', 'will not be used', $childParser);
         $result = $parser->parse(['key' => 'value']);
@@ -379,11 +380,11 @@ class ConvertToArrayTest extends TestCase
      */
     public function testThatForcedKeysAreParsedAndOverwriteReturn(): void
     {
-        $child = $this->prophesize(Parser::class);
-        $child->execute('value', Argument::type(Path::class))
+        $child = $this->prophesize(ParserContract::class);
+        $child->parse('value', Argument::type(Path::class))
             ->shouldBeCalledOnce()
             ->willReturn('parsedValue');
-        /** @var Parser $childParser */
+        /** @var ParserContract $childParser */
         $childParser = $child->reveal();
         $parser = (new ConvertToArray())->withKey('key', $childParser);
         self::assertSame(
@@ -401,12 +402,12 @@ class ConvertToArrayTest extends TestCase
      */
     public function testThatForcedKeysCanBeIntegerOrString($key): void
     {
-        $child = $this->prophesize(Parser::class);
-        $child->execute('value', Argument::type(Path::class))
+        $child = $this->prophesize(ParserContract::class);
+        $child->parse('value', Argument::type(Path::class))
             ->shouldBeCalledOnce()
             ->willReturn('parsedValue');
 
-        /** @var Parser $childParser */
+        /** @var ParserContract $childParser */
         $childParser = $child->reveal();
         $parser = (new ConvertToArray())->withKey($key, $childParser);
         self::assertSame(
@@ -624,10 +625,10 @@ class ConvertToArrayTest extends TestCase
         string $msg
     ): void
     {
-        $parser = $this->prophesize(Parser::class);
-        $parser->execute($oldKey, Argument::any())->willReturn($newKey);
+        $parser = $this->prophesize(ParserContract::class);
+        $parser->parse($oldKey, Argument::any())->willReturn($newKey);
 
-        /** @var Parser $childParser */
+        /** @var ParserContract $childParser */
         $childParser = $parser->reveal();
         $this->expectException(ParserConfigurationException::class);
         $this->expectExceptionMessage($expectedMessage);

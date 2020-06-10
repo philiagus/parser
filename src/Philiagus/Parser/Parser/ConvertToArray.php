@@ -14,6 +14,7 @@ namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
@@ -112,12 +113,12 @@ class ConvertToArray extends Parser
     /**
      * @param $key
      * @param $forcedValue
-     * @param Parser|null $andParse
+     * @param ParserContract|null $andParse
      *
      * @return $this
      * @throws ParserConfigurationException
      */
-    public function withDefaultedKey($key, $forcedValue, Parser $andParse = null): self
+    public function withDefaultedKey($key, $forcedValue, ParserContract $andParse = null): self
     {
 
         if (!is_string($key) && !is_int($key)) {
@@ -166,7 +167,7 @@ class ConvertToArray extends Parser
      * - key: The key that was expected to be present
      *
      * @param $key
-     * @param Parser $parser
+     * @param ParserContract $parser
      * @param string $missingKeyExceptionMessage
      *
      * @return $this
@@ -174,7 +175,7 @@ class ConvertToArray extends Parser
      * @see Debug::parseMessage()
      *
      */
-    public function withKey($key, Parser $parser, string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'): self
+    public function withKey($key, ParserContract $parser, string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'): self
     {
         if (!is_string($key) && !is_int($key)) {
             throw new ParserConfigurationException('Arrays only accept string or integer keys');
@@ -210,11 +211,11 @@ class ConvertToArray extends Parser
     /**
      * Forwards each value to the specified parser and overwrites the value with the result of the parser
      *
-     * @param Parser $parser
+     * @param ParserContract $parser
      *
      * @return $this
      */
-    public function withEachValue(Parser $parser): self
+    public function withEachValue(ParserContract $parser): self
     {
         $this->conversionList[] = function (array &$value) use ($parser) {
             foreach ($value as &$item) {
@@ -236,14 +237,14 @@ class ConvertToArray extends Parser
      * {newType} = gettype of the new key
      *
      *
-     * @param Parser $parser
+     * @param ParserContract $parser
      *
      * @param string $exceptionMessageOnInvalidArrayKey
      *
      * @return $this
      */
     public function withEachKey(
-        Parser $parser,
+        ParserContract $parser,
         string $exceptionMessageOnInvalidArrayKey = 'The index {oldKey} was converted by a parser to a value of type {newType} not supported as an array index'
     ): self
     {
