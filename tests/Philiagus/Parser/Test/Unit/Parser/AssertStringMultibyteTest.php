@@ -233,11 +233,30 @@ class AssertStringMultibyteTest extends TestCase
         $char = mb_convert_encoding('Ü', 'ISO-8859-1', 'UTF-8');
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage(
-            $char . ' string string<binary>(1)"' . $char . '" | UTF-8 string string<ASCII>(5)"UTF-8"'
+            $char . ' string string<binary>(1) | UTF-8 string string<ASCII>(5)"UTF-8"'
         );
         (new AssertStringMultibyte())
             ->setEncoding('UTF-8', '{value} {value.type} {value.debug} | {encoding} {encoding.type} {encoding.debug}')
             ->parse($char);
+    }
+
+    public function testEncodingNotDetectedException(): void
+    {
+        $string = "\xFF\xFE\xFD";
+        $parser = new AssertStringMultibyte();
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('The encoding of the multibyte string could not be determined');
+        $parser->parse($string);
+    }
+
+    public function testEncodingNotDetectedExceptionMessageOverwrite(): void
+    {
+        $string = "\xFF\xFE\xFD";
+        $parser = (new AssertStringMultibyte())
+            ->overwriteEncodingDetectionExceptionMessage('overwrite {value} {value.type} {value.debug}');
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage("overwrite \xFF\xFE\xFD string string<binary>(3)");
+        $parser->parse($string);
     }
 
 }

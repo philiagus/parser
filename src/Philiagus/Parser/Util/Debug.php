@@ -199,11 +199,18 @@ class Debug
                 } else {
                     $encoding = 'binary';
                 }
-                if (mb_strlen($value, 'UTF8') > self::MAX_STRING_LENGTH) {
-                    $value = mb_substr($value, 0, self::MAX_STRING_LENGTH - 1) . "\u{2026}";
+
+                if ($encoding === 'binary') {
+                    $print = '';
+                } else {
+                    if (mb_strlen($value, 'UTF8') > self::MAX_STRING_LENGTH) {
+                        $print = '"' . mb_substr($value, 0, self::MAX_STRING_LENGTH - 1) . "\u{2026}\"";
+                    } else {
+                        $print = '"' . $value . '"';
+                    }
                 }
 
-                return "string<$encoding>({$length})\"$value\"";
+                return "string<$encoding>({$length})$print";
             case 'array':
                 if (empty($value)) {
                     return 'array(0)';

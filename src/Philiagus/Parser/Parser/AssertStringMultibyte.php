@@ -38,6 +38,11 @@ class AssertStringMultibyte extends Parser
     private $assertionList = [];
 
     /**
+     * @var string
+     */
+    private $encodingDetectionExceptionMessage = 'The encoding of the multibyte string could not be determined';
+
+    /**
      * Defines the exception message to use if the value is not a string
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
@@ -52,6 +57,24 @@ class AssertStringMultibyte extends Parser
     public function overwriteTypeExceptionMessage(string $message): self
     {
         $this->typeExceptionMessage = $message;
+
+        return $this;
+    }
+
+    /**
+     * If no encoding is set we try to detect the encoding using mb_detect_encoding($value, "auto", true)
+     * The method defines the exception message thrown if the encoding could not be detected that way
+     *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     *
+     * @param string $message
+     *
+     * @return $this
+     */
+    public function overwriteEncodingDetectionExceptionMessage(string $message): self
+    {
+        $this->encodingDetectionExceptionMessage = $message;
 
         return $this;
     }
@@ -163,7 +186,14 @@ class AssertStringMultibyte extends Parser
                 );
             }
         } else {
-            $encoding = mb_detect_encoding($value);
+            $encoding = mb_detect_encoding($value, "auto", true);
+            if (!$encoding) {
+                throw new ParsingException(
+                    $value,
+                    Debug::parseMessage($this->encodingDetectionExceptionMessage, ['value' => $value]),
+                    $path
+                );
+            }
         }
 
         foreach ($this->assertionList as $assertion) {

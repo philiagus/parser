@@ -1,4 +1,20 @@
 # Migration document
+## v1.0.0-RC7 to v1.0.0
+
+### General
+- The replacer `{???.debug}` no longer prints an excerpt of binary strings, instead binary strings will be presented as `string<binary>(32)` where 32 is the bit length of the binary string
+    - behaviour for UTF-8 and ASCII is unchanged
+
+### AssertStringMultibyte
+- if no encoding is provided detection is now down via `mb_detect_encoding($value, "auto", true)` instead of `mb_detect_encoding($value)`
+    - if no encoding could be detected the class throws an exception
+    - the message of the exception thrown can be overwritten using `overwriteEncodingDetectionExceptionMessage`
+
+### Debug
+- `stringify`
+    - binary strings no longer print characters, instead binary strings will be presented as "string<binary>(32)" where 32 is the bit length of the binary string
+    - behaviour for UTF-8 and ASCII is unchanged
+    
 ## v1.0.0-RC6 to v1.0.0-RC7
 
 ### Contract\Parser interface
