@@ -58,10 +58,9 @@ abstract class Parser implements ParserContract
      * Static version of the constructor for more readable creation when chaining calls
      *
      * @param null $target
-     *
-     * @return ParserContract
+     * @return static
      */
-    public static function new(&$target = null): ParserContract
+    public static function new(&$target = null): self
     {
         return new static($target);
     }

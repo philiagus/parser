@@ -1,4 +1,11 @@
 # Migration document
+## v1.0.0 to v1.0.1
+
+### Base\Parser
+- `new`
+    - correctly hints towards `static` in docblock
+    - correctly hints towards `self` in return type
+
 ## v1.0.0-RC7 to v1.0.0
 
 ### General
