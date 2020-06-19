@@ -1,4 +1,16 @@
 # Migration document
+## v1.0.1 to v1.1.0
+
+### AssertStringMultibyte
+- `assertRegex` added
+
+### AssertString
+- `assertRegex` added
+
+### AssertStringRegex
+- added
+
+
 ## v1.0.0 to v1.0.1
 
 ### Base\Parser
