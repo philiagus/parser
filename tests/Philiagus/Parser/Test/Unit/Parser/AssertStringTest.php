@@ -177,4 +177,37 @@ class AssertStringTest extends TestCase
             ->parse(5);
     }
 
+    public function testWithRegex(): void
+    {
+        $parser = new AssertString();
+
+        self::assertSame('v', $parser
+            ->withRegex('/./')
+            ->parse('v')
+        );
+    }
+
+    public function testWithRegexInvalidRegexException(): void
+    {
+        $parser = new AssertString();
+        $this->expectException(ParserConfigurationException::class);
+        $this->expectExceptionMessage('An invalid regular expression was provided');
+        $parser->withRegex('');
+    }
+
+    public function testWithRegexNoMatchException(): void
+    {
+        $parser = AssertString::new()->withRegex('/a/');
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('The string does not match the expected pattern');
+        $parser->parse('b');
+    }
+
+    public function testWithRegexNoMatchExceptionReplacers(): void
+    {
+        $parser = AssertString::new()->withRegex('/a/', '{value} {value.type} {value.debug} | {pattern} {pattern.type}');
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('b string string<ASCII>(1)"b" | /a/ string');
+        $parser->parse('b');
+    }
 }

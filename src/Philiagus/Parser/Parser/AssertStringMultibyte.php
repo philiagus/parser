@@ -97,6 +97,49 @@ class AssertStringMultibyte extends Parser
     }
 
     /**
+     * Matches the provided string against the defined regular expression
+     *
+     * The exception message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     * - pattern: The provided regular expression
+     *
+     * @param string $pattern
+     * @param string|null $exceptionMessage
+     *
+     * @return $this
+     * @throws ParserConfigurationException
+     */
+    public function withRegex(
+        string $pattern,
+        string $exceptionMessage = 'The string does not match the expected pattern'
+    ): self
+    {
+        if (@preg_match($pattern, '') === false) {
+            throw new ParserConfigurationException(
+                'An invalid regular expression was provided'
+            );
+        }
+
+        $this->assertionList[] = function (string $value, $encoding, Path $path) use ($pattern, $exceptionMessage) {
+            if (!preg_match($pattern, $value)) {
+                throw new ParsingException(
+                    $value,
+                    Debug::parseMessage(
+                        $exceptionMessage,
+                        [
+                            'value' => $value,
+                            'pattern' => $pattern,
+                        ]
+                    ),
+                    $path
+                );
+            }
+        };
+
+        return $this;
+    }
+
+    /**
      * Performs mb_substr on the string and executes the parser on that part of the string
      * The encoding will be guessed if not defined using setEncoding
      *
@@ -128,7 +171,7 @@ class AssertStringMultibyte extends Parser
      * Defines the encoding of the string. The code is checked to have this encoding
      * and every other method uses this encoding.
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The exception message is processed using Debug::parseMessage and receives the following elements:
      * - value: The value currently being parsed
      * - encoding: The specified encoding
      *
