@@ -15,6 +15,7 @@ namespace Philiagus\Parser\Parser;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Contract\Parser as ParserContract;
+use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
 
@@ -88,6 +89,49 @@ class AssertString extends Parser
                 $part = (string) substr($value, $start, $length);
             }
             $stringParser->parse($part, $path->meta("$start:$length"));
+        };
+
+        return $this;
+    }
+
+    /**
+     * Matches the provided string against the defined regular expression
+     *
+     * The exception message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     * - pattern: The provided regular expression
+     *
+     * @param string $pattern
+     * @param string|null $exceptionMessage
+     *
+     * @return $this
+     * @throws ParserConfigurationException
+     */
+    public function withRegex(
+        string $pattern,
+        string $exceptionMessage = 'The string does not match the expected pattern'
+    ): self
+    {
+        if (@preg_match($pattern, '') === false) {
+            throw new ParserConfigurationException(
+                'An invalid regular expression was provided'
+            );
+        }
+
+        $this->assertionList[] = function (string $value, Path $path) use ($pattern, $exceptionMessage) {
+            if (!preg_match($pattern, $value)) {
+                throw new ParsingException(
+                    $value,
+                    Debug::parseMessage(
+                        $exceptionMessage,
+                        [
+                            'value' => $value,
+                            'pattern' => $pattern,
+                        ]
+                    ),
+                    $path
+                );
+            }
         };
 
         return $this;
