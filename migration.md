@@ -10,6 +10,14 @@
 ### AssertStringRegex
 - added
 
+### Fail
+- added
+- will always fail
+
+### Any
+- added
+- will accept any value
+
 
 ## v1.0.0 to v1.0.1
 
