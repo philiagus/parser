@@ -23,6 +23,9 @@
     - can only be called once
     - if none of the elements match, the provided value is returned
 
+### Map
+- added
+
 ## v1.0.0 to v1.0.1
 
 ### Base\Parser
