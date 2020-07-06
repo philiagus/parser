@@ -20,6 +20,7 @@ use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\OneOf;
 use Philiagus\Parser\Path\Root;
+use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
@@ -198,6 +199,51 @@ class OneOfTest extends TestCase
         (new OneOf())
             ->overwriteNonOfExceptionMessage('{value} {value.type} {value.debug}')
             ->parse(5);
+    }
+
+    public function testDefaultIsReturnedIfNothingMatches(): void
+    {
+        $object = new \stdClass();
+        $parser = OneOf::new()
+            ->addSameOption(1,2,3,4,5,6)
+            ->setDefaultResult($object);
+        self::assertSame($object, $parser->parse('something'));
+    }
+
+    public function provideAnyValue(): array
+    {
+        return DataProvider::provide(DataProvider::TYPE_ALL);
+    }
+
+    /**
+     * @param $value
+     *
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     * @dataProvider provideAnyValue
+     */
+    public function testDefaultTakesAnyValue($value): void
+    {
+        DataProvider::assertSame(
+            $value,
+            OneOf::new()->setDefaultResult($value)->parse(0)
+        );
+    }
+
+    public function testDefaultNotReturnedOnMatch(): void
+    {
+        self::assertSame(
+            1,
+            OneOf::new()->addSameOption(1)->setDefaultResult('false')->parse(1)
+        );
+    }
+
+    public function testSetDefaultCanOnlyBeCalledOnce(): void
+    {
+        $parser = OneOf::new()->setDefaultResult(1);
+        $this->expectException(ParserConfigurationException::class);
+        $this->expectExceptionMessage('The default for OneOf was already set and cannot be overwritten');
+        $parser->setDefaultResult(2);
     }
 
 }

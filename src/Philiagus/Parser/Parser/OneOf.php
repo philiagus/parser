@@ -41,6 +41,15 @@ class OneOf extends Parser
      * @var mixed[]
      */
     private $equalsOptions = [];
+    /**
+     * @var bool
+     */
+    private $defaultSet = false;
+
+    /**
+     * @var mixed
+     */
+    private $default = null;
 
     /**
      * Adds another potential parser the provided value might match
@@ -104,6 +113,27 @@ class OneOf extends Parser
     }
 
     /**
+     * Defines a default to be returned if none of the provided options match
+     * @param $value
+     *
+     * @return $this
+     * @throws Exception\ParserConfigurationException
+     */
+    public function setDefaultResult($value): self
+    {
+        if ($this->defaultSet) {
+            throw new Exception\ParserConfigurationException(
+                'The default for OneOf was already set and cannot be overwritten'
+            );
+        }
+
+        $this->defaultSet = true;
+        $this->default = $value;
+
+        return $this;
+    }
+
+    /**
      * @inheritdoc
      */
     protected function execute($value, Path $path)
@@ -123,6 +153,10 @@ class OneOf extends Parser
             } catch (ParsingException $exception) {
                 $exceptions[] = $exception;
             }
+        }
+
+        if ($this->defaultSet) {
+            return $this->default;
         }
 
         throw new Exception\OneOfParsingException(

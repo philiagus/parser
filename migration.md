@@ -1,4 +1,31 @@
 # Migration document
+## v1.0.1 to v1.1.0
+
+### AssertStringMultibyte
+- `assertRegex` added
+
+### AssertString
+- `assertRegex` added
+
+### AssertStringRegex
+- added
+
+### Fail
+- added
+- will always fail
+
+### Any
+- added
+- will accept any value
+
+### OneOf
+- `setDefaultResult` added
+    - can only be called once
+    - if none of the elements match, the provided value is returned
+
+### Map
+- added
+
 ## v1.0.0 to v1.0.1
 
 ### Base\Parser
