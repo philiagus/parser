@@ -1,4 +1,31 @@
 # Migration document
+## v1.1.0 to v1.2.0
+
+- migration.md was renamed to UPDATE.md
+
+### AssertStdClass
+- **BUGFIX**: When checking for the property `0` in `withProperty` or `withOptionalProperty` the code mistook non-numeric property names as matching candidates, which resulted in a warning.
+- `withOptionalProperty` added
+- `withEachPropertyName` added
+- `withEachPropertyValue` added
+- `withPropertyNames` added
+- `withPropertyCount` added
+
+### AssertArray
+- **BUGFIX**: When checking for the array key `0` in `withKey` or `withOptionalKey` the code mistook non-numeric string keys as matching candidates, which resulted in a warning.
+- `withOptionalKey` added
+
+### AssertString
+- `withStartsWith` added
+- `withEndsWith` added
+
+### AssertStringMultibyte
+- `withStartsWith` added
+- `withEndsWith` added
+
+### Path class `PropertyName` added
+Class used to represent that the name of a property of an object parsed, instead of the value that property holds.
+
 ## v1.0.1 to v1.1.0
 
 ### AssertStringMultibyte

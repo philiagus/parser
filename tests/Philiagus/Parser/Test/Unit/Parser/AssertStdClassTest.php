@@ -18,7 +18,9 @@ use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\AssertStdClass;
+use Philiagus\Parser\Path\MetaInformation;
 use Philiagus\Parser\Path\Property;
+use Philiagus\Parser\Path\PropertyName;
 use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -209,6 +211,81 @@ class AssertStdClassTest extends TestCase
         (new AssertStdClass())
             ->withProperty('hello', new AssertStdClass(), '{value} {value.type} {value.debug} | {property} {property.type} {property.debug}')
             ->parse((object) []);
+    }
+
+    public function testWithOptionalProperty(): void
+    {
+        $parser = $this->prophesize(ParserContract::class);
+        $parser->parse('value', Argument::type(Property::class))->shouldBeCalledOnce();
+        $parser->parse(Argument::not('value'), Argument::any())->shouldNotBeCalled();
+        $parser = $parser->reveal();
+        (new AssertStdClass())
+            ->withOptionalProperty('exists', $parser)
+            ->withOptionalProperty('does not exist', $parser)
+            ->parse((object) [
+                'exists' => 'value',
+            ]);
+    }
+
+    public function testWithPropertyNames(): void
+    {
+        $parser = $this->prophesize(ParserContract::class);
+        $parser->parse(['1', 'b', 'c', 'xyz'], Argument::type(MetaInformation::class))->shouldBeCalledOnce();
+        $parser = $parser->reveal();
+        (new AssertStdClass())
+            ->withPropertyNames($parser)
+            ->parse((object)[
+                '1' => 1,
+                'b' => null,
+                'c' => 'test',
+                'xyz' => 1.9
+            ]);
+    }
+
+    public function testWithEachPropertyName(): void
+    {
+        $parser = $this->prophesize(ParserContract::class);
+        $parser->parse('a', Argument::type(PropertyName::class))->shouldBeCalledOnce();
+        $parser->parse('b', Argument::type(PropertyName::class))->shouldBeCalledOnce();
+        $parser->parse('c', Argument::type(PropertyName::class))->shouldBeCalledOnce();
+        $parser->parse('xyz', Argument::type(PropertyName::class))->shouldBeCalledOnce();
+        $parser = $parser->reveal();
+        (new AssertStdClass())
+            ->withEachPropertyName($parser)
+            ->parse((object)[
+                'a' => 1,
+                'b' => null,
+                'c' => 'test',
+                'xyz' => 1.9
+            ]);
+    }
+
+    public function testWithEachProprertyValue(): void
+    {
+        $parser = $this->prophesize(ParserContract::class);
+        $parser->parse(1, Argument::type(PropertyName::class))->shouldBeCalledOnce();
+        $parser->parse(null, Argument::type(PropertyName::class))->shouldBeCalledOnce();
+        $parser->parse('test', Argument::type(PropertyName::class))->shouldBeCalledOnce();
+        $parser->parse(1.9, Argument::type(PropertyName::class))->shouldBeCalledOnce();
+        $parser = $parser->reveal();
+        (new AssertStdClass())
+            ->withEachPropertyValue($parser)
+            ->parse((object)[
+                '1' => 1,
+                'b' => null,
+                'c' => 'test',
+                'xyz' => 1.9
+            ]);
+    }
+
+    public function testWithPropertyCount(): void
+    {
+        $parser = $this->prophesize(ParserContract::class);
+        $parser->parse(2, Argument::type(MetaInformation::class))->shouldBeCalledOnce();
+        $parser = $parser->reveal();
+        AssertStdClass::new()
+            ->withPropertyCount($parser)
+            ->parse((object)['a' => 1, 'b' => 2]);
     }
 
 

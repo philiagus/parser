@@ -138,6 +138,66 @@ class AssertString extends Parser
     }
 
     /**
+     * Checks that the string starts with the provided string and fails if it doesn't
+     *
+     * The exception message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     * - expected: The expected string
+     *
+     * @param string $string
+     * @param string $message
+     *
+     * @return $this
+     */
+    public function withStartsWith(
+        string $string,
+        string $message = 'The string does not start with {expected.debug}'
+    ): self
+    {
+        $this->assertionList[] = function(string $value, Path $path) use($string, $message) {
+            if(substr($value, 0, strlen($string)) !== $string) {
+                throw new ParsingException(
+                    $value,
+                    Debug::parseMessage($message, ['value' => $value, 'expected' => $string]),
+                    $path
+                );
+            }
+        };
+
+        return $this;
+    }
+
+    /**
+     * Checks that the string ends with the provided string and fails if it doesn't
+     *
+     * The exception message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     * - expected: The expected string
+     *
+     * @param string $string
+     * @param string $message
+     *
+     * @return $this
+     */
+    public function withEndsWith(
+        string $string,
+        string $message = 'The string does not end with {expected.debug}'
+    ): self
+    {
+        $this->assertionList[] = function(string $value, Path $path) use($string, $message) {
+            if(substr($value, -strlen($string)) !== $string) {
+                throw new ParsingException(
+                    $value,
+                    Debug::parseMessage($message, ['value' => $value, 'expected' => $string]),
+                    $path
+                );
+            }
+        };
+
+        return $this;
+    }
+
+    /**
      * @inheritDoc
      */
     protected function execute($value, Path $path)

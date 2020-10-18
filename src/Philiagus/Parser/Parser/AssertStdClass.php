@@ -68,7 +68,7 @@ class AssertStdClass
     public function withProperty(string $property, ParserContract $parser, string $missingKeyExceptionMessage = 'The object does not contain the requested property {property}'): self
     {
         $this->assertionList[] = function (\stdClass $value, array $properties, Path $path) use ($property, $parser, $missingKeyExceptionMessage) {
-            if (!in_array($property, $properties)) {
+            if (!property_exists($value, $property)) {
                 throw new ParsingException(
                     $value,
                     Debug::parseMessage($missingKeyExceptionMessage, ['property' => $property, 'value' => $value]),
@@ -94,13 +94,96 @@ class AssertStdClass
     public function withDefaultedProperty(string $property, $default, ParserContract $parser): self
     {
         $this->assertionList[] = function (\stdClass $value, array $properties, Path $path) use ($property, $default, $parser) {
-            if (in_array($property, $properties)) {
+            if (property_exists($value, $property)) {
                 $element = $value->{$property};
             } else {
                 $element = $default;
             }
 
             $parser->parse($element, $path->property((string) $property));
+        };
+
+        return $this;
+    }
+
+    /**
+     * If a property of the given name exists, the value of that property is provided to the parser
+     *
+     * @param string $property
+     * @param ParserContract $parser
+     *
+     * @return $this
+     */
+    public function withOptionalProperty(string $property, ParserContract $parser): self
+    {
+        $this->assertionList[] = function(\stdClass $value, array $properties, Path $path) use ($property, $parser) {
+            if(property_exists($value, $property)) {
+                $parser->parse($value->{$property}, $path->property($property));
+            }
+        };
+
+        return $this;
+    }
+
+    /**
+     * @param ParserContract $arrayParser
+     *
+     * @return $this
+     */
+    public function withPropertyNames(ParserContract $arrayParser): self
+    {
+        $this->assertionList[] = function(\stdClass $value, array $properties, Path $path) use ($arrayParser) {
+            $arrayParser->parse($properties, $path->meta('properties'));
+        };
+
+        return $this;
+    }
+
+    /**
+     * Loops through the names of the properties of the object and hands each of them individually to the parser
+     *
+     * @param ParserContract $stringParser
+     *
+     * @return $this
+     */
+    public function withEachPropertyName(ParserContract $stringParser): self
+    {
+        $this->assertionList[] = function(\stdClass $value, array $properties, Path $path) use ($stringParser) {
+            foreach($properties as $property) {
+                $stringParser->parse($property, $path->propertyName((string) $property));
+            }
+        };
+
+        return $this;
+    }
+
+    /**
+     * Loops through the properties of the object and hands each value individually to the parser
+     * @param ParserContract $parser
+     *
+     * @return $this
+     */
+    public function withEachPropertyValue(ParserContract $parser): self
+    {
+        $this->assertionList[] = function(\stdClass $value, array $properties, Path $path) use ($parser) {
+            foreach($properties as $property) {
+                $parser->parse($value->{$property}, $path->propertyName((string) $property));
+            }
+        };
+
+        return $this;
+    }
+
+    /**
+     * Sends the count of properties to the provided parser
+     * @param ParserContract $integerParser
+     *
+     * @return $this
+     */
+    public function withPropertyCount(ParserContract $integerParser): self
+    {
+        $this->assertionList[] = function(\stdClass $value, array $properties, Path $path) use ($integerParser) {
+            $integerParser->parse(count($properties), $path->meta('property count'));
         };
 
         return $this;
@@ -119,7 +202,7 @@ class AssertStdClass
             );
         }
 
-        $properties = array_keys((array) $value);
+        $properties = array_map('strval', array_keys((array) $value));
         foreach ($this->assertionList as $assertion) {
             $assertion($value, $properties, $path);
         }

@@ -16,6 +16,7 @@ use Philiagus\Parser\Path\Index;
 use Philiagus\Parser\Path\Key;
 use Philiagus\Parser\Path\MetaInformation;
 use Philiagus\Parser\Path\Property;
+use Philiagus\Parser\Path\PropertyName;
 
 abstract class Path
 {
@@ -100,6 +101,11 @@ abstract class Path
     public function key(string $key): Key
     {
         return new Key($key, $this);
+    }
+
+    public function propertyName(string $name): PropertyName
+    {
+        return new PropertyName($name, $this);
     }
 
 }

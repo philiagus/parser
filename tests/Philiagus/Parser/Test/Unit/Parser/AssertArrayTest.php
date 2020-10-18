@@ -352,10 +352,13 @@ class AssertArrayTest extends TestCase
     }
 
     /**
+     * @param $key
+     *
      * @throws ParserConfigurationException
      * @throws ParsingException
+     * @dataProvider provideValidArrayKeys
      */
-    public function testWithDefaultedKey(): void
+    public function testWithDefaultedKey($key): void
     {
         $parser = $this->prophesize(ParserContract::class);
         $parser->parse('value', Argument::type(Index::class))->shouldBeCalledOnce();
@@ -363,23 +366,26 @@ class AssertArrayTest extends TestCase
         $valueParser = $parser->reveal();
 
         (new AssertArray())
-            ->withDefaultedKey('key', 'default', $valueParser)
-            ->parse(['key' => 'value'], new Root('root'));
+            ->withDefaultedKey($key, 'default', $valueParser)
+            ->parse([$key => 'value'], new Root('root'));
     }
 
     /**
+     * @param $key
+     *
      * @throws ParserConfigurationException
      * @throws ParsingException
+     * @dataProvider provideValidArrayKeys
      */
-    public function testWithMissingDefaultedKey(): void
+    public function testWithMissingDefaultedKey($key): void
     {
         $parser = $this->prophesize(ParserContract::class);
         $parser->parse('default', Argument::type(Index::class))->shouldBeCalledOnce();
         /** @var ParserContract $valueParser */
         $valueParser = $parser->reveal();
         (new AssertArray())
-            ->withDefaultedKey('key', 'default', $valueParser)
-            ->parse([], new Root('root'));
+            ->withDefaultedKey($key, 'default', $valueParser)
+            ->parse(['does not exist' . $key => 1], new Root('root'));
     }
 
     /**
@@ -495,6 +501,43 @@ class AssertArrayTest extends TestCase
         (new AssertArray())
             ->withSequentialKeys('{value} {value.type} {value.debug}')
             ->parse(['a', 5 => '', '']);
+    }
+
+    /**
+     * @param $key
+     *
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     * @dataProvider provideValidArrayKeys
+     */
+    public function testWithOptionalKey($key): void
+    {
+        $parser = $this->prophesize(ParserContract::class);
+        $parser->parse('value', Argument::type(Index::class))->shouldBeCalledOnce();
+        $parser->parse(Argument::not('value'), Argument::any())->shouldNotBeCalled();
+        $parser = $parser->reveal();
+        (new AssertArray())
+            ->withOptionalKey($key, $parser)
+            ->withOptionalKey('does not exist' . $key, $parser)
+            ->parse([
+                $key => 'value',
+                'not used' . $key => 'value'
+            ]);
+    }
+
+    /**
+     * @param $key
+     *
+     * @dataProvider provideInvalidArrayKeys
+     */
+    public function testWithOptionalKeyException($key): void
+    {
+        $parser = $this->prophesize(ParserContract::class);
+        $parser = $parser->reveal();
+        $this->expectException(ParserConfigurationException::class);
+        $this->expectExceptionMessage('Arrays only accept string or integer keys');
+        (new AssertArray())
+            ->withOptionalKey($key, $parser);
     }
 
 }
