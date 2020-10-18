@@ -202,7 +202,11 @@ class AssertStdClass
             );
         }
 
-        $properties = array_map('strval', array_keys((array) $value));
+        $properties = [];
+        foreach($value as $key => $_) {
+            $properties[] = (string)$key;
+        }
+
         foreach ($this->assertionList as $assertion) {
             $assertion($value, $properties, $path);
         }

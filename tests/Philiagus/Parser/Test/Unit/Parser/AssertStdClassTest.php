@@ -230,12 +230,13 @@ class AssertStdClassTest extends TestCase
     public function testWithPropertyNames(): void
     {
         $parser = $this->prophesize(ParserContract::class);
-        $parser->parse(['1', 'b', 'c', 'xyz'], Argument::type(MetaInformation::class))->shouldBeCalledOnce();
+        $parser->parse(['1', '1.1', 'b', 'c', 'xyz'], Argument::type(MetaInformation::class))->shouldBeCalledOnce();
         $parser = $parser->reveal();
         (new AssertStdClass())
             ->withPropertyNames($parser)
             ->parse((object)[
                 '1' => 1,
+                '1.1' => 1.1,
                 'b' => null,
                 'c' => 'test',
                 'xyz' => 1.9
