@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Provider;
 
 use PHPUnit\Framework\Assert;
+use ReflectionObject;
 
 class DataProvider
 {
@@ -158,7 +159,13 @@ class DataProvider
      */
     public static function isSame($expected, $value): bool
     {
-        return serialize($expected) === serialize($value);
+        try {
+            self::assertSame($expected, $value);
+        } catch (\Exception $e) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -166,12 +173,61 @@ class DataProvider
      *
      * @param mixed $expected
      * @param mixed $value
+     * @param array $path
+     *
+     * @throws \ReflectionException
      */
-    public static function assertSame($expected, $value): void
+    public static function assertSame($expected, $value, array $path = []): void
     {
-        Assert::assertSame(
-            serialize($expected), serialize($value)
-        );
+        if (count($path) > 100) {
+            Assert::fail('Max recursion level for assertion reached');
+        }
+        Assert::assertSame(gettype($expected), gettype($value));
+        switch ($expected instanceof \stdClass ? 'array' : gettype($expected)) {
+            case "double":
+                if(is_nan($expected) && is_nan($value)) {
+                    break;
+                }
+                Assert::assertSame($expected, $value);
+                break;
+            case "boolean":
+            case "integer":
+            case "NULL":
+            case "string":
+            case 'resource':
+                Assert::assertSame($expected, $value);
+                break;
+            case "array":
+                $expectedArray = (array) $expected;
+                $valueArray = (array) $value;
+                Assert::assertSame(array_keys($expectedArray), array_keys($valueArray));
+                foreach ((array) $expected as $key => $value) {
+                    self::assertSame(
+                        $value,
+                        $valueArray[$key],
+                        array_merge($path, [gettype($expected)])
+                    );
+                }
+                break;
+            case "object":
+                Assert::assertSame(get_class($expected), get_class($value));
+                $expectedReflection = new ReflectionObject($expected);
+                $valueReflection = new ReflectionObject($value);
+                foreach ($expectedReflection->getProperties() as $expectedProperty) {
+                    $valueProperty = $valueReflection->getProperty($expectedProperty->getName());
+                    $expectedProperty->setAccessible(true);
+                    $valueProperty->setAccessible(true);
+                    self::assertSame(
+                        $expectedProperty->getValue($expected),
+                        $valueProperty->getValue($value),
+                        array_merge($path, [get_class($expected)])
+                    );
+                }
+                break;
+            default:
+                Assert::fail('Cannot compare variables of type ' . gettype($expected) . ' at ' . implode(' > ', $path));
+                break;
+        }
     }
 
 }

@@ -210,4 +210,42 @@ class AssertStringTest extends TestCase
         $this->expectExceptionMessage('b string string<ASCII>(1)"b" | /a/ string');
         $parser->parse('b');
     }
+
+    public function testWithStartsWith(): void
+    {
+        self::assertSame('yes', AssertString::new()->withStartsWith('ye')->parse('yes'));
+    }
+
+    public function testWithStartsWithException(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('The string does not start with string<ASCII>(2)"ye"');
+        AssertString::new()->withStartsWith('ye')->parse('nope');
+    }
+
+    public function testWithStartsWithExceptionReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('nopeye');
+        AssertString::new()->withStartsWith('ye', '{value.raw}{expected.raw}')->parse('nope');
+    }
+
+    public function testWithEndsWith(): void
+    {
+        self::assertSame('yes', AssertString::new()->withEndsWith('es')->parse('yes'));
+    }
+
+    public function testWithEndsWithException(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('The string does not end with string<ASCII>(2)"es"');
+        AssertString::new()->withEndsWith('es')->parse('nope');
+    }
+
+    public function testWithEndsWithExceptionReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('nopees');
+        AssertString::new()->withEndsWith('es', '{value.raw}{expected.raw}')->parse('nope');
+    }
 }

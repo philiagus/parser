@@ -173,7 +173,7 @@ class AssertArray
         }
 
         $this->assertionList[] = function (array $value, array $keys, Path $path) use ($key, $default, $parser) {
-            if (in_array($key, $keys)) {
+            if (array_key_exists($key, $value)) {
                 $element = $value[$key];
             } else {
                 $element = $default;
@@ -200,11 +200,35 @@ class AssertArray
     {
         $this->assertionList[] = function (array $value, array $keys, Path $path) use ($exceptionMessage) {
             $assumedKey = 0;
-            foreach (array_keys($value) as $key) {
+            foreach ($keys as $key) {
                 if ($key !== $assumedKey) {
                     throw new ParsingException($value, Debug::parseMessage($exceptionMessage, ['value' => $value]), $path);
                 }
                 $assumedKey++;
+            }
+        };
+
+        return $this;
+    }
+
+    /**
+     * If the array has the provided key, the value of that key is provided to the parser
+     *
+     * @param $key
+     * @param ParserContract $parser
+     *
+     * @return $this
+     * @throws ParserConfigurationException
+     */
+    public function withOptionalKey($key, ParserContract $parser): self
+    {
+        if (!is_string($key) && !is_int($key)) {
+            throw new ParserConfigurationException('Arrays only accept string or integer keys');
+        }
+
+        $this->assertionList[] = function(array $value, array $keys, Path $path) use ($key, $parser) {
+            if(array_key_exists($key, $value)) {
+                $parser->parse($value[$key], $path->index((string) $key));
             }
         };
 

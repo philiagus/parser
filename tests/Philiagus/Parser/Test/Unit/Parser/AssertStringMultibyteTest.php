@@ -293,4 +293,64 @@ class AssertStringMultibyteTest extends TestCase
         $parser->parse('b');
     }
 
+
+
+    public function testWithStartsWith(): void
+    {
+        self::assertSame('yes', AssertStringMultibyte::new()->withStartsWith('ye')->parse('yes'));
+    }
+
+    public function testWithStartsWithException(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('The string does not start with string<ASCII>(2)"ye"');
+        AssertStringMultibyte::new()->withStartsWith('ye')->parse('nope');
+    }
+
+    public function testWithStartsWithExceptionReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('nopeye');
+        AssertStringMultibyte::new()->withStartsWith('ye', '{value.raw}{expected.raw}')->parse('nope');
+    }
+
+    public function testWithStartsWithWorksBinary(): void
+    {
+        self::assertSame(
+            'ü',
+            AssertStringMultibyte::new()
+                ->withStartsWith(substr('ü', 0, 1))
+                ->parse('ü')
+        );
+    }
+
+    public function testWithEndsWith(): void
+    {
+        self::assertSame('yes', AssertStringMultibyte::new()->withEndsWith('es')->parse('yes'));
+    }
+
+    public function testWithEndsWithException(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('The string does not end with string<ASCII>(2)"es"');
+        AssertStringMultibyte::new()->withEndsWith('es')->parse('nope');
+    }
+
+    public function testWithEndsWithExceptionReplacers(): void
+    {
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('nopees');
+        AssertStringMultibyte::new()->withEndsWith('es', '{value.raw}{expected.raw}')->parse('nope');
+    }
+
+    public function testWithEndsWithWorksBinary(): void
+    {
+        self::assertSame(
+            'ü',
+            AssertStringMultibyte::new()
+                ->withEndsWith(substr('ü', -1))
+                ->parse('ü')
+        );
+    }
+
 }

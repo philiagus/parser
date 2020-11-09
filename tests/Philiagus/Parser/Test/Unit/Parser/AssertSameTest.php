@@ -111,9 +111,9 @@ class AssertSameTest extends TestCase
     public function testStaticConstructor($value): void
     {
         $message = 'hello';
-        self::assertEquals(
-            serialize((new AssertSame())->setValue($value, $message)),
-            serialize(AssertSame::value($value, $message))
+        DataProvider::assertSame(
+            (new AssertSame())->setValue($value, $message),
+            AssertSame::value($value, $message)
         );
     }
 

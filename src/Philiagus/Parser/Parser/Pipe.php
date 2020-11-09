@@ -44,7 +44,7 @@ class Pipe extends Parser
      */
     protected function execute($value, Path $path)
     {
-        foreach ($this->parsers as $index => $parser) {
+        foreach ($this->parsers as $parser) {
             $value = $parser->parse($value, $path);
         }
 
