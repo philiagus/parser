@@ -194,6 +194,7 @@ class DataProvider
             case "integer":
             case "NULL":
             case "string":
+            case 'resource':
                 Assert::assertSame($expected, $value);
                 break;
             case "array":
@@ -222,9 +223,6 @@ class DataProvider
                         array_merge($path, [get_class($expected)])
                     );
                 }
-                break;
-            case 'resource':
-                Assert::assertSame(get_resource_type($expected), get_resource_type($value));
                 break;
             default:
                 Assert::fail('Cannot compare variables of type ' . gettype($expected) . ' at ' . implode(' > ', $path));
