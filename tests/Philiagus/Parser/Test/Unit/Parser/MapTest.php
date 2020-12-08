@@ -22,9 +22,12 @@ use Philiagus\Parser\Parser\Map;
 use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class MapTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testItExtendsBaseParser(): void
     {
         self::assertTrue(new Map() instanceof Parser);
@@ -73,11 +76,11 @@ class MapTest extends TestCase
     {
         $map = Map::new()
             ->addEquals(true, $this->prophesizeNotTriggered())
-            ->addEquals(0, $this->prophesizeTriggered(''))
+            ->addEquals(0, $this->prophesizeTriggered(0.0))
             ->addEquals('', $this->prophesizeNotTriggered())
             ->addEquals(false, $this->prophesizeNotTriggered())
             ->addParser($this->prophesizeNotTriggered(), $this->prophesizeNotTriggered());
-        self::assertSame('RESULT', $map->parse(''));
+        self::assertSame('RESULT', $map->parse(0.0));
     }
 
     public function testEqualsListMapping(): void

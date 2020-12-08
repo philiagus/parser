@@ -21,9 +21,12 @@ use Philiagus\Parser\Path\MetaInformation;
 use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class AssertStringRegexTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testThatItExtendsBaseParser(): void
     {
         self::assertTrue((new AssertStringRegex()) instanceof Parser);
@@ -282,7 +285,7 @@ class AssertStringRegexTest extends TestCase
             'pattern' => '/./',
             'offsetCapture' => true,
             'results' => [
-                false => [[0, 'a']],
+                false => [['a', 0]],
                 PREG_PATTERN_ORDER => [
                     [
                         ['a', 0],
@@ -394,13 +397,16 @@ class AssertStringRegexTest extends TestCase
     {
         $child = $this->prophesize(ParserContract::class);
         $child->parse($expectedArray, Argument::type(MetaInformation::class))->shouldBeCalledOnce();
-        AssertStringRegex::pattern($pattern)
-            ->setGlobal($global)
-            ->setOffsetCapture($offsetCapture)
-            ->setUnmatchedAsNull($unmatchedAsNull)
-            ->setOffset($offset)
-            ->withMatches($child->reveal())
-            ->parse($subject);
+        self::assertSame(
+            $subject,
+            AssertStringRegex::pattern($pattern)
+                ->setGlobal($global)
+                ->setOffsetCapture($offsetCapture)
+                ->setUnmatchedAsNull($unmatchedAsNull)
+                ->setOffset($offset)
+                ->withMatches($child->reveal())
+                ->parse($subject)
+        );
     }
 
     public function testExceptionIfNoPatternSet(): void

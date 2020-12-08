@@ -21,9 +21,11 @@ use Philiagus\Parser\Parser\ConvertToArray;
 use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class ConvertToArrayTest extends TestCase
 {
+    use ProphecyTrait;
 
     public function testThatItExtendsBaseParser(): void
     {

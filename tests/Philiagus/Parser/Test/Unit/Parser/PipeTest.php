@@ -20,9 +20,12 @@ use Philiagus\Parser\Parser\Pipe;
 use Philiagus\Parser\Path\Root;
 use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class PipeTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testThatItExtendsBaseParser(): void
     {
         self::assertTrue((new Pipe()) instanceof Parser);

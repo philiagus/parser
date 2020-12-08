@@ -24,9 +24,11 @@ use Philiagus\Parser\Path\PropertyName;
 use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class AssertStdClassTest extends TestCase
 {
+    use ProphecyTrait;
 
     public function testThatItExtendsBaseParser(): void
     {

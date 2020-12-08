@@ -21,9 +21,12 @@ use Philiagus\Parser\Path\Root;
 use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class ForkTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testItExtendsBaseParser(): void
     {
         self::assertTrue(new Fork() instanceof Parser);

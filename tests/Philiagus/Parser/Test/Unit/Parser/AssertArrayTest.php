@@ -25,6 +25,7 @@ use Philiagus\Parser\Path\Root;
 use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * Class AssertArrayTest
@@ -33,6 +34,7 @@ use Prophecy\Argument;
  */
 class AssertArrayTest extends TestCase
 {
+    use ProphecyTrait;
 
     public function testThatItExtendsBaseParser(): void
     {

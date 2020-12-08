@@ -18,9 +18,11 @@ use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class AssertEqualsTest extends TestCase
 {
+    use ProphecyTrait;
 
     public function testThatItExtendsBaseParser(): void
     {
@@ -43,7 +45,7 @@ class AssertEqualsTest extends TestCase
      */
     public function testThatItAllowsEqualValues(): void
     {
-        $parser = (new AssertEquals())->setValue(0);
+        $parser = (new AssertEquals())->setValue(false);
         self::assertSame(0, $parser->parse(0));
         self::assertSame(null, $parser->parse(null));
         self::assertSame('', $parser->parse(''));
