@@ -25,8 +25,7 @@
     },
     "require-dev": {
         "phpunit/phpunit": "*",
-        "ext-xdebug": "*",
-        "phpspec/prophecy-phpunit": "^2.0"
+        "ext-xdebug": "*"
     },
     "autoload": {
         "psr-4": {

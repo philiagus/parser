@@ -18,11 +18,10 @@ use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 class AssertEqualsTest extends TestCase
 {
-    use ProphecyTrait;
+
 
     public function testThatItExtendsBaseParser(): void
     {

@@ -22,11 +22,10 @@ use Philiagus\Parser\Parser\Map;
 use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 class MapTest extends TestCase
 {
-    use ProphecyTrait;
+
 
     public function testItExtendsBaseParser(): void
     {

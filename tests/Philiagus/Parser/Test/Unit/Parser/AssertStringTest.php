@@ -21,11 +21,10 @@ use Philiagus\Parser\Path\MetaInformation;
 use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 class AssertStringTest extends TestCase
 {
-    use ProphecyTrait;
+
 
     public function testThatItExtendsBaseParser(): void
     {
