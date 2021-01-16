@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\Unit\Parser;
 
+use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Parser\Any;
-use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class AnyTest extends TestCase
@@ -26,7 +26,7 @@ class AnyTest extends TestCase
 
     public function provideAnyValue(): array
     {
-        return DataProvider::provide(DataProvider::TYPE_ALL);
+        return (new DataProvider())->provide();
     }
 
     /**
@@ -38,7 +38,7 @@ class AnyTest extends TestCase
      */
     public function testItAcceptsAnyValue($value): void
     {
-        DataProvider::assertSame($value, Any::new()->parse($value));
+        self::assertTrue(DataProvider::isSame($value, Any::new()->parse($value)));
     }
 
 }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b71053341b31cb4d4deb61fef680fb45",
+    "content-hash": "f469e59b1a207e2b991cb7536d60a26a",
     "packages": [],
     "packages-dev": [
         {
@@ -244,6 +244,55 @@
                 "source": "https://github.com/phar-io/version/tree/3.0.4"
             },
             "time": "2020-12-13T23:18:30+00:00"
+        },
+        {
+            "name": "philiagus/dataprovider",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/philiagus/dataprovider.git",
+                "reference": "61f79422af08c09a7c277ac0f35fdcbf3527a6e8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/philiagus/dataprovider/zipball/61f79422af08c09a7c277ac0f35fdcbf3527a6e8",
+                "reference": "61f79422af08c09a7c277ac0f35fdcbf3527a6e8",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "require-dev": {
+                "ext-xdebug": "*",
+                "phpunit/phpunit": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Philiagus\\DataProvider\\": "src/Philiagus/DataProvider"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andreas Bittner",
+                    "email": "php@philiagus.de",
+                    "role": "lead"
+                }
+            ],
+            "description": "DataProvider for PHP Unit testing",
+            "keywords": [
+                "dataprovider",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/philiagus/dataprovider/issues",
+                "source": "https://github.com/philiagus/dataprovider/tree/v1.0.0"
+            },
+            "time": "2021-01-16T17:46:21+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",

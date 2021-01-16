@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\Unit\Parser;
 
+use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\ConvertFromJson;
-use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ConvertFromJsonTest extends TestCase
@@ -33,7 +33,7 @@ class ConvertFromJsonTest extends TestCase
      */
     public function provideNonStringValues(): array
     {
-        return DataProvider::provide((int) ~DataProvider::TYPE_STRING);
+        return (new DataProvider(~DataProvider::TYPE_STRING))->provide();
     }
 
     /**

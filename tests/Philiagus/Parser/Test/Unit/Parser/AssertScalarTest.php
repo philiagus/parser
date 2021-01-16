@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\Unit\Parser;
 
+use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\AssertScalar;
-use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class AssertScalarTest extends TestCase
@@ -33,9 +33,7 @@ class AssertScalarTest extends TestCase
      */
     public function provideInvalidValues(): array
     {
-        return DataProvider::provide(DataProvider::TYPE_ALL, function ($value) {
-            return !is_scalar($value);
-        });
+        return (new DataProvider(~DataProvider::TYPE_SCALAR))->provide();
     }
 
     /**
@@ -57,9 +55,7 @@ class AssertScalarTest extends TestCase
      */
     public function provideValidValues(): array
     {
-        return DataProvider::provide((int) ~DataProvider::TYPE_NAN, function ($value) {
-            return is_scalar($value);
-        });
+        return (new DataProvider(DataProvider::TYPE_SCALAR))->provide();
     }
 
     /**
@@ -71,7 +67,7 @@ class AssertScalarTest extends TestCase
      */
     public function testThatItAllowsScalarValues($value): void
     {
-        self::assertSame($value, (new AssertScalar())->parse($value));
+        self::assertTrue(DataProvider::isSame($value, (new AssertScalar())->parse($value)));
     }
 
     /**

@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\Unit\Parser;
 
+use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Parser\AssertBoolean;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class AssertBooleanTest extends TestCase
@@ -33,7 +33,7 @@ class AssertBooleanTest extends TestCase
      */
     public function provideInvalidValues(): array
     {
-        return DataProvider::provide((int) ~DataProvider::TYPE_BOOLEAN);
+        return (new DataProvider(~DataProvider::TYPE_BOOLEAN))->provide();
     }
 
     /**
@@ -55,7 +55,7 @@ class AssertBooleanTest extends TestCase
      */
     public function provideValidValues(): array
     {
-        return DataProvider::provide(DataProvider::TYPE_BOOLEAN);
+        return (new DataProvider(DataProvider::TYPE_BOOLEAN))->provide();
     }
 
     /**

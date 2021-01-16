@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\Unit\Parser;
 
+use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\ConvertToArray;
-use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
@@ -37,7 +37,7 @@ class ConvertToArrayTest extends TestCase
      */
     public function provideInvalidValues(): array
     {
-        return DataProvider::provide((int) ~DataProvider::TYPE_ARRAY);
+        return (new DataProvider(~DataProvider::TYPE_ARRAY))->provide();
     }
 
     /**
@@ -59,7 +59,7 @@ class ConvertToArrayTest extends TestCase
      */
     public function provideValidValues(): array
     {
-        return DataProvider::provide(DataProvider::TYPE_ARRAY);
+        return (new DataProvider(DataProvider::TYPE_ARRAY))->provide();
     }
 
     /**
@@ -93,7 +93,7 @@ class ConvertToArrayTest extends TestCase
             if (is_object($value)) {
                 self::assertSame((array) $value, $result);
             } else {
-                DataProvider::assertSame($value, $result[0]);
+                self::assertTrue(DataProvider::isSame($value, $result[0]));
             }
         }
     }
@@ -113,7 +113,7 @@ class ConvertToArrayTest extends TestCase
         self::assertIsArray($result);
         self::assertCount(1, $result);
         self::assertTrue(array_key_exists('key', $result));
-        DataProvider::assertSame($value, $result['key']);
+        self::assertTrue(DataProvider::isSame($value, $result['key']));
     }
 
     /**
@@ -122,7 +122,7 @@ class ConvertToArrayTest extends TestCase
      */
     public function provideValidKeys(): array
     {
-        return DataProvider::provide(DataProvider::TYPE_STRING | DataProvider::TYPE_INTEGER);
+        return (new DataProvider(DataProvider::TYPE_STRING | DataProvider::TYPE_INTEGER))->provide();
     }
 
     /**
@@ -168,7 +168,7 @@ class ConvertToArrayTest extends TestCase
      */
     public function provideInvalidKeys(): array
     {
-        return DataProvider::provide((int) ~(DataProvider::TYPE_INTEGER | DataProvider::TYPE_STRING));
+        return (new DataProvider(~(DataProvider::TYPE_INTEGER | DataProvider::TYPE_STRING)))->provide();
     }
 
     /**
@@ -596,17 +596,16 @@ class ConvertToArrayTest extends TestCase
      */
     public function provideEachKeyCases(): array
     {
-        $cases = [];
-        foreach (DataProvider::provide((int) ~DataProvider::TYPE_SCALAR) as $case => [$value]) {
-            $cases[$case] = [
-                4,
-                $value,
-                '4 => ' . gettype($value),
-                '{oldKey} => {newType}',
-            ];
-        }
-
-        return $cases;
+        return (new DataProvider(~DataProvider::TYPE_SCALAR))
+            ->map(function($value) {
+                return [
+                    4,
+                    $value,
+                    '4 => ' . gettype($value),
+                    '{oldKey} => {newType}',
+                ];
+            })
+            ->provide(false);
     }
 
     /**

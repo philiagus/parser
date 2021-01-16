@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\Unit\Parser;
 
+use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Contract\Parser as ParserContract;
@@ -19,7 +20,6 @@ use Philiagus\Parser\Exception\MultipleParsingException;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\Map;
-use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
@@ -185,7 +185,7 @@ class MapTest extends TestCase
 
     public function provideAllTypes(): array
     {
-        return DataProvider::provide(DataProvider::TYPE_ALL);
+        return (new DataProvider(DataProvider::TYPE_ALL))->provide();
     }
 
     /**
@@ -203,10 +203,10 @@ class MapTest extends TestCase
         $parser =  $this->prophesize(ParserContract::class);
         $parser->parse(Argument::any(), Argument::type(Path::class))->shouldBeCalledOnce()->willReturn($value);
 
-        DataProvider::assertSame($value, Map::new()
+        self::assertTrue(DataProvider::isSame($value, Map::new()
             ->addParser($matcher->reveal(), $parser->reveal())
             ->parse($value)
-        );
+        ));
     }
 
 }

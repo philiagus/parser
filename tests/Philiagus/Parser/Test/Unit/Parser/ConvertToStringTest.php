@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\Unit\Parser;
 
+use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\ConvertToString;
-use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ConvertToStringTest extends TestCase
@@ -33,15 +33,15 @@ class ConvertToStringTest extends TestCase
      */
     public function provideInvalidValues(): array
     {
-        return DataProvider::provide(
-                DataProvider::TYPE_RESOURCE |
-                DataProvider::TYPE_NAN |
-                DataProvider::TYPE_INFINITE |
-                DataProvider::TYPE_NULL |
-                DataProvider::TYPE_ARRAY
-            ) + [
-                'object without __toString' => [new \stdClass()],
-            ];
+        return (new DataProvider(
+            DataProvider::TYPE_RESOURCE |
+            DataProvider::TYPE_NAN |
+            DataProvider::TYPE_INFINITE |
+            DataProvider::TYPE_NULL |
+            DataProvider::TYPE_ARRAY
+        ))
+            ->addCase('object without __toString', new \stdClass())
+            ->provide();
     }
 
     /**
@@ -90,28 +90,26 @@ class ConvertToStringTest extends TestCase
      */
     public function provideValueWithExpectedStrings(): array
     {
-        $tests = [];
-        $providerCases = DataProvider::provide(
+
+        return (new DataProvider(
             DataProvider::TYPE_INTEGER |
             DataProvider::TYPE_FLOAT |
             DataProvider::TYPE_STRING |
             DataProvider::TYPE_BOOLEAN
-        );
-        foreach ($providerCases as $case => [$value]) {
-            $tests[$case] = [$value, (string) $value];
-        }
-
-        $tests['object with __toString'] = [
-            new class() {
-                public function __toString()
-                {
-                    return 'my string';
+        ))
+            ->addCase(
+                'object with __toString',
+                new class() {
+                    public function __toString()
+                    {
+                        return 'my string';
+                    }
                 }
-            },
-            'my string',
-        ];
-
-        return $tests;
+            )
+            ->map(function($value) {
+                return [$value, (string) $value];
+            })
+            ->provide(false);
     }
 
     /**

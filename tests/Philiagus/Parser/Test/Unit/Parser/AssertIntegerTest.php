@@ -11,11 +11,11 @@
 namespace Philiagus\Parser\Test\Unit\Parser;
 
 
+use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\AssertInteger;
-use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class AssertIntegerTest extends TestCase
@@ -31,7 +31,7 @@ class AssertIntegerTest extends TestCase
      */
     public function provideInvalidValues(): array
     {
-        return DataProvider::provide((int) ~DataProvider::TYPE_INTEGER);
+        return (new DataProvider(~DataProvider::TYPE_INTEGER))->provide();
     }
 
     /**
@@ -53,7 +53,7 @@ class AssertIntegerTest extends TestCase
      */
     public function provideValidValues(): array
     {
-        return DataProvider::provide(DataProvider::TYPE_INTEGER);
+        return (new DataProvider(DataProvider::TYPE_INTEGER))->provide();
     }
 
     /**

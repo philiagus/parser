@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\Unit\Exception;
 
+use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Path\Root;
-use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ParsingExceptionTest extends TestCase
@@ -46,7 +46,7 @@ class ParsingExceptionTest extends TestCase
      */
     public function provideAllTypes(): array
     {
-        return DataProvider::provide(DataProvider::TYPE_ALL);
+        return (new DataProvider(DataProvider::TYPE_ALL))->provide();
     }
 
     /**
@@ -57,6 +57,6 @@ class ParsingExceptionTest extends TestCase
     public function testGetValue($value): void
     {
         $exceptionValue = (new ParsingException($value, 'message', new Root('')))->getValue();
-        DataProvider::assertSame($value, $exceptionValue);
+        self::assertTrue(DataProvider::isSame($value, $exceptionValue));
     }
 }

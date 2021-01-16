@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\Util;
 
-use Philiagus\Parser\Test\Provider\DataProvider;
+use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Util\Debug;
 use PHPUnit\Framework\TestCase;
 
@@ -20,7 +20,7 @@ class DebugTest extends TestCase
 {
     public function provideAnything(): array
     {
-        return DataProvider::provide(DataProvider::TYPE_ALL);
+        return (new DataProvider(DataProvider::TYPE_ALL))->provide();
     }
 
     public function provideTypeDetection(): array

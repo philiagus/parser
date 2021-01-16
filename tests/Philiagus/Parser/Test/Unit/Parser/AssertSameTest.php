@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\Unit\Parser;
 
+use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Parser\AssertSame;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class AssertSameTest extends TestCase
@@ -33,7 +33,7 @@ class AssertSameTest extends TestCase
      */
     public function provideEverything(): array
     {
-        return DataProvider::provide(DataProvider::TYPE_ALL);
+        return (new DataProvider(DataProvider::TYPE_ALL))->provide();
     }
 
     /**
@@ -42,7 +42,7 @@ class AssertSameTest extends TestCase
      */
     public function provideEverythingExceptNAN(): array
     {
-        return DataProvider::provide((int) ~DataProvider::TYPE_NAN);
+        return (new DataProvider(~DataProvider::TYPE_NAN))->provide();
     }
 
     /**
@@ -111,10 +111,10 @@ class AssertSameTest extends TestCase
     public function testStaticConstructor($value): void
     {
         $message = 'hello';
-        DataProvider::assertSame(
+        self::assertTrue(DataProvider::isEqual(
             (new AssertSame())->setValue($value, $message),
             AssertSame::value($value, $message)
-        );
+        ));
     }
 
     /**
@@ -126,7 +126,7 @@ class AssertSameTest extends TestCase
      */
     public function testThatItAcceptsAllValues($value): void
     {
-        DataProvider::assertSame($value, (new AssertSame())->setValue($value)->parse($value));
+        self::assertTrue(DataProvider::isSame($value, (new AssertSame())->setValue($value)->parse($value)));
     }
 
     /**

@@ -25,7 +25,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "*",
-        "ext-xdebug": "*"
+        "ext-xdebug": "*",
+        "philiagus/dataprovider": "*"
     },
     "autoload": {
         "psr-4": {

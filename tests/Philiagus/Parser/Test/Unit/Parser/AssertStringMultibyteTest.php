@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\Unit\Parser;
 
+use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\AssertStringMultibyte;
 use Philiagus\Parser\Path\MetaInformation;
-use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
@@ -37,7 +37,7 @@ class AssertStringMultibyteTest extends TestCase
      */
     public function provideValidValues(): array
     {
-        return DataProvider::provide(DataProvider::TYPE_STRING);
+        return (new DataProvider(DataProvider::TYPE_STRING))->provide();
     }
 
     /**
@@ -46,7 +46,7 @@ class AssertStringMultibyteTest extends TestCase
      */
     public function provideInvalidValues(): array
     {
-        return DataProvider::provide((int) ~DataProvider::TYPE_STRING);
+        return (new DataProvider(~DataProvider::TYPE_STRING))->provide();
     }
 
     /**

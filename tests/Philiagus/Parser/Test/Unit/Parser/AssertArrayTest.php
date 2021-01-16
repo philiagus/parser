@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\Unit\Parser;
 
+use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Contract\Parser as ParserContract;
@@ -22,7 +23,6 @@ use Philiagus\Parser\Path\Index;
 use Philiagus\Parser\Path\Key;
 use Philiagus\Parser\Path\MetaInformation;
 use Philiagus\Parser\Path\Root;
-use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
@@ -45,7 +45,7 @@ class AssertArrayTest extends TestCase
      */
     public function provideInvalidValues(): array
     {
-        return DataProvider::provide((int) ~DataProvider::TYPE_ARRAY);
+        return (new DataProvider(~DataProvider::TYPE_ARRAY))->provide();
     }
 
     /**
@@ -67,7 +67,7 @@ class AssertArrayTest extends TestCase
      */
     public function provideValidValues(): array
     {
-        return DataProvider::provide(DataProvider::TYPE_ARRAY);
+        return (new DataProvider(DataProvider::TYPE_ARRAY))->provide();
     }
 
     /**
@@ -288,7 +288,7 @@ class AssertArrayTest extends TestCase
      */
     public function provideInvalidArrayKeys(): array
     {
-        return DataProvider::provide((int) ~(DataProvider::TYPE_STRING | DataProvider::TYPE_INTEGER));
+        return (new DataProvider(~(DataProvider::TYPE_STRING | DataProvider::TYPE_INTEGER)))->provide();
     }
 
     /**
@@ -297,7 +297,7 @@ class AssertArrayTest extends TestCase
      */
     public function provideValidArrayKeys(): array
     {
-        return DataProvider::provide(DataProvider::TYPE_STRING | DataProvider::TYPE_INTEGER);
+        return (new DataProvider(DataProvider::TYPE_STRING | DataProvider::TYPE_INTEGER))->provide();
     }
 
     /**

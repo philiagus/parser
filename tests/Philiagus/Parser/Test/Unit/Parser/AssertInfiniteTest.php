@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\Unit\Parser;
 
+use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\AssertInfinite;
-use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class AssertInfiniteTest extends TestCase
@@ -32,7 +32,7 @@ class AssertInfiniteTest extends TestCase
      */
     public function provideInvalidValues(): array
     {
-        return DataProvider::provide((int) ~DataProvider::TYPE_INFINITE);
+        return (new DataProvider(~DataProvider::TYPE_INFINITE))->provide();
     }
 
     /**
@@ -54,7 +54,7 @@ class AssertInfiniteTest extends TestCase
      */
     public function provideValidValues(): array
     {
-        return DataProvider::provide(DataProvider::TYPE_INFINITE);
+        return (new DataProvider(DataProvider::TYPE_INFINITE))->provide();
     }
 
     /**

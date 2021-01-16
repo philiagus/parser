@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\Unit\Base;
 
+use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 
@@ -31,7 +31,7 @@ class ParserTest extends TestCase
      */
     public function allValuesProvider(): array
     {
-        return DataProvider::provide(DataProvider::TYPE_ALL);
+        return (new DataProvider(DataProvider::TYPE_ALL))->provide();
     }
 
     /**
@@ -66,9 +66,9 @@ class ParserTest extends TestCase
         $result = $parser->parse($value);
 
         self::assertTrue($parser->wasCalled());
-        DataProvider::assertSame([$value, ParserTest::ANOTHER_VALUE], $target);
-        DataProvider::assertSame([$value, ParserTest::ANOTHER_VALUE], $result);
-        DataProvider::assertSame($target, $result);
+        self::assertTrue(DataProvider::isSame([$value, ParserTest::ANOTHER_VALUE], $target));
+        self::assertTrue(DataProvider::isSame([$value, ParserTest::ANOTHER_VALUE], $result));
+        self::assertTrue(DataProvider::isSame($target, $result));
     }
 
     /**

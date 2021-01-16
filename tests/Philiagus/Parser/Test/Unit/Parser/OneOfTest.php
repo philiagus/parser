@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\Unit\Parser;
 
+use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Contract\Parser as ParserContract;
@@ -20,7 +21,6 @@ use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\OneOf;
 use Philiagus\Parser\Path\Root;
-use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
@@ -213,7 +213,7 @@ class OneOfTest extends TestCase
 
     public function provideAnyValue(): array
     {
-        return DataProvider::provide(DataProvider::TYPE_ALL);
+        return (new DataProvider(DataProvider::TYPE_ALL))->provide();
     }
 
     /**
@@ -225,10 +225,10 @@ class OneOfTest extends TestCase
      */
     public function testDefaultTakesAnyValue($value): void
     {
-        DataProvider::assertSame(
+        self::assertTrue(DataProvider::isSame(
             $value,
             OneOf::new()->setDefaultResult($value)->parse(0)
-        );
+        ));
     }
 
     public function testDefaultNotReturnedOnMatch(): void

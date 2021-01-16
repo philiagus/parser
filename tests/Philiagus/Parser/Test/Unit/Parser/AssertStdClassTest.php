@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\Unit\Parser;
 
+use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Contract\Parser as ParserContract;
@@ -21,7 +22,6 @@ use Philiagus\Parser\Parser\AssertStdClass;
 use Philiagus\Parser\Path\MetaInformation;
 use Philiagus\Parser\Path\Property;
 use Philiagus\Parser\Path\PropertyName;
-use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
@@ -40,9 +40,11 @@ class AssertStdClassTest extends TestCase
      */
     public function provideInvalidValues(): array
     {
-        return DataProvider::provide(DataProvider::TYPE_ALL, function ($element) {
-            return !is_object($element) || get_class($element) !== \stdClass::class;
-        });
+        return (new DataProvider(DataProvider::TYPE_ALL))
+            ->filter(function($element) {
+                return !is_object($element) || get_class($element) !== \stdClass::class;
+            })
+            ->provide();
     }
 
     /**

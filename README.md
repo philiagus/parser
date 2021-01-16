@@ -1,14 +1,23 @@
 # philiagus/parser
 PHP classes to assert, convert and parse data.
 
-## Why?
+# Is it tested?
+Tested on the following PHP Version:
+- PHP7.2
+- PHP7.3
+- PHP7.4
+- PHP8.0
+
+100% test covered. Test coverage generated on PHP7.2
+
+## Why do I need it?
 Making sure your inputs are what they should be is one of the core principles of secure coding.
 
 Obviously there are more, but we must tackle them one step at a time.
 
 The basic idea of the parsers is, that the developer defines a structure through code and later throws a set of data against it. The parsers make sure, that the data is following the rules of defined in the structure.
 
-## How?
+## How does it work?
 
 A simple example:
 

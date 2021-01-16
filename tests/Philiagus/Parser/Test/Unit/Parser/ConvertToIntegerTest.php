@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\Unit\Parser;
 
+use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\ConvertToInteger;
-use Philiagus\Parser\Test\Provider\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ConvertToIntegerTest extends TestCase
@@ -33,16 +33,12 @@ class ConvertToIntegerTest extends TestCase
      */
     public function provideIncompatibleValues(): array
     {
-        return
-            array_merge(
-                DataProvider::provide((int) ~(DataProvider::TYPE_INTEGER | DataProvider::TYPE_FLOAT | DataProvider::TYPE_STRING)),
-                [
-                    'string non numeric' => ['abc'],
-                    'string almost numeric' => ['0abc'],
-                    'float overflow' => [PHP_INT_MAX + .5],
-                    'float underflow' => [PHP_INT_MIN - .5],
-                ]
-            );
+        return (new DataProvider(~(DataProvider::TYPE_INTEGER | DataProvider::TYPE_FLOAT | DataProvider::TYPE_STRING)))
+            ->addCase('non numeric', 'abc')
+            ->addCase('almost numeric', '0abc')
+            ->addCase('float overflow', PHP_INT_MAX + .5)
+            ->addCase('float underflow', PHP_INT_MIN - .5)
+            ->provide();
     }
 
     /**
