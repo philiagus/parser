@@ -29,7 +29,7 @@ class AssertBoolean
     private $typeExceptionMessage = 'Provided value is not a boolean';
 
     /**
-     * Overwrites the exception message sent when the input value is not a booll
+     * Sets the exception message sent when the input value is not a bool
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - value: The value currently being parsed
@@ -40,7 +40,7 @@ class AssertBoolean
      * @see Debug::parseMessage()
      *
      */
-    public function overwriteTypeExceptionMessage(string $message): self
+    public function setTypeExceptionMessage(string $message): self
     {
         $this->typeExceptionMessage = $message;
 

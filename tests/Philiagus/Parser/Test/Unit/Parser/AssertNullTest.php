@@ -80,17 +80,17 @@ class AssertNullTest extends TestCase
         $msg = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
-        (new AssertNull())->overwriteExceptionMessage($msg)->parse(false);
+        (new AssertNull())->setExceptionMessage($msg)->parse(false);
     }
 
-    public function testAllOverwriteTypeExceptionMessageReplacers(): void
+    public function testAllSetTypeExceptionMessageReplacers(): void
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage(
             'hello string string<ASCII>(5)"hello"'
         );
         (new AssertNull())
-            ->overwriteExceptionMessage('{value} {value.type} {value.debug}')
+            ->setExceptionMessage('{value} {value.type} {value.debug}')
             ->parse('hello');
     }
 

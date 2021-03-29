@@ -67,7 +67,7 @@ class ConvertToStringTest extends TestCase
         $msg = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
-        (new ConvertToString())->overwriteTypeExceptionMessage($msg)->parse(null);
+        (new ConvertToString())->setTypeExceptionMessage($msg)->parse(null);
     }
 
     /**
@@ -81,7 +81,7 @@ class ConvertToStringTest extends TestCase
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage('type ' . gettype($invalid));
-        (new ConvertToString())->overwriteTypeExceptionMessage('type {value.gettype}')->parse($invalid);
+        (new ConvertToString())->setTypeExceptionMessage('type {value.gettype}')->parse($invalid);
     }
 
     /**
@@ -198,34 +198,14 @@ class ConvertToStringTest extends TestCase
         self::assertSame($expected, (new ConvertToString())->setBooleanValues($true, $false)->parse($input));
     }
 
-    /**
-     * @throws ParserConfigurationException
-     */
-    public function testThatSetBooleanValuesCannotBeOverwritten(): void
-    {
-        $parser = ConvertToString::new()->setBooleanValues('a', 'b');
-        $this->expectException(ParserConfigurationException::class);
-        $parser->setBooleanValues('a', 'b');
-    }
-
-    /**
-     * @throws ParserConfigurationException
-     */
-    public function testThatImplodeOfArraysCannotBeOverwritten(): void
-    {
-        $parser = ConvertToString::new()->setImplodeOfArrays('a', 'b');
-        $this->expectException(ParserConfigurationException::class);
-        $parser->setImplodeOfArrays('a', 'b');
-    }
-
-    public function testAllOverwriteTypeExceptionMessageReplacers(): void
+    public function testAllSetTypeExceptionMessageReplacers(): void
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage(
             'Object object<stdClass> object<stdClass>'
         );
         (new ConvertToString())
-            ->overwriteTypeExceptionMessage('{value} {value.type} {value.debug}')
+            ->setTypeExceptionMessage('{value} {value.type} {value.debug}')
             ->parse((object) []);
     }
 

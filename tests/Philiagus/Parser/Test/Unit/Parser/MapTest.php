@@ -141,17 +141,6 @@ class MapTest extends TestCase
         return $triggered->reveal();
     }
 
-    public function testExceptionOnDefaltOverwriteAttempt(): void
-    {
-        $map = Map::new()
-            ->setDefaultResult(1);
-
-        $this->expectException(ParserConfigurationException::class);
-        $this->expectExceptionMessage('The default for OneOf was already set and cannot be overwritten');
-
-        $map->setDefaultResult(1);
-    }
-
     public function testExceptionOnNoMatchNoDefault(): void
     {
         $map = Map::new()
@@ -170,7 +159,7 @@ class MapTest extends TestCase
     public function testExceptionOnNoMatchNoDefaultOverwrite(): void
     {
         $map = Map::new()
-            ->overwriteNonOfExceptionMessage('{value} {value.type} {value.debug}')
+            ->setNonOfExceptionMessage('{value} {value.type} {value.debug}')
             ->addSame(true, $this->prophesizeNotTriggered())
             ->addEquals('', $this->prophesizeNotTriggered())
             ->addSameList([1.0, 1], $this->prophesizeNotTriggered())

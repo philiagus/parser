@@ -27,7 +27,7 @@ class ConvertToInteger
     private $typeExceptionMessage = 'Variable of type {value.type} could not be converted to an integer';
 
     /**
-     * Overwrites the message of the exception thrown when the provided value could not be converted to an integer
+     * Sets the message of the exception thrown when the provided value could not be converted to an integer
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - value: The value currently being parsed
@@ -38,7 +38,7 @@ class ConvertToInteger
      * @see Debug::parseMessage()
      *
      */
-    public function overwriteTypeExceptionMessage(string $message): self
+    public function setTypeExceptionMessage(string $message): self
     {
         $this->typeExceptionMessage = $message;
 

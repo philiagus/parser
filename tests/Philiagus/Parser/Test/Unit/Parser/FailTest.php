@@ -56,7 +56,7 @@ class FailTest extends TestCase
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage('1 integer integer 1');
         (new Fail())
-            ->overwriteExceptionMessage('{value} {value.type} {value.debug}')
+            ->setExceptionMessage('{value} {value.type} {value.debug}')
             ->parse(1);
     }
 

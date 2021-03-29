@@ -79,17 +79,17 @@ class AssertInfiniteTest extends TestCase
         $msg = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
-        (new AssertInfinite())->overwriteExceptionMessage($msg)->parse(false);
+        (new AssertInfinite())->setExceptionMessage($msg)->parse(false);
     }
 
-    public function testAllOverwriteTypeExceptionMessageReplacers(): void
+    public function testAllSetTypeExceptionMessageReplacers(): void
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage(
             'hello string string<ASCII>(5)"hello"'
         );
         (new AssertInfinite())
-            ->overwriteExceptionMessage('{value} {value.type} {value.debug}')
+            ->setExceptionMessage('{value} {value.type} {value.debug}')
             ->parse('hello');
     }
 

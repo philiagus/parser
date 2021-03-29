@@ -1,13 +1,6 @@
 version: '2'
 
 services:
-  test7.2:
-    build:
-      context: .
-      dockerfile: docker/7.2.Dockerfile
-    volumes:
-      - ./:/app
-
   test7.3:
     build:
       context: .

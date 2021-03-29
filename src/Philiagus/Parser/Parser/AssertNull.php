@@ -36,7 +36,7 @@ class AssertNull extends Parser
      * @see Debug::parseMessage()
      *
      */
-    public function overwriteExceptionMessage(string $message): self
+    public function setExceptionMessage(string $message): self
     {
         $this->exceptionMessage = $message;
 

@@ -56,7 +56,7 @@ class AssertNumberTest extends TestCase
         $msg = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
-        (new AssertNumber())->overwriteTypeExceptionMessage($msg)->parse('yes');
+        (new AssertNumber())->setTypeExceptionMessage($msg)->parse('yes');
     }
 
     /**
@@ -247,14 +247,14 @@ class AssertNumberTest extends TestCase
         (new AssertNumber())->withMaximum($max, $base)->parse($value);
     }
 
-    public function testAllOverwriteTypeExceptionMessageReplacers(): void
+    public function testAllSetTypeExceptionMessageReplacers(): void
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage(
             'hello string string<ASCII>(5)"hello"'
         );
         (new AssertNumber())
-            ->overwriteTypeExceptionMessage('{value} {value.type} {value.debug}')
+            ->setTypeExceptionMessage('{value} {value.type} {value.debug}')
             ->parse('hello');
     }
 

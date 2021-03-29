@@ -59,7 +59,7 @@ class Map extends Parser
      * @see Debug::parseMessage()
      *
      */
-    public function overwriteNonOfExceptionMessage(string $message): self
+    public function setNonOfExceptionMessage(string $message): self
     {
         $this->exceptionMessage = $message;
 
@@ -155,16 +155,9 @@ class Map extends Parser
      * @param $value
      *
      * @return $this
-     * @throws Exception\ParserConfigurationException
      */
     public function setDefaultResult($value): self
     {
-        if ($this->defaultSet) {
-            throw new Exception\ParserConfigurationException(
-                'The default for OneOf was already set and cannot be overwritten'
-            );
-        }
-
         $this->defaultSet = true;
         $this->default = $value;
 

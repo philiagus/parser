@@ -39,7 +39,7 @@ class AssertNumber extends Parser
      * @see Debug::parseMessage()
      *
      */
-    public function overwriteTypeExceptionMessage(string $exceptionMessage): self
+    public function setTypeExceptionMessage(string $exceptionMessage): self
     {
         $this->typeExceptionMessage = $exceptionMessage;
 
@@ -65,8 +65,12 @@ class AssertNumber extends Parser
     {
         if (
             (!is_int($minimum) && !is_float($minimum)) ||
-            is_nan($minimum) ||
-            is_infinite($minimum)
+            (is_float($minimum) &&
+                (
+                    is_nan($minimum) ||
+                    is_infinite($minimum)
+                )
+            )
         ) {
             throw new Exception\ParserConfigurationException('The minimum for a numeric value must be provided as integer or float');
         }
@@ -103,8 +107,12 @@ class AssertNumber extends Parser
     {
         if (
             (!is_int($maximum) && !is_float($maximum)) ||
-            is_nan($maximum) ||
-            is_infinite($maximum)
+            (is_float($maximum) &&
+                (
+                    is_nan($maximum) ||
+                    is_infinite($maximum)
+                )
+            )
         ) {
             throw new Exception\ParserConfigurationException('The maximum for a numeric value must be provided as integer or float');
         }
@@ -129,8 +137,13 @@ class AssertNumber extends Parser
     {
         if (
             (!is_float($value) && !is_int($value)) ||
-            is_nan($value) ||
-            is_infinite($value)) {
+            (
+                is_float($value) && (
+                    is_nan($value) ||
+                    is_infinite($value)
+                )
+            )
+        ) {
             throw new ParsingException(
                 $value,
                 Debug::parseMessage($this->typeExceptionMessage, ['value' => $value]),

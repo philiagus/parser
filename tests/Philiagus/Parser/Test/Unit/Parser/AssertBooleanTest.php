@@ -80,17 +80,17 @@ class AssertBooleanTest extends TestCase
         $message = 'This is an error msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($message);
-        (new AssertBoolean())->overwriteTypeExceptionMessage($message)->parse('yes');
+        (new AssertBoolean())->setTypeExceptionMessage($message)->parse('yes');
     }
 
-    public function testAllOverwriteTypeExceptionMessageReplacers(): void
+    public function testAllSetTypeExceptionMessageReplacers(): void
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage(
             'hello string string<ASCII>(5)"hello"'
         );
         (new AssertBoolean())
-            ->overwriteTypeExceptionMessage('{value} {value.type} {value.debug}')
+            ->setTypeExceptionMessage('{value} {value.type} {value.debug}')
             ->parse('hello');
     }
 

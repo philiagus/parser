@@ -104,11 +104,6 @@ class AssertStringRegex extends Parser
         string $exceptionMessage = self::DEFAULT_PATTERN_EXCEPTION_MESSAGE
     ): self
     {
-        if ($this->pattern !== null) {
-            throw new ParserConfigurationException(
-                'The pattern for AssertStringRegex has already been defined and cannot be overwritten'
-            );
-        }
         if (@preg_match($pattern, '') === false) {
             throw new ParserConfigurationException(
                 'An invalid regular expression was provided'
@@ -132,7 +127,7 @@ class AssertStringRegex extends Parser
      * @see Debug::parseMessage()
      *
      */
-    public function overwriteTypeExceptionMessage(string $message): self
+    public function setTypeExceptionMessage(string $message): self
     {
         $this->typeExceptionMessage = $message;
 
@@ -159,12 +154,6 @@ class AssertStringRegex extends Parser
      */
     public function setGlobal($matchType): self
     {
-        if ($this->global !== null) {
-            throw new ParserConfigurationException(
-                'Global matching configuration of AssertStringRegex has already been defined and cannot be overwritten'
-            );
-        }
-
         if (is_bool($matchType)) {
             if (!$matchType) {
                 $this->global = false;
@@ -189,16 +178,9 @@ class AssertStringRegex extends Parser
      * @param int $offset
      *
      * @return $this
-     * @throws ParserConfigurationException
      */
     public function setOffset(int $offset): self
     {
-        if ($this->offset !== null) {
-            throw new ParserConfigurationException(
-                'Offset configuration of AssertStringRegex has already been defined and cannot be overwritten'
-            );
-        }
-
         $this->offset = $offset;
 
         return $this;
@@ -214,16 +196,9 @@ class AssertStringRegex extends Parser
      * @param bool $offsetCapture
      *
      * @return $this
-     * @throws ParserConfigurationException
      */
     public function setOffsetCapture(bool $offsetCapture = true): self
     {
-        if ($this->offsetCapture !== null) {
-            throw new ParserConfigurationException(
-                'Offset capture configuration of AssertStringRegex has already been defined and cannot be overwritten'
-            );
-        }
-
         $this->offsetCapture = $offsetCapture;
 
         return $this;
@@ -239,16 +214,9 @@ class AssertStringRegex extends Parser
      * @param bool $unmatchedAsNull
      *
      * @return $this
-     * @throws ParserConfigurationException
      */
     public function setUnmatchedAsNull(bool $unmatchedAsNull = true): self
     {
-        if ($this->unmatchedAsNull !== null) {
-            throw new ParserConfigurationException(
-                'Unmatched as null configuration of AssertStringRegex has already been defined and cannot be overwritten'
-            );
-        }
-
         $this->unmatchedAsNull = $unmatchedAsNull;
 
         return $this;

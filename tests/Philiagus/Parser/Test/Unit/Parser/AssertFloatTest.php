@@ -56,7 +56,7 @@ class AssertFloatTest extends TestCase
         $msg = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
-        (new AssertFloat())->overwriteTypeExceptionMessage($msg)->parse('yes');
+        (new AssertFloat())->setTypeExceptionMessage($msg)->parse('yes');
     }
 
     /**
@@ -227,14 +227,14 @@ class AssertFloatTest extends TestCase
         (new AssertFloat())->withMaximum($value);
     }
 
-    public function testAllOverwriteTypeExceptionMessageReplacers(): void
+    public function testAllSetTypeExceptionMessageReplacers(): void
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage(
             'hello string string<ASCII>(5)"hello"'
         );
         (new AssertFloat())
-            ->overwriteTypeExceptionMessage('{value} {value.type} {value.debug}')
+            ->setTypeExceptionMessage('{value} {value.type} {value.debug}')
             ->parse('hello');
     }
 

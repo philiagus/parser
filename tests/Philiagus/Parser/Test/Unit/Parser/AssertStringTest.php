@@ -83,7 +83,7 @@ class AssertStringTest extends TestCase
         $msg = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
-        (new AssertString())->overwriteTypeExceptionMessage($msg)->parse(false);
+        (new AssertString())->setTypeExceptionMessage($msg)->parse(false);
     }
 
     /**
@@ -167,14 +167,14 @@ class AssertStringTest extends TestCase
         (new AssertString())->withSubstring(1, 1, $substringParser)->parse('öäü');
     }
 
-    public function testAllOverwriteTypeExceptionMessageReplacers(): void
+    public function testAllSetTypeExceptionMessageReplacers(): void
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage(
             '5 integer integer 5'
         );
         (new AssertString())
-            ->overwriteTypeExceptionMessage('{value} {value.type} {value.debug}')
+            ->setTypeExceptionMessage('{value} {value.type} {value.debug}')
             ->parse(5);
     }
 

@@ -81,7 +81,7 @@ class AssertStdClassTest extends TestCase
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
         (new AssertStdClass())
-            ->overwriteTypeExceptionMessage($msg)
+            ->setTypeExceptionMessage($msg)
             ->parse(1);
     }
 
@@ -194,14 +194,14 @@ class AssertStdClassTest extends TestCase
             );
     }
 
-    public function testAllOverwriteTypeExceptionMessageReplacers(): void
+    public function testAllSetTypeExceptionMessageReplacers(): void
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage(
             'hello string string<ASCII>(5)"hello"'
         );
         (new AssertStdClass())
-            ->overwriteTypeExceptionMessage('{value} {value.type} {value.debug}')
+            ->setTypeExceptionMessage('{value} {value.type} {value.debug}')
             ->parse('hello');
     }
 

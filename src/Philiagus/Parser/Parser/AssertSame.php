@@ -68,17 +68,11 @@ class AssertSame
      * @param string $exceptionMessage
      *
      * @return $this
-     * @throws ParserConfigurationException
      * @see Debug::parseMessage()
      *
      */
     public function setValue($equalsValue, string $exceptionMessage = self::DEFAULT_MESSAGE): self
     {
-        if ($this->exceptionMessage !== null) {
-            throw new ParserConfigurationException(
-                'Tried to overwrite value of configured same parser'
-            );
-        }
         $this->exceptionMessage = $exceptionMessage;
         $this->targetValue = $equalsValue;
 

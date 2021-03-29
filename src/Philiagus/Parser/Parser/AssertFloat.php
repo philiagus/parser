@@ -42,7 +42,7 @@ class AssertFloat extends Parser
      * @see Debug::parseMessage()
      *
      */
-    public function overwriteTypeExceptionMessage(string $exceptionMessage): self
+    public function setTypeExceptionMessage(string $exceptionMessage): self
     {
         $this->typeExceptionMessage = $exceptionMessage;
 

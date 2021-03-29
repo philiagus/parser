@@ -34,7 +34,7 @@ class Fail extends Parser
      *
      * @return $this
      */
-    public function overwriteExceptionMessage(string $message): self
+    public function setExceptionMessage(string $message): self
     {
         $this->message = $message;
 
@@ -53,7 +53,10 @@ class Fail extends Parser
      */
     public static function message(string $message): self
     {
-        return (new self())->overwriteExceptionMessage($message);
+        $instance = new self();
+        $instance->message = $message;
+
+        return $instance;
     }
 
     /**

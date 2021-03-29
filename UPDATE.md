@@ -1,4 +1,140 @@
 # Migration document
+## v1.2.0 to v2.0.0
+
+- Dropped support for PHP 7.2! Requires >=PHP7.3 now
+- Setters can now be called multiple times without error. Previously set values will simply be overwritten.
+- All `overwrite*` methods have been altered to `set*` methods
+- `ConverToArray` was split up into `ConvertToArray` and `ConvertArray`
+
+  Reason: The name `ConvertToArray` was misleading when already receiving an array and converting the content of that received array. With this refactor the task of the individual parsers was made clear: one for converting an received value to array, the other for converting the shape and values of an already existing array.
+
+### Additions
+
+- Added `ConvertArray`
+
+### Changes
+
+#### AssertArray
+
+- Renamed `overwriteTypeExceptionMessage` to `setTypeExceptionMessage`
+
+#### AssertBoolean
+
+- Renamed `overwriteTypeExceptionMessage` to `setTypeExceptionMessage`
+
+#### AssertEquals
+
+- `setValue` silently overwrites previous set values and no longer throws an exception
+
+#### AssertFloat
+
+- Renamed `overwriteTypeExceptionMessage` to `setTypeExceptionMessage`
+
+#### AssertInfinite
+
+- Renamed `overwriteExceptionMessage` to `setExceptionMessage`
+
+#### AssertInteger
+
+- Renamed `overwriteTypeExceptionMessage` to `setTypeExceptionMessage`
+
+#### AssertNan
+
+- Renamed `overwriteExceptionMessage` to `setExceptionMessage`
+
+#### AssertNull
+
+- Renamed `overwriteExceptionMessage` to `setExceptionMessage`
+
+#### AssertNumber
+
+- Renamed `overwriteTypeExceptionMessage` to `setTypeExceptionMessage`
+
+#### AssertSame
+
+- `setValue` silently overwrites previous set values and no longer throws an exception
+
+#### AssertScalar
+
+- Renamed `overwriteExceptionMessage` to `setExceptionMessage`
+
+#### AssertStdClass
+
+- Renamed `overwriteTypeExceptionMessage` to `setTypeExceptionMessage`
+
+#### AssertString
+
+- Renamed `overwriteTypeExceptionMessage` to `setTypeExceptionMessage`
+
+#### AssertStringMultibyte
+
+- Renamed `overwriteTypeExceptionMessage` to `setTypeExceptionMessage`
+- Renamed `overwriteEncodingDetectionExceptionMessage` to `setEncodingDetectionExceptionMessage`
+- `setEncoding` silently overwrites previous set values and no longer throws an exception
+
+#### AssertStringRegex
+
+- Renamed `overwriteTypeExceptionMessage` to `setTypeExceptionMessage`
+- `setPattern` silently overwrites previous set values and no longer throws an exception
+- `setGlobal` silently overwrites previous set values and no longer throws an exception
+- `setOffset` silently overwrites previous set values and no longer throws an exception
+- `setOffsetCapture` silently overwrites previous set values and no longer throws an exception
+- `setUnmatchedAsNull` silently overwrites previous set values and no longer throws an exception
+
+#### ConvertFromJson
+
+- Renamed `overwriteConversionExceptionMessage` to `setConversionExceptionMessage`
+- Renamed `overwriteTypeExceptionMessage` to `setTypeExceptionMessage`
+- `setObjectsAsArrays` silently overwrites previous set values and no longer throws an exception
+- `setMaxDepth` silently overwrites previous set values and no longer throws an exception
+- `setBigintAsString` silently overwrites previous set values and no longer throws an exception
+
+#### ConvertToArray
+
+- `CONVERSION_DO_NOT_CONVERT` option removed
+- `setConvertNonArrays` method removed in favor of
+  - `setConvertToUseCast`
+  - `setConvertToCreateArrayWithKey`
+- Added new static constructors
+  - `usingCast`
+  - `creatingArrayWithKey`
+- Migrated the following methods to a new parser `ConvertArray`
+  - `withDefaultedKey`
+  - `withKeyWhitelist`
+  - `withKey`
+  - `withSequentialKeys`
+  - `withEachValue`
+  - `withEachKey`
+
+#### ConvertToInteger
+
+- Renamed `overwriteTypeExceptionMessage` to `setTypeExceptionMessage`
+
+#### ConvertToString
+
+- Renamed `overwriteTypeExceptionMessage` to `setTypeExceptionMessage`
+- `setBooleanValues` silently overwrites previous set values and no longer throws an exception
+- `setImplodeOfArrays` silently overwrites previous set values and no longer throws an exception
+
+#### Fail
+
+- Renamed `overwriteExceptionMesage` to `setExceptionMessage`
+
+#### Fixed
+
+- `setValue` silently overwrites previous set values and no longer throws an exception
+
+#### Map
+
+- Renamed `overwriteNonOfExceptionMessage` to `setNonOfExceptionMessage`
+- `setDefaultResult` silently overwrites previous set values and no longer throws an exception
+
+#### OneOf
+
+- Renamed `overwriteNonOfExceptionMessage` to `setNonOfExceptionMessage`
+- `setDefaultResult` silently overwrites previous set values and no longer throws an exception
+
+
 ## v1.1.0 to v1.2.0
 
 - migration.md was renamed to UPDATE.md

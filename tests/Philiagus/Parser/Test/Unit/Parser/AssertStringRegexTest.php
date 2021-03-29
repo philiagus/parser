@@ -78,23 +78,23 @@ class AssertStringRegexTest extends TestCase
      * @throws ParsingException
      * @throws ParserConfigurationException
      */
-    public function testOverwriteTypeExceptionMessage(): void
+    public function testSetTypeExceptionMessage(): void
     {
         $msg = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
-        (new AssertStringRegex())->setPattern('//')->overwriteTypeExceptionMessage($msg)->parse(false);
+        (new AssertStringRegex())->setPattern('//')->setTypeExceptionMessage($msg)->parse(false);
     }
 
     /**
      * @throws ParsingException
      * @throws ParserConfigurationException
      */
-    public function testOverwriteTypeExceptionMessageReplacers(): void
+    public function testSetTypeExceptionMessageReplacers(): void
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage(' boolean boolean FALSE');
-        (new AssertStringRegex())->setPattern('//')->overwriteTypeExceptionMessage('{value} {value.type} {value.debug}')->parse(false);
+        (new AssertStringRegex())->setPattern('//')->setTypeExceptionMessage('{value} {value.type} {value.debug}')->parse(false);
     }
 
     public function testSetPatternSuccess(): void
@@ -116,29 +116,11 @@ class AssertStringRegexTest extends TestCase
         $parser->setPattern('');
     }
 
-    public function testSetPatternCanOnlyBeCalledOnce(): void
-    {
-
-        $parser = new AssertStringRegex();
-        $parser->setPattern('//');
-        $this->expectException(ParserConfigurationException::class);
-        $this->expectExceptionMessage('The pattern for AssertStringRegex has already been defined and cannot be overwritten');
-        $parser->setPattern('//');
-    }
-
     public function testStaticPatternInvalidPatternException(): void
     {
         $this->expectException(ParserConfigurationException::class);
         $this->expectExceptionMessage('An invalid regular expression was provided');
         AssertStringRegex::pattern('');
-    }
-
-    public function testStaticPatternSetPatternCanOnlyBeCalledOnce(): void
-    {
-        $parser = AssertStringRegex::pattern('//');
-        $this->expectException(ParserConfigurationException::class);
-        $this->expectExceptionMessage('The pattern for AssertStringRegex has already been defined and cannot be overwritten');
-        $parser->setPattern('//');
     }
 
     public function testSetPatternCustomExceptionMessageReplacers(): void
@@ -159,42 +141,6 @@ class AssertStringRegexTest extends TestCase
             $parser->withMatches($child->reveal());
         }
         $parser->parse('abc');
-    }
-
-    public function testSetGlobalCanOnlyBeCalledOnce(): void
-    {
-        $parser = AssertStringRegex::pattern('//')->setGlobal(false);
-        $this->expectException(ParserConfigurationException::class);
-        $this->expectExceptionMessage('Global matching configuration of AssertStringRegex has already been defined and cannot be overwritten');
-        $parser->setGlobal(false);
-    }
-
-    public function testSetOffsetCanOnlyBeCalledOnce(): void
-    {
-        $parser = AssertStringRegex::pattern('//')->setOffset(1);
-        $this->expectException(ParserConfigurationException::class);
-        $this->expectExceptionMessage('Offset configuration of AssertStringRegex has already been defined and cannot be overwritten');
-        $parser->setOffset(1);
-    }
-
-    public function testSetOffsetCaptureCanOnlyBeCalledOnce(): void
-    {
-        $parser = AssertStringRegex::pattern('//')->setOffsetCapture(true);
-        $this->expectException(ParserConfigurationException::class);
-        $this->expectExceptionMessage(
-            'Offset capture configuration of AssertStringRegex has already been defined and cannot be overwritten'
-        );
-        $parser->setOffsetCapture(true);
-    }
-
-    public function testSetUnmatchedAsNullCanOnlyBeCalledOnce(): void
-    {
-        $parser = AssertStringRegex::pattern('//')->setUnmatchedAsNull(true);
-        $this->expectException(ParserConfigurationException::class);
-        $this->expectExceptionMessage(
-            'Unmatched as null configuration of AssertStringRegex has already been defined and cannot be overwritten'
-        );
-        $parser->setUnmatchedAsNull(true);
     }
 
     public function provideValidGlobalValues(): array

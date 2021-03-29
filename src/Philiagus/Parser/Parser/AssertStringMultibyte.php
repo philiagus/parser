@@ -54,7 +54,7 @@ class AssertStringMultibyte extends Parser
      * @see Debug::parseMessage()
      *
      */
-    public function overwriteTypeExceptionMessage(string $message): self
+    public function setTypeExceptionMessage(string $message): self
     {
         $this->typeExceptionMessage = $message;
 
@@ -72,7 +72,7 @@ class AssertStringMultibyte extends Parser
      *
      * @return $this
      */
-    public function overwriteEncodingDetectionExceptionMessage(string $message): self
+    public function setEncodingDetectionExceptionMessage(string $message): self
     {
         $this->encodingDetectionExceptionMessage = $message;
 
@@ -186,13 +186,6 @@ class AssertStringMultibyte extends Parser
     public function setEncoding(string $encoding, string $exception = 'Multibyte string does not appear to be of the requested encoding'): self
     {
         static $encodings = null;
-
-        if ($this->encoding !== null) {
-            throw new ParserConfigurationException(
-                'The encoding of AssertStringMultibyte has already been defined and cannot be overwritten'
-            );
-        }
-
         if ($encodings === null) {
             $encodings = mb_list_encodings();
         }

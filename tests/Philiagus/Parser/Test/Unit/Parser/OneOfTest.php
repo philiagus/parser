@@ -103,7 +103,7 @@ class OneOfTest extends TestCase
                     }
                 }
             )
-            ->overwriteNonOfExceptionMessage($msg)
+            ->setNonOfExceptionMessage($msg)
             ->parse(null);
     }
 
@@ -191,14 +191,14 @@ class OneOfTest extends TestCase
     }
 
 
-    public function testAllOverwriteNonOfExceptionMessageReplacers(): void
+    public function testAllSetNonOfExceptionMessageReplacers(): void
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage(
             '5 integer integer 5'
         );
         (new OneOf())
-            ->overwriteNonOfExceptionMessage('{value} {value.type} {value.debug}')
+            ->setNonOfExceptionMessage('{value} {value.type} {value.debug}')
             ->parse(5);
     }
 
@@ -237,14 +237,6 @@ class OneOfTest extends TestCase
             1,
             OneOf::new()->addSameOption(1)->setDefaultResult('false')->parse(1)
         );
-    }
-
-    public function testSetDefaultCanOnlyBeCalledOnce(): void
-    {
-        $parser = OneOf::new()->setDefaultResult(1);
-        $this->expectException(ParserConfigurationException::class);
-        $this->expectExceptionMessage('The default for OneOf was already set and cannot be overwritten');
-        $parser->setDefaultResult(2);
     }
 
 }

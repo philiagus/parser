@@ -49,7 +49,7 @@ class AssertArray
      * @see Debug::parseMessage()
      *
      */
-    public function overwriteTypeExceptionMessage(string $message): self
+    public function setTypeExceptionMessage(string $message): self
     {
         $this->typeExceptionMessage = $message;
 

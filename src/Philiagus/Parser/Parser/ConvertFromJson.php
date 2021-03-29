@@ -59,7 +59,7 @@ class ConvertFromJson extends Parser
      * @see Debug::parseMessage()
      *
      */
-    public function overwriteConversionExceptionMessage(string $message): self
+    public function setConversionExceptionMessage(string $message): self
     {
         $this->conversionExceptionMessage = $message;
 
@@ -78,7 +78,7 @@ class ConvertFromJson extends Parser
      * @see Debug::parseMessage()
      *
      */
-    public function overwriteTypeExceptionMessage(string $message): self
+    public function setTypeExceptionMessage(string $message): self
     {
         $this->typeExceptionMessage = $message;
 
@@ -91,16 +91,10 @@ class ConvertFromJson extends Parser
      * @param bool $objectsAsArrays
      *
      * @return $this
-     * @throws ParserConfigurationException
      * @see https://www.php.net/manual/de/function.json-decode.php
      */
     public function setObjectsAsArrays(bool $objectsAsArrays = true): self
     {
-        if ($this->objectAsArrays !== null) {
-            throw new ParserConfigurationException(
-                'Cannot overwrite objectAsArray configuration once set'
-            );
-        }
         $this->objectAsArrays = $objectsAsArrays;
 
         return $this;
@@ -112,16 +106,10 @@ class ConvertFromJson extends Parser
      * @param int $maxDepth
      *
      * @return $this
-     * @throws ParserConfigurationException
      * @see https://www.php.net/manual/de/function.json-decode.php
      */
     public function setMaxDepth(int $maxDepth = 512): self
     {
-        if ($this->maxDepth !== null) {
-            throw new ParserConfigurationException(
-                'Cannot overwrite maxDepth configuration once set'
-            );
-        }
         $this->maxDepth = $maxDepth;
 
         return $this;
@@ -138,11 +126,6 @@ class ConvertFromJson extends Parser
      */
     public function setBigintAsString(bool $bigintAsString = true): self
     {
-        if ($this->bigintAsString !== null) {
-            throw new ParserConfigurationException(
-                'Cannot overwrite bigintAsString configuration once set'
-            );
-        }
         $this->bigintAsString = $bigintAsString;
 
         return $this;

@@ -64,4 +64,4 @@ $parser = (new AssertArray())
 
 ## What if something is missing?
 
-Fear not! All parsers extend `Philiagus\Parser\Base\Parser`, so you can easily write your own to fit your specific need.
+Fear not! All parsers implement `Philiagus\Parser\Contract\Parser`, so you can easily write your own to fit your specific need.

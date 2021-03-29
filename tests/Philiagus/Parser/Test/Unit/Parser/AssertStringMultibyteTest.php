@@ -83,7 +83,7 @@ class AssertStringMultibyteTest extends TestCase
         $msg = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
-        (new AssertStringMultibyte())->overwriteTypeExceptionMessage($msg)->parse(false);
+        (new AssertStringMultibyte())->setTypeExceptionMessage($msg)->parse(false);
     }
 
     /**
@@ -208,24 +208,23 @@ class AssertStringMultibyteTest extends TestCase
         (new AssertStringMultibyte())->setEncoding('this is not an encoding');
     }
 
-    /**
-     * @throws ParserConfigurationException
-     */
-    public function testThatEncodingCannotBeOverwritten(): void
+    public function testThatEncodingCanOverwritten(): void
     {
-        $parser = AssertStringMultibyte::new()->setEncoding('UTF-8');
-        $this->expectException(ParserConfigurationException::class);
-        $parser->setEncoding('ISO-8859-1');
+        $parser = AssertStringMultibyte::new()
+            ->setEncoding('UTF-8')
+            ->setEncoding('ISO-8859-1');
+        $value = utf8_decode('This is a UTF-8 string äöü decoded to ISO-8859-1');
+        self::assertSame($value, $parser->parse($value));
     }
 
-    public function testAllOverwriteTypeExceptionMessageReplacers(): void
+    public function testAllSetTypeExceptionMessageReplacers(): void
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage(
             '5 integer integer 5'
         );
         (new AssertStringMultibyte())
-            ->overwriteTypeExceptionMessage('{value} {value.type} {value.debug}')
+            ->setTypeExceptionMessage('{value} {value.type} {value.debug}')
             ->parse(5);
     }
 
@@ -254,7 +253,7 @@ class AssertStringMultibyteTest extends TestCase
     {
         $string = "\xFF\xFE\xFD";
         $parser = (new AssertStringMultibyte())
-            ->overwriteEncodingDetectionExceptionMessage('overwrite {value} {value.type} {value.debug}');
+            ->setEncodingDetectionExceptionMessage('overwrite {value} {value.type} {value.debug}');
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage("overwrite \xFF\xFE\xFD string string<binary>(3)");
         $parser->parse($string);

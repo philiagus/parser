@@ -120,14 +120,14 @@ class AssertEqualsTest extends TestCase
     /**
      * @throws ParserConfigurationException
      */
-    public function testThatItDoesNotAcceptsOverwrites(): void
+    public function testThatItDoesAcceptOverwrites(): void
     {
         $parser = AssertEquals::new()->setValue('a');
-        $this->expectException(ParserConfigurationException::class);
         $parser->setValue('b');
+        self::assertSame('b', $parser->parse('b'));
     }
 
-    public function testAllOverwriteTypeExceptionMessageReplacers(): void
+    public function testAllSetTypeExceptionMessageReplacers(): void
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage(

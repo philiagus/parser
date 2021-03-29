@@ -31,18 +31,12 @@ abstract class Parser implements ParserContract
     private $then = [];
 
     /**
-     * false = not set
-     * null = not active and cannot be set
+     * null = no overwrite set so far
      * string = use this exception
      *
-     * @var bool|null|string
+     * @var null|string
      */
-    private $parsingExceptionOverwrite = false;
-
-    /**
-     * @var bool
-     */
-    private $hasParsingExceptionOverwrite = false;
+    private $parsingExceptionOverwrite = null;
 
     /**
      * The constructor receives the target to parse into
@@ -86,7 +80,7 @@ abstract class Parser implements ParserContract
             }
             return $this->target = $value;
         } catch (ParsingException $e) {
-            if ($this->hasParsingExceptionOverwrite) {
+            if ($this->parsingExceptionOverwrite !== null) {
                 throw new ParsingException(
                     $value,
                     Debug::parseMessage(
@@ -146,19 +140,10 @@ abstract class Parser implements ParserContract
      * @param string|null $message
      *
      * @return $this
-     * @throws ParserConfigurationException
      */
     public function setParsingExceptionOverwrite(?string $message): self
     {
-        if ($this->parsingExceptionOverwrite !== false) {
-            throw new ParserConfigurationException(
-                "The ParsingException overwrite for this parser was already set"
-            );
-        }
-
         $this->parsingExceptionOverwrite = $message;
-
-        $this->hasParsingExceptionOverwrite = $message !== null;
 
         return $this;
     }

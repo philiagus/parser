@@ -79,17 +79,17 @@ class AssertScalarTest extends TestCase
         $msg = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
-        (new AssertScalar())->overwriteExceptionMessage($msg)->parse(new \stdClass());
+        (new AssertScalar())->setExceptionMessage($msg)->parse(new \stdClass());
     }
 
-    public function testAllOverwriteTypeExceptionMessageReplacers(): void
+    public function testAllSetTypeExceptionMessageReplacers(): void
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage(
             'Array array array(0)'
         );
         (new AssertScalar())
-            ->overwriteExceptionMessage('{value} {value.type} {value.debug}')
+            ->setExceptionMessage('{value} {value.type} {value.debug}')
             ->parse([]);
     }
 

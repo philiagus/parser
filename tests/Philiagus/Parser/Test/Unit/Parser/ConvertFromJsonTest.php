@@ -116,7 +116,7 @@ class ConvertFromJsonTest extends TestCase
         $msg = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
-        (new ConvertFromJson())->overwriteConversionExceptionMessage($msg)->parse('u');
+        (new ConvertFromJson())->setConversionExceptionMessage($msg)->parse('u');
     }
 
     /**
@@ -127,7 +127,7 @@ class ConvertFromJsonTest extends TestCase
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage('msg Syntax error');
-        (new ConvertFromJson())->overwriteConversionExceptionMessage('msg {msg}')->parse('u');
+        (new ConvertFromJson())->setConversionExceptionMessage('msg {msg}')->parse('u');
     }
 
     /**
@@ -139,7 +139,7 @@ class ConvertFromJsonTest extends TestCase
         $msg = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
-        (new ConvertFromJson())->overwriteTypeExceptionMessage($msg)->parse(false);
+        (new ConvertFromJson())->setTypeExceptionMessage($msg)->parse(false);
     }
 
     /**
@@ -150,59 +150,28 @@ class ConvertFromJsonTest extends TestCase
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage('msg boolean');
-        (new ConvertFromJson())->overwriteTypeExceptionMessage('msg {value.gettype}')->parse(false);
+        (new ConvertFromJson())->setTypeExceptionMessage('msg {value.gettype}')->parse(false);
     }
 
-    /**
-     * @throws ParserConfigurationException
-     */
-    public function testThatObjectsAsArrayCannotBeOverwritten(): void
-    {
-        $parser = ConvertFromJson::new()->setObjectsAsArrays();
-        $this->expectException(ParserConfigurationException::class);
-        $parser->setObjectsAsArrays(false);
-    }
-
-    /**
-     * @throws ParserConfigurationException
-     */
-    public function testThatMaxDepthCannotBeOverwritten(): void
-    {
-        $parser = ConvertFromJson::new()->setMaxDepth(100);
-        $this->expectException(ParserConfigurationException::class);
-        $parser->setMaxDepth(500);
-    }
-
-
-    /**
-     * @throws ParserConfigurationException
-     */
-    public function testThatBigintAsStringCannotBeOverwritten(): void
-    {
-        $parser = ConvertFromJson::new()->setBigintAsString();
-        $this->expectException(ParserConfigurationException::class);
-        $parser->setBigintAsString(false);
-    }
-
-    public function testAllOverwriteTypeExceptionMessageReplacers(): void
+    public function testAllSetTypeExceptionMessageReplacers(): void
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage(
             '5 integer integer 5'
         );
         (new ConvertFromJson())
-            ->overwriteTypeExceptionMessage('{value} {value.type} {value.debug}')
+            ->setTypeExceptionMessage('{value} {value.type} {value.debug}')
             ->parse(5);
     }
 
-    public function testAllOverwriteConversionExceptionMessageReplacers(): void
+    public function testAllSetConversionExceptionMessageReplacers(): void
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage(
             '. string string<ASCII>(1)"." | Syntax error string string<ASCII>(12)"Syntax error"'
         );
         (new ConvertFromJson())
-            ->overwriteConversionExceptionMessage('{value} {value.type} {value.debug} | {msg} {msg.type} {msg.debug}')
+            ->setConversionExceptionMessage('{value} {value.type} {value.debug} | {msg} {msg.type} {msg.debug}')
             ->parse('.');
     }
 

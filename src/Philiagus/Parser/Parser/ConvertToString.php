@@ -14,7 +14,6 @@ namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
 
@@ -34,7 +33,7 @@ class ConvertToString extends Parser
     private $implode = null;
 
     /**
-     * Overwrites the exception message when the value could not be converted to a string
+     * Sets the exception message when the value could not be converted to a string
      *
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
@@ -46,7 +45,7 @@ class ConvertToString extends Parser
      * @see Debug::parseMessage()
      *
      */
-    public function overwriteTypeExceptionMessage(string $message): self
+    public function setTypeExceptionMessage(string $message): self
     {
         $this->typeExceptionMessage = $message;
 
@@ -58,16 +57,9 @@ class ConvertToString extends Parser
      * @param string $false
      *
      * @return $this
-     * @throws ParserConfigurationException
      */
     public function setBooleanValues(string $true, string $false): self
     {
-        if ($this->booleanValues !== null) {
-            throw new ParserConfigurationException(
-                'Already set boolean value conversion configuration of ConvertToString cannot be overwritten'
-            );
-        }
-
         $this->booleanValues = [$false, $true];
 
         return $this;
@@ -86,7 +78,6 @@ class ConvertToString extends Parser
      * @param string $exceptionMessage
      *
      * @return $this
-     * @throws ParserConfigurationException
      * @see Debug::parseMessage()
      *
      */
@@ -95,11 +86,6 @@ class ConvertToString extends Parser
         string $exceptionMessage = 'A value at index {key} was not of type string but of type {culprit.type}'
     ): self
     {
-        if ($this->implode !== null) {
-            throw new ParserConfigurationException(
-                'Already set implode configuration of ConvertToString cannot be overwritten'
-            );
-        }
         $this->implode = [$delimiter, $exceptionMessage];
 
         return $this;
@@ -117,7 +103,6 @@ class ConvertToString extends Parser
         switch (true) {
             case is_int($value):
                 return (string) $value;
-                break;
             case is_float($value):
                 if (is_infinite($value) || is_nan($value)) break;
 

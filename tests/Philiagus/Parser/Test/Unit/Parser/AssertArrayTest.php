@@ -467,17 +467,17 @@ class AssertArrayTest extends TestCase
         $message = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($message);
-        (new AssertArray())->overwriteTypeExceptionMessage($message)->parse('no');
+        (new AssertArray())->setTypeExceptionMessage($message)->parse('no');
     }
 
-    public function testAllOverwriteTypeExceptionMessageReplacers(): void
+    public function testAllSetTypeExceptionMessageReplacers(): void
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage(
             'hello string string<ASCII>(5)"hello"'
         );
         (new AssertArray())
-            ->overwriteTypeExceptionMessage('{value} {value.type} {value.debug}')
+            ->setTypeExceptionMessage('{value} {value.type} {value.debug}')
             ->parse('hello');
     }
 

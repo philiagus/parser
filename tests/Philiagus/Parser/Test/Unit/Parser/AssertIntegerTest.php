@@ -173,7 +173,7 @@ class AssertIntegerTest extends TestCase
         $msg = 'msg';
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($msg);
-        (new AssertInteger())->overwriteTypeExceptionMessage($msg)->parse(false);
+        (new AssertInteger())->setTypeExceptionMessage($msg)->parse(false);
     }
 
     public function provideMinExceptionTestMessages(): array
@@ -257,14 +257,14 @@ class AssertIntegerTest extends TestCase
         (new AssertInteger())->withMultipleOf($base, $baseMsg)->parse($value);
     }
 
-    public function testAllOverwriteTypeExceptionMessageReplacers(): void
+    public function testAllSetTypeExceptionMessageReplacers(): void
     {
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage(
             'hello string string<ASCII>(5)"hello"'
         );
         (new AssertInteger())
-            ->overwriteTypeExceptionMessage('{value} {value.type} {value.debug}')
+            ->setTypeExceptionMessage('{value} {value.type} {value.debug}')
             ->parse('hello');
     }
 

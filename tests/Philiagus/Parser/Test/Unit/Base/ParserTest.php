@@ -159,32 +159,4 @@ class ParserTest extends TestCase
         $this->expectExceptionMessage('some text');
         $parser->parse(2);
     }
-
-    public function testSetParsingExceptionOverwriteNullBlockRecall(): void
-    {
-        $parser = new class() extends Parser {
-            protected function execute($value, Path $path)
-            {
-            }
-        };
-
-        $parser->setParsingExceptionOverwrite(null);
-        $this->expectException(ParserConfigurationException::class);
-        $this->expectExceptionMessage("The ParsingException overwrite for this parser was already set");
-        $parser->setParsingExceptionOverwrite('overwrite');
-    }
-
-    public function testSetParsingExceptionOverwriteBlockRecall(): void
-    {
-        $parser = new class() extends Parser {
-            protected function execute($value, Path $path)
-            {
-            }
-        };
-
-        $parser->setParsingExceptionOverwrite('set');
-        $this->expectException(ParserConfigurationException::class);
-        $this->expectExceptionMessage("The ParsingException overwrite for this parser was already set");
-        $parser->setParsingExceptionOverwrite('overwrite');
-    }
 }

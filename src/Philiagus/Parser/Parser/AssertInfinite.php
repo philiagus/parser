@@ -24,7 +24,7 @@ class AssertInfinite extends Parser
     private $exceptionMessage = 'Provided value is not INF';
 
     /**
-     * Overwrites the exception message sent when the input value is not an infinite value
+     * Sets the exception message sent when the input value is not an infinite value
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - value: The value currently being parsed
      *
@@ -33,7 +33,7 @@ class AssertInfinite extends Parser
      * @return $this
      * @see Debug::parseMessage()
      */
-    public function overwriteExceptionMessage(string $message): self
+    public function setExceptionMessage(string $message): self
     {
         $this->exceptionMessage = $message;
 
