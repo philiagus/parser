@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * This file is part of philiagus/parser
  *
  * (c) Andreas Bittner <philiagus@philiagus.de>
@@ -13,84 +13,36 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
-use Philiagus\Parser\Base\Parser;
-use Philiagus\Parser\Exception\ParserConfigurationException;
-use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\AssertScalar;
+use Philiagus\Parser\Test\ChainableParserTest;
+use Philiagus\Parser\Test\InvalidValueParserTest;
+use Philiagus\Parser\Test\SetTypeExceptionMessageTest;
+use Philiagus\Parser\Test\ValidValueParserTest;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Philiagus\Parser\Parser\AssertScalar
+ */
 class AssertScalarTest extends TestCase
 {
+    use ChainableParserTest, ValidValueParserTest, InvalidValueParserTest, SetTypeExceptionMessageTest;
 
-    public function testThatItExtendsBaseParser(): void
+    public function provideValidValuesAndParsersAndResults(): array
     {
-        self::assertTrue((new AssertScalar()) instanceof Parser);
+        return (new DataProvider(DataProvider::TYPE_SCALAR))
+            ->map(fn($value) => [$value, AssertScalar::new(), $value])
+            ->provide(false);
     }
 
-    /**
-     * @return array
-     * @throws \Exception
-     */
-    public function provideInvalidValues(): array
+    public function provideInvalidValuesAndParsers(): array
     {
-        return (new DataProvider(~DataProvider::TYPE_SCALAR))->provide();
+        return (new DataProvider(~DataProvider::TYPE_SCALAR))
+            ->map(fn($value) => [$value, AssertScalar::new()])
+            ->provide(false);
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @throws ParsingException
-     * @throws ParserConfigurationException
-     * @dataProvider provideInvalidValues
-     */
-    public function testThatItBlocksNonScalarValues($value): void
+    public function testStaticCreation(): void
     {
-        $this->expectException(ParsingException::class);
-        (new AssertScalar())->parse($value);
+        self::assertInstanceOf(AssertScalar::class, AssertScalar::new());
     }
-
-    /**
-     * @return array
-     * @throws \Exception
-     */
-    public function provideValidValues(): array
-    {
-        return (new DataProvider(DataProvider::TYPE_SCALAR))->provide();
-    }
-
-    /**
-     * @param mixed $value
-     *
-     * @throws ParsingException
-     * @throws ParserConfigurationException
-     * @dataProvider provideValidValues
-     */
-    public function testThatItAllowsScalarValues($value): void
-    {
-        self::assertTrue(DataProvider::isSame($value, (new AssertScalar())->parse($value)));
-    }
-
-    /**
-     * @throws ParserConfigurationException
-     * @throws ParsingException
-     */
-    public function testWithExceptionMessage(): void
-    {
-        $msg = 'msg';
-        $this->expectException(ParsingException::class);
-        $this->expectExceptionMessage($msg);
-        (new AssertScalar())->setExceptionMessage($msg)->parse(new \stdClass());
-    }
-
-    public function testAllSetTypeExceptionMessageReplacers(): void
-    {
-        $this->expectException(ParsingException::class);
-        $this->expectExceptionMessage(
-            'Array array array(0)'
-        );
-        (new AssertScalar())
-            ->setExceptionMessage('{value} {value.type} {value.debug}')
-            ->parse([]);
-    }
-
 }

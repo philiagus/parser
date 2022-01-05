@@ -12,15 +12,27 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Base\Chainable;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Contract\ChainableParser;
 
-class Any extends Parser
+class Any implements ChainableParser
 {
+    use Chainable;
+
+    private function __construct()
+    {
+    }
+
     /**
-     * @inheritDoc
+     * @return static
      */
-    protected function execute($value, Path $path)
+    public static function new(): self
+    {
+        return new self();
+    }
+
+    public function parse($value, Path $path = null)
     {
         return $value;
     }

@@ -16,15 +16,10 @@ use Philiagus\Parser\Base\Path;
 
 class OneOfParsingException extends MultipleParsingException
 {
-    /**
-     * @var mixed[]
-     */
-    private $sameOptions;
 
-    /**
-     * @var mixed[]
-     */
-    private $equalsOptions;
+    private array $sameOptions;
+
+    private array $equalsOptions;
 
     /**
      * MultipleParsingException constructor.

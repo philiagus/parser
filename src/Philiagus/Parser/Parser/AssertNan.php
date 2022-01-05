@@ -12,43 +12,42 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Base\Chainable;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Contract\ChainableParser;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
 
-class AssertNan extends Parser
+class AssertNan implements ChainableParser
 {
+    use Chainable;
 
-    /**
-     * @var string
-     */
-    private $exceptionMessage = 'Provided value is not NAN';
+    /** @var string */
+    private string $exceptionMessage;
+
+    private function __construct(string $message)
+    {
+        $this->exceptionMessage = $message;
+    }
 
     /**
      * Sets the exception message to be thrown when the provided value is not NAN
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - value: The value currently being parsed
      *
-     * @param string $message
+     * @param string $notNanExceptionMessage
      *
      * @return $this
      * @see Debug::parseMessage()
      *
      */
-    public function setExceptionMessage(string $message): self
+    public static function new(string $notNanExceptionMessage = 'Provided value is not NAN'): self
     {
-        $this->exceptionMessage = $message;
-
-        return $this;
+        return new self($notNanExceptionMessage);
     }
 
-    /**
-     * @inheritdoc
-     */
-    protected function execute($value, Path $path)
+    public function parse($value, ?Path $path = null)
     {
-
         if (is_float($value) && is_nan($value)) return NAN;
 
         throw new ParsingException(

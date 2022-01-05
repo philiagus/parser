@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * This file is part of philiagus/parser
  *
  * (c) Andreas Bittner <philiagus@philiagus.de>
@@ -13,32 +13,28 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
-use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Parser\Any;
+use Philiagus\Parser\Test\ChainableParserTest;
+use Philiagus\Parser\Test\ValidValueParserTest;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Philiagus\Parser\Parser\Any
+ */
 class AnyTest extends TestCase
 {
-    public function testThatItExtendsBaseParser(): void
+    use ChainableParserTest, ValidValueParserTest;
+
+    public function provideValidValuesAndParsersAndResults(): array
     {
-        self::assertTrue((new Any()) instanceof Parser);
+        $parser = Any::new();
+        return (new DataProvider())
+            ->map(fn($value) => [$value, $parser, $value])
+            ->provide(false);
     }
 
-    public function provideAnyValue(): array
+    public function testStaticCreation(): void
     {
-        return (new DataProvider())->provide();
+        self::assertInstanceOf(Any::class, Any::new());
     }
-
-    /**
-     * @param $value
-     *
-     * @throws \Philiagus\Parser\Exception\ParserConfigurationException
-     * @throws \Philiagus\Parser\Exception\ParsingException
-     * @dataProvider provideAnyValue
-     */
-    public function testItAcceptsAnyValue($value): void
-    {
-        self::assertTrue(DataProvider::isSame($value, Any::new()->parse($value)));
-    }
-
 }

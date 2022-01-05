@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * This file is part of philiagus/parser
  *
  * (c) Andreas Bittner <philiagus@philiagus.de>
@@ -13,85 +13,39 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
-use Philiagus\Parser\Base\Parser;
-use Philiagus\Parser\Exception\ParserConfigurationException;
-use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\AssertNan;
+use Philiagus\Parser\Test\ChainableParserTest;
+use Philiagus\Parser\Test\InvalidValueParserTest;
+use Philiagus\Parser\Test\ValidValueParserTest;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Philiagus\Parser\Parser\AssertNan
+ */
 class AssertNanTest extends TestCase
 {
+    use ChainableParserTest, ValidValueParserTest, InvalidValueParserTest;
 
-    public function testThatItExtendsBaseParser(): void
+    public function provideValidValuesAndParsersAndResults(): array
     {
-        self::assertTrue((new AssertNan()) instanceof Parser);
+        return (new DataProvider(DataProvider::TYPE_NAN))
+            ->map(function ($value) {
+                return [$value, AssertNan::new(), $value];
+            })
+            ->provide(false);
     }
 
-    /**
-     * @return array
-     * @throws \Exception
-     */
-    public function provideInvalidValues(): array
+    public function provideInvalidValuesAndParsers(): array
     {
-        return (new DataProvider(~DataProvider::TYPE_NAN))->provide();
+        return (new DataProvider(~DataProvider::TYPE_NAN))
+            ->map(function ($value) {
+                return [$value, AssertNan::new()];
+            })
+            ->provide(false);
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @throws ParsingException
-     * @throws ParserConfigurationException
-     * @dataProvider provideInvalidValues
-     */
-    public function testThatItBlocksNonNanValues($value): void
+    public function testStaticConstructor(): void
     {
-        $this->expectException(ParsingException::class);
-        (new AssertNan())->parse($value);
+        self::assertInstanceOf(AssertNan::class, AssertNan::new());
     }
-
-    /**
-     * @return array
-     * @throws \Exception
-     */
-    public function provideValidValues(): array
-    {
-        return (new DataProvider(DataProvider::TYPE_NAN))->provide();
-    }
-
-    /**
-     * @param mixed $value
-     *
-     * @throws ParsingException
-     * @throws ParserConfigurationException
-     * @dataProvider provideValidValues
-     */
-    public function testThatItAllowsNanValues($value): void
-    {
-        $result = (new AssertNan())->parse($value);
-        self::assertNan($result);
-    }
-
-    /**
-     * @throws ParserConfigurationException
-     * @throws ParsingException
-     */
-    public function testWithExceptionMessage(): void
-    {
-        $msg = 'msg';
-        $this->expectException(ParsingException::class);
-        $this->expectExceptionMessage($msg);
-        (new AssertNan())->setExceptionMessage($msg)->parse(false);
-    }
-
-    public function testAllSetTypeExceptionMessageReplacers(): void
-    {
-        $this->expectException(ParsingException::class);
-        $this->expectExceptionMessage(
-            'hello string string<ASCII>(5)"hello"'
-        );
-        (new AssertNan())
-            ->setExceptionMessage('{value} {value.type} {value.debug}')
-            ->parse('hello');
-    }
-
 }

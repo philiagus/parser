@@ -16,6 +16,9 @@ use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Path\MetaInformation;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Philiagus\Parser\Path\MetaInformation
+ */
 class MetaInformationTest extends TestCase
 {
 

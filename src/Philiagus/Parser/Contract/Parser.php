@@ -26,5 +26,5 @@ interface Parser
      * @throws ParserConfigurationException
      * @throws ParsingException
      */
-    public function parse($value, Path $path = null);
+    public function parse($value, ?Path $path = null);
 }

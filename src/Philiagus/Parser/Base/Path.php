@@ -12,37 +12,53 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Base;
 
-use Philiagus\Parser\Path\Index;
-use Philiagus\Parser\Path\Key;
+use Philiagus\Parser\Path\ArrayElement;
+use Philiagus\Parser\Path\ArrayKey;
 use Philiagus\Parser\Path\MetaInformation;
-use Philiagus\Parser\Path\Property;
 use Philiagus\Parser\Path\PropertyName;
+use Philiagus\Parser\Path\PropertyValue;
+use Philiagus\Parser\Path\Root;
 
 abstract class Path
 {
 
-    /**
-     * @var string
-     */
-    private $name;
+    private string $name;
+
+    private ?Path $parent;
 
     /**
-     * @var self|null
+     * Path constructor.
+     *
+     * @param string $name
+     * @param Path|null $parent
      */
-    private $parent;
-
-    final public function __construct(string $name, self $parent = null)
+    public function __construct(string $name, self $parent = null)
     {
         $this->name = $name;
         $this->parent = $parent;
     }
 
+    /**
+     * Returns the default Path to use if no path is provided
+     *
+     * @return static
+     */
+    public static function default(): self
+    {
+        return new Root();
+    }
+
+    /**
+     * @return string
+     */
     final public function getName(): string
     {
         return $this->name;
     }
 
     /**
+     * Returns the parent of this path or null if no parent is set
+     *
      * @return Path|null
      */
     final public function getParent(): ?Path
@@ -67,11 +83,23 @@ abstract class Path
         return $return;
     }
 
+    /**
+     * Implementation of the magic __toString method, calls toString internally
+     *
+     * @return string
+     * @see Path::toString()
+     */
     final public function __toString(): string
     {
         return $this->toString();
     }
 
+    /**
+     * Returns a string representation of the path, concatenating every level of  the path using the
+     * delimiters defined in the paths
+     *
+     * @return string
+     */
     final public function toString(): string
     {
         if (!$this->parent) {
@@ -81,28 +109,69 @@ abstract class Path
         return $this->parent->toString() . $this->getDelimiter() . $this->name;
     }
 
+    /**
+     * Returns the delimiter used for this Path element.
+     * Example: "parent->child" - in this case the "->" would be the delimiter of the child
+     *
+     * @return string
+     */
     abstract protected function getDelimiter(): string;
 
-    public function property(string $name): Property
+    /**
+     * Used when handing over the value of a property to another parser
+     *
+     * @param string $name
+     *
+     * @return PropertyValue
+     */
+    public function propertyValue(string $name): PropertyValue
     {
-        return new Property($name, $this);
+        return new PropertyValue($name, $this);
     }
 
+    /**
+     * Used when handing over meta information of a value such as the length of a string to another parser
+     *
+     * @param string $name
+     *
+     * @return MetaInformation
+     */
     public function meta(string $name): MetaInformation
     {
         return new MetaInformation($name, $this);
     }
 
-    public function index(string $index): Index
+    /**
+     * Used when handing over the value of a key of an array to another parser
+     *
+     * @param string $index
+     *
+     * @return ArrayElement
+     */
+    public function arrayElement(string $index): ArrayElement
     {
-        return new Index($index, $this);
+        return new ArrayElement($index, $this);
     }
 
-    public function key(string $key): Key
+    /**
+     * Used when handing over the key of an array to another parser
+     *
+     * @param string $key
+     *
+     * @return ArrayKey
+     */
+    public function arrayKey(string $key): ArrayKey
     {
-        return new Key($key, $this);
+        return new ArrayKey($key, $this);
     }
 
+    /**
+     * Used when handing over the name of a property to another parser
+     *
+     * @param string $name
+     *
+     * @return PropertyName
+     */
     public function propertyName(string $name): PropertyName
     {
         return new PropertyName($name, $this);

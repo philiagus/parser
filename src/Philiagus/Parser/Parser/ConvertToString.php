@@ -12,25 +12,34 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Base\Chainable;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Contract\ChainableParser;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
 
-class ConvertToString extends Parser
+class ConvertToString implements ChainableParser
 {
+    use Chainable;
 
-    private $typeExceptionMessage = 'Variable of type {value.type} could not be converted to a string';
+    /** @var string */
+    private string $typeExceptionMessage = 'Variable of type {value.type} could not be converted to a string';
 
-    /**
-     * @var array|null
-     */
-    private $booleanValues = null;
+    /** @var array|null */
+    private ?array $booleanValues = null;
 
-    /**
-     * @var null|string[]
-     */
-    private $implode = null;
+    /** @var null|string[] */
+    private ?array $implode = null;
+
+    private function __construct()
+    {
+
+    }
+
+    public static function new(): self
+    {
+        return new self();
+    }
 
     /**
      * Sets the exception message when the value could not be converted to a string
@@ -91,10 +100,7 @@ class ConvertToString extends Parser
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function execute($value, Path $path)
+    public function parse($value, ?Path $path = null)
     {
         if (is_string($value)) {
             return $value;

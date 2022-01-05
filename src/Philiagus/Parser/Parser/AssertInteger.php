@@ -12,25 +12,36 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Base\Chainable;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Contract\ChainableParser;
 use Philiagus\Parser\Exception;
 use Philiagus\Parser\Util\Debug;
 
-class AssertInteger extends Parser
+class AssertInteger implements ChainableParser
 {
-    /**
-     * @var string
-     */
-    private $typeExceptionMessage = 'Provided value is not of type integer';
+    use Chainable;
+
+    /** @var string */
+    private string $typeExceptionMessage = 'Provided value is not of type integer';
+
+    /** @var callable[] */
+    private array $assertionList = [];
+
+    private function __construct()
+    {
+    }
 
     /**
-     * @var callable[]
+     * @return self
      */
-    private $assertionList = [];
+    public static function new(): self
+    {
+        return new self();
+    }
 
     /**
-     * Sets the exception message thrown when the type does not match
+     * Defines the exception message to use if the value is not a string
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - value: The value currently being parsed
@@ -58,13 +69,13 @@ class AssertInteger extends Parser
      * @param int $minimum
      * @param string $exceptionMessage
      *
-     * @return AssertInteger
+     * @return $this
      * @see Debug::parseMessage()
      *
      */
-    public function withMinimum(int $minimum, string $exceptionMessage = 'Provided value {value.debug} is lower than the defined minimum of {min}'): self
+    public function assertMinimum(int $minimum, string $exceptionMessage = 'Provided value {value.debug} is lower than the defined minimum of {min}'): self
     {
-        $this->assertionList[] = function (int $value, Path $path) use ($minimum, $exceptionMessage) {
+        $this->assertionList[] = function (int $value, ?Path $path) use ($minimum, $exceptionMessage) {
             if ($minimum > $value) {
                 throw new Exception\ParsingException(
                     $value,
@@ -91,9 +102,9 @@ class AssertInteger extends Parser
      * @see Debug::parseMessage()
      *
      */
-    public function withMaximum(int $maximum, string $exceptionMessage = 'Provided value {value.debug} is greater than the defined maximum of {max}}'): self
+    public function assertMaximum(int $maximum, string $exceptionMessage = 'Provided value {value.debug} is greater than the defined maximum of {max}}'): self
     {
-        $this->assertionList[] = function (int $value, Path $path) use ($maximum, $exceptionMessage) {
+        $this->assertionList[] = function (int $value, ?Path $path) use ($maximum, $exceptionMessage) {
             if ($maximum < $value) {
                 throw new Exception\ParsingException(
                     $value,
@@ -120,12 +131,12 @@ class AssertInteger extends Parser
      * @see Debug::parseMessage()
      *
      */
-    public function withMultipleOf(
-        int $base,
+    public function assertMultipleOf(
+        int    $base,
         string $exceptionMessage = 'Provided value {value.debug} is not a multiple of {base}'
     ): self
     {
-        $this->assertionList[] = function (int $value, Path $path) use ($base, $exceptionMessage) {
+        $this->assertionList[] = function (int $value, ?Path $path) use ($base, $exceptionMessage) {
             if ($value === 0 && $base === 0) return;
             if (($value % $base) !== 0) {
                 throw new Exception\ParsingException(
@@ -139,10 +150,7 @@ class AssertInteger extends Parser
         return $this;
     }
 
-    /**
-     * @inheritdoc
-     */
-    protected function execute($value, Path $path)
+    public function parse($value, Path $path = null)
     {
         if (!is_int($value)) {
             throw new Exception\ParsingException(

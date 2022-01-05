@@ -17,6 +17,9 @@ use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Path\Root;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Philiagus\Parser\Exception\MultipleParsingException
+ */
 class MultipleParsingExceptionTest extends TestCase
 {
 

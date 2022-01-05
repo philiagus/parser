@@ -12,18 +12,33 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Base\Chainable;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Contract\ChainableParser;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
 
-class AssertScalar extends Parser
+class AssertScalar implements ChainableParser
 {
+    use Chainable;
 
-    private $exceptionMessage = 'Provided value is not scalar';
+    /** @var string */
+    private string $typeExceptionMessage = 'Provided value is not scalar';
+
+    private function __construct()
+    {
+    }
 
     /**
-     * Defines the exception message to be thrown if the value is not scalar
+     * @return self
+     */
+    public static function new(): self
+    {
+        return new self();
+    }
+
+    /**
+     * Defines the exception message to use if the value is not a string
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - value: The value currently being parsed
@@ -34,23 +49,20 @@ class AssertScalar extends Parser
      * @see Debug::parseMessage()
      *
      */
-    public function setExceptionMessage(string $message): self
+    public function setTypeExceptionMessage(string $message): self
     {
-        $this->exceptionMessage = $message;
+        $this->typeExceptionMessage = $message;
 
         return $this;
     }
 
-    /**
-     * @inheritdoc
-     */
-    protected function execute($value, Path $path)
+    public function parse($value, ?Path $path = null)
     {
         if (is_scalar($value)) return $value;
 
         throw new ParsingException(
             $value,
-            Debug::parseMessage($this->exceptionMessage, ['value' => $value]),
+            Debug::parseMessage($this->typeExceptionMessage, ['value' => $value]),
             $path
         );
     }

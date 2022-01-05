@@ -16,6 +16,9 @@ use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Path\PropertyName;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Philiagus\Parser\Path\PropertyName
+ */
 class PropertyNameTest extends TestCase
 {
 

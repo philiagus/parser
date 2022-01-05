@@ -12,36 +12,50 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Base\Chainable;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Contract\ChainableParser;
 use Philiagus\Parser\Exception;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
 
-class AssertNumber extends Parser
+class AssertNumber implements ChainableParser
 {
+    use Chainable;
+
+    /** @var string */
+    private string $typeExceptionMessage = 'Provided value is not of float or integer';
+
+    /** @var callable[] */
+    private array $assertionList = [];
+
+    private function __construct()
+    {
+    }
+
     /**
-     * @var string
+     * @return self
      */
-    private $typeExceptionMessage = 'Provided value is not of float or integer';
-
-    private $assertionList = [];
+    public static function new(): self
+    {
+        return new self();
+    }
 
     /**
-     * Sets the exception message thrown when the type does not match
+     * Defines the exception message to use if the value is not a string
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - value: The value currently being parsed
      *
-     * @param string $exceptionMessage
+     * @param string $message
      *
      * @return $this
      * @see Debug::parseMessage()
      *
      */
-    public function setTypeExceptionMessage(string $exceptionMessage): self
+    public function setTypeExceptionMessage(string $message): self
     {
-        $this->typeExceptionMessage = $exceptionMessage;
+        $this->typeExceptionMessage = $message;
 
         return $this;
     }
@@ -61,7 +75,7 @@ class AssertNumber extends Parser
      * @see Debug::parseMessage()
      *
      */
-    public function withMinimum($minimum, string $exceptionMessage = 'Provided value of {value} is lower than the defined minimum of {min}'): self
+    public function assertMinimum($minimum, string $exceptionMessage = 'Provided value of {value} is lower than the defined minimum of {min}'): self
     {
         if (
             (!is_int($minimum) && !is_float($minimum)) ||
@@ -75,7 +89,7 @@ class AssertNumber extends Parser
             throw new Exception\ParserConfigurationException('The minimum for a numeric value must be provided as integer or float');
         }
 
-        $this->assertionList[] = function ($value, Path $path) use ($minimum, $exceptionMessage) {
+        $this->assertionList[] = function ($value, ?Path $path) use ($minimum, $exceptionMessage) {
             if ($minimum > $value) {
                 throw new Exception\ParsingException(
                     $value,
@@ -103,7 +117,7 @@ class AssertNumber extends Parser
      * @see Debug::parseMessage()
      *
      */
-    public function withMaximum($maximum, string $exceptionMessage = 'Provided value of {value} is greater than the defined maximum of {max}}'): self
+    public function assertMaximum($maximum, string $exceptionMessage = 'Provided value of {value} is greater than the defined maximum of {max}}'): self
     {
         if (
             (!is_int($maximum) && !is_float($maximum)) ||
@@ -117,7 +131,7 @@ class AssertNumber extends Parser
             throw new Exception\ParserConfigurationException('The maximum for a numeric value must be provided as integer or float');
         }
 
-        $this->assertionList[] = function ($value, Path $path) use ($maximum, $exceptionMessage) {
+        $this->assertionList[] = function ($value, ?Path $path) use ($maximum, $exceptionMessage) {
             if ($maximum < $value) {
                 throw new Exception\ParsingException(
                     $value,
@@ -130,10 +144,7 @@ class AssertNumber extends Parser
         return $this;
     }
 
-    /**
-     * @inheritdoc
-     */
-    protected function execute($value, Path $path)
+    public function parse($value, ?Path $path = null)
     {
         if (
             (!is_float($value) && !is_int($value)) ||
@@ -157,5 +168,4 @@ class AssertNumber extends Parser
 
         return $value;
     }
-
 }

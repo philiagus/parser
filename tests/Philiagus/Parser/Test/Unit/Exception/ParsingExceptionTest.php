@@ -14,9 +14,14 @@ namespace Philiagus\Parser\Test\Unit\Exception;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Parser\Any;
+use Philiagus\Parser\Parser\Logic\OverwriteParsingException;
 use Philiagus\Parser\Path\Root;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Philiagus\Parser\Exception\ParsingException
+ */
 class ParsingExceptionTest extends TestCase
 {
     public function testWithoutPrevious(): void
@@ -58,5 +63,16 @@ class ParsingExceptionTest extends TestCase
     {
         $exceptionValue = (new ParsingException($value, 'message', new Root('')))->getValue();
         self::assertTrue(DataProvider::isSame($value, $exceptionValue));
+    }
+
+    public function testStaticOverwriteCreator(): void
+    {
+        $message = 'message';
+        $around = Any::new();
+        self::assertEquals(
+            OverwriteParsingException::withMessage($message, $around),
+            ParsingException::overwriteAround($message, $around)
+        );
+
     }
 }

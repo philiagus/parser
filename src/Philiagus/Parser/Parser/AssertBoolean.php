@@ -12,8 +12,9 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Base\Chainable;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Contract\ChainableParser;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
 
@@ -22,14 +23,27 @@ use Philiagus\Parser\Util\Debug;
  *
  * @package Philiagus\Parser
  */
-class AssertBoolean
-    extends Parser
+class AssertBoolean implements ChainableParser
 {
+    use Chainable;
 
-    private $typeExceptionMessage = 'Provided value is not a boolean';
+    /** @var string */
+    private string $typeExceptionMessage = 'Provided value is not a boolean';
+
+    private function __construct()
+    {
+    }
 
     /**
-     * Sets the exception message sent when the input value is not a bool
+     * @return self
+     */
+    public static function new(): self
+    {
+        return new self();
+    }
+
+    /**
+     * Defines the exception message to use if the value is not a string
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - value: The value currently being parsed
@@ -47,11 +61,7 @@ class AssertBoolean
         return $this;
     }
 
-
-    /**
-     * @inheritdoc
-     */
-    protected function execute($value, Path $path)
+    public function parse($value, Path $path = null)
     {
         if (is_bool($value)) return $value;
 
@@ -60,6 +70,5 @@ class AssertBoolean
             Debug::parseMessage($this->typeExceptionMessage, ['value' => $value]),
             $path
         );
-
     }
 }

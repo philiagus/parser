@@ -12,39 +12,50 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Base\Chainable;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Contract\ChainableParser;
 use Philiagus\Parser\Exception;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
 
-class AssertFloat extends Parser
+class AssertFloat implements ChainableParser
 {
-    /**
-     * @var string
-     */
-    private $typeExceptionMessage = 'Provided value is not of type float';
+    use Chainable;
+
+    /** @var string */
+    private string $typeExceptionMessage = 'Provided value is not of type float';
+
+    /** @var callable[] */
+    private array $assertionList = [];
+
+    private function __construct()
+    {
+    }
 
     /**
-     * @var callable[]
+     * @return self
      */
-    private $assertionList = [];
+    public static function new(): self
+    {
+        return new self();
+    }
 
     /**
-     * Sets the exception message thrown when the type does not match
+     * Defines the exception message to use if the value is not a string
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - value: The value currently being parsed
      *
-     * @param string $exceptionMessage
+     * @param string $message
      *
      * @return $this
      * @see Debug::parseMessage()
      *
      */
-    public function setTypeExceptionMessage(string $exceptionMessage): self
+    public function setTypeExceptionMessage(string $message): self
     {
-        $this->typeExceptionMessage = $exceptionMessage;
+        $this->typeExceptionMessage = $message;
 
         return $this;
     }
@@ -64,13 +75,13 @@ class AssertFloat extends Parser
      * @see Debug::parseMessage()
      *
      */
-    public function withMinimum(float $minimum, string $exceptionMessage = 'Provided value of {value} is lower than the defined minimum of {min}'): self
+    public function assertMinimum(float $minimum, string $exceptionMessage = 'Provided value of {value} is lower than the defined minimum of {min}'): self
     {
         if (is_nan($minimum) || is_infinite($minimum)) {
             throw new Exception\ParserConfigurationException('Minimum must be set as a float number value. NAN and INF are not allowed');
         }
 
-        $this->assertionList[] = function (float $value, Path $path) use ($minimum, $exceptionMessage) {
+        $this->assertionList[] = function (float $value, ?Path $path) use ($minimum, $exceptionMessage) {
             if ($minimum > $value) {
                 throw new Exception\ParsingException(
                     $value,
@@ -98,13 +109,13 @@ class AssertFloat extends Parser
      * @see Debug::parseMessage()
      *
      */
-    public function withMaximum(float $maximum, string $exceptionMessage = 'Provided value of {value} is greater than the defined maximum of {max}}'): self
+    public function assertMaximum(float $maximum, string $exceptionMessage = 'Provided value of {value} is greater than the defined maximum of {max}}'): self
     {
         if (is_nan($maximum) || is_infinite($maximum)) {
             throw new Exception\ParserConfigurationException('Maximum must be set as a float number value. NAN and INF are not allowed');
         }
 
-        $this->assertionList[] = function (float $value, Path $path) use ($maximum, $exceptionMessage) {
+        $this->assertionList[] = function (float $value, ?Path $path) use ($maximum, $exceptionMessage) {
             if ($maximum < $value) {
                 throw new Exception\ParsingException(
                     $value,
@@ -117,10 +128,7 @@ class AssertFloat extends Parser
         return $this;
     }
 
-    /**
-     * @inheritdoc
-     */
-    protected function execute($value, Path $path)
+    public function parse($value, Path $path = null)
     {
         if (!is_float($value) || is_nan($value) || is_infinite($value)) {
             throw new ParsingException(

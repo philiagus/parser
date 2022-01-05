@@ -12,45 +12,100 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Base\Chainable;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Contract\ChainableParser;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
 
-class AssertInfinite extends Parser
+class AssertInfinite implements ChainableParser
 {
+    use Chainable;
 
+    /** @var string */
+    private string $exceptionMessage;
 
-    private $exceptionMessage = 'Provided value is not INF';
+    private ?bool $assertPositive = null;
+    private ?string $assertSignMessage = null;
+
+    private function __construct(string $exceptionMessage)
+    {
+        $this->exceptionMessage = $exceptionMessage;
+    }
 
     /**
      * Sets the exception message sent when the input value is not an infinite value
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - value: The value currently being parsed
      *
-     * @param string $message
+     * @param string $notInfiniteExceptionMessage
      *
      * @return $this
      * @see Debug::parseMessage()
      */
-    public function setExceptionMessage(string $message): self
+    public static function new(string $notInfiniteExceptionMessage = 'Provided value is not INF'): self
     {
-        $this->exceptionMessage = $message;
+        return new self($notInfiniteExceptionMessage);
+    }
+
+    /**
+     * Sets the parser to assert that the infinite value is positiv, so +INF
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     *
+     * @param string $notPositiveMessage
+     *
+     * @return $this
+     */
+    public function setAssertSignToPositive(
+        string $notPositiveMessage = 'Provided value is not positive infinity'
+    ): self
+    {
+        $this->assertPositive = true;
+        $this->assertSignMessage = $notPositiveMessage;
 
         return $this;
     }
 
     /**
-     * @inheritdoc
+     * Sets the parser to assert that the infinite value is negative, so -INF
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     *
+     * @param string $notNegativeMessage
+     *
+     * @return $this
+     * @see Debug::parseMessage()
      */
-    protected function execute($value, Path $path)
+    public function setAssertSignToNegative(
+        string $notNegativeMessage = 'Provided value is not negative infinity'
+    ): self
     {
-        if (is_float($value) && is_infinite($value)) return $value;
+        $this->assertPositive = false;
+        $this->assertSignMessage = $notNegativeMessage;
 
-        throw new ParsingException(
-            $value,
-            Debug::parseMessage($this->exceptionMessage, ['value' => $value]),
-            $path
-        );
+        return $this;
+    }
+
+    public function parse($value, Path $path = null): float
+    {
+        if (!is_float($value) || !is_infinite($value)) {
+            throw new ParsingException(
+                $value,
+                Debug::parseMessage($this->exceptionMessage, ['value' => $value]),
+                $path
+            );
+        }
+        if ($this->assertPositive !== null) {
+            if (($value > 0) !== $this->assertPositive) {
+                throw new ParsingException(
+                    $value,
+                    Debug::parseMessage($this->assertSignMessage, ['value' => $value]),
+                    $path
+                );
+            }
+        }
+
+        return $value;
     }
 }

@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * This file is part of philiagus/parser
  *
  * (c) Andreas Bittner <philiagus@philiagus.de>
@@ -13,84 +13,71 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
-use Philiagus\Parser\Base\Parser;
-use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\AssertInfinite;
+use Philiagus\Parser\Test\ChainableParserTest;
+use Philiagus\Parser\Test\InvalidValueParserTest;
+use Philiagus\Parser\Test\ValidValueParserTest;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Philiagus\Parser\Parser\AssertInfinite
+ */
 class AssertInfiniteTest extends TestCase
 {
-    public function testThatItExtendsBaseParser(): void
+    use ChainableParserTest, ValidValueParserTest, InvalidValueParserTest;
+
+    public function provideValidValuesAndParsersAndResults(): array
     {
-        self::assertTrue((new AssertInfinite()) instanceof Parser);
+        $parser = AssertInfinite::new();
+
+        return (new DataProvider(DataProvider::TYPE_INFINITE))
+            ->map(fn($value) => [$value, $parser, $value])
+            ->provide(false);
     }
 
-    /**
-     * @return array
-     * @throws \Exception
-     */
-    public function provideInvalidValues(): array
+    public function provideInvalidValuesAndParsers(): array
     {
-        return (new DataProvider(~DataProvider::TYPE_INFINITE))->provide();
+        $parser = AssertInfinite::new();
+
+        return (new DataProvider(~DataProvider::TYPE_INFINITE))
+            ->map(fn($value) => [$value, $parser])
+            ->provide(false);
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @throws ParsingException
-     * @throws ParserConfigurationException
-     * @dataProvider provideInvalidValues
-     */
-    public function testThatItBlocksNonInfiniteValues($value): void
+    public function testAssertPositiveSuccess(): void
     {
-        $this->expectException(ParsingException::class);
-        (new AssertInfinite())->parse($value);
-    }
-
-    /**
-     * @return array
-     * @throws \Exception
-     */
-    public function provideValidValues(): array
-    {
-        return (new DataProvider(DataProvider::TYPE_INFINITE))->provide();
-    }
-
-    /**
-     * @param mixed $value
-     *
-     * @throws ParsingException
-     * @throws ParserConfigurationException
-     * @dataProvider provideValidValues
-     */
-    public function testThatItAllowsInfiniteValues($value): void
-    {
-        $result = (new AssertInfinite())->parse($value);
-        self::assertSame($value, $result);
-    }
-
-    /**
-     * @throws ParserConfigurationException
-     * @throws ParsingException
-     */
-    public function testWithExceptionMessage(): void
-    {
-        $msg = 'msg';
-        $this->expectException(ParsingException::class);
-        $this->expectExceptionMessage($msg);
-        (new AssertInfinite())->setExceptionMessage($msg)->parse(false);
-    }
-
-    public function testAllSetTypeExceptionMessageReplacers(): void
-    {
-        $this->expectException(ParsingException::class);
-        $this->expectExceptionMessage(
-            'hello string string<ASCII>(5)"hello"'
+        self::assertInfinite(
+            AssertInfinite::new()
+                ->setAssertSignToPositive()
+                ->parse(INF)
         );
-        (new AssertInfinite())
-            ->setExceptionMessage('{value} {value.type} {value.debug}')
-            ->parse('hello');
     }
 
+    public function testAssertNegativeSuccess(): void
+    {
+        self::assertInfinite(
+            AssertInfinite::new()
+                ->setAssertSignToNegative()
+                ->parse(-INF)
+        );
+    }
+
+    public function testAssertPositiveException(): void
+    {
+        self::expectException(ParsingException::class);
+        self::expectExceptionMessage('Value: -INF');
+        AssertInfinite::new()
+            ->setAssertSignToPositive('Value: {value.raw}')
+            ->parse(-INF);
+    }
+
+    public function testAssertNegativeException(): void
+    {
+        self::expectException(ParsingException::class);
+        self::expectExceptionMessage('Value: INF');
+        AssertInfinite::new()
+            ->setAssertSignToNegative('Value: {value.raw}')
+            ->parse(INF);
+    }
 }

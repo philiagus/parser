@@ -16,7 +16,7 @@
         }
     ],
     "require": {
-        "php": ">=7.3",
+        "php": ">=7.4",
         "ext-json": "*",
         "ext-mbstring": "*"
     },
@@ -35,7 +35,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Philiagus\\Parser\\Test\\": "tests/Philiagus/Parser/Test"
+            "Philiagus\\Parser\\Test\\Unit\\": "tests/Philiagus/Parser/Test/Unit",
+            "Philiagus\\Parser\\Test\\Integration\\": "tests/Philiagus/Parser/Test/Integration"
         }
     }
 }

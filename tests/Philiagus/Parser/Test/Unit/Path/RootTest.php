@@ -13,9 +13,13 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Path;
 
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Path\MetaInformation;
 use Philiagus\Parser\Path\Root;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Philiagus\Parser\Path\Root
+ */
 class RootTest extends TestCase
 {
 
@@ -27,12 +31,12 @@ class RootTest extends TestCase
     public function testStringConcat()
     {
         $parent = new Root('parent');
-        $path = new Root('Child', $parent);
+        $path = new MetaInformation('Child', $parent);
         self::assertSame([$parent, $path], $path->flat());
         self::assertSame('Child', $path->getName());
         self::assertSame($parent, $path->getParent());
-        self::assertSame('parentChild', $path->toString());
-        self::assertSame('parentChild', (string) $path);
+        self::assertSame('parent Child', $path->toString());
+        self::assertSame('parent Child', (string) $path);
     }
 
 }

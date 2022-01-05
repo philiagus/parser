@@ -12,32 +12,33 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Base\Chainable;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Contract\ChainableParser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 
-class ConvertToArray extends Parser
+class ConvertToArray implements ChainableParser
 {
+    use Chainable;
+
     public const CONVERSION_ARRAY_CAST = 1;
     public const CONVERSION_ARRAY_WITH_KEY = 2;
 
     /**
-     * @var null|1|2
-     */
-    private $convertNonArrays = null;
-
-    /**
      * @var string|int|null
      */
-    private $convertNonArraysOption = null;
+    private $targetedArrayKey = null;
+
+    private function __construct()
+    {
+    }
 
     /**
      * @return static
      */
     public static function usingCast(): self
     {
-        return (new self())
-            ->setConvertToUseCast();
+        return new self();
     }
 
     /**
@@ -48,59 +49,25 @@ class ConvertToArray extends Parser
      */
     public static function creatingArrayWithKey($key): self
     {
-        return (new self())
-            ->setConvertToCreateArrayWithKey($key);
-    }
-
-    /**
-     * @return $this
-     */
-    public function setConvertToUseCast(): self
-    {
-        $this->convertNonArrays = self::CONVERSION_ARRAY_CAST;
-        $this->convertNonArraysOption = null;
-
-        return $this;
-    }
-
-    /**
-     * @param $key
-     *
-     * @return $this
-     * @throws ParserConfigurationException
-     */
-    public function setConvertToCreateArrayWithKey($key): self
-    {
         if (!is_string($key) && !is_int($key)) {
             throw new ParserConfigurationException('Array key can only be string or integer');
         }
+        $instance = new self();
+        $instance->targetedArrayKey = $key;
 
-        $this->convertNonArrays = self::CONVERSION_ARRAY_WITH_KEY;
-        $this->convertNonArraysOption = $key;
-
-        return $this;
+        return $instance;
     }
 
-    /**
-     * @inheritdoc
-     */
-    protected function execute($value, Path $path)
+    public function parse($value, ?Path $path = null)
     {
-        if($this->convertNonArrays === null) {
-            throw new ParserConfigurationException(
-                'ConvertToArray parser was not configured with a conversion type'
-            );
+        if (is_array($value)) {
+            return $value;
         }
 
-        if(!is_array($value)) {
-            switch ($this->convertNonArrays) {
-                case self::CONVERSION_ARRAY_CAST:
-                    return (array) $value;
-                case self::CONVERSION_ARRAY_WITH_KEY:
-                    return [$this->convertNonArraysOption => $value];
-            }
+        if ($this->targetedArrayKey !== null) {
+            return [$this->targetedArrayKey => $value];
         }
 
-        return $value;
+        return (array) $value;
     }
 }

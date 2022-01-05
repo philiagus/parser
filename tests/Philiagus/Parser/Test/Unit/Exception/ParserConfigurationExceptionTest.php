@@ -15,6 +15,9 @@ namespace Philiagus\Parser\Test\Unit\Exception;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Philiagus\Parser\Exception\ParserConfigurationException
+ */
 class ParserConfigurationExceptionTest extends TestCase
 {
 

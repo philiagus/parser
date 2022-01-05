@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Base\Chainable;
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Exception\ParserConfigurationException;
+use Philiagus\Parser\Contract\ChainableParser;
 
 /**
  * Class Fixed
@@ -23,53 +23,30 @@ use Philiagus\Parser\Exception\ParserConfigurationException;
  *
  * @package Philiagus\Parser\Parser
  */
-class Fixed extends Parser
+class Fixed implements ChainableParser
 {
-    /**
-     * @var mixed
-     */
-    private $value = null;
+    use Chainable;
 
-    /**
-     * @var bool
-     */
-    private $defined = false;
+    /** @var mixed */
+    private $value;
+
+    private function __construct($value)
+    {
+        $this->value = $value;
+    }
 
     /**
      * @param $value
      *
      * @return static
-     * @throws ParserConfigurationException
      */
     public static function value($value): self
     {
-        return self::new()->setValue($value);
+        return new self($value);
     }
 
-    /**
-     * Sets the value this parser is defined as
-     *
-     * @param $value
-     *
-     * @return $this
-     */
-    public function setValue($value): self
+    public function parse($value, ?Path $path = null)
     {
-        $this->value = $value;
-        $this->defined = true;
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function execute($value, Path $path)
-    {
-        if (!$this->defined) {
-            throw new ParserConfigurationException('Fixed value was not defined');
-        }
-
         return $this->value;
     }
 }

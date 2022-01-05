@@ -17,6 +17,11 @@ use Philiagus\Parser\Base\Path;
 class Root extends Path
 {
 
+    public function __construct($name = 'root')
+    {
+        parent::__construct($name);
+    }
+
     protected function getDelimiter(): string
     {
         return '';

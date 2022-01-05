@@ -12,25 +12,37 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Base\Chainable;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Contract\ChainableParser;
+use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Path\Root;
 use Philiagus\Parser\Util\Debug;
 
-class AssertString extends Parser
+class AssertString implements ChainableParser
 {
+    use Chainable;
+
+    /** @var string */
+    private string $typeExceptionMessage = 'Provided value is not of type string';
+
+    /** @var callable[] */
+    private array $assertionList = [];
+
+    private function __construct()
+    {
+    }
 
     /**
-     * @var string
+     * @return self
      */
-    private $typeExceptionMessage = 'Provided value is not of type string';
-
-    /**
-     * @var callable[]
-     */
-    private $assertionList = [];
+    public static function new(): self
+    {
+        return new self();
+    }
 
     /**
      * Defines the exception message to use if the value is not a string
@@ -58,13 +70,31 @@ class AssertString extends Parser
      *
      * @return $this
      */
-    public function withLength(ParserContract $integerParser): self
+    public function giveLength(ParserContract $integerParser): self
     {
         $this->assertionList[] = function (string $value, Path $path) use ($integerParser) {
             $integerParser->parse(strlen($value), $path->meta('length'));
         };
 
         return $this;
+    }
+
+    public function parse($value, ?Path $path = null)
+    {
+        if (!is_string($value)) {
+            throw new ParsingException(
+                $value,
+                Debug::parseMessage($this->typeExceptionMessage, ['value' => $value]),
+                $path
+            );
+        }
+
+        $path = $path ?? new Root();
+        foreach ($this->assertionList as $assertion) {
+            $assertion($value, $path);
+        }
+
+        return $value;
     }
 
     /**
@@ -76,9 +106,9 @@ class AssertString extends Parser
      *
      * @return $this
      */
-    public function withSubstring(
-        int $start,
-        ?int $length,
+    public function giveSubstring(
+        int            $start,
+        ?int           $length,
         ParserContract $stringParser
     ): self
     {
@@ -107,7 +137,7 @@ class AssertString extends Parser
      * @return $this
      * @throws ParserConfigurationException
      */
-    public function withRegex(
+    public function assertRegex(
         string $pattern,
         string $exceptionMessage = 'The string does not match the expected pattern'
     ): self
@@ -149,13 +179,13 @@ class AssertString extends Parser
      *
      * @return $this
      */
-    public function withStartsWith(
+    public function assertStartsWith(
         string $string,
         string $message = 'The string does not start with {expected.debug}'
     ): self
     {
-        $this->assertionList[] = function(string $value, Path $path) use($string, $message) {
-            if(substr($value, 0, strlen($string)) !== $string) {
+        $this->assertionList[] = function (string $value, Path $path) use ($string, $message) {
+            if (substr($value, 0, strlen($string)) !== $string) {
                 throw new ParsingException(
                     $value,
                     Debug::parseMessage($message, ['value' => $value, 'expected' => $string]),
@@ -179,13 +209,13 @@ class AssertString extends Parser
      *
      * @return $this
      */
-    public function withEndsWith(
+    public function assertEndsWith(
         string $string,
         string $message = 'The string does not end with {expected.debug}'
     ): self
     {
-        $this->assertionList[] = function(string $value, Path $path) use($string, $message) {
-            if(substr($value, -strlen($string)) !== $string) {
+        $this->assertionList[] = function (string $value, Path $path) use ($string, $message) {
+            if (substr($value, -strlen($string)) !== $string) {
                 throw new ParsingException(
                     $value,
                     Debug::parseMessage($message, ['value' => $value, 'expected' => $string]),
@@ -195,25 +225,5 @@ class AssertString extends Parser
         };
 
         return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function execute($value, Path $path)
-    {
-        if (!is_string($value)) {
-            throw new ParsingException(
-                $value,
-                Debug::parseMessage($this->typeExceptionMessage, ['value' => $value]),
-                $path
-            );
-        }
-
-        foreach ($this->assertionList as $assertion) {
-            $assertion($value, $path);
-        }
-
-        return $value;
     }
 }

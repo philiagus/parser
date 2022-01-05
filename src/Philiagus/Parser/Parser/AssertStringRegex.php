@@ -12,75 +12,56 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Base\Chainable;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Contract\ChainableParser;
+use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Path\Root;
 use Philiagus\Parser\Util\Debug;
 
-class AssertStringRegex extends Parser
+class AssertStringRegex implements ChainableParser
 {
+    use Chainable;
 
     public const DEFAULT_PATTERN_EXCEPTION_MESSAGE = 'The string does not match the expected pattern';
 
-    /**
-     * @var string
-     */
-    private $typeExceptionMessage = 'Provided value is not of type string';
+    private string $typeExceptionMessage = 'Provided value is not of type string';
 
-    /**
-     * @var null|false|int
-     */
+    /** @var null|false|int */
     private $global = null;
 
-    /**
-     * @var null|bool
-     */
-    private $offsetCapture = null;
+    /** @var null|bool */
+    private ?bool $offsetCapture = null;
+
+    /** @var null|bool */
+    private ?bool $unmatchedAsNull = null;
+
+    /** @var ParserContract[] */
+    private array $matchesParser = [];
+
+    /** @var null|string */
+    private ?string $pattern = null;
+
+    /** @var null|string */
+    private ?string $patternExceptionMessage = null;
+
+    /** @var null|int */
+    private ?int $offset = null;
 
     /**
-     * @var bool|null
-     */
-    private $unmatchedAsNull = null;
-
-    /**
-     * @var ParserContract[]
-     */
-    private $matchesParser = [];
-
-    /**
-     * @var null|string
-     */
-    private $pattern = null;
-
-    /**
-     * @var string|null
-     */
-    private $patternExceptionMessage = null;
-
-    /**
-     * @var null|int
-     */
-    private $offset = null;
-
-    /**
-     * Shorthand for creation of the parser and defining a regular expression for it
-     *
-     *
-     * The exception message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
-     * - pattern: The provided regular expression
+     * AssertStringRegex constructor.
      *
      * @param string $pattern
      * @param string $exceptionMessage
      *
-     * @return static
      * @throws ParserConfigurationException
      */
-    public static function pattern(string $pattern, string $exceptionMessage = self::DEFAULT_PATTERN_EXCEPTION_MESSAGE): self
+    private function __construct(string $pattern, string $exceptionMessage)
     {
-        return (new self())->setPattern($pattern, $exceptionMessage);
+        $this->setPattern($pattern, $exceptionMessage);
     }
 
     /**
@@ -113,6 +94,25 @@ class AssertStringRegex extends Parser
         $this->patternExceptionMessage = $exceptionMessage;
 
         return $this;
+    }
+
+    /**
+     * Shorthand for creation of the parser and defining a regular expression for it
+     *
+     *
+     * The exception message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     * - pattern: The provided regular expression
+     *
+     * @param string $pattern
+     * @param string $exceptionMessage
+     *
+     * @return static
+     * @throws ParserConfigurationException
+     */
+    public static function pattern(string $pattern, string $exceptionMessage = self::DEFAULT_PATTERN_EXCEPTION_MESSAGE): self
+    {
+        return new self($pattern, $exceptionMessage);
     }
 
     /**
@@ -160,7 +160,7 @@ class AssertStringRegex extends Parser
             } else {
                 $this->global = PREG_PATTERN_ORDER;
             }
-        } else if ($matchType === PREG_SET_ORDER || $matchType === PREG_PATTERN_ORDER) {
+        } elseif ($matchType === PREG_SET_ORDER || $matchType === PREG_PATTERN_ORDER) {
             $this->global = $matchType;
         } else {
             throw new ParserConfigurationException(
@@ -232,17 +232,14 @@ class AssertStringRegex extends Parser
      *
      * @return $this
      */
-    public function withMatches(ParserContract $parser): self
+    public function giveMatches(ParserContract $parser): self
     {
         $this->matchesParser[] = $parser;
 
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function execute($value, Path $path)
+    public function parse($value, ?Path $path = null)
     {
         if ($this->pattern === null) {
             throw new ParserConfigurationException(
@@ -293,8 +290,11 @@ class AssertStringRegex extends Parser
             );
         }
 
+        $path = $path ?? new Root();
+        $metaPath = $path->meta('matches');
+
         foreach ($this->matchesParser as $parser) {
-            $parser->parse($matches, $path->meta('matches'));
+            $parser->parse($matches, $metaPath);
         }
 
         return $value;

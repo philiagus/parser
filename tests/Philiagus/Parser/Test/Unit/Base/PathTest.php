@@ -12,12 +12,15 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Base;
 
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Path\Index;
-use Philiagus\Parser\Path\Key;
+use Philiagus\Parser\Path\ArrayElement;
+use Philiagus\Parser\Path\ArrayKey;
 use Philiagus\Parser\Path\MetaInformation;
-use Philiagus\Parser\Path\Property;
+use Philiagus\Parser\Path\PropertyValue;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Philiagus\Parser\Base\Path
+ */
 class PathTest extends TestCase
 {
     public function testClass(): void
@@ -53,8 +56,8 @@ class PathTest extends TestCase
             }
         };
 
-        $child = $path->index('index');
-        self::assertInstanceOf(Index::class, $child);
+        $child = $path->arrayElement('index');
+        self::assertInstanceOf(ArrayElement::class, $child);
         self::assertSame($path, $child->getParent());
         self::assertSame('index', $child->getName());
     }
@@ -68,8 +71,8 @@ class PathTest extends TestCase
             }
         };
 
-        $child = $path->property('property');
-        self::assertInstanceOf(Property::class, $child);
+        $child = $path->propertyValue('property');
+        self::assertInstanceOf(PropertyValue::class, $child);
         self::assertSame($path, $child->getParent());
         self::assertSame('property', $child->getName());
     }
@@ -98,8 +101,8 @@ class PathTest extends TestCase
             }
         };
 
-        $child = $path->key('key');
-        self::assertInstanceOf(Key::class, $child);
+        $child = $path->arrayKey('key');
+        self::assertInstanceOf(ArrayKey::class, $child);
         self::assertSame($path, $child->getParent());
         self::assertSame('key', $child->getName());
     }

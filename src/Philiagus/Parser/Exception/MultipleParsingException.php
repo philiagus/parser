@@ -17,7 +17,8 @@ use Philiagus\Parser\Base\Path;
 class MultipleParsingException extends ParsingException
 {
 
-    private $parsingExceptions;
+    /** @var ParsingException[] */
+    private array $parsingExceptions;
 
     /**
      * MultipleParsingException constructor.

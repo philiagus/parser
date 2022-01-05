@@ -12,41 +12,42 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Parser;
+
+use Philiagus\Parser\Base\Chainable;
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Contract\ChainableParser;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
 
-class AssertNull extends Parser
+class AssertNull implements ChainableParser
 {
+    use Chainable;
+
+    /** @var string */
+    private string $exceptionMessage;
+
+    private function __construct(string $message)
+    {
+        $this->exceptionMessage = $message;
+    }
 
     /**
-     * @var string
-     */
-    private $exceptionMessage = 'Provided value is not NULL';
-
-    /**
-     * Sets the exception message to be thrown if the provided value is not NULL
+     * Creates a parser with a defined message if the provided value is not NULL
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - value: The value currently being parsed
      *
-     * @param string $message
+     * @param string $notNullExceptionMessage
      *
      * @return $this
      * @see Debug::parseMessage()
      *
      */
-    public function setExceptionMessage(string $message): self
+    public static function new(string $notNullExceptionMessage = 'Provided value is not NULL'): self
     {
-        $this->exceptionMessage = $message;
-
-        return $this;
+        return new self($notNullExceptionMessage);
     }
 
-    /**
-     * @inheritdoc
-     */
-    protected function execute($value, Path $path)
+    public function parse($value, ?Path $path = null)
     {
         if ($value === null) return null;
 

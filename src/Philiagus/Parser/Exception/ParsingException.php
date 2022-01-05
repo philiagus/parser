@@ -13,6 +13,9 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Exception;
 
 use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Contract\Parser;
+use Philiagus\Parser\Parser\Logic\OverwriteParsingException;
+use Philiagus\Parser\Path\Root;
 
 /**
  * This exception is supposed to be thrown, when the value as provided by the input does not conform with the parser
@@ -20,15 +23,8 @@ use Philiagus\Parser\Base\Path;
  */
 class ParsingException extends \Exception
 {
+    private Path $path;
 
-    /**
-     * @var Path
-     */
-    private $path;
-
-    /**
-     * @var mixed
-     */
     private $value;
 
     /**
@@ -36,14 +32,19 @@ class ParsingException extends \Exception
      *
      * @param $value
      * @param string $message
-     * @param Path $path
+     * @param Path|null $path
      * @param \Throwable|null $previous
      */
-    public function __construct($value, string $message, Path $path, \Throwable $previous = null)
+    public function __construct($value, string $message, ?Path $path, \Throwable $previous = null)
     {
         $this->value = $value;
-        $this->path = $path;
+        $this->path = $path ?? new Root();
         parent::__construct($message, 0, $previous);
+    }
+
+    public static function overwriteAround(string $message, Parser $around): OverwriteParsingException
+    {
+        return OverwriteParsingException::withMessage($message, $around);
     }
 
     public function getValue()

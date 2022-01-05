@@ -12,82 +12,41 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Base\Chainable;
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Exception\ParserConfigurationException;
+use Philiagus\Parser\Contract\ChainableParser;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
 
-class AssertSame
-    extends Parser
+class AssertSame implements ChainableParser
 {
+    use Chainable;
 
-    private const DEFAULT_MESSAGE = 'The value is not the same as the expected value';
-
-    /**
-     * @var null|string
-     */
-    private $exceptionMessage = null;
+    /** @var string */
+    private string $exceptionMessage = 'The value is not the same as the expected value';
 
     /**
      * @var mixed
      */
     private $targetValue;
 
-    /**
-     * Shortcut constructor for assertion against a value when no by-reference check is needed
-     *
-     * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
-     * - expected: The expected value the provided value was compared against
-     *
-     * @param $value
-     * @param string $exceptionMessage
-     *
-     * @return static
-     * @see Debug::parseMessage()
-     *
-     */
-    public static function value($value, string $exceptionMessage = self::DEFAULT_MESSAGE): self
+    private function __construct($value)
     {
-        $instance = new self();
-        $instance->targetValue = $value;
-        $instance->exceptionMessage = $exceptionMessage;
-
-        return $instance;
+        $this->targetValue = $value;
     }
 
     /**
-     * Sets the value to be === compared against
+     * @param mixed $value
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
-     * - expected: The expected value the provided value was compared against
-     *
-     * @param $equalsValue
-     * @param string $exceptionMessage
-     *
-     * @return $this
-     * @see Debug::parseMessage()
-     *
+     * @return self
      */
-    public function setValue($equalsValue, string $exceptionMessage = self::DEFAULT_MESSAGE): self
+    public static function value($value): self
     {
-        $this->exceptionMessage = $exceptionMessage;
-        $this->targetValue = $equalsValue;
-
-        return $this;
+        return new self($value);
     }
 
-    /**
-     * @inheritdoc
-     */
-    protected function execute($value, Path $path)
+    public function parse($value, ?Path $path = null)
     {
-        if ($this->exceptionMessage === null) {
-            throw new ParserConfigurationException('Called AssertSame parse without a value set');
-        }
-
         if ($value !== $this->targetValue) {
             throw new ParsingException(
                 $value,

@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * This file is part of philiagus/parser
  *
  * (c) Andreas Bittner <philiagus@philiagus.de>
@@ -13,78 +13,44 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
-use Philiagus\Parser\Base\Parser;
-use Philiagus\Parser\Exception\ParserConfigurationException;
-use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\Fixed;
+use Philiagus\Parser\Test\ChainableParserTest;
+use Philiagus\Parser\Test\ValidValueParserTest;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Philiagus\Parser\Parser\Fixed
+ */
 class FixedTest extends TestCase
 {
+    use ChainableParserTest;
 
-    public function testThatItExtendsBaseParser(): void
+    public function provideValidValuesAndParsersAndResults(): array
     {
-        self::assertTrue((new Fixed()) instanceof Parser);
+        return (new DataProvider())
+            ->map(fn($value) => [!$value, Fixed::value($value), $value])
+            ->provide(false);
+    }
+
+    public function provideAnyValue(): array
+    {
+        return (new DataProvider())->provide();
     }
 
     /**
-     * @return array
-     * @throws \Exception
-     */
-    public function provideAllTypes(): array
-    {
-        return (new DataProvider(DataProvider::TYPE_ALL))->provide();
-    }
-
-    /**
-     * @param $value
+     * @param mixed $anything
      *
-     * @throws ParserConfigurationException
-     * @throws ParsingException
-     * @dataProvider provideAllTypes
+     * @return void
+     * @throws \Philiagus\Parser\Exception\ParserConfigurationException
+     * @throws \Philiagus\Parser\Exception\ParsingException
+     * @dataProvider provideAnyValue
      */
-    public function testThatItIgnoresAnyInputAndReturnsTheDefinedValue($value): void
+    public function testFull($anything): void
     {
-        $instance = new \stdClass();
-        self::assertSame($instance, (new Fixed())->setValue($instance)->parse($value));
+        $obj = new \stdClass();
+        self::assertSame(
+            $obj,
+            Fixed::value($obj)->parse($anything)
+        );
     }
-
-    /**
-     * @param $value
-     *
-     * @throws ParserConfigurationException
-     * @throws ParsingException
-     * @dataProvider provideAllTypes
-     */
-    public function testThatItAcceptsAnyValueAsFixed($value): void
-    {
-        $instance = new \stdClass();
-        $result = (new Fixed())->setValue($value)->parse($instance);
-        self::assertTrue(DataProvider::isSame($value, $result));
-    }
-
-    /**
-     * @param $value
-     *
-     * @throws ParserConfigurationException
-     * @throws ParsingException
-     * @dataProvider provideAllTypes
-     */
-    public function testStaticValue($value): void
-    {
-        $instance = new \stdClass();
-        $result = Fixed::value($value)->parse($instance);
-        self::assertTrue(DataProvider::isSame($value, $result));
-    }
-
-    /**
-     * @throws ParserConfigurationException
-     * @throws ParsingException
-     */
-    public function testThatItThrowsAnExceptionIfNoValueIsDefined(): void
-    {
-        $this->expectException(ParserConfigurationException::class);
-        (new Fixed())->parse(null);
-    }
-
 }
