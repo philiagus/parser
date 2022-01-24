@@ -14,15 +14,16 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Extraction;
 
 use Philiagus\Parser\Base\Chainable;
+use Philiagus\Parser\Base\OverridableChainDescription;
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Contract\ChainableParser;
+use Philiagus\Parser\Contract\Parser;
 
 /**
  * Stores the value into the provided variable
  */
-class Assign implements ChainableParser
+class Assign implements Parser
 {
-    use Chainable;
+    use Chainable, OverridableChainDescription;
 
     /** @var mixed */
     private $target;
@@ -52,5 +53,10 @@ class Assign implements ChainableParser
         $this->target = $value;
 
         return $value;
+    }
+
+    protected function getDefaultChainPath(Path $path): Path
+    {
+        return $path;
     }
 }

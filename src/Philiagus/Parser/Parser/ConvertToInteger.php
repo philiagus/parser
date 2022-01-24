@@ -13,17 +13,18 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
+use Philiagus\Parser\Base\OverridableChainDescription;
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Contract\ChainableParser;
+use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception;
 use Philiagus\Parser\Util\Debug;
 
 /**
  * Takes any input and attempts a loss free conversion of the provided value into a valid integer value
  */
-class ConvertToInteger implements ChainableParser
+class ConvertToInteger implements Parser
 {
-    use Chainable;
+    use Chainable, OverridableChainDescription;
 
     private string $typeExceptionMessage = 'Variable of type {value.type} could not be converted to an integer';
 
@@ -87,5 +88,10 @@ class ConvertToInteger implements ChainableParser
             Debug::parseMessage($this->typeExceptionMessage, ['value' => $value]),
             $path
         );
+    }
+
+    protected function getDefaultChainPath(Path $path): Path
+    {
+        return $path->chain('convert to integer');
     }
 }

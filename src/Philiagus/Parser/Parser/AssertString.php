@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
+use Philiagus\Parser\Base\OverridableChainDescription;
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Contract\ChainableParser;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
@@ -22,9 +22,9 @@ use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Path\Root;
 use Philiagus\Parser\Util\Debug;
 
-class AssertString implements ChainableParser
+class AssertString implements Parser
 {
-    use Chainable;
+    use Chainable, OverridableChainDescription;
 
     /** @var string */
     private string $typeExceptionMessage = 'Provided value is not of type string';
@@ -225,5 +225,10 @@ class AssertString implements ChainableParser
         };
 
         return $this;
+    }
+
+    protected function getDefaultChainPath(Path $path): Path
+    {
+        return $path->chain('assert string');
     }
 }

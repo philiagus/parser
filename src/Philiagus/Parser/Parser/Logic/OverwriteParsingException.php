@@ -13,15 +13,15 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base\Chainable;
+use Philiagus\Parser\Base\OverridableChainDescription;
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Contract\ChainableParser;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
 
-class OverwriteParsingException implements ChainableParser
+class OverwriteParsingException implements Parser
 {
-    use Chainable;
+    use Chainable, OverridableChainDescription;
 
     /** @var string */
     private string $message;
@@ -52,5 +52,10 @@ class OverwriteParsingException implements ChainableParser
                 $exception
             );
         }
+    }
+
+    protected function getDefaultChainPath(Path $path): Path
+    {
+        return $path;
     }
 }

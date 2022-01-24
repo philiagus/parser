@@ -13,8 +13,9 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Extraction;
 
 use Philiagus\Parser\Base\Chainable;
+use Philiagus\Parser\Base\OverridableChainDescription;
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Contract\ChainableParser;
+use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Util\Debug;
 
@@ -23,9 +24,9 @@ use Philiagus\Parser\Util\Debug;
  * If the provided target is not an array at that point, Append will convert `null` to an empty array and
  * in all other cases throw a ParserConfigurationException
  */
-class Append implements ChainableParser
+class Append implements Parser
 {
-    use Chainable;
+    use Chainable, OverridableChainDescription;
 
     private array $target;
 
@@ -72,5 +73,10 @@ class Append implements ChainableParser
         $this->target[] = $value;
 
         return $value;
+    }
+
+    protected function getDefaultChainPath(Path $path): Path
+    {
+        return $path;
     }
 }

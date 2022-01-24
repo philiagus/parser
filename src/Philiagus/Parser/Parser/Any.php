@@ -13,10 +13,11 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
+use Philiagus\Parser\Base\OverridableChainDescription;
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Contract\ChainableParser;
+use Philiagus\Parser\Contract\Parser;
 
-class Any implements ChainableParser
+class Any implements Parser
 {
     use Chainable;
 
@@ -35,5 +36,10 @@ class Any implements ChainableParser
     public function parse($value, Path $path = null)
     {
         return $value;
+    }
+
+    public function getChainedPath(Path $path): Path
+    {
+        return $path;
     }
 }

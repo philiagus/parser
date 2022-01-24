@@ -27,4 +27,14 @@ interface Parser
      * @throws ParsingException
      */
     public function parse($value, ?Path $path = null);
+
+    /**
+     * Returns a path representing this parser when chained
+     * Most times using the Path::chain method to append a string to the provided path
+     * @see Path::chain
+     * @param Path $path
+     *
+     * @return Path
+     */
+    public function getChainedPath(Path $path): Path;
 }

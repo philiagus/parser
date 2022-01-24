@@ -14,14 +14,15 @@ namespace Philiagus\Parser\Parser;
 
 use DateTimeZone;
 use Philiagus\Parser\Base\Chainable;
+use Philiagus\Parser\Base\OverridableChainDescription;
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Contract\ChainableParser;
+use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
 
-class ConvertToDateTime implements ChainableParser
+class ConvertToDateTime implements Parser
 {
-    use Chainable;
+    use Chainable, OverridableChainDescription;
 
     private ?string $sourceFormat = null;
     private ?DateTimeZone $sourceTimezone = null;
@@ -161,5 +162,10 @@ class ConvertToDateTime implements ChainableParser
         }
 
         return $dateTime;
+    }
+
+    protected function getDefaultChainPath(Path $path): Path
+    {
+        return $path->chain('convert to DateTime');
     }
 }

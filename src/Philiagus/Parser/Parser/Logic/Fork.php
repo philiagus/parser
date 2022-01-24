@@ -13,14 +13,14 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base\Chainable;
+use Philiagus\Parser\Base\OverridableChainDescription;
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Contract\ChainableParser;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Path\Root;
 
-class Fork implements ChainableParser
+class Fork implements Parser
 {
-    use Chainable;
+    use Chainable, OverridableChainDescription;
 
     /** @var Parser[] */
     private array $parsers;
@@ -67,5 +67,10 @@ class Fork implements ChainableParser
         }
 
         return $value;
+    }
+
+    protected function getDefaultChainPath(Path $path): Path
+    {
+        return $path;
     }
 }

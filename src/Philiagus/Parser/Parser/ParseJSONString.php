@@ -13,14 +13,15 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
+use Philiagus\Parser\Base\OverridableChainDescription;
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Contract\ChainableParser;
+use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
 
-class ParseJSONString implements ChainableParser
+class ParseJSONString implements Parser
 {
-    use Chainable;
+    use Chainable, OverridableChainDescription;
 
     /** @var string */
     private string $conversionExceptionMessage = 'Provided string is not a valid JSON: {msg}';
@@ -163,5 +164,10 @@ class ParseJSONString implements ChainableParser
         }
 
         return $result;
+    }
+
+    protected function getDefaultChainPath(Path $path): Path
+    {
+        return $path->chain('parse as JSON string');
     }
 }

@@ -13,14 +13,15 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
+use Philiagus\Parser\Base\OverridableChainDescription;
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Contract\ChainableParser;
+use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
 
-class ConvertToString implements ChainableParser
+class ConvertToString implements Parser
 {
-    use Chainable;
+    use Chainable, OverridableChainDescription;
 
     /** @var string */
     private string $typeExceptionMessage = 'Variable of type {value.type} could not be converted to a string';
@@ -158,5 +159,10 @@ class ConvertToString implements ChainableParser
             ),
             $path
         );
+    }
+
+    protected function getDefaultChainPath(Path $path): Path
+    {
+        return $path->chain('convert to string');
     }
 }

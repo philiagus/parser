@@ -13,17 +13,17 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base\Chainable;
+use Philiagus\Parser\Base\OverridableChainDescription;
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Contract\ChainableParser;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Path\Root;
 use Philiagus\Parser\Util\Debug;
 
-class OneOf implements ChainableParser
+class OneOf implements Parser
 {
-    use Chainable;
+    use Chainable, OverridableChainDescription;
 
     /** @var string */
     private string $exceptionMessage = 'Provided value does not match any of the expected formats or values';
@@ -167,5 +167,10 @@ class OneOf implements ChainableParser
             $this->sameOptions,
             $this->equalsOptions
         );
+    }
+
+    protected function getDefaultChainPath(Path $path): Path
+    {
+        return $path->chain('used one of many conversions');
     }
 }

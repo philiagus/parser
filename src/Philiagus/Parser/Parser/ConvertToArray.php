@@ -13,13 +13,14 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
+use Philiagus\Parser\Base\OverridableChainDescription;
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Contract\ChainableParser;
+use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 
-class ConvertToArray implements ChainableParser
+class ConvertToArray implements Parser
 {
-    use Chainable;
+    use Chainable, OverridableChainDescription;
 
     public const CONVERSION_ARRAY_CAST = 1;
     public const CONVERSION_ARRAY_WITH_KEY = 2;
@@ -69,5 +70,10 @@ class ConvertToArray implements ChainableParser
         }
 
         return (array) $value;
+    }
+
+    protected function getDefaultChainPath(Path $path): Path
+    {
+        return $path->chain('convert to array');
     }
 }

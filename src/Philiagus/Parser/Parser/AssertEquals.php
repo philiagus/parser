@@ -13,14 +13,15 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
+use Philiagus\Parser\Base\OverridableChainDescription;
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Contract\ChainableParser;
+use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
 
-class AssertEquals implements ChainableParser
+class AssertEquals implements Parser
 {
-    use Chainable;
+    use Chainable, OverridableChainDescription;
 
     private const DEFAULT_MESSAGE = 'The value is not equal to the expected value';
 
@@ -77,5 +78,10 @@ class AssertEquals implements ChainableParser
             ),
             $path
         );
+    }
+
+    protected function getDefaultChainPath(Path $path): Path
+    {
+        return $path->chain('assert equals');
     }
 }

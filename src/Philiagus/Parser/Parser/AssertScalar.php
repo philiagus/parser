@@ -13,14 +13,15 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
+use Philiagus\Parser\Base\OverridableChainDescription;
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Contract\ChainableParser;
+use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
 
-class AssertScalar implements ChainableParser
+class AssertScalar implements Parser
 {
-    use Chainable;
+    use Chainable, OverridableChainDescription;
 
     /** @var string */
     private string $typeExceptionMessage = 'Provided value is not scalar';
@@ -65,5 +66,10 @@ class AssertScalar implements ChainableParser
             Debug::parseMessage($this->typeExceptionMessage, ['value' => $value]),
             $path
         );
+    }
+
+    protected function getDefaultChainPath(Path $path): Path
+    {
+        return $path->chain('assert scalar');
     }
 }

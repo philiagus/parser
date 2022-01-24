@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
+use Philiagus\Parser\Base\OverridableChainDescription;
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Contract\ChainableParser;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
@@ -22,9 +22,9 @@ use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Path\Root;
 use Philiagus\Parser\Util\Debug;
 
-class AssertStringRegex implements ChainableParser
+class AssertStringRegex implements Parser
 {
-    use Chainable;
+    use Chainable, OverridableChainDescription;
 
     public const DEFAULT_PATTERN_EXCEPTION_MESSAGE = 'The string does not match the expected pattern';
 
@@ -298,5 +298,10 @@ class AssertStringRegex implements ChainableParser
         }
 
         return $value;
+    }
+
+    protected function getDefaultChainPath(Path $path): Path
+    {
+        return $path->chain('assert string regex');
     }
 }

@@ -12,8 +12,10 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Base;
 
+use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Path\ArrayElement;
 use Philiagus\Parser\Path\ArrayKey;
+use Philiagus\Parser\Path\Chain;
 use Philiagus\Parser\Path\MetaInformation;
 use Philiagus\Parser\Path\PropertyName;
 use Philiagus\Parser\Path\PropertyValue;
@@ -175,6 +177,19 @@ abstract class Path
     public function propertyName(string $name): PropertyName
     {
         return new PropertyName($name, $this);
+    }
+
+    /**
+     * Used when defining a parser as being chained and the result used after the parser
+     *
+     * @see Parser::getChainedPath()
+     * @param string $description
+     *
+     * @return $this
+     */
+    public function chain(string $description): self
+    {
+        return new Chain($description, $this);
     }
 
 }

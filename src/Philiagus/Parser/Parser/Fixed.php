@@ -13,8 +13,9 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
+use Philiagus\Parser\Base\OverridableChainDescription;
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Contract\ChainableParser;
+use Philiagus\Parser\Contract\Parser;
 
 /**
  * Class Fixed
@@ -23,9 +24,9 @@ use Philiagus\Parser\Contract\ChainableParser;
  *
  * @package Philiagus\Parser\Parser
  */
-class Fixed implements ChainableParser
+class Fixed implements Parser
 {
-    use Chainable;
+    use Chainable, OverridableChainDescription;
 
     /** @var mixed */
     private $value;
@@ -48,5 +49,10 @@ class Fixed implements ChainableParser
     public function parse($value, ?Path $path = null)
     {
         return $this->value;
+    }
+
+    protected function getDefaultChainPath(Path $path): Path
+    {
+        return $path->chain('replace value with fixed value');
     }
 }

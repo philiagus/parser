@@ -169,4 +169,9 @@ class ParseStdClass extends AssertStdClass
 
         return $this;
     }
+
+    protected function getDefaultChainPath(Path $path): Path
+    {
+        return $path->chain('parse stdClass');
+    }
 }

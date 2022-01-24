@@ -13,14 +13,15 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
+use Philiagus\Parser\Base\OverridableChainDescription;
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Contract\ChainableParser;
+use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
 
-class AssertObject implements ChainableParser
+class AssertObject implements Parser
 {
-    use Chainable;
+    use Chainable, OverridableChainDescription;
 
     private const DEFAULT_INSTANCEOF_MESSAGE = 'The provided object is not an instance of {class.raw}';
 
@@ -132,5 +133,10 @@ class AssertObject implements ChainableParser
         }
 
         return $value;
+    }
+
+    protected function getDefaultChainPath(Path $path): Path
+    {
+        return $path->chain('assert object');
     }
 }

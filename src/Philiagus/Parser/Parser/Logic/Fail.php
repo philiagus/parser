@@ -62,4 +62,9 @@ class Fail implements Parser
             $path ?? new Root()
         );
     }
+
+    public function getChainedPath(Path $path): Path
+    {
+        return $path;
+    }
 }

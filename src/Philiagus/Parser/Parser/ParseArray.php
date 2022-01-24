@@ -196,4 +196,9 @@ class ParseArray extends AssertArray
 
         return $this;
     }
+
+    protected function getDefaultChainPathDescription(): string
+    {
+        return 'parse array';
+    }
 }

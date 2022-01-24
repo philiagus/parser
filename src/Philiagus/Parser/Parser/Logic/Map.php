@@ -13,16 +13,16 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base\Chainable;
+use Philiagus\Parser\Base\OverridableChainDescription;
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Contract\ChainableParser;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception;
 use Philiagus\Parser\Path\Root;
 use Philiagus\Parser\Util\Debug;
 
-class Map implements ChainableParser
+class Map implements Parser
 {
-    use Chainable;
+    use Chainable, OverridableChainDescription;
 
     private const TYPE_SAME = 1;
     private const TYPE_EQUALS = 2;
@@ -244,5 +244,10 @@ class Map implements ChainableParser
             $sameOptions,
             $equalsOptions
         );
+    }
+
+    protected function getDefaultChainPath(Path $path): Path
+    {
+        return $path->chain('internally mapped value');
     }
 }

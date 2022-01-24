@@ -13,17 +13,17 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base\Chainable;
+use Philiagus\Parser\Base\OverridableChainDescription;
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Contract\ChainableParser;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 
 /**
  * Preserves a value around another parser, shielding it from alteration
  */
-class Preserve implements ChainableParser
+class Preserve implements Parser
 {
-    use Chainable;
+    use Chainable, OverridableChainDescription;
 
     /** @var ParserContract */
     private ParserContract $around;
@@ -53,5 +53,10 @@ class Preserve implements ChainableParser
         $this->around->parse($value, $path);
 
         return $value;
+    }
+
+    protected function getDefaultChainPath(Path $path): Path
+    {
+        return $path;
     }
 }

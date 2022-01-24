@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
+use Philiagus\Parser\Base\OverridableChainDescription;
 use Philiagus\Parser\Base\Path;
-use Philiagus\Parser\Contract\ChainableParser;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParsingException;
@@ -26,9 +26,9 @@ use Philiagus\Parser\Util\Debug;
  *
  * @see parse_url()
  */
-class ParseURL implements ChainableParser
+class ParseURL implements Parser
 {
-    use Chainable;
+    use Chainable, OverridableChainDescription;
 
     private const TARGET_SCHEME = 'scheme',
         TARGET_HOST = 'host',
@@ -404,5 +404,10 @@ class ParseURL implements ChainableParser
         }
 
         return $parsed;
+    }
+
+    protected function getDefaultChainPath(Path $path): Path
+    {
+        return $path->chain('parse as url');
     }
 }
