@@ -47,7 +47,11 @@ The real fun begins, when you start stacking parsers into one another:
 
 ```php
 <?php
-use Philiagus\Parser\Parser\AssertFloat;use Philiagus\Parser\Parser\AssertInteger;use Philiagus\Parser\Parser\Logic\OneOf;use Philiagus\Parser\Parser\ParseArray;
+use Philiagus\Parser\Parser\AssertFloat;
+use Philiagus\Parser\Parser\AssertInteger;
+use Philiagus\Parser\Parser\Logic\OneOf;
+use Philiagus\Parser\Parser\ParseArray;
+use Philiagus\Parser\Parser\Extraction\Append;
 
 $input = [
     1, 1.0, 2, 4, 4.20
@@ -63,11 +67,11 @@ ParseArray::new()
             ->parser(
                 AssertInteger::new()
                     ->assertMinimum(0)
-                    ->thenAppendTo($integers)
+                    ->then(Append::to($integers))
                     ,
                 AssertFloat::new()
                     ->assertMinimum(0.0)
-                    ->thenAppendTo($floats)
+                    ->then(Append::to($floats))
             )
     )
 ->parse($input);

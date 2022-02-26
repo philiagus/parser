@@ -30,13 +30,14 @@
     },
     "autoload": {
         "psr-4": {
-            "Philiagus\\Parser\\": "src/Philiagus/Parser"
+            "Philiagus\\Parser\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Philiagus\\Parser\\Test\\Unit\\": "tests/Philiagus/Parser/Test/Unit",
-            "Philiagus\\Parser\\Test\\Integration\\": "tests/Philiagus/Parser/Test/Integration"
+            "Philiagus\\Parser\\Test\\Unit\\": "tests/Unit",
+            "Philiagus\\Parser\\Test\\Integration\\": "tests/Integration",
+            "Philiagus\\Parser\\Test\\" : "tests/"
         }
     }
 }
