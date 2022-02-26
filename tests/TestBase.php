@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test;
 
+use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Contract\Parser;
 use PHPUnit\Framework\TestCase;
@@ -19,20 +20,33 @@ use Prophecy\Argument;
 
 class TestBase extends TestCase
 {
-    protected function parserProphecy(
-        $expectedValue,
-        $result = null,
-        $expectedPath = null
+    public function provideAnything(): array
+    {
+        return (new DataProvider(DataProvider::TYPE_ALL))
+            ->provide();
+    }
+
+    protected function prophesizeParser(
+        array $inputResultPairs,
+              $expectedPath = null
     ): Parser
     {
         $parser = $this->prophesize(Parser::class);
-        $parser
-            ->parse(
-                $expectedValue,
-                $expectedPath ?? Argument::that(fn($arg) => $arg === null || $arg instanceof Path)
-            )
-            ->shouldBeCalled()
-            ->willReturn($result ?? $expectedValue);
+        foreach ($inputResultPairs as $pair) {
+            if (count($pair) === 1) {
+                $pair[1] = $pair[0];
+            }
+            $parser
+                ->parse(
+                    $pair[0],
+                    $expectedPath ?? Argument::that(fn($arg) => $arg === null || $arg instanceof Path)
+                )
+                ->shouldBeCalled()
+                ->willReturn($pair[1]);
+        }
+        if(empty($inputResultPairs)) {
+            $parser->parse(Argument::any(), Argument::any())->shouldNotBeCalled();
+        }
 
         return $parser->reveal();
     }

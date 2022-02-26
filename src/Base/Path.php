@@ -212,4 +212,12 @@ abstract class Path
         return new Chain($description, $this, $isPathInValue);
     }
 
+    /**
+     * @return bool
+     */
+    public function isPathInValue(): bool
+    {
+        return $this->isPathInValue;
+    }
+
 }

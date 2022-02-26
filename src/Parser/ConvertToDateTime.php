@@ -14,7 +14,7 @@ namespace Philiagus\Parser\Parser;
 
 use DateTimeZone;
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverridableChainDescription;
+use Philiagus\Parser\Base\OverwritableChainDescription;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
@@ -23,7 +23,7 @@ use Philiagus\Parser\Util\Debug;
 
 class ConvertToDateTime implements Parser
 {
-    use Chainable, OverridableChainDescription, TypeExceptionMessage;
+    use Chainable, OverwritableChainDescription, TypeExceptionMessage;
 
     private ?string $sourceFormat = null;
     private ?DateTimeZone $sourceTimezone = null;

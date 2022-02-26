@@ -13,14 +13,14 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverridableChainDescription;
+use Philiagus\Parser\Base\OverwritableChainDescription;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
 
 class AssertScalar implements Parser
 {
-    use Chainable, OverridableChainDescription, TypeExceptionMessage;
+    use Chainable, OverwritableChainDescription, TypeExceptionMessage;
 
     private function __construct()
     {

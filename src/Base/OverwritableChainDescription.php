@@ -15,10 +15,10 @@ namespace Philiagus\Parser\Base;
 
 use Philiagus\Parser\Contract\Parser;
 
-trait OverridableChainDescription
+trait OverwritableChainDescription
 {
 
-    private array $overridableChainDescription;
+    private array $overwritableChainDescription;
 
     /**
      * @param string $description
@@ -28,7 +28,7 @@ trait OverridableChainDescription
      */
     public function setChainDescription(string $description, bool $isPathInValue = true): self
     {
-        $this->overridableChainDescription = [$description, $isPathInValue];
+        $this->overwritableChainDescription = [$description, $isPathInValue];
 
         return $this;
     }
@@ -43,10 +43,10 @@ trait OverridableChainDescription
      */
     public function getChainedPath(Path $path): Path
     {
-        return isset($this->overridableChainDescription) ?
+        return isset($this->overwritableChainDescription) ?
             $path->chain(
-                $this->overridableChainDescription[0],
-                $this->overridableChainDescription[1]
+                $this->overwritableChainDescription[0],
+                $this->overwritableChainDescription[1]
             ) :
             $this->getDefaultChainPath($path);
     }

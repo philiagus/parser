@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverridableChainDescription;
+use Philiagus\Parser\Base\OverwritableChainDescription;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
@@ -23,7 +23,7 @@ use Philiagus\Parser\Contract\Parser as ParserContract;
  */
 class Preserve implements Parser
 {
-    use Chainable, OverridableChainDescription;
+    use Chainable, OverwritableChainDescription;
 
     /** @var ParserContract */
     private ParserContract $around;

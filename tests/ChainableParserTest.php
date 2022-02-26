@@ -13,10 +13,12 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test;
 
 use Philiagus\DataProvider\DataProvider;
+use Philiagus\Parser\Base\Chainable;
+use Philiagus\Parser\Base\OverwritableChainDescription;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Contract\Parser;
-use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Path\Chain;
 use Prophecy\Argument;
 
 trait ChainableParserTest
@@ -28,11 +30,11 @@ trait ChainableParserTest
 
     /**
      * @param $value
-     * @param Parser $parser
+     * @param \Closure $parser
      * @param $expected
      *
-     * @throws ParserConfigurationException
      * @throws ParsingException
+     * @throws \Philiagus\Parser\Exception\RuntimeParserConfigurationException
      * @dataProvider provideValidValuesAndParsersAndResults
      */
     public function testThen($value, \Closure $parser, $expected): void
@@ -49,6 +51,86 @@ trait ChainableParserTest
                 }),
                 Argument::that(
                     fn(?Path $path) => true
+                )
+            )
+            ->shouldBeCalledOnce()
+            ->willReturn($expectedResult);
+        $thenParser = $thenParser->reveal();
+        $result = $parser
+            ->then($thenParser)
+            ->parse($value);
+
+        DataProvider::isSame($expectedResult, $result);
+    }
+
+    /**
+     * @param $value
+     * @param \Closure $parser
+     * @param $expected
+     *
+     * @throws ParsingException
+     * @throws \Philiagus\Parser\Exception\RuntimeParserConfigurationException
+     * @dataProvider provideValidValuesAndParsersAndResults
+     */
+    public function testThenWithOverwrittenParserNotValue($value, \Closure $parser, $expected): void
+    {
+        $parser = $parser($value);
+        /** @var OverwritableChainDescription&Chainable $parser */
+        self::assertTrue(method_exists($parser, 'then'), 'method ->then doesn\'t exist on parser');
+        self::assertTrue(method_exists($parser, 'setChainDescription'), 'method ->setChainDescription doesn\'t exist on parser');
+        $parser->setChainDescription('some description', false);
+        $expectedResult = new \stdClass();
+        $thenParser = $this->prophesize(Parser::class);
+        /** @noinspection PhpParamsInspection */
+        $thenParser
+            ->parse(
+                Argument::that(function ($argument) use ($expected) {
+                    return DataProvider::isSame($expected, $argument);
+                }),
+                Argument::that(
+                    fn(?Path $path) => $path instanceof Chain &&
+                        $path->getDescription() === 'some description' &&
+                        !$path->isPathInValue()
+                )
+            )
+            ->shouldBeCalledOnce()
+            ->willReturn($expectedResult);
+        $thenParser = $thenParser->reveal();
+        $result = $parser
+            ->then($thenParser)
+            ->parse($value);
+
+        DataProvider::isSame($expectedResult, $result);
+    }
+
+    /**
+     * @param $value
+     * @param \Closure $parser
+     * @param $expected
+     *
+     * @throws ParsingException
+     * @throws \Philiagus\Parser\Exception\RuntimeParserConfigurationException
+     * @dataProvider provideValidValuesAndParsersAndResults
+     */
+    public function testThenWithOverwrittenParserInValue($value, \Closure $parser, $expected): void
+    {
+        $parser = $parser($value);
+        /** @var OverwritableChainDescription&Chainable $parser */
+        self::assertTrue(method_exists($parser, 'then'), 'method ->then doesn\'t exist on parser');
+        self::assertTrue(method_exists($parser, 'setChainDescription'), 'method ->setChainDescription doesn\'t exist on parser');
+        $parser->setChainDescription('some description', true);
+        $expectedResult = new \stdClass();
+        $thenParser = $this->prophesize(Parser::class);
+        /** @noinspection PhpParamsInspection */
+        $thenParser
+            ->parse(
+                Argument::that(function ($argument) use ($expected) {
+                    return DataProvider::isSame($expected, $argument);
+                }),
+                Argument::that(
+                    fn(?Path $path) => $path instanceof Chain &&
+                        $path->getDescription() === 'some description' &&
+                        $path->isPathInValue()
                 )
             )
             ->shouldBeCalledOnce()

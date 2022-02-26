@@ -14,7 +14,7 @@ namespace Philiagus\Parser\Parser\Extraction;
 
 use ArrayAccess;
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverridableChainDescription;
+use Philiagus\Parser\Base\OverwritableChainDescription;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
@@ -28,7 +28,7 @@ use Philiagus\Parser\Util\Debug;
  */
 class Append implements Parser
 {
-    use Chainable, OverridableChainDescription;
+    use Chainable, OverwritableChainDescription;
 
     /** @var array|ArrayAccess */
     private $target;
@@ -55,7 +55,7 @@ class Append implements Parser
     }
 
     /**
-     * @param $target
+     * @param null|array|ArrayAccess $target
      *
      * @return static
      * @throws ParserConfigurationException

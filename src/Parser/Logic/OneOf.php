@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverridableChainDescription;
+use Philiagus\Parser\Base\OverwritableChainDescription;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception;
@@ -22,7 +22,7 @@ use Philiagus\Parser\Util\Debug;
 
 class OneOf implements Parser
 {
-    use Chainable, OverridableChainDescription;
+    use Chainable, OverwritableChainDescription;
 
     /** @var string */
     private string $exceptionMessage = 'Provided value does not match any of the expected formats or values';

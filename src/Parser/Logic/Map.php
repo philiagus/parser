@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverridableChainDescription;
+use Philiagus\Parser\Base\OverwritableChainDescription;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception;
@@ -21,7 +21,7 @@ use Philiagus\Parser\Util\Debug;
 
 class Map implements Parser
 {
-    use Chainable, OverridableChainDescription;
+    use Chainable, OverwritableChainDescription;
 
     private const TYPE_SAME = 1;
     private const TYPE_EQUALS = 2;

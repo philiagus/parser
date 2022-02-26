@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverridableChainDescription;
+use Philiagus\Parser\Base\OverwritableChainDescription;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
@@ -24,7 +24,7 @@ use Philiagus\Parser\Util\Debug;
 
 class AssertArray implements Parser
 {
-    use Chainable, OverridableChainDescription, TypeExceptionMessage;
+    use Chainable, OverwritableChainDescription, TypeExceptionMessage;
 
     /** @var callable[] */
     protected array $assertionList = [];
@@ -170,7 +170,7 @@ class AssertArray implements Parser
      * @return $this
      * @throws ParserConfigurationException
      */
-    public function giveKeyValueDefaulted($key, $default, ParserContract $parser): self
+    public function giveDefaultedKeyValue($key, $default, ParserContract $parser): self
     {
         if (!is_string($key) && !is_int($key)) {
             throw new ParserConfigurationException('Arrays only accept string or integer keys');
@@ -182,6 +182,8 @@ class AssertArray implements Parser
             } else {
                 $parser->parse($default, $path->arrayElement((string) $key));
             }
+
+            return $value;
         };
 
         return $this;
@@ -208,6 +210,8 @@ class AssertArray implements Parser
                 }
                 $assumedKey++;
             }
+
+            return $value;
         };
 
         return $this;

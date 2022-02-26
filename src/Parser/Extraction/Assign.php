@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Extraction;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverridableChainDescription;
+use Philiagus\Parser\Base\OverwritableChainDescription;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Contract\Parser;
 
@@ -23,7 +23,7 @@ use Philiagus\Parser\Contract\Parser;
  */
 class Assign implements Parser
 {
-    use Chainable, OverridableChainDescription;
+    use Chainable, OverwritableChainDescription;
 
     /** @var mixed */
     private $target;
