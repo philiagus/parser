@@ -46,6 +46,7 @@ class OneOfParsingExceptionTest extends TestCase
     public function testConstructException(): void
     {
         $this->expectException(\LogicException::class);
+        /** @noinspection PhpParamsInspection */
         new MultipleParsingException('value', 'message', new Root(''), [false], [], []);
     }
 
