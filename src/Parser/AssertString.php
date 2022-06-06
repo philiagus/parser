@@ -99,49 +99,6 @@ class AssertString implements Parser
     }
 
     /**
-     * Matches the provided string against the defined regular expression
-     *
-     * The exception message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
-     * - pattern: The provided regular expression
-     *
-     * @param string $pattern
-     * @param string|null $exceptionMessage
-     *
-     * @return $this
-     * @throws ParserConfigurationException
-     */
-    public function assertRegex(
-        string $pattern,
-        string $exceptionMessage = 'The string does not match the expected pattern'
-    ): self
-    {
-        if (@preg_match($pattern, '') === false) {
-            throw new ParserConfigurationException(
-                'An invalid regular expression was provided'
-            );
-        }
-
-        $this->assertionList[] = function (string $value, Path $path) use ($pattern, $exceptionMessage) {
-            if (!preg_match($pattern, $value)) {
-                throw new ParsingException(
-                    $value,
-                    Debug::parseMessage(
-                        $exceptionMessage,
-                        [
-                            'value' => $value,
-                            'pattern' => $pattern,
-                        ]
-                    ),
-                    $path
-                );
-            }
-        };
-
-        return $this;
-    }
-
-    /**
      * Checks that the string starts with the provided string and fails if it doesn't
      *
      * The exception message is processed using Debug::parseMessage and receives the following elements:

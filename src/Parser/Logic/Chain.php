@@ -35,12 +35,11 @@ class Chain implements Parser
     }
 
     /**
-     *
      * @inheritDoc
      */
     public function parse($value, Path $path = null)
     {
-        $lastKey = array_key_last($this->parsers);
+        $lastKey = count($this->parsers) - 1;
         $path ??= Path::default($value);
         foreach ($this->parsers as $index => $parser) {
             $value = $parser->parse($value, $path);
@@ -52,6 +51,9 @@ class Chain implements Parser
         return $value;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getChainedPath(Path $path): Path
     {
         $result = $path;

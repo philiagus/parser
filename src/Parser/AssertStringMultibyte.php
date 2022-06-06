@@ -33,6 +33,9 @@ class AssertStringMultibyte implements Parser
     /** @var string */
     private string $encodingDetectionExceptionMessage = 'The encoding of the multibyte string could not be determined';
 
+    /** @var string[]|null */
+    private ?array $availableEncodings = ['auto'];
+
     private function __construct()
     {
     }
@@ -52,12 +55,16 @@ class AssertStringMultibyte implements Parser
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - value: The value currently being parsed
      *
+     * @param string[] $encodings
      * @param string $message
      *
      * @return $this
+     * @throws ParserConfigurationException
      */
-    public function setEncodingDetectionExceptionMessage(string $message): self
+    public function setAvailableEncodings(array $encodings, string $message = 'The provided string does not match any expected encoding'): self
     {
+        $this->assertEncodings($encodings);
+        $this->availableEncodings = $encodings;
         $this->encodingDetectionExceptionMessage = $message;
 
         return $this;
@@ -96,7 +103,7 @@ class AssertStringMultibyte implements Parser
                 );
             }
         } else {
-            $encoding = mb_detect_encoding($value, "auto", true);
+            $encoding = mb_detect_encoding($value, $this->availableEncodings, true);
             if (!$encoding) {
                 throw new ParsingException(
                     $value,
@@ -112,49 +119,6 @@ class AssertStringMultibyte implements Parser
         }
 
         return $value;
-    }
-
-    /**
-     * Matches the provided string against the defined regular expression
-     *
-     * The exception message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
-     * - pattern: The provided regular expression
-     *
-     * @param string $pattern
-     * @param string|null $exceptionMessage
-     *
-     * @return $this
-     * @throws ParserConfigurationException
-     */
-    public function assertRegex(
-        string $pattern,
-        string $exceptionMessage = 'The string does not match the expected pattern'
-    ): self
-    {
-        if (@preg_match($pattern, '') === false) {
-            throw new ParserConfigurationException(
-                'An invalid regular expression was provided'
-            );
-        }
-
-        $this->assertionList[] = function (string $value, $encoding, Path $path) use ($pattern, $exceptionMessage) {
-            if (!preg_match($pattern, $value)) {
-                throw new ParsingException(
-                    $value,
-                    Debug::parseMessage(
-                        $exceptionMessage,
-                        [
-                            'value' => $value,
-                            'pattern' => $pattern,
-                        ]
-                    ),
-                    $path
-                );
-            }
-        };
-
-        return $this;
     }
 
     /**
@@ -177,7 +141,7 @@ class AssertStringMultibyte implements Parser
             if ($value === '') {
                 $part = '';
             } else {
-                $part = (string) mb_substr($value, $start, $length, $encoding);
+                $part = mb_substr($value, $start, $length, $encoding);
             }
             $stringParser->parse($part, $path->meta("$start:$length"));
         };
@@ -203,18 +167,37 @@ class AssertStringMultibyte implements Parser
      */
     public function setEncoding(string $encoding, string $exception = 'Multibyte string does not appear to be of the requested encoding'): self
     {
-        static $encodings = null;
-        if ($encodings === null) {
-            $encodings = mb_list_encodings();
-        }
-
-        if (!in_array($encoding, $encodings)) {
-            throw new ParserConfigurationException("The encoding $encoding is unknown to the system");
-        }
+        $this->assertEncodings([$encoding]);
 
         $this->encoding = [$encoding, $exception];
 
         return $this;
+    }
+
+    /**
+     * Asserts a list of encodings and throws an exception if one isn't supported
+     * @param string[] $encodings
+     *
+     * @return void
+     * @throws ParserConfigurationException
+     */
+    private function assertEncodings(array $encodings): void
+    {
+        static $availableEncodings = null;
+        if ($availableEncodings === null) {
+            $availableEncodings = mb_list_encodings();
+        }
+
+        foreach($encodings as $encoding) {
+            if(!is_string($encoding)) {
+                throw new ParserConfigurationException(
+                    Debug::parseMessage("Non-string provided as encoding: {encoding.debug}", ['encoding' => $encoding])
+                );
+            }
+            if (!in_array($encoding, $availableEncodings)) {
+                throw new ParserConfigurationException("The encoding $encoding is unknown to the system");
+            }
+        }
     }
 
     /**
@@ -287,5 +270,20 @@ class AssertStringMultibyte implements Parser
     protected function getDefaultChainPath(Path $path): Path
     {
         return $path->chain('assert multibyte string', false);
+    }
+
+    /**
+     * Provides the set or detected encoding to the defined parser
+     * @param ParserContract $parser
+     *
+     * @return $this
+     */
+    public function giveEncoding(Parser $parser): self
+    {
+        $this->assertionList[] = function(string $value, $encoding, Path $path) use ($parser) {
+            $parser->parse($encoding, $path->meta('encoding'));
+        };
+
+        return $this;
     }
 }

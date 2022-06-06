@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
+use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\AssertArray;
 use Philiagus\Parser\Test\ChainableParserTest;
@@ -89,4 +90,56 @@ class AssertArrayTest extends TestBase
                 [1,2,3,4, 'yes' => 'no', 5,4,3,2]
             );
     }
+
+    /**
+     * @param $invalidKey
+     *
+     * @return void
+     * @dataProvider provideInvalidArrayKeys
+     * @throws ParserConfigurationException
+     */
+    public function testExceptionOnGiveKeyValueInvalidKey($invalidKey): void
+    {
+        $parser = AssertArray::new();
+        self::expectException(ParserConfigurationException::class);
+        $parser->giveKeyValue($invalidKey, $this->prophesizeUncalledParser());
+    }
+
+    public function testElementDoesNotExistOnGiveKeyValue(): void
+    {
+        $parser = AssertArray::new()
+            ->giveKeyValue('undefined', $this->prophesizeUncalledParser());
+        self::expectException(ParsingException::class);
+        $parser->parse([]);
+    }
+
+    /**
+     * @param $invalidKey
+     *
+     * @return void
+     * @dataProvider provideInvalidArrayKeys
+     * @throws ParserConfigurationException
+     */
+    public function testExceptionOnGiveDefaultedKeyValueInvalidKey($invalidKey): void
+    {
+        $parser = AssertArray::new();
+        self::expectException(ParserConfigurationException::class);
+        $parser->giveDefaultedKeyValue($invalidKey, null, $this->prophesizeUncalledParser());
+    }
+
+    /**
+     * @param $invalidKey
+     *
+     * @return void
+     * @dataProvider provideInvalidArrayKeys
+     * @throws ParserConfigurationException
+     */
+    public function testExceptionOnGiveOptionalKeyValueInvalidKey($invalidKey): void
+    {
+        $parser = AssertArray::new();
+        self::expectException(ParserConfigurationException::class);
+        $parser->giveOptionalKeyValue($invalidKey, $this->prophesizeUncalledParser());
+    }
+
+
 }

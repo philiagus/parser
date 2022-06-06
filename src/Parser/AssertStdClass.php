@@ -125,6 +125,8 @@ class AssertStdClass implements Parser
                 $propertyValue = $value->$property;
             }
             $parser->parse($propertyValue, $path->propertyValue($property));
+
+            return $value;
         };
 
         return $this;

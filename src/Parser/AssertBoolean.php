@@ -42,9 +42,9 @@ class AssertBoolean implements Parser
 
     public function parse($value, Path $path = null)
     {
-        if (is_bool($value)) return $value;
+        if (!is_bool($value)) $this->throwTypeException($value, $path);
 
-        $this->throwTypeException($value, $path);
+        return $value;
     }
 
     protected function getDefaultTypeExceptionMessage(): string

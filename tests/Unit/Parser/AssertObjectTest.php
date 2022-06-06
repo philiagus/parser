@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
+use Philiagus\Parser\Contract\Parser;
+use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\AssertObject;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
@@ -44,5 +46,15 @@ class AssertObjectTest extends TestCase
         return (new DataProvider(~DataProvider::TYPE_OBJECT))
             ->map(fn($value) => [$value, fn() => AssertObject::new()])
             ->provide(false);
+    }
+
+    public function testInstanceOf(): void
+    {
+        $parser = AssertObject::instanceOf(Parser::class);
+        $parser->parse($parser);
+        $parser->assertInstanceOf(get_class($parser));
+        $parser->parse($parser);
+        self::expectException(ParsingException::class);
+        $parser->parse(new \stdClass());
     }
 }

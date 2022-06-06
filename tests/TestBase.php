@@ -26,6 +26,20 @@ class TestBase extends TestCase
             ->provide();
     }
 
+    protected function prophesizeUncalledParser(): Parser
+    {
+        $parser = $this->prophesize(Parser::class);
+        $parser->parse(Argument::any(), Argument::any())->shouldNotBeCalled();
+        $parser->parse(Argument::any())->shouldNotBeCalled();
+        return $parser->reveal();
+    }
+
+    public function provideInvalidArrayKeys(): array
+    {
+        return (new DataProvider(~DataProvider::TYPE_INTEGER & ~DataProvider::TYPE_STRING))
+            ->provide();
+    }
+
     protected function prophesizeParser(
         array $inputResultPairs,
               $expectedPath = null
@@ -33,6 +47,9 @@ class TestBase extends TestCase
     {
         $parser = $this->prophesize(Parser::class);
         foreach ($inputResultPairs as $pair) {
+            if(!is_array($pair)) {
+                $pair = (array)$pair;
+            }
             if (count($pair) === 1) {
                 $pair[1] = $pair[0];
             }

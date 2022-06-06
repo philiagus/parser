@@ -36,7 +36,7 @@ class AssertObject implements Parser
     /**
      * Shortcut for creating an instance and calling withInstanceOf
      *
-     * @param string $class
+     * @param class-string $class
      * @param string $exceptionMessage
      *
      * @return static

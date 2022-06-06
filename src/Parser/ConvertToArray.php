@@ -71,6 +71,10 @@ class ConvertToArray implements Parser
 
     protected function getDefaultChainPath(Path $path): Path
     {
+        if ($this->targetedArrayKey !== null) {
+            return $path->chain("wrapped in array with key '$this->targetedArrayKey'", false);
+        }
+
         return $path->chain('convert to array', false);
     }
 }

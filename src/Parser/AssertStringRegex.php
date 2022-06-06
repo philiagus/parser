@@ -42,6 +42,9 @@ class AssertStringRegex implements Parser
     /** @var null|int */
     private ?int $offset = null;
 
+    /** @var Parser[] */
+    private array $numberMatchesParsers = [];
+
     /**
      * AssertStringRegex constructor.
      *
@@ -107,8 +110,7 @@ class AssertStringRegex implements Parser
     }
 
     /**
-     * Sets to use preg_match or preg_match_all, depending on the argument.
-     * The method can only be called once
+     * Sets to use preg_match or preg_match_all, depending on the argument
      *
      * The argument can be
      * false: preg_match will be used
@@ -126,26 +128,31 @@ class AssertStringRegex implements Parser
      */
     public function setGlobal($matchType): self
     {
-        if (is_bool($matchType)) {
-            if (!$matchType) {
-                $this->global = false;
-            } else {
-                $this->global = PREG_PATTERN_ORDER;
-            }
-        } elseif ($matchType === PREG_SET_ORDER || $matchType === PREG_PATTERN_ORDER) {
-            $this->global = $matchType;
-        } else {
-            throw new ParserConfigurationException(
-                'Global matching configuration of AssertStringRegex must be provided as bool, PREG_SET_ORDER or PREG_PATTERN_ORDER'
-            );
+        if ($matchType === false) {
+            $this->global = false;
+
+            return $this;
         }
 
-        return $this;
+        if ($matchType === true) {
+            $this->global = PREG_PATTERN_ORDER;
+
+            return $this;
+        }
+
+        if ($matchType === PREG_SET_ORDER || $matchType === PREG_PATTERN_ORDER) {
+            $this->global = $matchType;
+
+            return $this;
+        }
+
+        throw new ParserConfigurationException(
+            'Global matching configuration of AssertStringRegex must be provided as bool, PREG_SET_ORDER or PREG_PATTERN_ORDER'
+        );
     }
 
     /**
      * Sets the offset from where to search in the pattern
-     * The method can only be called once
      *
      * @param int $offset
      *
@@ -161,7 +168,6 @@ class AssertStringRegex implements Parser
     /**
      * Adds the PREG_OFFSET_CAPTURE flag to the regular expression, influencing the
      * resulting matches and the array provided to the matches parsers
-     * The method can only be called once
      *
      * @see https://www.php.net/manual/de/function.preg-match-all
      *
@@ -179,7 +185,6 @@ class AssertStringRegex implements Parser
     /**
      * Adds the PREG_UNMATCHED_AS_NULL flag to the regular expression, influencing the
      * resulting matches and the array provided to the matches parsers
-     * The method can only be called once
      *
      * @see https://www.php.net/manual/de/function.preg-match-all
      *
@@ -255,6 +260,10 @@ class AssertStringRegex implements Parser
         $path ??= Path::default($value);
         $metaPath = $path->meta('matches');
 
+        foreach($this->numberMatchesParsers as $numberMatchesParser) {
+            $numberMatchesParser->parse($result, $path->meta('number of matches'));
+        }
+
         foreach ($this->matchesParser as $parser) {
             $parser->parse($matches, $metaPath);
         }
@@ -270,5 +279,18 @@ class AssertStringRegex implements Parser
     protected function getDefaultChainPath(Path $path): Path
     {
         return $path->chain('assert string regex', false);
+    }
+
+    /**
+     * Adds a parser the number of matches are passed to
+     * @param ParserContract $parser
+     *
+     * @return $this
+     */
+    public function giveNumberOfMatches(Parser $parser): self
+    {
+        $this->numberMatchesParsers[] = $parser;
+
+        return $this;
     }
 }

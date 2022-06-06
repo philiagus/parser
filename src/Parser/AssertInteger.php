@@ -118,7 +118,7 @@ class AssertInteger implements Parser
     {
         $this->assertionList[] = function (int $value, ?Path $path) use ($base, $exceptionMessage) {
             if ($value === 0 && $base === 0) return;
-            if (($value % $base) !== 0) {
+            if ($base === 0 || ($value % $base) !== 0) {
                 throw new Exception\ParsingException(
                     $value,
                     Debug::parseMessage($exceptionMessage, ['value' => $value, 'base' => $base]),

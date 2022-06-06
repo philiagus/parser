@@ -36,12 +36,10 @@ class AssertScalar implements Parser
 
     public function parse($value, ?Path $path = null)
     {
-        if (is_scalar($value)) return $value;
+        if (!is_scalar($value)) $this->throwTypeException($value, $path);
 
-        $this->throwTypeException($value, $path);
+        return $value;
     }
-
-    /** @var string */
 
     protected function getDefaultTypeExceptionMessage(): string
     {
