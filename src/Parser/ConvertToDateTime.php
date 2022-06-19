@@ -41,6 +41,26 @@ class ConvertToDateTime implements Parser
         return new self();
     }
 
+
+    /**
+     * Is identical to creating a new instance of this class and calling setStringSourceFormat on it
+     * @see ConvertToDateTime::setStringSourceFormat()
+     *
+     * @param string $format
+     * @param DateTimeZone|null $timeZone
+     * @param string $exceptionMessage
+     *
+     * @return self
+     */
+    public static function fromSourceFormat(
+        string       $format,
+        DateTimeZone $timeZone = null,
+        string       $exceptionMessage = 'The provided string is not in the format {format.raw}'
+    ): self
+    {
+        return self::new()->setStringSourceFormat($format, $timeZone, $exceptionMessage);
+    }
+
     /**
      * Specifies the source format when receiving a string and trying to convert it to a DateTime/DateTimeImmutable
      * object.
@@ -77,7 +97,7 @@ class ConvertToDateTime implements Parser
      */
     public function setImmutable(bool $immutable = true): self
     {
-        $this->immutabel = $immutable;
+        $this->immutable = $immutable;
 
         return $this;
     }
@@ -108,11 +128,11 @@ class ConvertToDateTime implements Parser
             if (!$this->immutable) {
                 $dateTime = \DateTime::createFromImmutable($value);
             }
-        } elseif (is_string($value) && $this->sourceFormat !== null) {
+        } elseif ((is_string($value) || is_int($value)) && $this->sourceFormat !== null) {
             if ($this->immutable) {
-                $dateTime = @\DateTimeImmutable::createFromFormat($this->sourceFormat, $this->sourceTimezone);
+                $dateTime = @\DateTimeImmutable::createFromFormat($this->sourceFormat, (string)$value, $this->sourceTimezone);
             } else {
-                $dateTime = @\DateTime::createFromFormat($this->sourceFormat, $this->sourceTimezone);
+                $dateTime = @\DateTime::createFromFormat($this->sourceFormat, (string)$value, $this->sourceTimezone);
             }
             if ($dateTime === false) {
                 throw new ParsingException(

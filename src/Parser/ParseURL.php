@@ -40,11 +40,30 @@ class ParseURL implements Parser
         TARGET_QUERY = 'query',
         TARGET_FRAGMENT = 'fragment';
 
-    /** @var ParserContract[] */
-    private array $parsers = [];
+    /** @var array<array{string, null|int|string, Parser, string|null}> */
+    private array $giveElements = [];
+
+    private string $invalidStringExceptionMessage = 'The provided string could not be parsed as a url';
 
     private function __construct()
     {
+    }
+
+    /**
+     * Overwrites the exception thrown in case the provided string cannot be parsed as an url
+     *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     *
+     * @param string $message
+     *
+     * @return $this
+     */
+    public function setInvalidStringExceptionMessage(string $message): self
+    {
+        $this->invalidStringExceptionMessage = $message;
+
+        return $this;
     }
 
     /**
@@ -69,7 +88,7 @@ class ParseURL implements Parser
      */
     public function giveScheme(ParserContract $parser, string $missingExceptionMessage = 'The provided URL does not specify a scheme'): self
     {
-        $this->parsers = [self::TARGET_SCHEME, null, $parser, $missingExceptionMessage];
+        $this->giveElements[] = [self::TARGET_SCHEME, null, $parser, $missingExceptionMessage];
 
         return $this;
     }
@@ -86,7 +105,7 @@ class ParseURL implements Parser
      */
     public function giveSchemeDefaulted(string $default, ParserContract $parser): self
     {
-        $this->parsers = [self::TARGET_SCHEME, $default, $parser, null];
+        $this->giveElements[] = [self::TARGET_SCHEME, $default, $parser, null];
 
         return $this;
     }
@@ -105,7 +124,7 @@ class ParseURL implements Parser
      */
     public function giveHost(ParserContract $parser, string $missingExceptionMessage = 'The provided URL does not specify a host'): self
     {
-        $this->parsers = [self::TARGET_HOST, null, $parser, $missingExceptionMessage];
+        $this->giveElements[] = [self::TARGET_HOST, null, $parser, $missingExceptionMessage];
 
         return $this;
     }
@@ -122,7 +141,7 @@ class ParseURL implements Parser
      */
     public function giveHostDefaulted(string $default, ParserContract $parser): self
     {
-        $this->parsers = [self::TARGET_HOST, $default, $parser, null];
+        $this->giveElements[] = [self::TARGET_HOST, $default, $parser, null];
 
         return $this;
     }
@@ -141,7 +160,7 @@ class ParseURL implements Parser
      */
     public function givePort(ParserContract $parser, string $missingExceptionMessage = 'The provided URL does not specify a port'): self
     {
-        $this->parsers = [self::TARGET_PORT, null, $parser, $missingExceptionMessage];
+        $this->giveElements[] = [self::TARGET_PORT, null, $parser, $missingExceptionMessage];
 
         return $this;
     }
@@ -159,7 +178,7 @@ class ParseURL implements Parser
      */
     public function givePortDefaulted(int $default, ParserContract $parser): self
     {
-        $this->parsers = [self::TARGET_PORT, $default, $parser, null];
+        $this->giveElements[] = [self::TARGET_PORT, $default, $parser, null];
 
         return $this;
     }
@@ -178,7 +197,7 @@ class ParseURL implements Parser
      */
     public function giveUser(ParserContract $parser, string $missingExceptionMessage = 'The provided URL does not specify a user'): self
     {
-        $this->parsers = [self::TARGET_USER, null, $parser, $missingExceptionMessage];
+        $this->giveElements[] = [self::TARGET_USER, null, $parser, $missingExceptionMessage];
 
         return $this;
     }
@@ -195,7 +214,7 @@ class ParseURL implements Parser
      */
     public function giveUserDefaulted(string $default, ParserContract $parser): self
     {
-        $this->parsers = [self::TARGET_USER, $default, $parser, null];
+        $this->giveElements[] = [self::TARGET_USER, $default, $parser, null];
 
         return $this;
     }
@@ -214,7 +233,7 @@ class ParseURL implements Parser
      */
     public function givePassword(ParserContract $parser, string $missingExceptionMessage = 'The provided URL does not specify a password'): self
     {
-        $this->parsers = [self::TARGET_PASS, null, $parser, $missingExceptionMessage];
+        $this->giveElements[] = [self::TARGET_PASS, null, $parser, $missingExceptionMessage];
 
         return $this;
     }
@@ -231,7 +250,7 @@ class ParseURL implements Parser
      */
     public function givePasswordDefaulted(string $default, ParserContract $parser): self
     {
-        $this->parsers = [self::TARGET_PASS, $default, $parser, null];
+        $this->giveElements[] = [self::TARGET_PASS, $default, $parser, null];
 
         return $this;
     }
@@ -250,7 +269,7 @@ class ParseURL implements Parser
      */
     public function givePath(ParserContract $parser, string $missingExceptionMessage = 'The provided URL does not specify a path'): self
     {
-        $this->parsers = [self::TARGET_PATH, null, $parser, $missingExceptionMessage];
+        $this->giveElements[] = [self::TARGET_PATH, null, $parser, $missingExceptionMessage];
 
         return $this;
     }
@@ -267,7 +286,7 @@ class ParseURL implements Parser
      */
     public function givePathDefaulted(string $default, ParserContract $parser): self
     {
-        $this->parsers = [self::TARGET_PATH, $default, $parser, null];
+        $this->giveElements[] = [self::TARGET_PATH, $default, $parser, null];
 
         return $this;
     }
@@ -286,7 +305,7 @@ class ParseURL implements Parser
      */
     public function giveQuery(ParserContract $parser, string $missingExceptionMessage = 'The provided URL does not specify a query'): self
     {
-        $this->parsers = [self::TARGET_QUERY, null, $parser, $missingExceptionMessage];
+        $this->giveElements[] = [self::TARGET_QUERY, null, $parser, $missingExceptionMessage];
 
         return $this;
     }
@@ -303,7 +322,7 @@ class ParseURL implements Parser
      */
     public function giveQueryDefaulted(string $default, ParserContract $parser): self
     {
-        $this->parsers = [self::TARGET_QUERY, $default, $parser, null];
+        $this->giveElements[] = [self::TARGET_QUERY, $default, $parser, null];
 
         return $this;
     }
@@ -322,7 +341,7 @@ class ParseURL implements Parser
      */
     public function giveFragment(ParserContract $parser, string $missingExceptionMessage = 'The provided URL does not specify a fragment'): self
     {
-        $this->parsers = [self::TARGET_FRAGMENT, null, $parser, $missingExceptionMessage];
+        $this->giveElements[] = [self::TARGET_FRAGMENT, null, $parser, $missingExceptionMessage];
 
         return $this;
     }
@@ -339,7 +358,7 @@ class ParseURL implements Parser
      */
     public function giveFragmentDefaulted(string $default, ParserContract $parser): self
     {
-        $this->parsers = [self::TARGET_FRAGMENT, $default, $parser, null];
+        $this->giveElements[] = [self::TARGET_FRAGMENT, $default, $parser, null];
 
         return $this;
     }
@@ -356,14 +375,19 @@ class ParseURL implements Parser
 
         $parsed = parse_url($value);
 
-        /**
-         * @var int $target
-         * @var bool $isDefaulted
-         * @var mixed $default
-         * @var ParserContract $parser
-         * @var string|null $missingExceptionMessage
-         */
-        foreach ($this->parsers as [$target, $default, $parser, $missingExceptionMessage]) {
+        if(!$parsed) {
+            throw new ParsingException(
+                $value,
+                Debug::parseMessage(
+                    $this->invalidStringExceptionMessage,
+                    ['value' => $value]
+                ),
+                $path
+            );
+        }
+
+        $path ??= Path::default($value);
+        foreach ($this->giveElements as [$target, $default, $parser, $missingExceptionMessage]) {
             $fieldValue = $parsed[$target] ?? null;
             if ($fieldValue === null) {
                 if ($missingExceptionMessage !== null) {
@@ -376,8 +400,7 @@ class ParseURL implements Parser
 
                 $fieldValue = $default;
             }
-
-            $parser->parse($fieldValue, null);
+            $parser->parse($fieldValue, $path->meta($target));
         }
 
         return $parsed;

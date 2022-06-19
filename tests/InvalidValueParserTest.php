@@ -44,7 +44,7 @@ trait InvalidValueParserTest
 
         }
         if (!isset($exception)) {
-            self::fail('No exception was thrown and parser resulted in: ' . Debug::stringify($result));
+            self::fail('No exception was thrown and parser for ' . Debug::stringify($value) . ' resulted in: ' . Debug::stringify($result));
         }
         if (is_string($expectedException)) {
             self::assertInstanceOf($expectedException, $exception, "Exception of type $expectedException not thrown");

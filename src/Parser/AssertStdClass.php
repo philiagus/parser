@@ -89,8 +89,9 @@ class AssertStdClass implements Parser
         }
 
         $path ??= Path::default($value);
+        $alreadyCloned = false;
         foreach ($this->assertionList as $assertion) {
-            $value = $assertion($value, $path);
+            $value = $assertion($value, $path, $alreadyCloned);
         }
 
         return $value;
@@ -145,6 +146,23 @@ class AssertStdClass implements Parser
                 $properties[] = $property;
             }
             $arrayParser->parse($properties, $path->meta('property names'));
+
+            return $value;
+        };
+
+        return $this;
+    }
+
+    public function givePropertyValues(ParserContract $arrayParser): self
+    {
+        $this->assertionList[] = function (\stdClass $value, Path $path) use ($arrayParser) {
+            $propertyValues = [];
+            foreach ($value as $propertyValue) {
+                $propertyValues[] = $propertyValue;
+            }
+            $arrayParser->parse($propertyValues, $path->meta('property values'));
+
+            return $value;
         };
 
         return $this;

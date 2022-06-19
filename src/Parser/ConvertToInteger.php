@@ -42,11 +42,9 @@ class ConvertToInteger implements Parser
         }
 
         if (is_float($value)) {
-            // float conversion
-            if (!is_nan($value) && !is_infinite($value)) {
-                if ($value == (float) (int) $value) {
-                    return (int) $value;
-                }
+            // invalid float values
+            if (is_nan($value) || is_infinite($value) || $value !== (float) (int) $value) {
+                $this->throwTypeException($value, $path);
             }
         } elseif (is_string($value)) {
             // string conversion
@@ -61,9 +59,12 @@ class ConvertToInteger implements Parser
                     return $compareInteger;
                 }
             }
+            $this->throwTypeException($value, $path);
+        } else {
+            $this->throwTypeException($value, $path);
         }
 
-        $this->throwTypeException($value, $path);
+        return (int) $value;
     }
 
     protected function getDefaultTypeExceptionMessage(): string
