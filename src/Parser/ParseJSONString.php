@@ -17,6 +17,7 @@ use Philiagus\Parser\Base\OverwritableChainDescription;
 use Philiagus\Parser\Base\Path;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
+use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
 
@@ -83,10 +84,15 @@ class ParseJSONString implements Parser
      * @param int $maxDepth
      *
      * @return $this
+     * @throws ParserConfigurationException
      * @see https://www.php.net/manual/de/function.json-decode.php
      */
     public function setMaxDepth(int $maxDepth = 512): self
     {
+        if($maxDepth < 1) {
+            throw new ParserConfigurationException("The maximum depth for ParseJSONString must be at least 1");
+        }
+
         $this->maxDepth = $maxDepth;
 
         return $this;

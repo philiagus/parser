@@ -48,7 +48,7 @@ trait TypeExceptionMessage
      * @param $value
      * @param Path|null $path
      *
-     * @return void
+     * @return never-returns
      * @throws ParsingException
      */
     private function throwTypeException($value, ?Path $path): void

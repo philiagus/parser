@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
+use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\ParseBase64String;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
@@ -36,5 +37,23 @@ class ParseBase64StringTest extends TestCase
         return (new DataProvider(DataProvider::TYPE_STRING))
             ->map(fn($value) => [base64_encode($value), fn() => ParseBase64String::new(), $value])
             ->provide(false);
+    }
+
+    public function test_setNotBase64ExceptionMessage(): void
+    {
+        $value = '$$$';
+        $parser = ParseBase64String::new()
+            ->setNotBase64ExceptionMessage('MESSAGE {value.raw}');
+        self::expectException(ParsingException::class);
+        self::expectExceptionMessage('MESSAGE $$$');
+        $parser->parse($value);
+    }
+
+    public function test_setStrict(): void
+    {
+        $string = base64_encode('hallo welt') . 'üüü';
+        self::assertSame('hallo welt', ParseBase64String::new()->setStrict(false)->parse($string));
+        self::expectException(ParsingException::class);
+        ParseBase64String::new()->parse($string);
     }
 }
