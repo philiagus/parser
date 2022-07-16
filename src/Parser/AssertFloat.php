@@ -13,16 +13,18 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception;
+use Philiagus\Parser\Result;
+use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
 
 class AssertFloat implements Parser
 {
-    use Chainable, OverwritableChainDescription, TypeExceptionMessage;
+    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
 
     /** @var callable[] */
     private array $assertionList = [];
@@ -60,12 +62,11 @@ class AssertFloat implements Parser
             throw new Exception\ParserConfigurationException('Minimum must be set as a float number value. NAN and INF are not allowed');
         }
 
-        $this->assertionList[] = function (float $value, ?Path $path) use ($minimum, $exceptionMessage) {
+        $this->assertionList[] = function (ResultBuilder $builder, float $value) use ($minimum, $exceptionMessage): void {
             if ($minimum > $value) {
-                throw new Exception\ParsingException(
-                    $value,
-                    Debug::parseMessage($exceptionMessage, ['value' => $value, 'min' => $minimum]),
-                    $path
+                $builder->logErrorUsingDebug(
+                    $exceptionMessage,
+                    ['min' => $minimum]
                 );
             }
         };
@@ -94,12 +95,11 @@ class AssertFloat implements Parser
             throw new Exception\ParserConfigurationException('Maximum must be set as a float number value. NAN and INF are not allowed');
         }
 
-        $this->assertionList[] = function (float $value, ?Path $path) use ($maximum, $exceptionMessage) {
+        $this->assertionList[] = function (ResultBuilder $builder, float $value) use ($maximum, $exceptionMessage): void {
             if ($maximum < $value) {
-                throw new Exception\ParsingException(
-                    $value,
-                    Debug::parseMessage($exceptionMessage, ['value' => $value, 'max' => $maximum]),
-                    $path
+                $builder->logErrorUsingDebug(
+                    $exceptionMessage,
+                    ['max' => $maximum]
                 );
             }
         };
@@ -107,17 +107,21 @@ class AssertFloat implements Parser
         return $this;
     }
 
-    public function parse($value, Path $path = null)
+    public function parse(Subject $subject): Result
     {
+        $builder = $this->createResultBuilder($subject);
+        $value = $subject->getValue();
         if (!is_float($value) || is_nan($value) || is_infinite($value)) {
-            $this->throwTypeException($value, $path);
+            $this->logTypeError($builder);
+
+            return $builder->createResultUnchanged();
         }
 
         foreach ($this->assertionList as $assertion) {
-            $assertion($value, $path);
+            $assertion($builder, $value);
         }
 
-        return $value;
+        return $builder->createResultUnchanged();
     }
 
     protected function getDefaultTypeExceptionMessage(): string
@@ -125,8 +129,8 @@ class AssertFloat implements Parser
         return 'Provided value is not of type float';
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path->chain('assert float', false);
+        return 'assert float';
     }
 }

@@ -13,17 +13,19 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
+use Philiagus\Parser\Result;
+
 
 /**
  * Preserves a value around another parser, shielding it from alteration
  */
 class Preserve implements Parser
 {
-    use Chainable, OverwritableChainDescription;
+    use Chainable, OverwritableParserDescription;
 
     /** @var ParserContract */
     private ParserContract $around;
@@ -48,15 +50,20 @@ class Preserve implements Parser
         return new self($parser);
     }
 
-    public function parse($value, Path $path = null)
+    public function parse(Subject $subject): Result
     {
-        $this->around->parse($value, $path->chain('inside preserve', false));
+        $builder = $this->createResultBuilder($subject);
+        $builder->incorporateResult(
+            $this->around->parse(
+                $builder->subjectForwarded('preserved around')
+            )
+        );
 
-        return $value;
+        return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path->chain('preserved', false);
+        return 'preserved';
     }
 }

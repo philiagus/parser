@@ -13,23 +13,26 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Result;
+use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
 
 class AssertStdClass implements Parser
 {
-    use Chainable, OverwritableChainDescription, TypeExceptionMessage;
+    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
 
-    /** @var callable[] */
-    protected array $assertionList = [];
+    /** @var \SplDoublyLinkedList<\Closure> */
+    protected \SplDoublyLinkedList $assertionList;
 
     final private function __construct()
     {
+        $this->assertionList = new \SplDoublyLinkedList();
     }
 
     /**
@@ -50,7 +53,7 @@ class AssertStdClass implements Parser
      *
      * @param string $property
      * @param ParserContract $parser
-     * @param string $missingKeyExceptionMessage
+     * @param string $missingPropertyExceptionMessage
      *
      * @return $this
      * @see Debug::parseMessage()
@@ -58,21 +61,23 @@ class AssertStdClass implements Parser
      */
     public function givePropertyValue(
         string $property, ParserContract $parser,
-        string $missingKeyExceptionMessage = 'The object does not contain the requested property {property}'
+        string $missingPropertyExceptionMessage = 'The object does not contain the requested property {property}'
     ): self
     {
-        $this->assertionList[] = function (\stdClass $value, Path $path) use ($property, $parser, $missingKeyExceptionMessage) {
-            if (!property_exists($value, $property)) {
-                throw new ParsingException(
-                    $value,
-                    Debug::parseMessage($missingKeyExceptionMessage, ['property' => $property, 'value' => $value]),
-                    $path
+        $this->assertionList[] = function (ResultBuilder $builder) use ($property, $parser, $missingPropertyExceptionMessage): void {
+            $value = $builder->getCurrentValue();
+            if (property_exists($value, $property)) {
+                $builder->incorporateResult(
+                    $parser->parse(
+                        $builder->subjectPropertyValue($property, $value->$property)
+                    )
+                );
+            } else {
+                $builder->logErrorUsingDebug(
+                    $missingPropertyExceptionMessage,
+                    ['property' => $property]
                 );
             }
-
-            $parser->parse($value->$property, $path->propertyValue($property));
-
-            return $value;
         };
 
         return $this;
@@ -82,19 +87,18 @@ class AssertStdClass implements Parser
      *
      * @inheritdoc
      */
-    public function parse($value, ?Path $path = null)
+    public function parse(Subject $subject): Result
     {
-        if (!is_object($value) || get_class($value) !== \stdClass::class) {
-            $this->throwTypeException($value, $path);
+        $builder = $this->createResultBuilder($subject);
+        if ($builder->getCurrentValue() instanceof \stdClass) {
+            foreach ($this->assertionList as $assertion) {
+                $assertion($builder);
+            }
+        } else {
+            $this->logTypeError($builder);
         }
 
-        $path ??= Path::default($value);
-        $alreadyCloned = false;
-        foreach ($this->assertionList as $assertion) {
-            $value = $assertion($value, $path, $alreadyCloned);
-        }
-
-        return $value;
+        return $builder->createResultBasedOnCurrentSubject();
     }
 
     /**
@@ -107,12 +111,18 @@ class AssertStdClass implements Parser
      */
     public function giveOptionalPropertyValue(string $property, ParserContract $parser): self
     {
-        $this->assertionList[] = function (\stdClass $value, Path $path) use ($property, $parser) {
+        $this->assertionList[] = function (ResultBuilder $builder) use ($property, $parser): void {
+            $value= $builder->getCurrentValue();
             if (property_exists($value, $property)) {
-                $parser->parse($value->$property, $path->propertyValue($property));
+                $builder->incorporateResult(
+                    $parser->parse(
+                        $builder->subjectPropertyValue(
+                            $property,
+                            $value->$property
+                        )
+                    )
+                );
             }
-
-            return $value;
         };
 
         return $this;
@@ -120,14 +130,14 @@ class AssertStdClass implements Parser
 
     public function giveDefaultedPropertyValue(string $property, $default, ParserContract $parser): self
     {
-        $this->assertionList[] = function (\stdClass $value, Path $path) use ($property, $default, $parser) {
-            $propertyValue = $default;
-            if (property_exists($value, $property)) {
-                $propertyValue = $value->$property;
-            }
-            $parser->parse($propertyValue, $path->propertyValue($property));
-
-            return $value;
+        $this->assertionList[] = function (ResultBuilder $builder) use ($property, $default, $parser): void {
+            $value = $builder->getCurrentValue();
+            $propertyValue = property_exists($value, $property) ? $value->$property : $default;
+            $builder->incorporateResult(
+                $parser->parse(
+                    $builder->subjectPropertyValue($property, $propertyValue)
+                )
+            );
         };
 
         return $this;
@@ -140,14 +150,16 @@ class AssertStdClass implements Parser
      */
     public function givePropertyNames(ParserContract $arrayParser): self
     {
-        $this->assertionList[] = function (\stdClass $value, Path $path) use ($arrayParser) {
+        $this->assertionList[] = function (ResultBuilder $builder) use ($arrayParser): void {
             $properties = [];
-            foreach ($value as $property => $_) {
+            foreach ($builder->getCurrentValue() as $property => $_) {
                 $properties[] = $property;
             }
-            $arrayParser->parse($properties, $path->meta('property names'));
-
-            return $value;
+            $builder->incorporateResult(
+                $arrayParser->parse(
+                    $builder->subjectMeta('property names', $properties)
+                )
+            );
         };
 
         return $this;
@@ -155,14 +167,16 @@ class AssertStdClass implements Parser
 
     public function givePropertyValues(ParserContract $arrayParser): self
     {
-        $this->assertionList[] = function (\stdClass $value, Path $path) use ($arrayParser) {
+        $this->assertionList[] = function (ResultBuilder $builder) use ($arrayParser): void {
             $propertyValues = [];
-            foreach ($value as $propertyValue) {
+            foreach ($builder->getCurrentValue() as $propertyValue) {
                 $propertyValues[] = $propertyValue;
             }
-            $arrayParser->parse($propertyValues, $path->meta('property values'));
-
-            return $value;
+            $builder->incorporateResult(
+                $arrayParser->parse(
+                    $builder->subjectMeta('property values', $propertyValues)
+                )
+            );
         };
 
         return $this;
@@ -177,12 +191,14 @@ class AssertStdClass implements Parser
      */
     public function giveEachPropertyName(ParserContract $stringParser): self
     {
-        $this->assertionList[] = function (\stdClass $value, Path $path) use ($stringParser) {
-            foreach ($value as $property => $_) {
-                $stringParser->parse($property, $path->propertyName((string) $property));
+        $this->assertionList[] = function (ResultBuilder $builder) use ($stringParser): void {
+            foreach ($builder->getCurrentValue() as $property => $_) {
+                $builder->incorporateResult(
+                    $stringParser->parse(
+                        $builder->subjectPropertyName($property)
+                    )
+                );
             }
-
-            return $value;
         };
 
         return $this;
@@ -197,12 +213,14 @@ class AssertStdClass implements Parser
      */
     public function giveEachPropertyValue(ParserContract $parser): self
     {
-        $this->assertionList[] = function (\stdClass $stdClass, Path $path) use ($parser) {
-            foreach ($stdClass as $property => $value) {
-                $parser->parse($value, $path->propertyName((string) $property));
+        $this->assertionList[] = function (ResultBuilder $builder) use ($parser): void {
+            foreach ($builder->getCurrentValue() as $property => $value) {
+                $builder->incorporateResult(
+                    $parser->parse(
+                        $builder->subjectPropertyValue($property, $value)
+                    )
+                );
             }
-
-            return $stdClass;
         };
 
         return $this;
@@ -217,14 +235,16 @@ class AssertStdClass implements Parser
      */
     public function givePropertyCount(ParserContract $integerParser): self
     {
-        $this->assertionList[] = function (\stdClass $value, Path $path) use ($integerParser) {
+        $this->assertionList[] = function (ResultBuilder $builder) use ($integerParser): void {
             $count = 0;
-            foreach ($value as $_) {
+            foreach ($builder->getCurrentValue()->value as $_) {
                 $count++;
             }
-            $integerParser->parse($count, $path->meta('property count'));
-
-            return $value;
+            $builder->incorporateResult(
+                $integerParser->parse(
+                    $builder->subjectMeta('property count', $count)
+                )
+            );
         };
 
         return $this;
@@ -235,8 +255,8 @@ class AssertStdClass implements Parser
         return 'Provided value is not an instance of \stdClass';
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path->chain('assert stdClass', false);
+        return 'assert stdClass';
     }
 }

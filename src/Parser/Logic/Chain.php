@@ -13,8 +13,11 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
+use Philiagus\Parser\Exception\ParserConfigurationException;
+use Philiagus\Parser\Result;
+
 
 class Chain implements Parser
 {
@@ -24,41 +27,25 @@ class Chain implements Parser
     /** @var Parser[] */
     private array $parsers;
 
-    private function __construct(Parser ...$parsers)
+    private function __construct(Parser $parser, Parser ...$parsers)
     {
-        $this->parsers = $parsers;
+        $this->parsers = [$parser, ...$parsers];
     }
 
-    public static function parsers(Parser ...$parsers): self
+    public static function parsers(Parser $parser, Parser ...$parsers): self
     {
-        return new self(...$parsers);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function parse($value, Path $path = null)
-    {
-        $lastKey = count($this->parsers) - 1;
-        $path ??= Path::default($value);
-        foreach ($this->parsers as $index => $parser) {
-            $value = $parser->parse($value, $path);
-            if ($index !== $lastKey) {
-                $path = $parser->getChainedPath($path);
-            }
-        }
-
-        return $value;
+        return new self($parser, ...$parsers);
     }
 
     /**
      * @inheritDoc
      */
-    public function getChainedPath(Path $path): Path
+    public function parse(Subject $subject): Result
     {
-        $result = $path;
         foreach ($this->parsers as $parser) {
-            $result = $parser->getChainedPath($result);
+            $result = $parser->parse($subject);
+            if (!$result->isSuccess()) return $result;
+            $subject = $result->subjectChain();
         }
 
         return $result;

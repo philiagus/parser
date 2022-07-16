@@ -13,33 +13,32 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Debug;
 
 class AssertStringRegex implements Parser
 {
-    use Chainable, OverwritableChainDescription, TypeExceptionMessage;
+    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
 
     public const DEFAULT_PATTERN_EXCEPTION_MESSAGE = 'The string does not match the expected pattern';
-    /** @var null|false|int */
-    private $global = null;
-    /** @var null|bool */
+
+
+    private int|null|false $global = null;
     private ?bool $offsetCapture = null;
-    /** @var null|bool */
     private ?bool $unmatchedAsNull = null;
+
     /** @var ParserContract[] */
     private array $matchesParser = [];
-    /** @var string */
+
     private string $pattern;
-    /** @var null|string */
     private ?string $patternExceptionMessage = null;
-    /** @var null|int */
     private ?int $offset = null;
 
     /** @var Parser[] */
@@ -126,7 +125,7 @@ class AssertStringRegex implements Parser
      * @return $this
      * @throws ParserConfigurationException
      */
-    public function setGlobal($matchType): self
+    public function setGlobal(bool|int $matchType): self
     {
         if ($matchType === false) {
             $this->global = false;
@@ -216,10 +215,14 @@ class AssertStringRegex implements Parser
         return $this;
     }
 
-    public function parse($value, ?Path $path = null)
+    public function parse(Subject $subject): Result
     {
+        $builder = $this->createResultBuilder($subject);
+        $value = $builder->getCurrentValue();
         if (!is_string($value)) {
-            $this->throwTypeException($value, $path);
+            $this->logTypeError($builder);
+
+            return $builder->createResultUnchanged();
         }
 
         $flags = 0;
@@ -244,45 +247,38 @@ class AssertStringRegex implements Parser
         }
 
         if (!$result) {
-            throw new ParsingException(
-                $value,
-                Debug::parseMessage(
-                    $this->patternExceptionMessage,
-                    [
-                        'value' => $value,
-                        'pattern' => $this->pattern,
-                    ]
-                ),
-                $path
+            $builder->logErrorUsingDebug(
+                $this->patternExceptionMessage,
+                [
+                    'pattern' => $this->pattern
+                ]
+            );
+
+            return $builder->createResultUnchanged();
+        }
+
+        foreach ($this->numberMatchesParsers as $numberMatchesParser) {
+            $builder->incorporateResult(
+                $numberMatchesParser->parse(
+                    $builder->subjectMeta('number of matches', $result)
+                )
             );
         }
 
-        $path ??= Path::default($value);
-        $metaPath = $path->meta('matches');
-
-        foreach($this->numberMatchesParsers as $numberMatchesParser) {
-            $numberMatchesParser->parse($result, $path->meta('number of matches'));
-        }
-
         foreach ($this->matchesParser as $parser) {
-            $parser->parse($matches, $metaPath);
+            $builder->incorporateResult(
+                $parser->parse(
+                    $builder->subjectMeta('matches', $matches)
+                )
+            );
         }
 
-        return $value;
-    }
-
-    protected function getDefaultTypeExceptionMessage(): string
-    {
-        return 'Provided value is not of type string';
-    }
-
-    protected function getDefaultChainPath(Path $path): Path
-    {
-        return $path->chain('assert string regex', false);
+        return $builder->createResultUnchanged();
     }
 
     /**
      * Adds a parser the number of matches are passed to
+     *
      * @param ParserContract $parser
      *
      * @return $this
@@ -292,5 +288,15 @@ class AssertStringRegex implements Parser
         $this->numberMatchesParsers[] = $parser;
 
         return $this;
+    }
+
+    protected function getDefaultTypeExceptionMessage(): string
+    {
+        return 'Provided value is not of type string';
+    }
+
+    protected function getDefaultChainDescription(Subject $subject): string
+    {
+        return "assert string regex";
     }
 }

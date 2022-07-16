@@ -13,12 +13,13 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Debug;
 
 /**
@@ -29,7 +30,7 @@ use Philiagus\Parser\Util\Debug;
  */
 class ParseURL implements Parser
 {
-    use Chainable, OverwritableChainDescription, TypeExceptionMessage;
+    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
 
     private const TARGET_SCHEME = 'scheme',
         TARGET_HOST = 'host',
@@ -50,6 +51,14 @@ class ParseURL implements Parser
     }
 
     /**
+     * @return self
+     */
+    public static function new(): self
+    {
+        return new self();
+    }
+
+    /**
      * Overwrites the exception thrown in case the provided string cannot be parsed as an url
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
@@ -64,14 +73,6 @@ class ParseURL implements Parser
         $this->invalidStringExceptionMessage = $message;
 
         return $this;
-    }
-
-    /**
-     * @return self
-     */
-    public static function new(): self
-    {
-        return new self();
     }
 
     /**
@@ -367,43 +368,43 @@ class ParseURL implements Parser
      *
      * @inheritDoc
      */
-    public function parse($value, ?Path $path = null)
+    public function parse(Subject $subject): Result
     {
+        $builder = $this->createResultBuilder($subject);
+        $value= $builder->getCurrentValue();
         if (!is_string($value)) {
-            $this->throwTypeException($value, $path);
+            $this->logTypeError($builder);
+
+            return $builder->createResultUnchanged();
         }
 
         $parsed = parse_url($value);
 
-        if(!$parsed) {
-            throw new ParsingException(
-                $value,
-                Debug::parseMessage(
-                    $this->invalidStringExceptionMessage,
-                    ['value' => $value]
-                ),
-                $path
+        if (!$parsed) {
+            $builder->logErrorUsingDebug(
+                $this->invalidStringExceptionMessage
             );
+
+            return $builder->createResultUnchanged();
         }
 
-        $path ??= Path::default($value);
         foreach ($this->giveElements as [$target, $default, $parser, $missingExceptionMessage]) {
             $fieldValue = $parsed[$target] ?? null;
             if ($fieldValue === null) {
                 if ($missingExceptionMessage !== null) {
-                    throw new ParsingException(
-                        $value,
-                        Debug::parseMessage($missingExceptionMessage, ['value' => $value]),
-                        $path
+                    $builder->logErrorUsingDebug(
+                        $missingExceptionMessage,
                     );
                 }
 
                 $fieldValue = $default;
             }
-            $parser->parse($fieldValue, $path->meta($target));
+            $parser->parse(
+                $builder->subjectMeta($target, $fieldValue)
+            );
         }
 
-        return $parsed;
+        return $builder->createResult($parsed);
     }
 
     protected function getDefaultTypeExceptionMessage(): string
@@ -411,8 +412,8 @@ class ParseURL implements Parser
         return 'Provided value is not of type string';
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path->chain('parse URL', false);
+        return 'parse URL';
     }
 }

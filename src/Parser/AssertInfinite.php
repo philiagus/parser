@@ -13,15 +13,16 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
-use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Error;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Debug;
 
 class AssertInfinite implements Parser
 {
-    use Chainable, OverwritableChainDescription;
+    use Chainable, OverwritableParserDescription;
 
     /** @var string */
     private string $exceptionMessage;
@@ -88,30 +89,24 @@ class AssertInfinite implements Parser
         return $this;
     }
 
-    public function parse($value, Path $path = null): float
+    public function parse(Subject $subject): Result
     {
+        $builder = $this->createResultBuilder($subject);
+        $value = $subject->getValue();
         if (!is_float($value) || !is_infinite($value)) {
-            throw new ParsingException(
-                $value,
-                Debug::parseMessage($this->exceptionMessage, ['value' => $value]),
-                $path
-            );
+            $builder->logErrorUsingDebug($this->exceptionMessage);
         }
         if ($this->assertPositive !== null) {
             if (($value > 0) !== $this->assertPositive) {
-                throw new ParsingException(
-                    $value,
-                    Debug::parseMessage($this->assertSignMessage, ['value' => $value]),
-                    $path
-                );
+                $builder->logErrorUsingDebug($this->assertSignMessage);
             }
         }
 
-        return $value;
+        return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path->chain('assert infinite', false);
+        return 'assert infinite';
     }
 }

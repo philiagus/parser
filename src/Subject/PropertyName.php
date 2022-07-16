@@ -10,18 +10,18 @@
 
 declare(strict_types=1);
 
-namespace Philiagus\Parser\Path;
+namespace Philiagus\Parser\Subject;
 
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\Subject;
 
-class PropertyValue extends Path
+class PropertyName extends Subject
 {
 
     /**
      * @inheritDoc
      */
-    protected function getStringPart(): string
+    protected function getPathStringPart(): string
     {
-        return ".{$this->getDescription()}";
+        return " property name {$this->getPathDescription()}";
     }
 }

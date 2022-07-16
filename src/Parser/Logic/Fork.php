@@ -13,13 +13,15 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
+use Philiagus\Parser\Result;
+
 
 class Fork implements Parser
 {
-    use Chainable, OverwritableChainDescription;
+    use Chainable, OverwritableParserDescription;
 
     /** @var Parser[] */
     private array $parsers;
@@ -61,20 +63,21 @@ class Fork implements Parser
     /**
      * @inheritDoc
      */
-    public function parse($value, Path $path = null)
+    public function parse(Subject $subject): Result
     {
-        foreach ($this->parsers as $parser) {
-            $parser->parse($value, $path);
+        $builder = $this->createResultBuilder($subject);
+        foreach ($this->parsers as $index => $parser) {
+            $parser->parse($builder->subjectForwarded("fork #$index"));
         }
 
-        return $value;
+        return $builder->createResultUnchanged();
     }
 
     /**
      * @inheritDoc
      */
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path;
+        return 'fork to multiple parsers';
     }
 }

@@ -13,10 +13,12 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
+use Philiagus\Parser\Result;
+
 
 /**
  * Parses the provided string treating it as form encoded data
@@ -26,7 +28,7 @@ use Philiagus\Parser\Contract\Parser;
  */
 class ParseFormEncodedString implements Parser
 {
-    use Chainable, OverwritableChainDescription, TypeExceptionMessage;
+    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
 
     private function __construct()
     {
@@ -41,15 +43,19 @@ class ParseFormEncodedString implements Parser
      *
      * @inheritDoc
      */
-    public function parse($value, ?Path $path = null)
+    public function parse(Subject $subject): Result
     {
+        $builder = $this->createResultBuilder($subject);
+        $value = $builder->getCurrentValue();
         if (!is_string($value)) {
-            $this->throwTypeException($value, $path);
+            $this->logTypeError($builder);
+
+            return $builder->createResultUnchanged();
         }
 
         parse_str($value, $result);
 
-        return $result;
+        return $builder->createResult($result);
     }
 
     protected function getDefaultTypeExceptionMessage(): string
@@ -57,8 +63,8 @@ class ParseFormEncodedString implements Parser
         return 'Provided value is not of type string';
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path->chain('parse form encoded', false);
+        return 'parse form encoded';
     }
 }

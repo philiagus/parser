@@ -14,16 +14,17 @@ namespace Philiagus\Parser\Parser;
 
 use DateTimeZone;
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Debug;
 
 class ConvertToDateTime implements Parser
 {
-    use Chainable, OverwritableChainDescription, TypeExceptionMessage;
+    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
 
     private ?string $sourceFormat = null;
     private ?DateTimeZone $sourceTimezone = null;
@@ -36,21 +37,16 @@ class ConvertToDateTime implements Parser
 
     }
 
-    public static function new(): self
-    {
-        return new self();
-    }
-
-
     /**
      * Is identical to creating a new instance of this class and calling setStringSourceFormat on it
-     * @see ConvertToDateTime::setStringSourceFormat()
      *
      * @param string $format
      * @param DateTimeZone|null $timeZone
      * @param string $exceptionMessage
      *
      * @return self
+     * @see ConvertToDateTime::setStringSourceFormat()
+     *
      */
     public static function fromSourceFormat(
         string       $format,
@@ -90,6 +86,11 @@ class ConvertToDateTime implements Parser
         return $this;
     }
 
+    public static function new(): self
+    {
+        return new self();
+    }
+
     /**
      * @param bool $immutable
      *
@@ -100,6 +101,44 @@ class ConvertToDateTime implements Parser
         $this->immutable = $immutable;
 
         return $this;
+    }
+
+    public function parse(Subject $subject): Result
+    {
+        $builder = $this->createResultBuilder($subject);
+        $value = $builder->getCurrentValue();
+        $dateTime = null;
+        if ($value instanceof \DateTime) {
+            $dateTime = $value;
+            if ($this->immutable) {
+                $dateTime = \DateTimeImmutable::createFromMutable($value);
+            }
+        } elseif ($value instanceof \DateTimeImmutable) {
+            $dateTime = $value;
+            if (!$this->immutable) {
+                $dateTime = \DateTime::createFromImmutable($value);
+            }
+        } elseif ((is_string($value) || is_int($value)) && $this->sourceFormat !== null) {
+            if ($this->immutable) {
+                $dateTime = @\DateTimeImmutable::createFromFormat($this->sourceFormat, (string) $value, $this->sourceTimezone);
+            } else {
+                $dateTime = @\DateTime::createFromFormat($this->sourceFormat, (string) $value, $this->sourceTimezone);
+            }
+            if ($dateTime === false) {
+                $builder->logErrorUsingDebug(
+                    $this->sourceFormatException,
+                    ['format' => $this->sourceFormat]
+                );
+            }
+        } else {
+            $this->logTypeError($builder);
+        }
+
+        if ($dateTime && $this->timezone) {
+            $dateTime = $dateTime->setTimezone($this->timezone);
+        }
+
+        return $builder->createResult($dateTime);
     }
 
     /**
@@ -116,55 +155,13 @@ class ConvertToDateTime implements Parser
         return $this;
     }
 
-    public function parse($value, ?Path $path = null)
-    {
-        if ($value instanceof \DateTime) {
-            $dateTime = $value;
-            if ($this->immutable) {
-                $dateTime = \DateTimeImmutable::createFromMutable($value);
-            }
-        } elseif ($value instanceof \DateTimeImmutable) {
-            $dateTime = $value;
-            if (!$this->immutable) {
-                $dateTime = \DateTime::createFromImmutable($value);
-            }
-        } elseif ((is_string($value) || is_int($value)) && $this->sourceFormat !== null) {
-            if ($this->immutable) {
-                $dateTime = @\DateTimeImmutable::createFromFormat($this->sourceFormat, (string)$value, $this->sourceTimezone);
-            } else {
-                $dateTime = @\DateTime::createFromFormat($this->sourceFormat, (string)$value, $this->sourceTimezone);
-            }
-            if ($dateTime === false) {
-                throw new ParsingException(
-                    $value,
-                    Debug::parseMessage(
-                        $this->sourceFormatException,
-                        [
-                            'value' => $value,
-                            'format' => $this->sourceFormat,
-                        ]
-                    ),
-                    $path
-                );
-            }
-        } else {
-            $this->throwTypeException($value, $path);
-        }
-
-        if ($this->timezone) {
-            $dateTime = $dateTime->setTimezone($this->timezone);
-        }
-
-        return $dateTime;
-    }
-
     protected function getDefaultTypeExceptionMessage(): string
     {
         return 'Provided value could not be converted to DateTime';
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path->chain('convert to DateTime', false);
+        return 'convert to DateTime';
     }
 }

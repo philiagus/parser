@@ -13,16 +13,17 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
-use Philiagus\Parser\Exception;
+use Philiagus\Parser\Result;
+use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
 
 class AssertInteger implements Parser
 {
-    use Chainable, OverwritableChainDescription, TypeExceptionMessage;
+    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
 
     /** @var callable[] */
     private array $assertionList = [];
@@ -55,12 +56,11 @@ class AssertInteger implements Parser
      */
     public function assertMinimum(int $minimum, string $exceptionMessage = 'Provided value {value.debug} is lower than the defined minimum of {min}'): self
     {
-        $this->assertionList[] = function (int $value, ?Path $path) use ($minimum, $exceptionMessage) {
+        $this->assertionList[] = function (ResultBuilder $builder, int $value) use ($minimum, $exceptionMessage): void {
             if ($minimum > $value) {
-                throw new Exception\ParsingException(
-                    $value,
-                    Debug::parseMessage($exceptionMessage, ['value' => $value, 'min' => $minimum]),
-                    $path
+                $builder->logErrorUsingDebug(
+                    $exceptionMessage,
+                    ['min' => $minimum]
                 );
             }
         };
@@ -84,12 +84,11 @@ class AssertInteger implements Parser
      */
     public function assertMaximum(int $maximum, string $exceptionMessage = 'Provided value {value.debug} is greater than the defined maximum of {max}}'): self
     {
-        $this->assertionList[] = function (int $value, ?Path $path) use ($maximum, $exceptionMessage) {
+        $this->assertionList[] = function (ResultBuilder $builder, int $value) use ($maximum, $exceptionMessage): void {
             if ($maximum < $value) {
-                throw new Exception\ParsingException(
-                    $value,
-                    Debug::parseMessage($exceptionMessage, ['value' => $value, 'max' => $maximum]),
-                    $path
+                $builder->logErrorUsingDebug(
+                    $exceptionMessage,
+                    ['max' => $maximum]
                 );
             }
         };
@@ -116,13 +115,12 @@ class AssertInteger implements Parser
         string $exceptionMessage = 'Provided value {value.debug} is not a multiple of {base}'
     ): self
     {
-        $this->assertionList[] = function (int $value, ?Path $path) use ($base, $exceptionMessage) {
+        $this->assertionList[] = function (ResultBuilder $builder, int $value) use ($base, $exceptionMessage): void {
             if ($value === 0 && $base === 0) return;
             if ($base === 0 || ($value % $base) !== 0) {
-                throw new Exception\ParsingException(
-                    $value,
-                    Debug::parseMessage($exceptionMessage, ['value' => $value, 'base' => $base]),
-                    $path
+                $builder->logErrorUsingDebug(
+                    $exceptionMessage,
+                    ['base' => $base]
                 );
             }
         };
@@ -130,17 +128,19 @@ class AssertInteger implements Parser
         return $this;
     }
 
-    public function parse($value, Path $path = null)
+    public function parse(Subject $subject): Result
     {
+        $builder = $this->createResultBuilder($subject);
+        $value = $subject->getValue();
         if (!is_int($value)) {
-            $this->throwTypeException($value, $path);
+            $this->logTypeError($builder);
+        } else {
+            foreach ($this->assertionList as $assertion) {
+                $assertion($subject, $value);
+            }
         }
 
-        foreach ($this->assertionList as $assertion) {
-            $assertion($value, $path);
-        }
-
-        return $value;
+        return $builder->createResultUnchanged();
     }
 
     protected function getDefaultTypeExceptionMessage(): string
@@ -148,8 +148,8 @@ class AssertInteger implements Parser
         return 'Provided value is not of type integer';
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path->chain('assert integer', false);
+        return 'assert integer';
     }
 }

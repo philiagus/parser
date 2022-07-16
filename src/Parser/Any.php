@@ -13,13 +13,15 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
+use Philiagus\Parser\Result;
+
 
 class Any implements Parser
 {
-    use Chainable, OverwritableChainDescription;
+    use Chainable, OverwritableParserDescription;
 
     private function __construct()
     {
@@ -33,13 +35,23 @@ class Any implements Parser
         return new self();
     }
 
-    public function parse($value, Path $path = null)
+    /**
+     * @param Subject $subject
+     *
+     * @return Result
+     */
+    public function parse(Subject $subject): Result
     {
-        return $value;
+        return $this->createResultBuilder($subject)->createResultUnchanged();
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    /**
+     * @param Subject $subject
+     *
+     * @return string
+     */
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path;
+        return 'accepting any value';
     }
 }

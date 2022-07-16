@@ -13,15 +13,17 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
+use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Debug;
 
 class AssertNan implements Parser
 {
-    use Chainable, OverwritableChainDescription;
+    use Chainable, OverwritableParserDescription;
 
     /** @var string */
     private string $exceptionMessage;
@@ -47,19 +49,19 @@ class AssertNan implements Parser
         return new self($notNanExceptionMessage);
     }
 
-    public function parse($value, ?Path $path = null)
+    public function parse(Subject $subject): Result
     {
-        if (is_float($value) && is_nan($value)) return NAN;
+        $builder = $this->createResultBuilder($subject);
+        $value = $subject->getValue();
+        if (!is_float($value) || !is_nan($value)) {
+            $builder->logErrorUsingDebug($this->exceptionMessage);
+        }
 
-        throw new ParsingException(
-            $value,
-            Debug::parseMessage($this->exceptionMessage, ['value' => $value]),
-            $path
-        );
+        return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path->chain('assert NaN', false);
+        return 'assert NaN';
     }
 }

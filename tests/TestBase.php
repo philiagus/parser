@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test;
 
 use Philiagus\DataProvider\DataProvider;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -29,7 +29,7 @@ class TestBase extends TestCase
     protected function prophesizeUncalledParser(): Parser
     {
         $parser = $this->prophesize(Parser::class);
-        $parser->parse(Argument::any(), Argument::any())->shouldNotBeCalled();
+        $parser->parse(Argument::any())->shouldNotBeCalled();
         $parser->parse(Argument::any())->shouldNotBeCalled();
         return $parser->reveal();
     }
@@ -55,14 +55,13 @@ class TestBase extends TestCase
             }
             $parser
                 ->parse(
-                    $pair[0],
-                    $expectedPath ?? Argument::that(fn($arg) => $arg === null || $arg instanceof Path)
+                    $pair[0]
                 )
                 ->shouldBeCalled()
                 ->willReturn($pair[1]);
         }
         if(empty($inputResultPairs)) {
-            $parser->parse(Argument::any(), Argument::any())->shouldNotBeCalled();
+            $parser->parse(Argument::any())->shouldNotBeCalled();
         }
 
         return $parser->reveal();

@@ -12,9 +12,10 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser\Logic;
 
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Debug;
 
 class Fail implements Parser
@@ -51,20 +52,11 @@ class Fail implements Parser
      *
      * @inheritDoc
      */
-    public function parse($value, Path $path = null)
+    public function parse(Subject $subject): Result
     {
-        throw new ParsingException(
-            $value,
-            Debug::parseMessage(
-                $this->message,
-                ['value' => $value]
-            ),
-            ($path ?? Path::default($value))->chain('hardcoded fail', false)
-        );
-    }
+        $builder = $subject->getResultBuilder('FAIL');
+        $builder->logErrorUsingDebug($this->message);
 
-    public function getChainedPath(Path $path): ?Path
-    {
-        return $path;
+        return $builder->createResultUnchanged();
     }
 }

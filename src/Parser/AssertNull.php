@@ -14,15 +14,17 @@ namespace Philiagus\Parser\Parser;
 
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
+use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Debug;
 
 class AssertNull implements Parser
 {
-    use Chainable, OverwritableChainDescription;
+    use Chainable, OverwritableParserDescription;
 
     /** @var string */
     private string $exceptionMessage;
@@ -48,19 +50,18 @@ class AssertNull implements Parser
         return new self($notNullExceptionMessage);
     }
 
-    public function parse($value, ?Path $path = null)
+    public function parse(Subject $subject): Result
     {
-        if ($value === null) return null;
+        $builder = $this->createResultBuilder($subject);
+        if($subject->getValue() !== null) {
+            $builder->logErrorUsingDebug($this->exceptionMessage);
+        }
 
-        throw new ParsingException(
-            $value,
-            Debug::parseMessage($this->exceptionMessage, ['value' => $value]),
-            $path
-        );
+        return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path->chain('assert null', false);
+        return 'assert null';
     }
 }

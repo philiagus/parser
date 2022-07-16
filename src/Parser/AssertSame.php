@@ -13,54 +13,50 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Debug;
 
 class AssertSame implements Parser
 {
-    use Chainable, OverwritableChainDescription;
+    use Chainable, OverwritableParserDescription;
 
-    /** @var string */
-    private string $exceptionMessage = 'The value is not the same as the expected value';
-
-    /**
-     * @var mixed
-     */
-    private $targetValue;
-
-    private function __construct($value)
+    private function __construct(
+        private readonly mixed $value,
+        private readonly mixed $exceptionMessage
+    )
     {
-        $this->targetValue = $value;
     }
 
     /**
      * @param mixed $value
+     * @param string $exceptionMessage
      *
      * @return self
      */
-    public static function value($value): self
+    public static function value(mixed $value, string $exceptionMessage = 'The value is not the same as the expected value'): self
     {
-        return new self($value);
+        return new self($value, $exceptionMessage);
     }
 
-    public function parse($value, ?Path $path = null)
+    public function parse(Subject $subject): Result
     {
-        if ($value !== $this->targetValue) {
-            throw new ParsingException(
-                $value,
-                Debug::parseMessage($this->exceptionMessage, ['value' => $value, 'expected' => $this->targetValue]),
-                $path
+        $builder = $this->createResultBuilder($subject);
+        if ($subject->getValue() !== $this->value) {
+            $builder->logErrorUsingDebug(
+                $this->exceptionMessage,
+                ['expected' => $this->value]
             );
         }
 
-        return $value;
+        return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path->chain('assert same', false);
+        return 'assert same';
     }
 }

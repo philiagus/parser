@@ -15,7 +15,7 @@ namespace Philiagus\Parser\Test\Unit\Parser;
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Parser\ConvertToArray;
-use Philiagus\Parser\Path\Root;
+use Philiagus\Parser\Subject\Root;
 use Philiagus\Parser\Test\TestBase;
 use PHPUnit\Framework\TestCase;
 

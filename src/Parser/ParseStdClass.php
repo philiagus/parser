@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception;
-use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
 
 class ParseStdClass extends AssertStdClass
@@ -24,16 +24,17 @@ class ParseStdClass extends AssertStdClass
 
     public function defaultProperty(string $property, $defaultValue): self
     {
-        $this->assertionList[] = function (\stdClass $value, Path $path, bool &$alreadyCloned) use ($property, $defaultValue) {
-            if (!property_exists($value, $property)) {
-                if(!$alreadyCloned) {
-                    $value = clone $value;
-                    $alreadyCloned = true;
-                }
-                $value->$property = $defaultValue;
+        $this->assertionList[] = function (ResultBuilder $builder) use ($property, $defaultValue): void {
+            $value = $builder->getCurrentValue();
+            if (property_exists($value, $property)) {
+                return;
             }
+            $value = clone $value;
+            $value->$property = $defaultValue;
 
-            return $value;
+            $builder->setCurrentSubject(
+                $builder->subjectInternal("defaulted property '$property'", $value)
+            );
         };
 
         return $this;
@@ -41,18 +42,24 @@ class ParseStdClass extends AssertStdClass
 
     public function defaultWith(\stdClass $object): self
     {
-        $this->assertionList[] = function (\stdClass $stdClass, Path $path, bool &$alreadyCloned) use ($object) {
-            if(!$alreadyCloned) {
-                $stdClass = clone $stdClass;
-                $alreadyCloned = true;
-            }
-            foreach ($object as $property => $value) {
-                if (!property_exists($stdClass, $property)) {
-                    $stdClass->$property = $value;
+        $this->assertionList[] = function (ResultBuilder $builder) use ($object): void {
+            $value = $builder->getCurrentValue();
+            $cloned = false;
+            foreach ($object as $property => $newValue) {
+                if (!property_exists($value, $property)) {
+                    if (!$cloned) {
+                        $cloned = true;
+                        $value = clone $value;
+                    }
+                    $value->$property = $newValue;
                 }
             }
 
-            return $stdClass;
+            if (!$cloned) return;
+
+            $builder->setCurrentSubject(
+                $builder->subjectInternal('defaulted with object', $value)
+            );
         };
 
         return $this;
@@ -79,22 +86,32 @@ class ParseStdClass extends AssertStdClass
         string $missingKeyExceptionMessage = 'The object does not contain the requested property {property}'
     ): self
     {
-        $this->assertionList[] = function (\stdClass $value, Path $path, bool &$alreadyCloned) use ($property, $parser, $missingKeyExceptionMessage) {
+        $this->assertionList[] = function (ResultBuilder $builder) use ($property, $parser, $missingKeyExceptionMessage): void {
+            $value = $builder->getCurrentValue();
             if (!property_exists($value, $property)) {
-                throw new ParsingException(
-                    $value,
-                    Debug::parseMessage($missingKeyExceptionMessage, ['property' => $property, 'value' => $value]),
-                    $path
+                $builder->logErrorUsingDebug(
+                    $missingKeyExceptionMessage,
+                    ['property' => $property]
                 );
+
+                return;
             }
 
-            if(!$alreadyCloned) {
+            $result = $parser->parse(
+                $builder->subjectPropertyValue($property, $value->$property)
+            );
+            if ($result->isSuccess()) {
                 $value = clone $value;
-                $alreadyCloned = true;
-            }
-            $value->$property = $parser->parse($value->$property, $path->propertyValue($property));
+                $value->$property = $result->getValue();
 
-            return $value;
+                $builder->setCurrentSubject(
+                    $builder->subjectInternal("modify property '$property'", $value)
+                );
+
+                return;
+            }
+
+            $builder->incorporateResult($result);
         };
 
         return $this;
@@ -110,16 +127,28 @@ class ParseStdClass extends AssertStdClass
      */
     public function modifyOptionalPropertyValue(string $property, ParserContract $parser): self
     {
-        $this->assertionList[] = function (\stdClass $value, Path $path, bool &$alreadyCloned) use ($property, $parser) {
-            if (property_exists($value, $property)) {
-                if(!$alreadyCloned) {
-                    $value = clone $value;
-                    $alreadyCloned = true;
-                }
-                $value->$property = $parser->parse($value->$property, $path->propertyValue($property));
+        $this->assertionList[] = function (ResultBuilder $builder) use ($property, $parser): void {
+            $value = $builder->getCurrentValue();
+            if (!property_exists($value, $property)) {
+                return;
+
+            }
+            $result = $parser->parse(
+                $builder->subjectPropertyValue($property, $value->$property)
+            );
+
+            if ($result->isSuccess()) {
+                $value = clone $value;
+                $value->$property = $result->getValue();
+
+                $builder->setCurrentSubject(
+                    $builder->subjectInternal("modify property '$property' value", $value)
+                );
+
+                return;
             }
 
-            return $value;
+            $builder->incorporateResult($result);
         };
 
         return $this;
@@ -138,26 +167,38 @@ class ParseStdClass extends AssertStdClass
         string         $newPropertyNameIsNotUsableMessage = 'Modifying the property name "{property.raw}" resulted in an invalid type {value.type}, expected string'
     ): self
     {
-        $this->assertionList[] = function (\stdClass $value, Path $path, bool &$alreadyCloned) use ($newPropertyNameIsNotUsableMessage, $stringParser) {
+        $this->assertionList[] = function (ResultBuilder $builder) use ($newPropertyNameIsNotUsableMessage, $stringParser): void {
             $result = new \stdClass();
-            $alreadyCloned = true;
+            $value = $builder->getCurrentValue();
             foreach ($value as $property => $propValue) {
-                $newName = $stringParser->parse($property, $path->propertyName((string) $property));
-                if (!is_string($newName)) {
-                    throw new Exception\ParserConfigurationException(
-                        Debug::parseMessage(
-                            $newPropertyNameIsNotUsableMessage,
-                            [
-                                'property' => $property,
-                                'value' => $newName,
-                            ]
-                        )
-                    );
+                $newNameResult = $stringParser->parse(
+                    $builder->subjectPropertyName($property)
+                );
+                if ($newNameResult->isSuccess()) {
+                    $newName = $newNameResult->getValue();
+                    if (!is_string($newName)) {
+                        throw new Exception\RuntimeParserConfigurationException(
+                            Debug::parseMessage(
+                                $newPropertyNameIsNotUsableMessage,
+                                ['property' => $property, 'value' => $newName]
+                            )
+                        );
+                    }
+                    $result->$newName = $propValue;
+
+                    continue;
                 }
-                $result->$newName = $propValue;
+
+                $builder->incorporateResult($newNameResult);
+
+                $result->$property = $propValue;
             }
 
-            return $result;
+            $builder->setCurrentSubject(
+                $builder->subjectInternal(
+                    'modify each property name', $result
+                )
+            );
         };
 
         return $this;
@@ -172,21 +213,31 @@ class ParseStdClass extends AssertStdClass
      */
     public function modifyEachPropertyValue(ParserContract $parser): self
     {
-        $this->assertionList[] = function (\stdClass $stdClass, Path $path, bool &$alreadyCloned) use ($parser) {
+        $this->assertionList[] = function (ResultBuilder $builder) use ($parser): void {
             $result = new \stdClass();
-            $alreadyCloned = true;
-            foreach ($stdClass as $property => $value) {
-                $result->$property = $parser->parse($value, $path->propertyName((string) $property));
+            foreach ($builder->getCurrentValue() as $property => $value) {
+                $newValueResult = $parser->parse(
+                    $builder->subjectPropertyValue($property, $value)
+                );
+                if ($newValueResult->isSuccess()) {
+                    $result->$property = $newValueResult->getValue();
+
+                    continue;
+                }
+                $builder->incorporateResult($newValueResult);
+                $result->$property = $value;
             }
 
-            return $result;
+            $builder->setCurrentSubject(
+                $builder->subjectInternal('modify each property value', $result)
+            );
         };
 
         return $this;
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path->chain('parse stdClass', false);
+        return 'parse stdClass';
     }
 }

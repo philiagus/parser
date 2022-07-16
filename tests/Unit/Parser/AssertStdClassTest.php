@@ -15,7 +15,7 @@ namespace Philiagus\Parser\Test\Unit\Parser;
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\AssertStdClass;
-use Philiagus\Parser\Path\Root;
+use Philiagus\Parser\Subject\Root;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
 use Philiagus\Parser\Test\SetTypeExceptionMessageTest;
@@ -59,9 +59,9 @@ class AssertStdClassTest extends TestBase
             ->givePropertyValue('name', $this->prophesizeParser(['value'], $path->propertyValue('name')));
         $parser->parse((object)[
             'name' => 'value'
-        ], $path);
+        ]);
         self::expectException(ParsingException::class);
-        $parser->parse((object)['another' => 'another'], $path);
+        $parser->parse((object)['another' => 'another']);
     }
 
     public function test_giveOptionalPropertyValue(): void
@@ -73,7 +73,7 @@ class AssertStdClassTest extends TestBase
         $object = (object)[
             'name' => 'value'
         ];
-        self::assertSame($object, $parser->parse($object, $path));
+        self::assertSame($object, $parser->parse($object));
     }
 
     public function test_giveDefaultedPropertyValue(): void
@@ -86,7 +86,7 @@ class AssertStdClassTest extends TestBase
         $object = (object)[
             'name' => 'value'
         ];
-        self::assertSame($object, $parser->parse($object, $path));
+        self::assertSame($object, $parser->parse($object));
     }
 
     public function test_givePropertyNames(): void

@@ -14,11 +14,12 @@ namespace Philiagus\Parser\Parser\Extraction;
 
 use ArrayAccess;
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\RuntimeParserConfigurationException;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Debug;
 
 /**
@@ -28,39 +29,27 @@ use Philiagus\Parser\Util\Debug;
  */
 class Append implements Parser
 {
-    use Chainable, OverwritableChainDescription;
+    use Chainable, OverwritableParserDescription;
 
-    /** @var array|ArrayAccess */
-    private $target;
+    /** @var null|array|ArrayAccess */
+    private null|array|ArrayAccess $target;
 
     /**
      * Append constructor.
      *
      * @param mixed $target
-     *
-     * @throws ParserConfigurationException
      */
-    private function __construct(&$target)
+    private function __construct(null|array|ArrayAccess &$target)
     {
-        if (!is_array($target) && !$target instanceof ArrayAccess) {
-            if ($target !== null) {
-                throw new ParserConfigurationException(
-                    'Append parser has received an invalid target of ' . Debug::getType($target)
-                );
-            }
-            $target = [];
-        }
-
         $this->target =& $target;
     }
 
     /**
-     * @param null|array|ArrayAccess $target
+     * @param ArrayAccess|array|null $target
      *
      * @return static
-     * @throws ParserConfigurationException
      */
-    public static function to(&$target): self
+    public static function to(null|ArrayAccess|array &$target): self
     {
         return new self($target);
     }
@@ -68,21 +57,16 @@ class Append implements Parser
     /**
      * @inheritDoc
      */
-    public function parse($value, Path $path = null)
+    public function parse(Subject $subject): Result
     {
-        if (!is_array($this->target) && !$this->target instanceof ArrayAccess) {
-            throw new RuntimeParserConfigurationException(
-                'The target of the append parser was altered from an array or ArrayAccess to ' . Debug::getType($this->target)
-            );
-        }
+        $builder = $this->createResultBuilder($subject);
+        $this->target[] = $subject->getValue();
 
-        $this->target[] = $value;
-
-        return $value;
+        return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path->chain('extract: appended', false);
+        return 'extract: appended';
     }
 }

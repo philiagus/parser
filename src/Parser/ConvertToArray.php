@@ -13,19 +13,17 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
+use Philiagus\Parser\Result;
 
 class ConvertToArray implements Parser
 {
-    use Chainable, OverwritableChainDescription;
+    use Chainable, OverwritableParserDescription;
 
-    /**
-     * @var string|int|null
-     */
-    private $targetedArrayKey = null;
+    private string|int|null $targetedArrayKey = null;
 
     private function __construct()
     {
@@ -56,25 +54,27 @@ class ConvertToArray implements Parser
         return $instance;
     }
 
-    public function parse($value, ?Path $path = null)
+    public function parse(Subject $subject): Result
     {
+        $builder = $this->createResultBuilder($subject);
+        $value = $builder->getCurrentValue();
         if (is_array($value)) {
-            return $value;
+            return $builder->createResultUnchanged();
         }
 
         if ($this->targetedArrayKey !== null) {
-            return [$this->targetedArrayKey => $value];
+            return $builder->createResult([$this->targetedArrayKey => $value]);
         }
 
-        return (array) $value;
+        return $builder->createResult((array) $value);
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
         if ($this->targetedArrayKey !== null) {
-            return $path->chain("treated as array, if needed with key '$this->targetedArrayKey'", false);
+            return "treated as array, if needed with key '$this->targetedArrayKey'";
         }
 
-        return $path->chain('treated as array', false);
+        return 'treated as array, cast if needed';
     }
 }

@@ -13,17 +13,18 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Debug;
 
 class ParseJSONString implements Parser
 {
-    use Chainable, OverwritableChainDescription, TypeExceptionMessage;
+    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
 
     /** @var string */
     private string $conversionExceptionMessage = 'Provided string is not a valid JSON: {msg}';
@@ -89,7 +90,7 @@ class ParseJSONString implements Parser
      */
     public function setMaxDepth(int $maxDepth = 512): self
     {
-        if($maxDepth < 1) {
+        if ($maxDepth < 1) {
             throw new ParserConfigurationException("The maximum depth for ParseJSONString must be at least 1");
         }
 
@@ -117,10 +118,14 @@ class ParseJSONString implements Parser
      *
      * @inheritDoc
      */
-    public function parse($value, ?Path $path = null)
+    public function parse(Subject $subject): Result
     {
+        $builder = $this->createResultBuilder($subject);
+        $value = $builder->getCurrentValue();
         if (!is_string($value)) {
-            $this->throwTypeException($value, $path);
+            $this->logTypeError($builder);
+
+            return $builder->createResultUnchanged();
         }
 
         $options = 0;
@@ -135,14 +140,15 @@ class ParseJSONString implements Parser
             $options
         );
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new ParsingException(
-                $value,
-                Debug::parseMessage($this->conversionExceptionMessage, ['msg' => json_last_error_msg(), 'value' => $value]),
-                $path
+            $builder->logErrorUsingDebug(
+                $this->conversionExceptionMessage,
+                ['msg' => json_last_error_msg()]
             );
+
+            return $builder->createResultUnchanged();
         }
 
-        return $result;
+        return $builder->createResult($result);
     }
 
     protected function getDefaultTypeExceptionMessage(): string
@@ -150,8 +156,8 @@ class ParseJSONString implements Parser
         return 'Provided value is not a string and thus not a valid JSON';
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path->chain('parse as JSON', false);
+        return 'parse as JSON';
     }
 }

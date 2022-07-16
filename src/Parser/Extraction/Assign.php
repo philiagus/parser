@@ -14,19 +14,21 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Extraction;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
+use Philiagus\Parser\Result;
+
 
 /**
  * Stores the value into the provided variable
  */
 class Assign implements Parser
 {
-    use Chainable, OverwritableChainDescription;
+    use Chainable, OverwritableParserDescription;
 
     /** @var mixed */
-    private $target;
+    private mixed $target;
 
     private function __construct(&$target)
     {
@@ -49,15 +51,16 @@ class Assign implements Parser
      *
      * @inheritDoc
      */
-    public function parse($value, Path $path = null)
+    public function parse(Subject $subject): Result
     {
-        $this->target = $value;
+        $builder = $this->createResultBuilder($subject);
+        $this->target = $subject->getValue();
 
-        return $value;
+        return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path->chain('extract: assign', false);
+        return 'extract: assign';
     }
 }

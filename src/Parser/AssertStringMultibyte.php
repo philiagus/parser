@@ -13,23 +13,25 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Result;
+use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
 
 class AssertStringMultibyte implements Parser
 {
-    use Chainable, OverwritableChainDescription, TypeExceptionMessage;
+    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
 
     /** @var string[]|null */
     private ?array $encoding = null;
-    /** @var callable[] */
-    private array $assertionList = [];
+    /** @var \SplDoublyLinkedList<\Closure> */
+    private \SplDoublyLinkedList $assertionList;
     /** @var string */
     private string $encodingDetectionExceptionMessage = 'The encoding of the multibyte string could not be determined';
 
@@ -38,6 +40,7 @@ class AssertStringMultibyte implements Parser
 
     private function __construct()
     {
+        $this->assertionList = new \SplDoublyLinkedList();
     }
 
     /**
@@ -71,6 +74,33 @@ class AssertStringMultibyte implements Parser
     }
 
     /**
+     * Asserts a list of encodings and throws an exception if one isn't supported
+     *
+     * @param string[] $encodings
+     *
+     * @return void
+     * @throws ParserConfigurationException
+     */
+    private function assertEncodings(array $encodings): void
+    {
+        static $availableEncodings = null;
+        if ($availableEncodings === null) {
+            $availableEncodings = mb_list_encodings();
+        }
+
+        foreach ($encodings as $encoding) {
+            if (!is_string($encoding)) {
+                throw new ParserConfigurationException(
+                    Debug::parseMessage("Non-string provided as encoding: {encoding.debug}", ['encoding' => $encoding])
+                );
+            }
+            if (!in_array($encoding, $availableEncodings)) {
+                throw new ParserConfigurationException("The encoding $encoding is unknown to the system");
+            }
+        }
+    }
+
+    /**
      * Executes mb_strlen on the string and hands the result over to the parser
      * The encoding will be guessed if not defined using setEncoding
      *
@@ -80,45 +110,53 @@ class AssertStringMultibyte implements Parser
      */
     public function giveLength(ParserContract $integerParser): self
     {
-        $this->assertionList[] = function (string $value, $encoding, Path $path) use ($integerParser) {
-            $integerParser->parse(mb_strlen($value, $encoding), $path->meta('length'));
+        $this->assertionList[] = function (string $value, $encoding, ResultBuilder $builder) use ($integerParser): void {
+            $builder->incorporateResult(
+                $integerParser->parse(
+                    $builder->subjectMeta('length in ' . $encoding, mb_strlen($value, $encoding))
+                )
+            );
         };
 
         return $this;
     }
 
-    public function parse($value, ?Path $path = null)
+    public function parse(Subject $subject): Result
     {
+        $builder = $this->createResultBuilder($subject);
+        $value = $builder->getCurrentValue();
         if (!is_string($value)) {
-            $this->throwTypeException($value, $path);
+            $this->logTypeError($builder);
+
+            return $builder->createResultUnchanged();
         }
 
         if ($this->encoding) {
             [$encoding, $exception] = $this->encoding;
             if (!mb_check_encoding($value, $encoding)) {
-                throw new ParsingException(
-                    $value,
-                    Debug::parseMessage($exception, ['value' => $value, 'encoding' => $encoding]),
-                    $path
+                $builder->logErrorUsingDebug(
+                    $exception,
+                    ['encoding' => $encoding]
                 );
+
+                return $builder->createResultUnchanged();
             }
         } else {
             $encoding = mb_detect_encoding($value, $this->availableEncodings, true);
             if (!$encoding) {
-                throw new ParsingException(
-                    $value,
-                    Debug::parseMessage($this->encodingDetectionExceptionMessage, ['value' => $value]),
-                    $path
+                $builder->logErrorUsingDebug(
+                    $this->encodingDetectionExceptionMessage,
                 );
+
+                return $builder->createResultUnchanged();
             }
         }
 
-        $path ??= Path::default($value);
         foreach ($this->assertionList as $assertion) {
-            $assertion($value, $encoding, $path);
+            $assertion($value, $encoding, $builder);
         }
 
-        return $value;
+        return $builder->createResultUnchanged();
     }
 
     /**
@@ -137,13 +175,17 @@ class AssertStringMultibyte implements Parser
         ParserContract $stringParser
     ): self
     {
-        $this->assertionList[] = function (string $value, $encoding, Path $path) use ($start, $length, $stringParser) {
+        $this->assertionList[] = function (string $value, $encoding, ResultBuilder $builder) use ($start, $length, $stringParser): void {
             if ($value === '') {
                 $part = '';
             } else {
                 $part = mb_substr($value, $start, $length, $encoding);
             }
-            $stringParser->parse($part, $path->meta("$start:$length"));
+            $builder->incorporateResult(
+                $stringParser->parse(
+                    $builder->subjectMeta("$encoding substring from $start to " . ($length ?? 'end'), $part)
+                )
+            );
         };
 
         return $this;
@@ -175,32 +217,6 @@ class AssertStringMultibyte implements Parser
     }
 
     /**
-     * Asserts a list of encodings and throws an exception if one isn't supported
-     * @param string[] $encodings
-     *
-     * @return void
-     * @throws ParserConfigurationException
-     */
-    private function assertEncodings(array $encodings): void
-    {
-        static $availableEncodings = null;
-        if ($availableEncodings === null) {
-            $availableEncodings = mb_list_encodings();
-        }
-
-        foreach($encodings as $encoding) {
-            if(!is_string($encoding)) {
-                throw new ParserConfigurationException(
-                    Debug::parseMessage("Non-string provided as encoding: {encoding.debug}", ['encoding' => $encoding])
-                );
-            }
-            if (!in_array($encoding, $availableEncodings)) {
-                throw new ParserConfigurationException("The encoding $encoding is unknown to the system");
-            }
-        }
-    }
-
-    /**
      * Checks that the string starts with the provided string and fails if it doesn't.
      * Compares the binary of the strings, so the encoding is not relevant
      *
@@ -218,12 +234,11 @@ class AssertStringMultibyte implements Parser
         string $message = 'The string does not start with {expected.debug}'
     ): self
     {
-        $this->assertionList[] = function (string $value, $encoding, Path $path) use ($string, $message) {
-            if (substr($value, 0, strlen($string)) !== $string) {
-                throw new ParsingException(
-                    $value,
-                    Debug::parseMessage($message, ['value' => $value, 'expected' => $string]),
-                    $path
+        $this->assertionList[] = function (string $value, $encoding, ResultBuilder $builder) use ($string, $message): void {
+            if (!str_starts_with($value, $string)) {
+                $builder->logErrorUsingDebug(
+                    $message,
+                    ['expected' => $string]
                 );
             }
         };
@@ -249,14 +264,33 @@ class AssertStringMultibyte implements Parser
         string $message = 'The string does not end with {expected.debug}'
     ): self
     {
-        $this->assertionList[] = function (string $value, $encoding, Path $path) use ($string, $message) {
-            if (substr($value, -strlen($string)) !== $string) {
-                throw new ParsingException(
-                    $value,
-                    Debug::parseMessage($message, ['value' => $value, 'expected' => $string]),
-                    $path
+        $this->assertionList[] = function (string $value, $encoding, ResultBuilder $builder) use ($string, $message): void {
+            if (!str_ends_with($value, $string)) {
+                $builder->logErrorUsingDebug(
+                    $message,
+                    ['expected' => $string]
                 );
             }
+        };
+
+        return $this;
+    }
+
+    /**
+     * Provides the set or detected encoding to the defined parser
+     *
+     * @param ParserContract $parser
+     *
+     * @return $this
+     */
+    public function giveEncoding(Parser $parser): self
+    {
+        $this->assertionList[] = function (string $value, $encoding, ResultBuilder $builder) use ($parser) {
+            $builder->incorporateResult(
+                $parser->parse(
+                    $builder->subjectMeta('encoding', $encoding)
+                )
+            );
         };
 
         return $this;
@@ -267,23 +301,12 @@ class AssertStringMultibyte implements Parser
         return 'Provided value is not of type string';
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path->chain('assert multibyte string', false);
-    }
+        if($this->encoding) {
+            return "assert {$this->encoding[0]} string";
+        }
 
-    /**
-     * Provides the set or detected encoding to the defined parser
-     * @param ParserContract $parser
-     *
-     * @return $this
-     */
-    public function giveEncoding(Parser $parser): self
-    {
-        $this->assertionList[] = function(string $value, $encoding, Path $path) use ($parser) {
-            $parser->parse($encoding, $path->meta('encoding'));
-        };
-
-        return $this;
+        return 'assert detected multibyte string';
     }
 }

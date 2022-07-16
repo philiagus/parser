@@ -13,14 +13,16 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
+use Philiagus\Parser\Result;
+
 
 class AssertScalar implements Parser
 {
-    use Chainable, OverwritableChainDescription, TypeExceptionMessage;
+    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
 
     private function __construct()
     {
@@ -34,11 +36,14 @@ class AssertScalar implements Parser
         return new self();
     }
 
-    public function parse($value, ?Path $path = null)
+    public function parse(Subject $subject): Result
     {
-        if (!is_scalar($value)) $this->throwTypeException($value, $path);
+        $builder = $this->createResultBuilder($subject);
+        if (!is_scalar($subject)) {
+            $this->logTypeError($builder);
+        }
 
-        return $value;
+        return $builder->createResultUnchanged();
     }
 
     protected function getDefaultTypeExceptionMessage(): string
@@ -46,8 +51,8 @@ class AssertScalar implements Parser
         return 'Provided value is not scalar';
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path->chain('assert scalar', false);
+        return 'asset scalar';
     }
 }

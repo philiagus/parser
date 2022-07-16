@@ -10,18 +10,18 @@
 
 declare(strict_types=1);
 
-namespace Philiagus\Parser\Path;
+namespace Philiagus\Parser\Subject;
 
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\Subject;
 
-class ArrayKey extends Path
+class MetaInformation extends Subject
 {
 
     /**
      * @inheritDoc
      */
-    protected function getStringPart(): string
+    protected function getPathStringPart(): string
     {
-        return " key " . var_export($this->getDescription(), true);
+        return " {$this->getPathDescription()}";
     }
 }

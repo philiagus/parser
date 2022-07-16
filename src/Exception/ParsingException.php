@@ -12,9 +12,10 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Exception;
 
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract\Error;
 use Philiagus\Parser\Contract\Parser;
-use Philiagus\Parser\Parser\Logic\OverwriteParsingException;
+use Philiagus\Parser\Parser\Logic\OverwriteErrors;
 
 /**
  * This exception is supposed to be thrown, when the value as provided by the input does not conform with the parser
@@ -22,37 +23,37 @@ use Philiagus\Parser\Parser\Logic\OverwriteParsingException;
  */
 class ParsingException extends \Exception
 {
-    private Path $path;
-
-    private $value;
 
     /**
-     * ParsingException constructor.
-     *
-     * @param $value
-     * @param string $message
-     * @param Path|null $path
-     * @param \Throwable|null $previous
+     * @param Error $error
      */
-    public function __construct($value, string $message, ?Path $path, \Throwable $previous = null)
+    public function __construct(
+        private readonly Error $error,
+    )
     {
-        $this->value = $value;
-        $this->path = $path ?? Path::default($value);
-        parent::__construct($message, 0, $previous);
+        parent::__construct($this->error->getMessage(), 0, $this->error->getSourceThrowable());
     }
 
-    public static function overwriteAround(string $message, Parser $around): OverwriteParsingException
+    public static function overwriteAround(string $message, Parser $around): OverwriteErrors
     {
-        return OverwriteParsingException::withMessage($message, $around);
+        return OverwriteErrors::withMessage($message, $around);
     }
 
-    public function getValue()
+    public function getSubject(): Subject
     {
-        return $this->value;
+        return $this->error->getSubject();
     }
 
-    public function getPath(): Path
+    public function getPathAsString(bool $asValuePath = true): string
     {
-        return $this->path;
+        return $this->getSubject()->getPathAsString($asValuePath);
+    }
+
+    /**
+     * @return Error
+     */
+    public function getError(): Error
+    {
+        return $this->error;
     }
 }

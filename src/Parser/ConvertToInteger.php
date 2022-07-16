@@ -13,17 +13,19 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
+use Philiagus\Parser\Result;
+
 
 /**
  * Takes any input and attempts a loss free conversion of the provided value into a valid integer value
  */
 class ConvertToInteger implements Parser
 {
-    use Chainable, OverwritableChainDescription, TypeExceptionMessage;
+    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
 
     private function __construct()
     {
@@ -35,18 +37,26 @@ class ConvertToInteger implements Parser
         return new self();
     }
 
-    public function parse($value, ?Path $path = null)
+    public function parse(Subject $subject): Result
     {
+        $builder = $this->createResultBuilder($subject);
+        $value = $builder->getCurrentValue();
         if (is_int($value)) {
-            return $value;
+            return $builder->createResultUnchanged();
         }
 
         if (is_float($value)) {
             // invalid float values
             if (is_nan($value) || is_infinite($value) || $value !== (float) (int) $value) {
-                $this->throwTypeException($value, $path);
+                $this->logTypeError($builder);
+
+                return $builder->createResultUnchanged();
             }
-        } elseif (is_string($value)) {
+
+            return $builder->createResult((int)$value);
+        }
+
+        if (is_string($value)) {
             // string conversion
             if (preg_match('~^(-|)0*([0-9]+)$~', $value, $matches) === 1) {
                 if ($matches[2] === '0') {
@@ -56,15 +66,13 @@ class ConvertToInteger implements Parser
                 }
                 $compareInteger = (int) $compareString;
                 if ((string) $compareInteger === $compareString) {
-                    return $compareInteger;
+                    return $builder->createResult($compareInteger);
                 }
             }
-            $this->throwTypeException($value, $path);
-        } else {
-            $this->throwTypeException($value, $path);
         }
+        $this->logTypeError($builder);
 
-        return (int) $value;
+        return $builder->createResultUnchanged();
     }
 
     protected function getDefaultTypeExceptionMessage(): string
@@ -72,8 +80,8 @@ class ConvertToInteger implements Parser
         return 'Variable of type {value.type} could not be converted to an integer';
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path->chain('convert to integer', false);
+        return 'convert to integer';
     }
 }

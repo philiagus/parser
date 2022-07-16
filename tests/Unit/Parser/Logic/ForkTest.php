@@ -45,8 +45,7 @@ class ForkTest extends TestCase
             ->parse(
                 Argument::that(
                     fn($arg) => DataProvider::isSame($arg, $value)
-                ),
-                Argument::any()
+                )
             )
             ->shouldBeCalled()
             ->willReturn(1);
@@ -57,8 +56,7 @@ class ForkTest extends TestCase
             ->parse(
                 Argument::that(
                     fn($arg) => DataProvider::isSame($arg, $value)
-                ),
-                Argument::any()
+                )
             )
             ->shouldBeCalled()
             ->willReturn(2);
@@ -69,8 +67,7 @@ class ForkTest extends TestCase
             ->parse(
                 Argument::that(
                     fn($arg) => DataProvider::isSame($arg, $value)
-                ),
-                Argument::any()
+                )
             )
             ->shouldBeCalled()
             ->willReturn(3);

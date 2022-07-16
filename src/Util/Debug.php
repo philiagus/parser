@@ -119,11 +119,7 @@ class Debug
             }
 
             if (is_infinite($value)) {
-                if ($value < 0) {
-                    return '-INF';
-                }
-
-                return 'INF';
+                return $value > 0 ? 'INF' : '-INF';
             }
 
             return 'float';

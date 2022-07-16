@@ -13,16 +13,17 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
-use Philiagus\Parser\Exception;
+use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Debug;
 
 class OneOf implements Parser
 {
-    use Chainable, OverwritableChainDescription;
+    use Chainable, OverwritableParserDescription;
 
     /** @var string */
     private string $exceptionMessage = 'Provided value does not match any of the expected formats or values';
@@ -40,7 +41,7 @@ class OneOf implements Parser
     private bool $defaultSet = false;
 
     /** @var mixed */
-    private $default = null;
+    private mixed $default = null;
 
     private function __construct()
     {
@@ -134,42 +135,62 @@ class OneOf implements Parser
         return $this;
     }
 
-    public function parse($value, Path $path = null)
+    public function parse(Subject $subject): Result
     {
-        $path ??= Path::default($value);
-        if (in_array($value, $this->sameOptions, true)) {
-            return $value;
+        $builder = $this->createResultBuilder($subject);
+        $value = $subject->getValue();
+
+        /** @var Error[] $errors */
+        $errors = [];
+        if (!empty($this->sameOptions)) {
+            if (in_array($value, $this->sameOptions, true)) {
+                return $builder->createResultUnchanged();
+            }
+
+            $errors = new Error(
+                $subject,
+                'Value is not same as any of these: ' . implode(', ', array_map(fn($value) => Debug::stringify($value), $this->sameOptions))
+            );
         }
 
-        if (in_array($value, $this->equalsOptions)) {
-            return $value;
+        if (!empty($this->equalsOptions)) {
+            if (in_array($value, $this->equalsOptions)) {
+                return $builder->createResultUnchanged();
+            }
+
+            $errors = new Error(
+                $subject,
+                'Value is not equal to any of these: ' . implode(', ', array_map(fn($value) => Debug::stringify($value), $this->sameOptions))
+            );
         }
 
-        $exceptions = [];
         foreach ($this->options as $index => $option) {
             try {
-                return $option->parse($value, $path->chain("option #$index", false));
+                $result = $option->parse(
+                    $builder->subjectForwarded("one of parser #$index")
+                );
             } catch (ParsingException $exception) {
-                $exceptions[] = $exception;
+                $errors[] = $exception->getError();
+                continue;
             }
+
+            if ($result->isSuccess()) {
+                return $builder->createResultFromResult($result);
+            }
+            $errors = [...$errors, ...$result->getErrors()];
         }
 
         if ($this->defaultSet) {
             return $this->default;
         }
 
-        throw new Exception\OneOfParsingException(
-            $value,
-            Debug::parseMessage($this->exceptionMessage, ['value' => $value]),
-            $path,
-            $exceptions,
-            $this->sameOptions,
-            $this->equalsOptions
-        );
+        $builder->logErrorUsingDebug($this->exceptionMessage, [], null, $errors);
+
+        return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path->chain('OneOf', false);
+        return 'OneOf';
     }
 }

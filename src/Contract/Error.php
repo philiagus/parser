@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * This file is part of philiagus/parser
  *
  * (c) Andreas Bittner <philiagus@philiagus.de>
@@ -10,21 +10,28 @@
 
 declare(strict_types=1);
 
+
 namespace Philiagus\Parser\Contract;
 
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Exception\RuntimeParserConfigurationException;
-use Philiagus\Parser\Result;
 
-interface Parser
+interface Error
 {
+
+    public function getMessage(): string;
+
+    public function getSourceThrowable(): ?\Throwable;
+
     /**
-     * @param Subject $value
-     *
-     * @return Result
-     * @throws RuntimeParserConfigurationException
+     * @return never
      * @throws ParsingException
      */
-    public function parse(Subject $subject): Result;
+    public function throw(): never;
+
+    /**
+     * @return Subject
+     */
+    public function getSubject(): Subject;
+
 }

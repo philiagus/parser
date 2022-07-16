@@ -13,16 +13,19 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
+use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Result;
+use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
 
 class AssertObject implements Parser
 {
-    use Chainable, OverwritableChainDescription, TypeExceptionMessage;
+    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
 
     private const DEFAULT_INSTANCEOF_MESSAGE = 'The provided object is not an instance of {class.raw}';
 
@@ -69,18 +72,11 @@ class AssertObject implements Parser
         string $exceptionMessage = self::DEFAULT_INSTANCEOF_MESSAGE
     ): self
     {
-        $this->checks[] = function (object $value, ?Path $path) use ($class, $exceptionMessage): void {
+        $this->checks[] = function (ResultBuilder $builder, object $value) use ($class, $exceptionMessage): void {
             if (!$value instanceof $class) {
-                throw new ParsingException(
-                    $value,
-                    Debug::parseMessage(
-                        $exceptionMessage,
-                        [
-                            'value' => $value,
-                            'class' => $class,
-                        ]
-                    ),
-                    $path
+                $builder->logErrorUsingDebug(
+                    $exceptionMessage,
+                    ['class' => $class]
                 );
             }
         };
@@ -94,16 +90,19 @@ class AssertObject implements Parser
             ->setTypeExceptionMessage($typeExceptionMessage);
     }
 
-    public function parse($value, ?Path $path = null)
+    public function parse(Subject $subject): Result
     {
-        if (!is_object($value)) {
-            $this->throwTypeException($value, $path);
-        }
-        foreach ($this->checks as $check) {
-            $check($value, $path);
+        $builder = $this->createResultBuilder($subject);
+        $value = $builder->getCurrentValue();
+        if (!is_object($builder->getCurrentValue())) {
+            $this->logTypeError($builder);
+        } else {
+            foreach ($this->checks as $check) {
+                $check($builder, $value);
+            }
         }
 
-        return $value;
+        return $builder->createResultUnchanged();
     }
 
     protected function getDefaultTypeExceptionMessage(): string
@@ -111,8 +110,8 @@ class AssertObject implements Parser
         return 'The provided value is not an object';
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path->chain('assert object', false);
+        return 'assert object';
     }
 }

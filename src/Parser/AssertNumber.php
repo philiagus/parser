@@ -13,16 +13,18 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception;
+use Philiagus\Parser\Result;
+use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
 
 class AssertNumber implements Parser
 {
-    use Chainable, OverwritableChainDescription, TypeExceptionMessage;
+    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
 
     /** @var callable[] */
     private array $assertionList = [];
@@ -54,26 +56,19 @@ class AssertNumber implements Parser
      * @see Debug::parseMessage()
      *
      */
-    public function assertMinimum($minimum, string $exceptionMessage = 'Provided value of {value} is lower than the defined minimum of {min}'): self
+    public function assertMinimum(float|int $minimum, string $exceptionMessage = 'Provided value of {value} is lower than the defined minimum of {min}'): self
     {
         if (
-            (!is_int($minimum) && !is_float($minimum)) ||
-            (is_float($minimum) &&
-                (
-                    is_nan($minimum) ||
-                    is_infinite($minimum)
-                )
-            )
+            is_float($minimum) && (is_nan($minimum) || is_infinite($minimum))
         ) {
             throw new Exception\ParserConfigurationException('The minimum for a numeric value must be provided as integer or float');
         }
 
-        $this->assertionList[] = function ($value, ?Path $path) use ($minimum, $exceptionMessage) {
+        $this->assertionList[] = function (ResultBuilder $builder, int|float $value) use ($minimum, $exceptionMessage): void {
             if ($minimum > $value) {
-                throw new Exception\ParsingException(
-                    $value,
-                    Debug::parseMessage($exceptionMessage, ['value' => $value, 'min' => $minimum]),
-                    $path
+                $builder->logErrorUsingDebug(
+                    $exceptionMessage,
+                    ['min' => $minimum]
                 );
             }
         };
@@ -96,26 +91,19 @@ class AssertNumber implements Parser
      * @see Debug::parseMessage()
      *
      */
-    public function assertMaximum($maximum, string $exceptionMessage = 'Provided value of {value} is greater than the defined maximum of {max}}'): self
+    public function assertMaximum(float|int $maximum, string $exceptionMessage = 'Provided value of {value} is greater than the defined maximum of {max}}'): self
     {
         if (
-            (!is_int($maximum) && !is_float($maximum)) ||
-            (is_float($maximum) &&
-                (
-                    is_nan($maximum) ||
-                    is_infinite($maximum)
-                )
-            )
+            is_float($maximum) && (is_nan($maximum) || is_infinite($maximum))
         ) {
             throw new Exception\ParserConfigurationException('The maximum for a numeric value must be provided as integer or float');
         }
 
-        $this->assertionList[] = function ($value, ?Path $path) use ($maximum, $exceptionMessage) {
+        $this->assertionList[] = function (ResultBuilder $builder, int|float $value) use ($maximum, $exceptionMessage): void {
             if ($maximum < $value) {
-                throw new Exception\ParsingException(
-                    $value,
-                    Debug::parseMessage($exceptionMessage, ['value' => $value, 'max' => $maximum]),
-                    $path
+                $builder->logErrorUsingDebug(
+                    $exceptionMessage,
+                    ['max' => $maximum]
                 );
             }
         };
@@ -123,21 +111,22 @@ class AssertNumber implements Parser
         return $this;
     }
 
-    public function parse($value, ?Path $path = null)
+    public function parse(Subject $subject): Result
     {
+        $builder = $this->createResultBuilder($subject);
+        $value = $subject->getValue();
         if (
-            false === (
-                is_int($value) || (is_float($value) && !is_nan($value) && !is_infinite($value))
-            )
+            is_int($value) ||
+            (is_float($value) && !is_nan($value) && !is_infinite($value))
         ) {
-            $this->throwTypeException($value, $path);
+            foreach ($this->assertionList as $assertion) {
+                $assertion($builder, $value);
+            }
+        } else {
+            $this->logTypeError($builder);
         }
 
-        foreach ($this->assertionList as $assertion) {
-            $assertion($value, $path);
-        }
-
-        return $value;
+        return $builder->createResultUnchanged();
     }
 
     protected function getDefaultTypeExceptionMessage(): string
@@ -145,8 +134,8 @@ class AssertNumber implements Parser
         return 'Provided value is not of float or integer';
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path->chain('assert number', false);
+        return 'asset number';
     }
 }

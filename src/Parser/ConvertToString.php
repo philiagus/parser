@@ -13,16 +13,18 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
-use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Error;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Debug;
+use Stringable;
 
 class ConvertToString implements Parser
 {
-    use Chainable, OverwritableChainDescription, TypeExceptionMessage;
+    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
 
     /** @var array{string, string}|null */
     private ?array $booleanValues = null;
@@ -96,66 +98,80 @@ class ConvertToString implements Parser
         return $this;
     }
 
-    public function parse($value, ?Path $path = null)
+    public function parse(Subject $subject): Result
     {
-
-        if (!is_string($value)) {
-            switch (true) {
-                case $value === null && $this->nullValue !== null:
-                    return $this->nullValue;
-                case is_int($value):
-                    return (string) $value;
-                case is_float($value):
-                    if (is_infinite($value) || is_nan($value)) break;
-
-                    return (string) $value;
-                case is_bool($value):
-                    if ($this->booleanValues) {
-                        return $this->booleanValues[$value];
-                    }
-                    break;
-                case is_array($value):
-                    if ($this->implode !== null) {
-                        /** @var Parser|null $elementConverter */
-                        $elementConverter = $this->implode[2];
-                        $convertedElements = [];
-                        $path ??= Path::default($value);
-                        foreach ($value as $key => $element) {
-                            $convertedElement = $elementConverter ?
-                                $elementConverter->parse($element, $path->arrayElement((string) $key)) :
-                                $element;
-                            if (!is_string($convertedElement)) {
-                                throw new ParsingException(
-                                    $value,
-                                    Debug::parseMessage(
-                                        $this->implode[1],
-                                        [
-                                            'value' => $value,
-                                            'key' => $key,
-                                            'culprit' => $convertedElement,
-                                            'culpritRaw' => $element,
-                                        ]
-                                    ),
-                                    $elementConverter ?
-                                        $elementConverter->getChainedPath($path) :
-                                        $path
-                                );
+        $builder = $this->createResultBuilder($subject);
+        $value = $builder->getCurrentValue();
+        if (is_string($value)) {
+            return $builder->createResultUnchanged();
+        }
+        switch (true) {
+            case $value === null && $this->nullValue !== null:
+                return $builder->createResult($this->nullValue);
+            /** @noinspection PhpMissingBreakStatementInspection */
+            case is_float($value):
+                if (is_infinite($value) || is_nan($value)) break;
+            case is_int($value):
+                return $builder->createResult((string) $value);
+            case is_bool($value):
+                if ($this->booleanValues) {
+                    return $builder->createResult($this->booleanValues[$value]);
+                }
+                break;
+            case is_array($value):
+                if ($this->implode !== null) {
+                    /** @var Parser|null $elementConverter */
+                    $elementConverter = $this->implode[2];
+                    $convertedElements = [];
+                    $errors = [];
+                    foreach ($subject as $key => $element) {
+                        $newSubject = $builder->subjectArrayElement($key, $element);
+                        if ($elementConverter) {
+                            $conversionResult = $elementConverter->parse($newSubject);
+                            if (!$conversionResult->isSuccess()) {
+                                $builder->incorporateResult($conversionResult);
+                                continue;
                             }
-                            $convertedElements[] = $convertedElement;
+                            $convertedElement = $conversionResult->getValue();
+                        } else {
+                            $convertedElement = $element;
                         }
 
-                        return implode($this->implode[0], $convertedElements);
-                    }
-                    break;
-                case is_object($value):
-                    if (method_exists($value, '__toString')) return (string) $value;
-                    break;
-            }
+                        if (!is_string($convertedElement)) {
+                            $builder->logError(
+                                Error::createUsingDebugString(
+                                    $newSubject,
+                                    $this->implode[1],
+                                    [
+                                        'key' => $key,
+                                        'culprit' => $convertedElement,
+                                        'culpritRaw' => $element,
+                                    ]
+                                )
+                            );
 
-            $this->throwTypeException($value, $path);
+                            continue;
+                        }
+
+                        $convertedElements[] = $convertedElement;
+                    }
+                    if ($errors) {
+                        return $builder->createResultUnchanged();
+                    }
+
+                    return $builder->createResult(implode($this->implode[0], $convertedElements));
+                }
+                break;
+            case is_object($value):
+                if ($value instanceof Stringable) {
+                    return $builder->createResult((string) $value);
+                }
+                break;
         }
 
-        return $value;
+        $this->logTypeError($builder);
+
+        return $builder->createResultUnchanged();
     }
 
     protected function getDefaultTypeExceptionMessage(): string
@@ -163,8 +179,8 @@ class ConvertToString implements Parser
         return 'Variable of type {value.type} could not be converted to a string';
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path->chain('convert to string', false);
+        return 'convert to string';
     }
 }

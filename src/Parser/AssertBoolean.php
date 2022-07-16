@@ -13,10 +13,12 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
+use Philiagus\Parser\Result;
+
 
 /**
  * Class BooleanPrimitive
@@ -25,7 +27,7 @@ use Philiagus\Parser\Contract\Parser;
  */
 class AssertBoolean implements Parser
 {
-    use Chainable, OverwritableChainDescription, TypeExceptionMessage;
+    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
 
 
     private function __construct()
@@ -40,11 +42,13 @@ class AssertBoolean implements Parser
         return new self();
     }
 
-    public function parse($value, Path $path = null)
+    public function parse(Subject $subject): Result
     {
-        if (!is_bool($value)) $this->throwTypeException($value, $path);
-
-        return $value;
+        $builder = $this->createResultBuilder($subject);
+        if (!is_bool($builder->getCurrentValue())) {
+            $this->logTypeError($builder);
+        }
+        return $builder->createResultUnchanged();
     }
 
     protected function getDefaultTypeExceptionMessage(): string
@@ -52,8 +56,8 @@ class AssertBoolean implements Parser
         return 'Provided value is not a boolean';
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path->chain('assert boolean', false);
+        return 'assert boolean';
     }
 }

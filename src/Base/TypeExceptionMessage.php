@@ -12,7 +12,9 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Base;
 
+use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
 
 trait TypeExceptionMessage
@@ -40,24 +42,18 @@ trait TypeExceptionMessage
     }
 
     /**
+     * @param ResultBuilder $builder
+     *
+     * @throws ParsingException
+     */
+    private function logTypeError(ResultBuilder $builder): void
+    {
+        $builder->logErrorUsingDebug($this->typeExceptionMessage ?? $this->getDefaultTypeExceptionMessage());
+    }
+
+    /**
      * @return string
      */
     abstract protected function getDefaultTypeExceptionMessage(): string;
-
-    /**
-     * @param $value
-     * @param Path|null $path
-     *
-     * @return never-returns
-     * @throws ParsingException
-     */
-    private function throwTypeException($value, ?Path $path): void
-    {
-        throw new ParsingException(
-            $value,
-            Debug::parseMessage($this->typeExceptionMessage ?? $this->getDefaultTypeExceptionMessage(), ['value' => $value]),
-            $path
-        );
-    }
 
 }

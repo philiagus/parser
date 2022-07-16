@@ -13,9 +13,11 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
+use Philiagus\Parser\Result;
+
 
 /**
  * Class Fixed
@@ -26,7 +28,7 @@ use Philiagus\Parser\Contract\Parser;
  */
 class Fixed implements Parser
 {
-    use Chainable, OverwritableChainDescription;
+    use Chainable, OverwritableParserDescription;
 
     /** @var mixed */
     private $value;
@@ -46,13 +48,13 @@ class Fixed implements Parser
         return new self($value);
     }
 
-    public function parse($value, ?Path $path = null)
+    public function parse(Subject $subject): Result
     {
-        return $this->value;
+        return $this->createResultBuilder($subject)->createResult($this->value);
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path->chain('replace with fixed value', false);
+        return 'replace with fixed value';
     }
 }

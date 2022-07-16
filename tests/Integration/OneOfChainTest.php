@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\Integration;
 
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Parser\AssertArray;
 use Philiagus\Parser\Parser\AssertInteger;
 use Philiagus\Parser\Parser\AssertSame;
@@ -27,18 +28,18 @@ class OneOfChainTest extends TestCase
             ->parser(
                 AssertArray::new()
                     ->then(
-                        Fixed::value('isn array')
+                        Fixed::value('is array')
                     )
             )
             ->parser(
                 AssertInteger::new()
-                    ->then(Fixed::value('isn integer'))
+                    ->then(Fixed::value('is integer'))
             )
             ->then(
-                AssertSame::value('isn array')
+                AssertSame::value('is array')
             )
-            ->parse(['array' => 'something']);
+            ->parse(Subject::default(['array' => 'something']));
 
-        self::assertSame('isn array', $result);
+        self::assertSame('is array', $result->getValue());
     }
 }

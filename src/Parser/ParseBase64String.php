@@ -13,16 +13,17 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Debug;
 
 class ParseBase64String implements Parser
 {
-    use Chainable, OverwritableChainDescription, TypeExceptionMessage;
+    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
 
     /** @var bool */
     private bool $strict = true;
@@ -73,26 +74,27 @@ class ParseBase64String implements Parser
      *
      * @inheritDoc
      */
-    public function parse($value, ?Path $path = null)
+    public function parse(Subject $subject): Result
     {
+        $builder = $this->createResultBuilder($subject);
+        $value = $builder->getCurrentValue();
         if (!is_string($value)) {
-            $this->throwTypeException($value, $path);
+            $this->logTypeError($builder);
+
+            return $builder->createResultUnchanged();
         }
 
         $result = base64_decode($value, $this->strict);
 
         if ($result === false) {
-            throw new ParsingException(
-                $value,
-                Debug::parseMessage(
-                    $this->notBase64ExceptionMessage,
-                    ['value' => $value]
-                ),
-                $path
+            $builder->logErrorUsingDebug(
+                $this->notBase64ExceptionMessage
             );
+
+            return $builder->createResultUnchanged();
         }
 
-        return $result;
+        return $builder->createResult($result);
     }
 
     protected function getDefaultTypeExceptionMessage(): string
@@ -100,8 +102,8 @@ class ParseBase64String implements Parser
         return 'Provided value is not of type string';
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path->chain('parse as base64 string', false);
+        return 'parse as base64 string';
     }
 }

@@ -13,15 +13,17 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
+use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Debug;
 
 class Map implements Parser
 {
-    use Chainable, OverwritableChainDescription;
+    use Chainable, OverwritableParserDescription;
 
     private const TYPE_SAME = 1;
     private const TYPE_EQUALS = 2;
@@ -172,13 +174,11 @@ class Map implements Parser
     }
 
 
-    public function parse($value, Path $path = null)
+    public function parse(Subject $subject): Result
     {
-        $path ??= Path::default($value);
-        $exceptions = [];
-        $sameOptions = [];
-        $equalsOptions = [];
-
+        $builder = $this->createResultBuilder($subject);
+        $value = $subject->getValue();
+        $errors = [];
         /**
          * @type Parser $to
          */
@@ -186,48 +186,62 @@ class Map implements Parser
             switch ($type) {
                 case self::TYPE_SAME:
                     if ($value === $from) {
-                        return $to->parse($value, $path);
+                        return $builder->createResultFromResult($to->parse($builder->subjectForwarded('same')));
                     }
-                    $sameOptions[] = $from;
+                    $errors[] = new Error(
+                        $subject,
+                        'Value is not same as ' . Debug::stringify($from)
+                    );
                     break;
                 case self::TYPE_SAME_LIST:
                     if (in_array($value, $from, true)) {
-                        return $to->parse($value, $path);
+                        return $builder->createResultFromResult($to->parse($builder->subjectForwarded('same list')));
                     }
-                    $sameOptions = array_merge($sameOptions, $from);
+                    $errors[] = new Error(
+                        $subject,
+                        'Value is not same as ' . implode(', ', array_map(fn($value) => Debug::stringify($value), $from))
+                    );
                     break;
                 case self::TYPE_EQUALS:
                     if ($value == $from) {
-                        return $to->parse($value, $path);
+                        return $builder->createResultFromResult($to->parse($builder->subjectForwarded('equals')));
                     }
-                    $equalsOptions[] = $from;
+                    $errors[] = new Error(
+                        $subject,
+                        'Value is not equal to ' . Debug::stringify($from)
+                    );
                     break;
                 case self::TYPE_EQUALS_LIST:
                     if (in_array($value, $from)) {
-                        return $to->parse($value, $path);
+                        return $builder->createResultFromResult($to->parse($builder->subjectForwarded('equals list')));
                     }
-                    $equalsOptions = array_merge($equalsOptions, $from);
+                    $errors[] = new Error(
+                        $subject,
+                        'Value is not equal to ' . implode(', ', array_map(fn($value) => Debug::stringify($value), $from))
+                    );
                     break;
                 case self::TYPE_PARSER:
                     /** @var Parser $from */
                     try {
-                        $from->parse($value, $path);
+                        $builder->incorporateResult($from->parse($builder->subjectInternal('check', $subject->getValue(), true)));
                     } catch (Exception\ParsingException $e) {
-                        $exceptions[] = $e;
+                        $errors[] = $e->getError();
                         break;
                     }
 
-                    return $to->parse($value, $path);
+                    return $builder->createResultFromResult($to->parse($builder->subjectForwarded('parser check')));
                 case self::TYPE_PARSER_PIPE:
                     /** @var Parser $from */
                     try {
-                        $parserResult = $from->parse($value, $path);
+                        $parserResult = $from->parse($builder->subjectForwarded('check with pipe'));
                     } catch (Exception\ParsingException $e) {
-                        $exceptions[] = $e;
+                        $errors[] = $e->getError();
                         break;
                     }
 
-                    return $to->parse($parserResult, $path);
+                    return $builder->createResultFromResult(
+                        $to->parse($parserResult->subjectChain())
+                    );
             }
         }
 
@@ -235,18 +249,17 @@ class Map implements Parser
             return $this->default;
         }
 
-        throw new Exception\OneOfParsingException(
-            $value,
-            Debug::parseMessage($this->exceptionMessage, ['value' => $value]),
-            $path,
-            $exceptions,
-            $sameOptions,
-            $equalsOptions
+        $builder->logErrorUsingDebug(
+            $this->exceptionMessage,
+            [], null,
+            $errors
         );
+
+        return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path->chain('Map', false);
+        return 'Map';
     }
 }

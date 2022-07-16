@@ -14,11 +14,11 @@ namespace Philiagus\Parser\Test;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Path\Chain;
+use Philiagus\Parser\Subject\Chain;
 use Prophecy\Argument;
 
 trait ChainableParserTest
@@ -48,10 +48,7 @@ trait ChainableParserTest
             ->parse(
                 Argument::that(function ($argument) use ($expected) {
                     return DataProvider::isSame($expected, $argument);
-                }),
-                Argument::that(
-                    fn(?Path $path) => true
-                )
+                })
             )
             ->shouldBeCalledOnce()
             ->willReturn($expectedResult);
@@ -75,7 +72,7 @@ trait ChainableParserTest
     public function testThenWithOverwrittenParserNotValue($value, \Closure $parser, $expected): void
     {
         $parser = $parser($value);
-        /** @var OverwritableChainDescription&Chainable $parser */
+        /** @var OverwritableParserDescription&Chainable $parser */
         self::assertTrue(method_exists($parser, 'then'), 'method ->then doesn\'t exist on parser');
         self::assertTrue(method_exists($parser, 'setChainDescription'), 'method ->setChainDescription doesn\'t exist on parser');
         $parser->setChainDescription('some description', false);
@@ -86,12 +83,7 @@ trait ChainableParserTest
             ->parse(
                 Argument::that(function ($argument) use ($expected) {
                     return DataProvider::isSame($expected, $argument);
-                }),
-                Argument::that(
-                    fn(?Path $path) => $path instanceof Chain &&
-                        $path->getDescription() === 'some description' &&
-                        !$path->isPathInValue()
-                )
+                })
             )
             ->shouldBeCalledOnce()
             ->willReturn($expectedResult);
@@ -115,7 +107,7 @@ trait ChainableParserTest
     public function testThenWithOverwrittenParserInValue($value, \Closure $parser, $expected): void
     {
         $parser = $parser($value);
-        /** @var OverwritableChainDescription&Chainable $parser */
+        /** @var OverwritableParserDescription&Chainable $parser */
         self::assertTrue(method_exists($parser, 'then'), 'method ->then doesn\'t exist on parser');
         self::assertTrue(method_exists($parser, 'setChainDescription'), 'method ->setChainDescription doesn\'t exist on parser');
         $parser->setChainDescription('some description', true);
@@ -126,12 +118,7 @@ trait ChainableParserTest
             ->parse(
                 Argument::that(function ($argument) use ($expected) {
                     return DataProvider::isSame($expected, $argument);
-                }),
-                Argument::that(
-                    fn(?Path $path) => $path instanceof Chain &&
-                        $path->getDescription() === 'some description' &&
-                        $path->isPathInValue()
-                )
+                })
             )
             ->shouldBeCalledOnce()
             ->willReturn($expectedResult);

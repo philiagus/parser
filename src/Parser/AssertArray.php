@@ -13,24 +13,27 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableChainDescription;
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
+use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParserConfigurationException;
-use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Result;
+use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
 
 class AssertArray implements Parser
 {
-    use Chainable, OverwritableChainDescription, TypeExceptionMessage;
+    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
 
-    /** @var callable[] */
-    protected array $assertionList = [];
+    /** @var \SplDoublyLinkedList<\Closure> */
+    protected \SplDoublyLinkedList $assertionList;
 
     protected function __construct()
     {
+        $this->assertionList = new \SplDoublyLinkedList();
     }
 
     /**
@@ -43,29 +46,33 @@ class AssertArray implements Parser
 
     public function giveEachValue(ParserContract $parser): self
     {
-        $this->assertionList[] = function (array $array, Path $path) use ($parser) {
-            foreach ($array as $key => $value) {
-                $parser->parse($value, $path->arrayElement((string) $key));
+        $this->assertionList[] = function (ResultBuilder $builder) use ($parser): void {
+            foreach ($builder->getCurrentValue() as $key => $value) {
+                $builder->incorporateResult(
+                    $parser->parse(
+                        $builder->subjectArrayElement($key, $value)
+                    )
+                );
             }
-
-            return $array;
         };
 
         return $this;
     }
 
-    public function parse($value, ?Path $path = null)
+    public function parse(Subject $subject): Result
     {
-        if (!is_array($value)) {
-            $this->throwTypeException($value, $path);
+        $builder = $this->createResultBuilder($subject);
+        if (!is_array($subject->getValue())) {
+            $this->logTypeError($builder);
+
+            return $builder->createResultUnchanged();
         }
 
-        $path ??= Path::default($value);
         foreach ($this->assertionList as $assertion) {
-            $value = $assertion($value, $path);
+            $assertion($builder);
         }
 
-        return $value;
+        return $builder->createResultBasedOnCurrentSubject();
     }
 
     /**
@@ -75,12 +82,14 @@ class AssertArray implements Parser
      */
     public function giveEachKey(ParserContract $parser): self
     {
-        $this->assertionList[] = function (array $value, Path $path) use ($parser) {
-            foreach ($value as $key => $_) {
-                $parser->parse($key, $path->arrayKey((string) $key));
+        $this->assertionList[] = function (ResultBuilder $builder) use ($parser): void {
+            foreach ($builder->getCurrentValue() as $key => $_) {
+                $builder->incorporateResult(
+                    $parser->parse(
+                        $builder->subjectArrayKey($key)
+                    )
+                );
             }
-
-            return $value;
         };
 
         return $this;
@@ -93,10 +102,15 @@ class AssertArray implements Parser
      */
     public function giveKeys(ParserContract $arrayParser): self
     {
-        $this->assertionList[] = function (array $array, Path $path) use ($arrayParser) {
-            $arrayParser->parse(array_keys($array), $path->meta('keys'));
-
-            return $array;
+        $this->assertionList[] = function (ResultBuilder $builder) use ($arrayParser): void {
+            $builder->incorporateResult(
+                $arrayParser->parse(
+                    $builder->subjectMeta(
+                        'keys',
+                        array_keys($builder->getCurrentValue())
+                    )
+                )
+            );
         };
 
         return $this;
@@ -111,10 +125,11 @@ class AssertArray implements Parser
      */
     public function giveLength(ParserContract $integerParser): self
     {
-        $this->assertionList[] = function (array $value, Path $path) use ($integerParser) {
-            $integerParser->parse(count($value), $path->meta('length'));
-
-            return $value;
+        $this->assertionList[] = function (ResultBuilder $builder) use ($integerParser): void {
+            $builder->incorporateResult(
+                $integerParser->parse(
+                    $builder->subjectMeta('length', count($builder->getCurrentValue())))
+            );
         };
 
         return $this;
@@ -137,23 +152,22 @@ class AssertArray implements Parser
      * @throws ParserConfigurationException
      * @see Debug::parseMessage()
      */
-    public function giveKeyValue($key, ParserContract $parser, string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'): self
+    public function giveKeyValue(int|string $key, ParserContract $parser, string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'): self
     {
-        if (!is_string($key) && !is_int($key)) {
-            throw new ParserConfigurationException('Arrays only accept string or integer keys');
-        }
-
-        $this->assertionList[] = function (array $value, Path $path) use ($key, $parser, $missingKeyExceptionMessage) {
-            if (!array_key_exists($key, $value)) {
-                throw new ParsingException(
-                    $value,
-                    Debug::parseMessage($missingKeyExceptionMessage, ['key' => $key, 'value' => $value,]),
-                    $path
+        $this->assertionList[] = function (ResultBuilder $builder) use ($key, $parser, $missingKeyExceptionMessage): void {
+            if (!array_key_exists($key, $builder->getCurrentValue())) {
+                $builder->logErrorUsingDebug(
+                    $missingKeyExceptionMessage,
+                    [
+                        'key' => $key,
+                    ]
                 );
-            }
-            $parser->parse($value[$key], $path->arrayElement((string) $key));
 
-            return $value;
+                return;
+            }
+            $builder->incorporateResult(
+                $parser->parse($builder->subjectArrayElement($key, $builder->getCurrentValue()[$key]))
+            );
         };
 
         return $this;
@@ -168,22 +182,18 @@ class AssertArray implements Parser
      * @param ParserContract $parser
      *
      * @return $this
-     * @throws ParserConfigurationException
      */
-    public function giveDefaultedKeyValue($key, $default, ParserContract $parser): self
+    public function giveDefaultedKeyValue(int|string $key, $default, ParserContract $parser): self
     {
-        if (!is_string($key) && !is_int($key)) {
-            throw new ParserConfigurationException('Arrays only accept string or integer keys');
-        }
-
-        $this->assertionList[] = function (array $value, Path $path) use ($key, $default, $parser) {
-            if (array_key_exists($key, $value)) {
-                $parser->parse($value[$key], $path->arrayElement((string) $key));
-            } else {
-                $parser->parse($default, $path->arrayElement((string) $key));
-            }
-
-            return $value;
+        $this->assertionList[] = function (ResultBuilder $builder) use ($key, $default, $parser): void {
+            $value = $builder->getCurrentValue();
+            $builder->incorporateResult(
+                $parser->parse(
+                    array_key_exists($key, $value) ?
+                        $builder->subjectArrayElement($key, $value[$key]) :
+                        $builder->subjectArrayElement($key, $default)
+                )
+            );
         };
 
         return $this;
@@ -202,16 +212,10 @@ class AssertArray implements Parser
      */
     public function assertSequentialKeys(string $exceptionMessage = 'The array is not a sequential numerical array starting at 0'): self
     {
-        $this->assertionList[] = function (array $value, Path $path) use ($exceptionMessage) {
-            $assumedKey = 0;
-            foreach (array_keys($value) as $key) {
-                if ($key !== $assumedKey) {
-                    throw new ParsingException($value, Debug::parseMessage($exceptionMessage, ['value' => $value]), $path);
-                }
-                $assumedKey++;
+        $this->assertionList[] = function (ResultBuilder $builder) use ($exceptionMessage): void {
+            if (!array_is_list($builder->getCurrentValue())) {
+                $builder->logErrorUsingDebug($exceptionMessage);
             }
-
-            return $value;
         };
 
         return $this;
@@ -220,32 +224,30 @@ class AssertArray implements Parser
     /**
      * If the array has the provided key, the value of that key is provided to the parser
      *
-     * @param $key
+     * @param int|string $key
      * @param ParserContract $parser
      *
      * @return $this
-     * @throws ParserConfigurationException
      */
-    public function giveOptionalKeyValue($key, ParserContract $parser): self
+    public function giveOptionalKeyValue(int|string $key, ParserContract $parser): self
     {
-        if (!is_string($key) && !is_int($key)) {
-            throw new ParserConfigurationException('Arrays only accept string or integer keys');
-        }
-
-        $this->assertionList[] = function (array $value, Path $path) use ($key, $parser) {
+        $this->assertionList[] = function (ResultBuilder $builder) use ($key, $parser): void {
+            $value = $builder->getCurrentValue();
             if (array_key_exists($key, $value)) {
-                $parser->parse($value[$key], $path->arrayElement((string) $key));
+                $builder->incorporateResult(
+                    $parser->parse(
+                        $builder->subjectArrayElement($key, $value[$key])
+                    )
+                );
             }
-
-            return $value;
         };
 
         return $this;
     }
 
-    protected function getDefaultChainPath(Path $path): Path
+    protected function getDefaultChainDescription(Subject $subject): string
     {
-        return $path->chain('assert array', false);
+        return 'assert array';
     }
 
     protected function getDefaultTypeExceptionMessage(): string

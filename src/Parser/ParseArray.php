@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Path;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
-use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
 
 class ParseArray extends AssertArray
@@ -29,12 +29,21 @@ class ParseArray extends AssertArray
      */
     public function modifyEachValue(ParserContract $parser): self
     {
-        $this->assertionList[] = function (array $array, Path $path) use ($parser) {
+        $this->assertionList[] = function (ResultBuilder $builder) use ($parser): void {
+            $array = $builder->getCurrentValue();
             foreach ($array as $key => &$value) {
-                $value = $parser->parse($value, $path->arrayElement((string) $key));
+                $value = $builder->incorporateResult(
+                    $parser->parse($builder->subjectArrayElement($key, $value)),
+                    $value
+                );
             }
 
-            return $array;
+            $builder->setCurrentSubject(
+                $builder->subjectInternal(
+                    'modfiy each value',
+                    $array
+                )
+            );
         };
 
         return $this;
@@ -57,21 +66,30 @@ class ParseArray extends AssertArray
         string         $newKeyIsNotUseableMessage = 'A parser resulted in an invalid array key for key {oldKey.raw}'
     ): self
     {
-        $this->assertionList[] = function (array $array, Path $path) use ($parser, $newKeyIsNotUseableMessage) {
+        $this->assertionList[] = function (ResultBuilder $builder) use ($parser, $newKeyIsNotUseableMessage): void {
+            $array = $builder->getCurrentValue();
             $result = [];
             foreach ($array as $key => $value) {
-                $newKey = $parser->parse($key, $path->arrayKey((string) $key));
-                if (!is_int($key) && !is_string($key)) {
-                    throw new ParsingException(
-                        $array,
-                        Debug::parseMessage($newKeyIsNotUseableMessage, ['oldKey' => $key, 'newKey' => $newKey]),
-                        $path
-                    );
+                $newKeyResult = $parser->parse($builder->subjectArrayKey($key));
+                if (!$newKeyResult->isSuccess()) {
+                    $builder->incorporateResult($newKeyResult);
+
+                    continue;
                 }
-                $result[$newKey] = $value;
+                $newKey = $newKeyResult->getValue();
+                if (!is_int($newKey) && !is_string($newKey)) {
+                    $builder->logErrorUsingDebug(
+                        $newKeyIsNotUseableMessage,
+                        ['oldKey' => $key, 'newKey' => $newKey]
+                    );
+                } else {
+                    $result[$newKey] = $value;
+                }
             }
 
-            return $result;
+            $builder->setCurrentSubject(
+                $builder->subjectInternal('modify each key', $result)
+            );
         };
 
         return $this;
@@ -94,24 +112,30 @@ class ParseArray extends AssertArray
      * @throws ParserConfigurationException
      * @see Debug::parseMessage()
      */
-    public function modifyKeyValue($key, ParserContract $parser, string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'): self
+    public function modifyKeyValue(string|int $key, ParserContract $parser, string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'): self
     {
-        if (!is_string($key) && !is_int($key)) {
-            throw new ParserConfigurationException('Arrays only accept string or integer keys');
-        }
-
-        $this->assertionList[] = function (array $value, Path $path) use ($key, $parser, $missingKeyExceptionMessage) {
+        $this->assertionList[] = function (ResultBuilder $builder) use ($key, $parser, $missingKeyExceptionMessage): void {
+            $value = $builder->getCurrentValue();
             if (!array_key_exists($key, $value)) {
-                throw new ParsingException(
-                    $value,
-                    Debug::parseMessage($missingKeyExceptionMessage, ['key' => $key, 'value' => $value,]),
-                    $path
+                $builder->logErrorUsingDebug(
+                    $missingKeyExceptionMessage,
+                    ['key' => $key]
                 );
+
+                return;
             }
 
-            $value[$key] = $parser->parse($value[$key], $path->arrayElement((string) $key));
+            $result = $parser->parse(
+                $builder->subjectArrayElement($key, $value[$key])
+            );
+            if (!$result->isSuccess()) {
+                $builder->incorporateResult($result);
 
-            return $value;
+                return;
+            }
+            $value[$key] = $parser->parse($value[$key]);
+
+            $builder->setCurrentSubject($builder->subjectInternal("modify key {$key} value", $value));
         };
 
         return $this;
@@ -122,20 +146,18 @@ class ParseArray extends AssertArray
      * @param $value
      *
      * @return $this
-     * @throws ParserConfigurationException
      */
-    public function defaultKey($key, $value): self
+    public function defaultKey(int|string $key, $value): self
     {
-        if (!is_string($key) && !is_int($key)) {
-            throw new ParserConfigurationException('Arrays only accept string or integer keys');
-        }
-
-        $this->assertionList[] = function (array $array, Path $path) use ($key, $value) {
-            if (!array_key_exists($key, $array)) {
-                $array[$key] = $value;
+        $this->assertionList[] = function (ResultBuilder $builder) use ($key, $value): void {
+            $array = $builder->getCurrentValue();
+            if (array_key_exists($key, $array)) {
+                return;
             }
 
-            return $array;
+            $array[$key] = $value;
+
+            $builder->setCurrentSubject($builder->subjectInternal("defaulted key '$key", $array));
         };
 
         return $this;
@@ -148,10 +170,12 @@ class ParseArray extends AssertArray
      */
     public function unionWith(array $array): self
     {
-        $this->assertionList[] = function (array $value) use ($array) {
-            $value += $array;
-
-            return $value;
+        $this->assertionList[] = function (ResultBuilder $builder) use ($array): void {
+            $builder->setCurrentSubject(
+                $builder->subjectInternal(
+                    'array union', $builder->getCurrentValue() + $array
+                )
+            );
         };
 
         return $this;
@@ -164,8 +188,10 @@ class ParseArray extends AssertArray
      */
     public function forceSequentialKeys(): self
     {
-        $this->assertionList[] = function (array $value, Path $path) {
-            return array_values($value);
+        $this->assertionList[] = function (ResultBuilder $builder): void {
+            $builder->setCurrentSubject($builder->subjectInternal(
+                'force sequential keys', array_values($builder->getCurrentValue())
+            ));
         };
 
         return $this;
@@ -174,30 +200,36 @@ class ParseArray extends AssertArray
     /**
      * If the array has the provided key, the value of that key is provided to the parser
      *
-     * @param $key
+     * @param int|string $key
      * @param ParserContract $parser
      *
      * @return $this
-     * @throws ParserConfigurationException
      */
-    public function modifyOptionalKeyValue($key, ParserContract $parser): self
+    public function modifyOptionalKeyValue(int|string $key, ParserContract $parser): self
     {
-        if (!is_string($key) && !is_int($key)) {
-            throw new ParserConfigurationException('Arrays only accept string or integer keys');
-        }
+        $this->assertionList[] = function (ResultBuilder $builder) use ($key, $parser): void {
+            $value = $builder->getCurrentValue();
+            if (!array_key_exists($key, $value)) {
+                return;
 
-        $this->assertionList[] = function (array $value, Path $path) use ($key, $parser) {
-            if (array_key_exists($key, $value)) {
-                $value[$key] = $parser->parse($value[$key], $path->arrayElement((string) $key));
             }
+            $result = $parser->parse(
+                $builder->subjectArrayElement($key, $value[$key])
+            );
+            if (!$result->isSuccess()) {
+                $builder->incorporateResult($result);
 
-            return $value;
+                return;
+            }
+            $value[$key] = $result->getValue();
+
+            $builder->setCurrentSubject($builder->subjectInternal("modification of key '$key'", $value));
         };
 
         return $this;
     }
 
-    protected function getDefaultChainPathDescription(): string
+    protected function getDefaultChainDescription(Subject $subject): string
     {
         return 'parse array';
     }

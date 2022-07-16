@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\Integration;
 
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\AssertArray;
 use Philiagus\Parser\Parser\AssertFloat;
@@ -45,39 +46,38 @@ class RandomFullTests extends TestCase
             'array' => [],
         ];
         $input = json_encode($rawValue, JSON_PRESERVE_ZERO_FRACTION);
-        try {
-            $result = ParseJSONString::new()
-                ->then(
-                    Preserve::around(
-                        ParseStdClass::new()
-                            ->modifyEachPropertyName(Fixed::value('overwritten'))
-                            ->modifyEachPropertyValue(Fixed::value('overwritten'))
-                            ->modifyPropertyValue('overwritten', AssertSame::value('overwritten')->then(Fixed::value('overwritten again')))
-                            ->then(Assign::to($result2))
-                            ->then(Append::to($result3))
-                            ->then(Fail::message('boom'))
-                    )
-                        ->then(
-                            ParseStdClass::new()
-                                ->givePropertyValue('string', AssertString::new())
-                                ->givePropertyValue('integer', AssertInteger::new())
-                                ->givePropertyValue('float', AssertFloat::new())
-                                ->givePropertyValue('stdClass', AssertStdClass::new())
-                                ->givePropertyValue('array', AssertArray::new())
-                                ->givePropertyValue('null', AssertNull::new())
-                        )
-                        ->then(Assign::to($preservedValue1))
+        $parser = ParseJSONString::new()
+            ->then(
+                Preserve::around(
+                    ParseStdClass::new()
+                        ->modifyEachPropertyName(Fixed::value('overwritten'))
+                        ->modifyEachPropertyValue(Fixed::value('overwritten'))
+                        ->modifyPropertyValue('overwritten', AssertSame::value('overwritten')->then(Fixed::value('overwritten again')))
+                        ->then(Assign::to($result2))
+                        ->then(Append::to($result3))
                 )
-                ->then(Assign::to($preservedValue2))
-                ->parse($input);
+                    ->then(
+                        ParseStdClass::new()
+                            ->givePropertyValue('string', AssertString::new())
+                            ->givePropertyValue('integer', AssertInteger::new())
+                            ->givePropertyValue('float', AssertFloat::new())
+                            ->givePropertyValue('stdClass', AssertStdClass::new())
+                            ->givePropertyValue('array', AssertArray::new())
+                            ->givePropertyValue('null', AssertNull::new())
+                    )
+                    ->then(Assign::to($preservedValue1))
+            )
+            ->then(Assign::to($preservedValue2));
+        try {
+            $result = $parser->parse(Subject::default($input, false));
         } catch (ParsingException $e) {
-            echo $e->getPath()->toString(true), PHP_EOL,
-            $e->getPath()->toString(false), PHP_EOL,
+            echo $e->getSubject()->getPathAsString(true), PHP_EOL,
+            $e->getSubject()->getPathAsString(false), PHP_EOL,
             $e->getMessage();
             self::fail();
         }
 
-        self::assertSame($preservedValue2, $result);
+        self::assertSame($preservedValue2, $result->getValue());
         self::assertEquals((object) ['overwritten' => 'overwritten again'], $result2);
         self::assertSame([$result2], $result3);
         self::assertSame($preservedValue1, $preservedValue2);
