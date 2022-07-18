@@ -45,7 +45,7 @@ class AssertNumber implements Parser
      * Asserts that the value is >= the provided minimum
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      * - min: The set minimum value
      *
      * @param float|int $minimum
@@ -64,7 +64,7 @@ class AssertNumber implements Parser
             throw new Exception\ParserConfigurationException('The minimum for a numeric value must be provided as integer or float');
         }
 
-        $this->assertionList[] = function (ResultBuilder $builder, int|float $value) use ($minimum, $exceptionMessage): void {
+        $this->assertionList[] = static function (ResultBuilder $builder, int|float $value) use ($minimum, $exceptionMessage): void {
             if ($minimum > $value) {
                 $builder->logErrorUsingDebug(
                     $exceptionMessage,
@@ -80,7 +80,7 @@ class AssertNumber implements Parser
      * Asserts that the value is <= the provided maximum
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      * - max: The currently set maximum
      *
      * @param float|int $maximum
@@ -99,7 +99,7 @@ class AssertNumber implements Parser
             throw new Exception\ParserConfigurationException('The maximum for a numeric value must be provided as integer or float');
         }
 
-        $this->assertionList[] = function (ResultBuilder $builder, int|float $value) use ($maximum, $exceptionMessage): void {
+        $this->assertionList[] = static function (ResultBuilder $builder, int|float $value) use ($maximum, $exceptionMessage): void {
             if ($maximum < $value) {
                 $builder->logErrorUsingDebug(
                     $exceptionMessage,

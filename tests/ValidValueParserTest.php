@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test;
 
 use Philiagus\DataProvider\DataProvider;
+use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Debug;
 
 trait ValidValueParserTest
@@ -23,12 +25,34 @@ trait ValidValueParserTest
     /**
      * @dataProvider provideValidValuesAndParsersAndResults
      */
-    public function testThatItAcceptsValidValues($value, \Closure $parser, $expected): void
+    public function testThatItAcceptsValidValuesThrowing($value, \Closure $parser, $expected): void
     {
-        $result = $parser($value)->parse($value);
+        $subject = Subject::default($value);
+        /** @var Result $result */
+        $result = $parser($value)->parse($subject);
+        self::assertTrue($result->isSuccess());
+        self::assertSame($subject, $result->getSubject()->getParent());
+        self::assertSame([], $result->getErrors());
         self::assertTrue(
-            DataProvider::isSame($expected, $result),
-            Debug::stringify($expected) . ' is not equal to ' . Debug::stringify($result)
+            DataProvider::isSame($expected, $result->getValue()),
+            Debug::stringify($expected) . ' is not equal to ' . Debug::stringify($result->getValue())
+        );
+    }
+
+    /**
+     * @dataProvider provideValidValuesAndParsersAndResults
+     */
+    public function testThatItAcceptsValidValuesNotThrowing($value, \Closure $parser, $expected): void
+    {
+        $subject = Subject::default($value, false);
+        /** @var Result $result */
+        $result = $parser($value)->parse($subject);
+        self::assertTrue($result->isSuccess());
+        self::assertSame($subject, $result->getSubject()->getParent());
+        self::assertSame([], $result->getErrors());
+        self::assertTrue(
+            DataProvider::isSame($expected, $result->getValue()),
+            Debug::stringify($expected) . ' is not equal to ' . Debug::stringify($result->getValue())
         );
     }
 

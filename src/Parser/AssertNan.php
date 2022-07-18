@@ -36,7 +36,7 @@ class AssertNan implements Parser
     /**
      * Sets the exception message to be thrown when the provided value is not NAN
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      *
      * @param string $notNanExceptionMessage
      *

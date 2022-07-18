@@ -56,7 +56,7 @@ class AssertStringMultibyte implements Parser
      * The method defines the exception message thrown if the encoding could not be detected that way
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      *
      * @param string[] $encodings
      * @param string $message
@@ -110,7 +110,7 @@ class AssertStringMultibyte implements Parser
      */
     public function giveLength(ParserContract $integerParser): self
     {
-        $this->assertionList[] = function (string $value, $encoding, ResultBuilder $builder) use ($integerParser): void {
+        $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($integerParser): void {
             $builder->incorporateResult(
                 $integerParser->parse(
                     $builder->subjectMeta('length in ' . $encoding, mb_strlen($value, $encoding))
@@ -175,7 +175,7 @@ class AssertStringMultibyte implements Parser
         ParserContract $stringParser
     ): self
     {
-        $this->assertionList[] = function (string $value, $encoding, ResultBuilder $builder) use ($start, $length, $stringParser): void {
+        $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($start, $length, $stringParser): void {
             if ($value === '') {
                 $part = '';
             } else {
@@ -196,7 +196,7 @@ class AssertStringMultibyte implements Parser
      * and every other method uses this encoding.
      *
      * The exception message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      * - encoding: The specified encoding
      *
      * @param string $encoding
@@ -221,7 +221,7 @@ class AssertStringMultibyte implements Parser
      * Compares the binary of the strings, so the encoding is not relevant
      *
      * The exception message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      * - expected: The expected string
      *
      * @param string $string
@@ -234,7 +234,7 @@ class AssertStringMultibyte implements Parser
         string $message = 'The string does not start with {expected.debug}'
     ): self
     {
-        $this->assertionList[] = function (string $value, $encoding, ResultBuilder $builder) use ($string, $message): void {
+        $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($string, $message): void {
             if (!str_starts_with($value, $string)) {
                 $builder->logErrorUsingDebug(
                     $message,
@@ -251,7 +251,7 @@ class AssertStringMultibyte implements Parser
      * Compares the binary of the strings, so the encoding is not relevant
      *
      * The exception message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      * - expected: The expected string
      *
      * @param string $string
@@ -264,7 +264,7 @@ class AssertStringMultibyte implements Parser
         string $message = 'The string does not end with {expected.debug}'
     ): self
     {
-        $this->assertionList[] = function (string $value, $encoding, ResultBuilder $builder) use ($string, $message): void {
+        $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($string, $message): void {
             if (!str_ends_with($value, $string)) {
                 $builder->logErrorUsingDebug(
                     $message,
@@ -285,7 +285,7 @@ class AssertStringMultibyte implements Parser
      */
     public function giveEncoding(Parser $parser): self
     {
-        $this->assertionList[] = function (string $value, $encoding, ResultBuilder $builder) use ($parser) {
+        $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($parser) {
             $builder->incorporateResult(
                 $parser->parse(
                     $builder->subjectMeta('encoding', $encoding)

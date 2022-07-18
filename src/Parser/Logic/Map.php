@@ -56,7 +56,7 @@ class Map implements Parser
      * Defines the exception message to use if none of the provided parsers matches
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      *
      * @param string $message
      *

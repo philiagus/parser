@@ -28,13 +28,17 @@ class Result
         private readonly array   $errors
     )
     {
-        $this->success = empty($this->errors);
-        foreach ($this->errors as $error) {
-            if (!$error instanceof Error) {
-                throw new \LogicException(
-                    "Trying to create error result with a non ResultError instance: " . Debug::getType($error)
-                );
+        if($this->errors) {
+            $this->success = false;
+            foreach ($this->errors as $error) {
+                if (!$error instanceof Error) {
+                    throw new \LogicException(
+                        "Trying to create error result with a non ResultError instance: " . Debug::getType($error)
+                    );
+                }
             }
+        } else {
+            $this->success = true;
         }
     }
 

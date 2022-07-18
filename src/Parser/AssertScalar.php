@@ -39,7 +39,7 @@ class AssertScalar implements Parser
     public function parse(Subject $subject): Result
     {
         $builder = $this->createResultBuilder($subject);
-        if (!is_scalar($subject)) {
+        if (!is_scalar($subject->getValue())) {
             $this->logTypeError($builder);
         }
 

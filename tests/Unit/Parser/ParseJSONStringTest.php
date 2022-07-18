@@ -13,15 +13,17 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\ParseJSONString;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
+use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
 use PHPUnit\Framework\TestCase;
 
-class ParseJSONStringTest extends TestCase
+class ParseJSONStringTest extends TestBase
 {
 
     use ChainableParserTest, InvalidValueParserTest, ValidValueParserTest;
@@ -49,21 +51,21 @@ class ParseJSONStringTest extends TestCase
     public function test_setConversionExceptionMessage(): void
     {
         $value = 'nope';
-        $message = 'MESSAGE {value.raw}';
+        $message = 'MESSAGE {subject.raw}';
         $parser = ParseJSONString::new()
             ->setConversionExceptionMessage($message);
         self::expectException(ParsingException::class);
         self::expectExceptionMessage('MESSAGE nope');
-        $parser->parse($value);
+        $parser->parse(Subject::default($value));
     }
 
     public function test_setObjectsAsArrays(): void
     {
         $value = '{"a":1}';
-        self::assertEquals((object) ['a' => 1], ParseJSONString::new()->parse($value));
-        self::assertSame(['a' => 1], ParseJSONString::new()->setObjectsAsArrays()->parse($value));
-        self::assertSame(['a' => 1], ParseJSONString::new()->setObjectsAsArrays(true)->parse($value));
-        self::assertEquals((object) ['a' => 1], ParseJSONString::new()->setObjectsAsArrays(false)->parse($value));
+        self::assertEquals((object) ['a' => 1], ParseJSONString::new()->parse(Subject::default($value))->getValue());
+        self::assertSame(['a' => 1], ParseJSONString::new()->setObjectsAsArrays()->parse(Subject::default($value))->getValue());
+        self::assertSame(['a' => 1], ParseJSONString::new()->setObjectsAsArrays(true)->parse(Subject::default($value))->getValue());
+        self::assertEquals((object) ['a' => 1], ParseJSONString::new()->setObjectsAsArrays(false)->parse(Subject::default($value))->getValue());
     }
 
     public function test_setMaxDepth(): void
@@ -73,10 +75,11 @@ class ParseJSONStringTest extends TestCase
             json_decode($value),
             ParseJSONString::new()
                 ->setMaxDepth(7)
-                ->parse($value)
+                ->parse(Subject::default($value))
+                ->getValue()
         );
         self::expectException(ParsingException::class);
-        ParseJSONString::new()->setMaxDepth(1)->parse($value);
+        ParseJSONString::new()->setMaxDepth(1)->parse(Subject::default($value));
     }
 
     public function test_setMaxDepth_configurationException(): void
@@ -92,14 +95,16 @@ class ParseJSONStringTest extends TestCase
         self::assertSame(
             (float)$value,
             ParseJSONString::new()
-            ->parse($value)
+            ->parse(Subject::default($value))
+                ->getValue()
         );
 
         self::assertSame(
             $value,
             ParseJSONString::new()
             ->setBigintAsString()
-            ->parse($value)
+            ->parse(Subject::default($value))
+                ->getValue()
         );
     }
 

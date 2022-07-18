@@ -17,13 +17,15 @@ use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\AssertInteger;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
+use Philiagus\Parser\Test\ParserTestBase;
+use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Philiagus\Parser\Parser\AssertInteger
  */
-class AssertIntegerTest extends TestCase
+class AssertIntegerTest extends ParserTestBase
 {
 
 
@@ -32,50 +34,73 @@ class AssertIntegerTest extends TestCase
     public function provideInvalidValuesAndParsers(): array
     {
         return (new DataProvider(~DataProvider::TYPE_INTEGER))
-            ->map(fn($value) => [$value, fn() => AssertInteger::new()])
+            ->map(static fn($value) => [$value, static fn() => AssertInteger::new()])
             ->provide(false);
     }
 
     public function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider(DataProvider::TYPE_INTEGER))
-            ->map(fn($value) => [$value, fn() => AssertInteger::new(), $value])
+            ->map(static fn($value) => [$value, static fn() => AssertInteger::new(), $value])
             ->provide(false);
     }
 
     public function testAssertMinimum(): void
     {
-        $parser = AssertInteger::new()->assertMinimum(1);
-        $parser->parse(2);
-        $parser->parse(1);
-        self::expectException(ParsingException::class);
-        $parser->parse(0);
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(fn($value) => PHP_INT_MIN, fn($value) => $value !== PHP_INT_MIN)
+                    ->error(fn($value) => PHP_INT_MAX, fn($value) => $value !== PHP_INT_MAX),
+                $builder
+                    ->messageArgument()
+                    ->expectedWhen(fn($value, array $args) => $value < $args[0])
+                    ->withParameterElement('min', 0)
+            )
+            ->successProvider(DataProvider::TYPE_INTEGER);
+        $builder->run();
     }
 
     public function testAssertMaximum(): void
     {
-        $parser = AssertInteger::new()->assertMaximum(1);
-        $parser->parse(0);
-        $parser->parse(1);
-        self::expectException(ParsingException::class);
-        $parser->parse(2);
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(fn($value) => PHP_INT_MAX, fn($value) => $value !== PHP_INT_MAX)
+                    ->error(fn($value) => PHP_INT_MIN, fn($value) => $value !== PHP_INT_MIN),
+                $builder
+                    ->messageArgument()
+                    ->expectedWhen(fn($value, array $args) => $value > $args[0])
+                    ->withParameterElement('max', 0)
+            )
+            ->successProvider(DataProvider::TYPE_INTEGER);
+        $builder->run();
     }
 
     public function testAssertMultipleOf(): void
     {
-        $parser = AssertInteger::new()->assertMultipleOf(2);
-        $parser->parse(0);
-        $parser->parse(2);
-        $parser->parse(8);
-        self::expectException(ParsingException::class);
-        $parser->parse(3);
-    }
-
-    public function testAssertMultipleOfZero(): void
-    {
-        $parser = AssertInteger::new()->assertMultipleOf(0);
-        $parser->parse(0);
-        self::expectException(ParsingException::class);
-        $parser->parse(1);
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(fn($value) => $value, description: 'same value')
+                    ->success(fn($value) => intdiv($value, 2), fn($value) => $value / 2 === intdiv($value, 2), description: 'half value')
+                    ->success(fn($value) => 1, description: 'value 1')
+                    ->error(fn($value) => 0, fn($value) => $value !== 0, description: 'zero'),
+                $builder
+                    ->messageArgument()
+                    ->expectedWhen(fn($value, array $args, array $successes) => !$successes[0])
+                    ->withParameterElement('base', 0)
+            )
+            ->successProvider(DataProvider::TYPE_INTEGER);
+        $builder->run();
     }
 }

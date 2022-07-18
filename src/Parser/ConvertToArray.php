@@ -38,16 +38,12 @@ class ConvertToArray implements Parser
     }
 
     /**
-     * @param $key
+     * @param int|string $key
      *
      * @return static
-     * @throws ParserConfigurationException
      */
-    public static function creatingArrayWithKey($key): self
+    public static function creatingArrayWithKey(int|string $key): self
     {
-        if (!is_string($key) && !is_int($key)) {
-            throw new ParserConfigurationException('Array key can only be string or integer');
-        }
         $instance = new self();
         $instance->targetedArrayKey = $key;
 

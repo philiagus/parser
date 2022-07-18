@@ -52,7 +52,7 @@ class AssertString implements Parser
      */
     public function giveLength(ParserContract $integerParser): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder, string $value) use ($integerParser): void {
+        $this->assertionList[] = static function (ResultBuilder $builder, string $value) use ($integerParser): void {
             $builder->incorporateResult(
                 $integerParser->parse(
                     $builder->subjectMeta('length', strlen($value))
@@ -93,7 +93,7 @@ class AssertString implements Parser
         ParserContract $stringParser
     ): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder, string $value) use ($start, $length, $stringParser): void {
+        $this->assertionList[] = static function (ResultBuilder $builder, string $value) use ($start, $length, $stringParser): void {
             if ($value === '') {
                 $part = '';
             } else {
@@ -113,7 +113,7 @@ class AssertString implements Parser
      * Checks that the string starts with the provided string and fails if it doesn't
      *
      * The exception message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      * - expected: The expected string
      *
      * @param string $string
@@ -126,8 +126,8 @@ class AssertString implements Parser
         string $message = 'The string does not start with {expected.debug}'
     ): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder, string $value) use ($string, $message): void {
-            if (str_starts_with($value, $string)) {
+        $this->assertionList[] = static function (ResultBuilder $builder, string $value) use ($string, $message): void {
+            if (!str_starts_with($value, $string)) {
                 $builder->logErrorUsingDebug(
                     $message,
                     ['expected' => $string]
@@ -142,7 +142,7 @@ class AssertString implements Parser
      * Checks that the string ends with the provided string and fails if it doesn't
      *
      * The exception message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      * - expected: The expected string
      *
      * @param string $string
@@ -155,8 +155,8 @@ class AssertString implements Parser
         string $message = 'The string does not end with {expected.debug}'
     ): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder, string $value) use ($string, $message): void {
-            if (str_ends_with($value, $string)) {
+        $this->assertionList[] = static function (ResultBuilder $builder, string $value) use ($string, $message): void {
+            if (!str_ends_with($value, $string)) {
                 $builder->logErrorUsingDebug(
                     $message,
                     ['expected' => $string]

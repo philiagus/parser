@@ -18,8 +18,6 @@ use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
-use Philiagus\Parser\Error;
-use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
@@ -46,11 +44,11 @@ class AssertArray implements Parser
 
     public function giveEachValue(ParserContract $parser): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder) use ($parser): void {
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($parser): void {
             foreach ($builder->getCurrentValue() as $key => $value) {
                 $builder->incorporateResult(
                     $parser->parse(
-                        $builder->subjectArrayElement($key, $value)
+                        $builder->subjectArrayValue($key, $value)
                     )
                 );
             }
@@ -82,7 +80,7 @@ class AssertArray implements Parser
      */
     public function giveEachKey(ParserContract $parser): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder) use ($parser): void {
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($parser): void {
             foreach ($builder->getCurrentValue() as $key => $_) {
                 $builder->incorporateResult(
                     $parser->parse(
@@ -102,7 +100,7 @@ class AssertArray implements Parser
      */
     public function giveKeys(ParserContract $arrayParser): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder) use ($arrayParser): void {
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($arrayParser): void {
             $builder->incorporateResult(
                 $arrayParser->parse(
                     $builder->subjectMeta(
@@ -125,7 +123,7 @@ class AssertArray implements Parser
      */
     public function giveLength(ParserContract $integerParser): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder) use ($integerParser): void {
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($integerParser): void {
             $builder->incorporateResult(
                 $integerParser->parse(
                     $builder->subjectMeta('length', count($builder->getCurrentValue())))
@@ -141,32 +139,30 @@ class AssertArray implements Parser
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - key: The missing key
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      *
      *
-     * @param $key
+     * @param int|string $key
      * @param ParserContract $parser
      * @param string $missingKeyExceptionMessage
      *
      * @return $this
-     * @throws ParserConfigurationException
      * @see Debug::parseMessage()
      */
-    public function giveKeyValue(int|string $key, ParserContract $parser, string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'): self
+    public function giveValue(int|string $key, ParserContract $parser, string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder) use ($key, $parser, $missingKeyExceptionMessage): void {
-            if (!array_key_exists($key, $builder->getCurrentValue())) {
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($key, $parser, $missingKeyExceptionMessage): void {
+            $value = $builder->getCurrentValue();
+            if (!array_key_exists($key, $value)) {
                 $builder->logErrorUsingDebug(
                     $missingKeyExceptionMessage,
-                    [
-                        'key' => $key,
-                    ]
+                    ['key' => $key]
                 );
 
                 return;
             }
             $builder->incorporateResult(
-                $parser->parse($builder->subjectArrayElement($key, $builder->getCurrentValue()[$key]))
+                $parser->parse($builder->subjectArrayValue($key, $value[$key]))
             );
         };
 
@@ -185,13 +181,13 @@ class AssertArray implements Parser
      */
     public function giveDefaultedKeyValue(int|string $key, $default, ParserContract $parser): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder) use ($key, $default, $parser): void {
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($key, $default, $parser): void {
             $value = $builder->getCurrentValue();
             $builder->incorporateResult(
                 $parser->parse(
                     array_key_exists($key, $value) ?
-                        $builder->subjectArrayElement($key, $value[$key]) :
-                        $builder->subjectArrayElement($key, $default)
+                        $builder->subjectArrayValue($key, $value[$key]) :
+                        $builder->subjectArrayValue($key, $default)
                 )
             );
         };
@@ -203,7 +199,7 @@ class AssertArray implements Parser
      * Specifies that this array is expected to have numeric keys starting at 0, incrementing by 1
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      *
      * @param string $exceptionMessage
      *
@@ -212,7 +208,7 @@ class AssertArray implements Parser
      */
     public function assertSequentialKeys(string $exceptionMessage = 'The array is not a sequential numerical array starting at 0'): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder) use ($exceptionMessage): void {
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($exceptionMessage): void {
             if (!array_is_list($builder->getCurrentValue())) {
                 $builder->logErrorUsingDebug($exceptionMessage);
             }
@@ -231,12 +227,12 @@ class AssertArray implements Parser
      */
     public function giveOptionalKeyValue(int|string $key, ParserContract $parser): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder) use ($key, $parser): void {
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($key, $parser): void {
             $value = $builder->getCurrentValue();
             if (array_key_exists($key, $value)) {
                 $builder->incorporateResult(
                     $parser->parse(
-                        $builder->subjectArrayElement($key, $value[$key])
+                        $builder->subjectArrayValue($key, $value[$key])
                     )
                 );
             }

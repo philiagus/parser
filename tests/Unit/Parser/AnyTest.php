@@ -15,20 +15,21 @@ namespace Philiagus\Parser\Test\Unit\Parser;
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Parser\Any;
 use Philiagus\Parser\Test\ChainableParserTest;
+use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Philiagus\Parser\Parser\Any
  */
-class AnyTest extends TestCase
+class AnyTest extends TestBase
 {
     use ChainableParserTest, ValidValueParserTest;
 
     public function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider())
-            ->map(fn($value) => [$value, fn() => Any::new(), $value])
+            ->map(static fn($value) => [$value, fn() => Any::new(), $value])
             ->provide(false);
     }
 

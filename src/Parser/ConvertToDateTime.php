@@ -64,7 +64,7 @@ class ConvertToDateTime implements Parser
      * The exception message is thrown when the string value does not match the expected format.
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      * - format: The format provided to this function
      *
      * @param string $format

@@ -13,12 +13,13 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Exception;
 
 use Philiagus\Parser\Exception\ParserConfigurationException;
+use Philiagus\Parser\Test\TestBase;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Philiagus\Parser\Exception\ParserConfigurationException
  */
-class ParserConfigurationExceptionTest extends TestCase
+class ParserConfigurationExceptionTest extends TestBase
 {
 
     public function testConstructWithoutPrevious(): void

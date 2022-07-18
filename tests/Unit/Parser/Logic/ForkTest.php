@@ -13,15 +13,17 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser\Logic;
 
 use Philiagus\DataProvider\DataProvider;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\Logic\Fork;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\ChainableParserTest;
-use PHPUnit\Framework\TestCase;
+use Philiagus\Parser\Test\TestBase;
 use Prophecy\Argument;
 
-class ForkTest extends TestCase
+class ForkTest extends TestBase
 {
     use ChainableParserTest;
 
@@ -40,45 +42,31 @@ class ForkTest extends TestCase
      */
     public function testFull($value): void
     {
-        $parser1 = $this->prophesize(Parser::class);
-        $parser1
-            ->parse(
-                Argument::that(
-                    fn($arg) => DataProvider::isSame($arg, $value)
+        $parser = function ($result) use ($value): Parser {
+            $parser = $this->prophesize(Parser::class);
+            $parser
+                ->parse(
+                    Argument::that(
+                        fn(Subject $subject) => DataProvider::isSame($subject->getValue(), $value)
+                    )
                 )
-            )
-            ->shouldBeCalled()
-            ->willReturn(1);
-        $parser1 = $parser1->reveal();
+                ->shouldBeCalled()
+                ->will(
+                    function (array $args) use ($result) {
+                        return new Result($args[0], $result, []);
+                    }
+                );
 
-        $parser2 = $this->prophesize(Parser::class);
-        $parser2
-            ->parse(
-                Argument::that(
-                    fn($arg) => DataProvider::isSame($arg, $value)
-                )
-            )
-            ->shouldBeCalled()
-            ->willReturn(2);
-        $parser2 = $parser2->reveal();
-
-        $parser3 = $this->prophesize(Parser::class);
-        $parser3
-            ->parse(
-                Argument::that(
-                    fn($arg) => DataProvider::isSame($arg, $value)
-                )
-            )
-            ->shouldBeCalled()
-            ->willReturn(3);
-        $parser3 = $parser3->reveal();
+            return $parser->reveal();
+        };
 
         self::assertTrue(
             DataProvider::isSame(
                 $value,
-                Fork::to($parser1, $parser2)
-                    ->addParser($parser3)
-                    ->parse($value)
+                Fork::to($parser(1), $parser(2))
+                    ->addParser($parser(3))
+                    ->parse(Subject::default($value))
+                    ->getValue()
             )
         );
     }

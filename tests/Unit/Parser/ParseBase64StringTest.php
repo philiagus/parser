@@ -13,14 +13,16 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\ParseBase64String;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
+use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
 use PHPUnit\Framework\TestCase;
 
-class ParseBase64StringTest extends TestCase
+class ParseBase64StringTest extends TestBase
 {
     use ChainableParserTest, InvalidValueParserTest, ValidValueParserTest;
 
@@ -43,17 +45,17 @@ class ParseBase64StringTest extends TestCase
     {
         $value = '$$$';
         $parser = ParseBase64String::new()
-            ->setNotBase64ExceptionMessage('MESSAGE {value.raw}');
+            ->setNotBase64ExceptionMessage('MESSAGE {subject.raw}');
         self::expectException(ParsingException::class);
         self::expectExceptionMessage('MESSAGE $$$');
-        $parser->parse($value);
+        $parser->parse(Subject::default($value));
     }
 
     public function test_setStrict(): void
     {
         $string = base64_encode('hallo welt') . 'üüü';
-        self::assertSame('hallo welt', ParseBase64String::new()->setStrict(false)->parse($string));
+        self::assertSame('hallo welt', ParseBase64String::new()->setStrict(false)->parse(Subject::default($string))->getValue());
         self::expectException(ParsingException::class);
-        ParseBase64String::new()->parse($string);
+        ParseBase64String::new()->parse(Subject::default($string));
     }
 }

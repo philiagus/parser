@@ -16,13 +16,14 @@ use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Parser\AssertSame;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
+use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Philiagus\Parser\Parser\AssertSame
  */
-class AssertSameTest extends TestCase
+class AssertSameTest extends TestBase
 {
     use ChainableParserTest, ValidValueParserTest, InvalidValueParserTest;
 

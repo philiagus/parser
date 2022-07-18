@@ -14,15 +14,17 @@ namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Contract\Parser;
-use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\AssertObject;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
+use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\SetTypeExceptionMessageTest;
 use Philiagus\Parser\Test\ValidValueParserTest;
-use PHPUnit\Framework\TestCase;
 
-class AssertObjectTest extends TestCase
+/**
+ * @covers \Philiagus\Parser\Parser\AssertObject
+ */
+class AssertObjectTest extends ParserTestBase
 {
     use ChainableParserTest, ValidValueParserTest, InvalidValueParserTest, SetTypeExceptionMessageTest;
 
@@ -50,11 +52,20 @@ class AssertObjectTest extends TestCase
 
     public function testInstanceOf(): void
     {
-        $parser = AssertObject::instanceOf(Parser::class);
-        $parser->parse($parser);
-        $parser->assertInstanceOf(get_class($parser));
-        $parser->parse($parser);
-        self::expectException(ParsingException::class);
-        $parser->parse(new \stdClass());
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(static fn($value) => get_class($value))
+                    ->error(static fn($value) => $value instanceof \stdClass ? Parser::class : \stdClass::class),
+                $builder
+                    ->messageArgument()
+                    ->withParameterElement('class', 0)
+                    ->expectedWhen(fn($value, array $args) => !$value instanceof $args[0])
+            )
+            ->successProvider(DataProvider::TYPE_OBJECT);
+        $builder->run();
     }
 }

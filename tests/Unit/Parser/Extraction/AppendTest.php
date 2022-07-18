@@ -14,6 +14,7 @@ namespace Philiagus\Parser\Test\Unit\Parser\Extraction;
 
 use ArrayAccess;
 use Philiagus\DataProvider\DataProvider;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\RuntimeParserConfigurationException;
 use Philiagus\Parser\Parser\Extraction\Append;
@@ -43,57 +44,30 @@ class AppendTest extends TestBase
     public function testAppendsToAnything($value): void
     {
         $parser = Append::to($unsetTarget);
-        $parser->parse($value);
-        $parser->parse($value);
+        $parser->parse(Subject::default($value));
+        $parser->parse(Subject::default($value));
         self::assertTrue(DataProvider::isSame([$value, $value], $unsetTarget));
 
         $presetNull = null;
         $parser = Append::to($presetNull);
-        $parser->parse($value);
-        $parser->parse($value);
+        $parser->parse(Subject::default($value));
+        $parser->parse(Subject::default($value));
         self::assertTrue(DataProvider::isSame([$value, $value], $presetNull));
 
         $presetArray = ['first element'];
         $parser = Append::to($presetArray);
-        $parser->parse($value);
-        $parser->parse($value);
+        $parser->parse(Subject::default($value));
+        $parser->parse(Subject::default($value));
         self::assertTrue(DataProvider::isSame(['first element', $value, $value], $presetArray));
 
         $presetArrayAccess = $this->prophesize(ArrayAccess::class);
         $presetArrayAccess
-            ->offsetSet(null, Argument::that(fn($arg) => DataProvider::isSame($value, $arg)))
+            ->offsetSet(null, Argument::that(static fn($arg) => DataProvider::isSame($value, $arg)))
             ->shouldBeCalledTimes(2);
         $presetArrayAccess = $presetArrayAccess->reveal();
         $parser = Append::to($presetArrayAccess);
-        $parser->parse($value);
-        $parser->parse($value);
-    }
-
-    public function provideInvalidTargets(): array
-    {
-        return (new DataProvider(~(DataProvider::TYPE_NULL | DataProvider::TYPE_ARRAY)))
-            ->filter(fn($value) => !$value instanceof ArrayAccess)
-            ->provide();
-    }
-
-    public function provideInvalidationTargets(): array
-    {
-        return (new DataProvider(~(DataProvider::TYPE_ARRAY)))
-            ->filter(fn($value) => !$value instanceof ArrayAccess)
-            ->provide();
-    }
-
-    /**
-     * @param $target
-     *
-     * @return void
-     * @dataProvider provideInvalidTargets
-     * @throws ParserConfigurationException
-     */
-    public function testInvalidTargets($target): void
-    {
-        self::expectException(ParserConfigurationException::class);
-        Append::to($target);
+        $parser->parse(Subject::default($value));
+        $parser->parse(Subject::default($value));
     }
 
     public function provideValidValuesAndParsersAndResults(): array
@@ -111,22 +85,5 @@ class AppendTest extends TestBase
                 ]
             )
             ->provide(false);
-    }
-
-    /**
-     * @param $changedValue
-     *
-     * @return void
-     * @throws ParserConfigurationException
-     * @throws RuntimeParserConfigurationException
-     * @throws \Philiagus\Parser\Exception\ParsingException
-     * @dataProvider provideInvalidationTargets
-     */
-    public function testInvalidationWhileParsing($changedValue): void
-    {
-        $parser = Append::to($target);
-        $target = $changedValue;
-        self::expectException(RuntimeParserConfigurationException::class);
-        $parser->parse(null);
     }
 }

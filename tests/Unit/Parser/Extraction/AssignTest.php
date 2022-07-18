@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser\Extraction;
 
 use Philiagus\DataProvider\DataProvider;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Parser\Extraction\Assign;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\TestBase;
@@ -27,9 +28,8 @@ class AssignTest extends TestBase
             ->map(
                 fn($value) => [
                     $value,
-                    function ($value) {
+                    function () {
                         $target = null;
-
                         return Assign::to($target);
                     },
                     $value,
@@ -50,8 +50,8 @@ class AssignTest extends TestBase
     {
         $something = ['any default value we can think of', $value];
         $parser = Assign::to($something);
-        $result = $parser->parse($value);
+        $result = $parser->parse(Subject::default($value));
         self::assertTrue(DataProvider::isSame($value, $something));
-        self::assertTrue(DataProvider::isSame($result, $value));
+        self::assertTrue(DataProvider::isSame($result->getValue(), $value));
     }
 }

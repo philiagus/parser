@@ -38,7 +38,7 @@ class AssertInfinite implements Parser
     /**
      * Sets the exception message sent when the input value is not an infinite value
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      *
      * @param string $notInfiniteExceptionMessage
      *
@@ -53,7 +53,7 @@ class AssertInfinite implements Parser
     /**
      * Sets the parser to assert that the infinite value is positiv, so +INF
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      *
      * @param string $notPositiveMessage
      *
@@ -72,7 +72,7 @@ class AssertInfinite implements Parser
     /**
      * Sets the parser to assert that the infinite value is negative, so -INF
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      *
      * @param string $notNegativeMessage
      *

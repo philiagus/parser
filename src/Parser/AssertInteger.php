@@ -44,7 +44,7 @@ class AssertInteger implements Parser
      * Asserts that the value is >= the provided minimum
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      * - min: The defined minimum value
      *
      * @param int $minimum
@@ -54,9 +54,9 @@ class AssertInteger implements Parser
      * @see Debug::parseMessage()
      *
      */
-    public function assertMinimum(int $minimum, string $exceptionMessage = 'Provided value {value.debug} is lower than the defined minimum of {min}'): self
+    public function assertMinimum(int $minimum, string $exceptionMessage = 'Provided value {subject.debug} is lower than the defined minimum of {min}'): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder, int $value) use ($minimum, $exceptionMessage): void {
+        $this->assertionList[] = static function (ResultBuilder $builder, int $value) use ($minimum, $exceptionMessage): void {
             if ($minimum > $value) {
                 $builder->logErrorUsingDebug(
                     $exceptionMessage,
@@ -72,7 +72,7 @@ class AssertInteger implements Parser
      * Asserts that the value is <= the provided maximum
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      * - max: The maximum value
      *
      * @param int $maximum
@@ -82,9 +82,9 @@ class AssertInteger implements Parser
      * @see Debug::parseMessage()
      *
      */
-    public function assertMaximum(int $maximum, string $exceptionMessage = 'Provided value {value.debug} is greater than the defined maximum of {max}}'): self
+    public function assertMaximum(int $maximum, string $exceptionMessage = 'Provided value {subject.debug} is greater than the defined maximum of {max}}'): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder, int $value) use ($maximum, $exceptionMessage): void {
+        $this->assertionList[] = static function (ResultBuilder $builder, int $value) use ($maximum, $exceptionMessage): void {
             if ($maximum < $value) {
                 $builder->logErrorUsingDebug(
                     $exceptionMessage,
@@ -100,7 +100,7 @@ class AssertInteger implements Parser
      * Asserts that the value is a multiple of the base
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      * - base: The base set by this call
      *
      * @param int $base
@@ -112,10 +112,10 @@ class AssertInteger implements Parser
      */
     public function assertMultipleOf(
         int    $base,
-        string $exceptionMessage = 'Provided value {value.debug} is not a multiple of {base}'
+        string $exceptionMessage = 'Provided value {subject.debug} is not a multiple of {base}'
     ): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder, int $value) use ($base, $exceptionMessage): void {
+        $this->assertionList[] = static function (ResultBuilder $builder, int $value) use ($base, $exceptionMessage): void {
             if ($value === 0 && $base === 0) return;
             if ($base === 0 || ($value % $base) !== 0) {
                 $builder->logErrorUsingDebug(
@@ -136,7 +136,7 @@ class AssertInteger implements Parser
             $this->logTypeError($builder);
         } else {
             foreach ($this->assertionList as $assertion) {
-                $assertion($subject, $value);
+                $assertion($builder, $value);
             }
         }
 

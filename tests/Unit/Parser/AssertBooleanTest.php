@@ -17,27 +17,28 @@ use Philiagus\Parser\Parser\AssertBoolean;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
 use Philiagus\Parser\Test\SetTypeExceptionMessageTest;
+use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Philiagus\Parser\Parser\AssertBoolean
  */
-class AssertBooleanTest extends TestCase
+class AssertBooleanTest extends TestBase
 {
     use ChainableParserTest, ValidValueParserTest, InvalidValueParserTest, SetTypeExceptionMessageTest;
 
     public function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider(DataProvider::TYPE_BOOLEAN))
-            ->map(fn($value) => [$value, fn() => AssertBoolean::new(), $value])
+            ->map(static fn($value) => [$value, static fn() => AssertBoolean::new(), $value])
             ->provide(false);
     }
 
     public function provideInvalidValuesAndParsers(): array
     {
         return (new DataProvider(~DataProvider::TYPE_BOOLEAN))
-            ->map(fn($value) => [$value, fn() => AssertBoolean::new()])
+            ->map(static fn($value) => [$value, static fn() => AssertBoolean::new()])
             ->provide(false);
     }
 
@@ -49,7 +50,7 @@ class AssertBooleanTest extends TestCase
     public function provideInvalidTypesAndParser(): array
     {
         return (new DataProvider(~DataProvider::TYPE_BOOLEAN))
-            ->map(fn($value) => [$value, fn() => AssertBoolean::new()])
+            ->map(static fn($value) => [$value, static fn() => AssertBoolean::new()])
             ->provide(false);
     }
 }

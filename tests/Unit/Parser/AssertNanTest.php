@@ -16,13 +16,14 @@ use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Parser\AssertNan;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
+use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Philiagus\Parser\Parser\AssertNan
  */
-class AssertNanTest extends TestCase
+class AssertNanTest extends TestBase
 {
     use ChainableParserTest, ValidValueParserTest, InvalidValueParserTest;
 
@@ -30,7 +31,7 @@ class AssertNanTest extends TestCase
     {
         return (new DataProvider(DataProvider::TYPE_NAN))
             ->map(function ($value) {
-                return [$value, fn() => AssertNan::new(), $value];
+                return [$value, static fn() => AssertNan::new(), $value];
             })
             ->provide(false);
     }
@@ -39,7 +40,7 @@ class AssertNanTest extends TestCase
     {
         return (new DataProvider(~DataProvider::TYPE_NAN))
             ->map(function ($value) {
-                return [$value, fn() => AssertNan::new()];
+                return [$value, static fn() => AssertNan::new()];
             })
             ->provide(false);
     }

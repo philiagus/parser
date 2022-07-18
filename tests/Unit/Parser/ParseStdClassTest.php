@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\AssertStdClass;
@@ -100,7 +101,7 @@ class ParseStdClassTest extends TestBase
         $testPropertiesAndValues($parser, ['reduce' => 20]);
         $parser->defaultProperty('defaulted', 90);
         $testPropertiesAndValues($parser, ['reduce' => 20, 'defaulted' => 90]);
-        $parser->parse((object) ['a' => 1, 'c' => 3]);
+        $parser->parse(Subject::default((object) ['a' => 1, 'c' => 3]));
     }
 
     public function provideInvalidPropertyNames(): array
@@ -122,7 +123,7 @@ class ParseStdClassTest extends TestBase
             );
 
         self::expectException(ParserConfigurationException::class);
-        $parser->parse((object) ['name' => 'value']);
+        $parser->parse(Subject::default((object) ['name' => 'value']));
     }
 
     public function test_modifyOptionalProperty_cloning(): void
@@ -130,7 +131,7 @@ class ParseStdClassTest extends TestBase
         $source = (object) ['name' => 'value'];
         $result = ParseStdClass::new()
             ->modifyOptionalPropertyValue('name', $this->prophesizeParser([['value', 'new value']]))
-            ->parse($source);
+            ->parse(Subject::default($source));
         self::assertNotSame($source, $result);
     }
 
@@ -139,7 +140,7 @@ class ParseStdClassTest extends TestBase
         $source = (object) ['name' => 'value'];
         $result = ParseStdClass::new()
             ->modifyPropertyValue('name', $this->prophesizeParser([['value', 'new value']]))
-            ->parse($source);
+            ->parse(Subject::default($source));
         self::assertNotSame($source, $result);
     }
 
@@ -148,7 +149,7 @@ class ParseStdClassTest extends TestBase
         self::expectException(ParsingException::class);
         ParseStdClass::new()
             ->modifyPropertyValue('name', $this->prophesizeUncalledParser())
-            ->parse((object) []);
+            ->parse(Subject::default((object) []));
     }
 
     public function test_defaultProperty_cloning(): void
@@ -156,9 +157,9 @@ class ParseStdClassTest extends TestBase
         $source = (object) [];
         $result = ParseStdClass::new()
             ->defaultProperty('name', 'value')
-            ->parse($source);
+            ->parse(Subject::default($source));
         self::assertNotSame($source, $result);
-        self::assertEquals((object)['name' => 'value'], $result);
+        self::assertEquals((object)['name' => 'value'], $result->getValue());
     }
 
     public function test_defaultProperty_notReplacing(): void
@@ -166,8 +167,8 @@ class ParseStdClassTest extends TestBase
         $source = (object) ['name' => 'value'];
         $result = ParseStdClass::new()
             ->defaultProperty('name', 'nope')
-            ->parse($source);
-        self::assertSame($source, $result);
-        self::assertEquals((object)['name' => 'value'], $result);
+            ->parse(Subject::default($source));
+        self::assertSame($source, $result->getValue());
+        self::assertEquals((object)['name' => 'value'], $result->getValue());
     }
 }

@@ -75,7 +75,7 @@ class ConvertToString implements Parser
      * The element converter parser can be used to convert elements of the array before type checking them to be string
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      * - key: The key of the value that was not a string
      * - culprit: The value of the array that wasn't a string (after potential conversion)
      * - culpritRaw: The value of the array before conversion
@@ -123,9 +123,8 @@ class ConvertToString implements Parser
                     /** @var Parser|null $elementConverter */
                     $elementConverter = $this->implode[2];
                     $convertedElements = [];
-                    $errors = [];
-                    foreach ($subject as $key => $element) {
-                        $newSubject = $builder->subjectArrayElement($key, $element);
+                    foreach ($value as $key => $element) {
+                        $newSubject = $builder->subjectArrayValue($key, $element);
                         if ($elementConverter) {
                             $conversionResult = $elementConverter->parse($newSubject);
                             if (!$conversionResult->isSuccess()) {
@@ -155,9 +154,6 @@ class ConvertToString implements Parser
 
                         $convertedElements[] = $convertedElement;
                     }
-                    if ($errors) {
-                        return $builder->createResultUnchanged();
-                    }
 
                     return $builder->createResult(implode($this->implode[0], $convertedElements));
                 }
@@ -176,7 +172,7 @@ class ConvertToString implements Parser
 
     protected function getDefaultTypeExceptionMessage(): string
     {
-        return 'Variable of type {value.type} could not be converted to a string';
+        return 'Variable of type {subject.type} could not be converted to a string';
     }
 
     protected function getDefaultChainDescription(Subject $subject): string

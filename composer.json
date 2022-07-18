@@ -25,6 +25,7 @@
     },
     "require-dev": {
         "phpunit/phpunit": "*",
+        "phpspec/prophecy-phpunit": "*",
         "ext-xdebug": "*",
         "philiagus/dataprovider": "*"
     },

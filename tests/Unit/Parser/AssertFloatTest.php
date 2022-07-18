@@ -18,14 +18,14 @@ use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\AssertFloat;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
+use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\SetTypeExceptionMessageTest;
 use Philiagus\Parser\Test\ValidValueParserTest;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Philiagus\Parser\Parser\AssertFloat
  */
-class AssertFloatTest extends TestCase
+class AssertFloatTest extends ParserTestBase
 {
 
     use ChainableParserTest, ValidValueParserTest, InvalidValueParserTest, ChainableParserTest, SetTypeExceptionMessageTest;
@@ -33,38 +33,60 @@ class AssertFloatTest extends TestCase
     public function provideInvalidValuesAndParsers(): array
     {
         return (new DataProvider(~DataProvider::TYPE_FLOAT))
-            ->map(fn($value) => [$value, fn() => AssertFloat::new()])
+            ->map(static fn($value) => [$value, static fn() => AssertFloat::new()])
             ->provide(false);
     }
 
     public function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider(DataProvider::TYPE_FLOAT))
-            ->map(fn($value) => [$value, fn() => AssertFloat::new(), $value])
+            ->map(static fn($value) => [$value, static fn() => AssertFloat::new(), $value])
             ->provide(false);
     }
 
     public function provideInvalidTypesAndParser(): array
     {
         return (new DataProvider(~DataProvider::TYPE_FLOAT))
-            ->map(fn($value) => [$value, fn() => AssertFloat::new()])
+            ->map(static fn($value) => [$value, static fn() => AssertFloat::new()])
             ->provide(false);
     }
 
     public function testAssertMinimum(): void
     {
-        $parser = AssertFloat::new()->assertMinimum(1.2);
-        self::assertSame(1.3, $parser->parse(1.3));
-        self::expectException(ParsingException::class);
-        $parser->parse(1.1);
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(fn($value) => $value - abs($value) - 1)
+                    ->error(fn($value) => $value + abs($value) + 1),
+                $builder
+                    ->messageArgument()
+                    ->expectedWhen(fn($value, array $args) => $value < $args[0])
+                    ->withParameterElement('min', 0)
+            )
+            ->successProvider(DataProvider::TYPE_FLOAT);
+        $builder->run();
     }
 
     public function testAssertMaximum(): void
     {
-        $parser = AssertFloat::new()->assertMaximum(1.2);
-        self::assertSame(1.1, $parser->parse(1.1));
-        self::expectException(ParsingException::class);
-        $parser->parse(1.3);
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(fn($value) => $value + abs($value) + 1)
+                    ->error(fn($value) => $value - abs($value) - 1),
+                $builder
+                    ->messageArgument()
+                    ->expectedWhen(fn($value, array $args) => $value > $args[0])
+                    ->withParameterElement('max', 0)
+            )
+            ->successProvider(DataProvider::TYPE_FLOAT);
+        $builder->run();
     }
 
     public function provideInvalidFloats(): array

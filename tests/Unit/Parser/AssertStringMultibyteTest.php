@@ -16,18 +16,27 @@ use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\AssertStringMultibyte;
+use Philiagus\Parser\Subject\MetaInformation;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
+use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\SetTypeExceptionMessageTest;
-use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
-use PHPUnit\Framework\TestCase;
 
-class AssertStringMultibyteTest extends TestBase
+/**
+ * @covers \Philiagus\Parser\Parser\AssertStringMultibyte
+ */
+class AssertStringMultibyteTest extends ParserTestBase
 {
     private const ISO_8859_1 = "\xE4";
     private const UTF_8 = "\xC3\xBC";
-    private const SEVEN_ASCII = 'u';
+    private const ASCII = 'u';
+
+    private const VALUE_ENCODING = [
+        self::ISO_8859_1 => 'ISO-8859-1',
+        self::UTF_8 => 'UTF-8',
+        self::ASCII => 'ASCII',
+    ];
 
     use ChainableParserTest, ValidValueParserTest, InvalidValueParserTest, SetTypeExceptionMessageTest;
 
@@ -52,110 +61,151 @@ class AssertStringMultibyteTest extends TestBase
             ->provide(false);
     }
 
-    public function test_setAvailableEncodings(): void
+    public function testSetAvailableEncodings(): void
     {
-        AssertStringMultibyte::new()
-            ->setAvailableEncodings(['7bit', 'ASCII', 'ISO-8859-1', 'UTF-8'])
-            ->giveEncoding($this->prophesizeParser(['ISO-8859-1']))
-            ->parse(self::ISO_8859_1);
-
-        AssertStringMultibyte::new()
-            ->setAvailableEncodings(['ASCII'])
-            ->giveEncoding($this->prophesizeParser(['ASCII']))
-            ->parse('abcd');
-
-        AssertStringMultibyte::new()
-            ->setAvailableEncodings(['UTF-8'])
-            ->giveEncoding($this->prophesizeParser(['UTF-8']))
-            ->parse(self::UTF_8);
-
-        self::expectException(ParsingException::class);
-        self::expectExceptionMessage('MESSAGE');
-        AssertStringMultibyte::new()
-            ->setAvailableEncodings(['7bit'], 'MESSAGE')
-            ->parse(self::UTF_8);
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(fn() => array_values(self::VALUE_ENCODING))
+                    ->success(fn($value) => [self::VALUE_ENCODING[$value]])
+                    ->error(fn() => ['ASCII'], fn($value) => $value === self::UTF_8),
+                $builder
+                    ->messageArgument()
+                    ->expectedWhen(fn($_1, $_2, array $successes) => !$successes[0])
+            )
+            ->values([self::UTF_8, self::ASCII]);
+        $builder->run();
     }
 
-    public function test_setEncoding(): void
+    public function testSetEncoding(): void
     {
-        AssertStringMultibyte::new()
-            ->setEncoding('7bit')
-            ->parse(self::SEVEN_ASCII);
-
-        AssertStringMultibyte::new()
-            ->setEncoding('ISO-8859-1')
-            ->parse(self::ISO_8859_1);
-
-        AssertStringMultibyte::new()
-            ->setEncoding('UTF-8')
-            ->parse(self::UTF_8);
-
-        self::expectException(ParsingException::class);
-        self::expectExceptionMessage('MESSAGE');
-        AssertStringMultibyte::new()
-            ->setEncoding('7bit', 'MESSAGE')
-            ->parse(self::UTF_8);
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(fn($value) => self::VALUE_ENCODING[$value])
+                    ->error(fn() => 'ASCII', fn($value) => !mb_detect_encoding($value, ['ASCII'], true))
+                    ->error(fn() => 'UTF-8', fn($value) => !mb_detect_encoding($value, ['UTF-8'], true)),
+                $builder
+                    ->messageArgument()
+                    ->expectedWhen(fn($_1, $_2, array $successes) => !$successes[0])
+            )
+            ->values([self::UTF_8, self::ISO_8859_1, self::ASCII]);
+        $builder->run();
     }
 
-    public function test_giveLength(): void
+    public function testGiveLength(): void
     {
-        AssertStringMultibyte::new()
-            ->setEncoding('ISO-8859-1')
-            ->giveLength($this->prophesizeParser([2]))
-            ->parse(self::UTF_8);
-
-        AssertStringMultibyte::new()
-            ->setEncoding('UTF-8')
-            ->giveLength($this->prophesizeParser([1]))
-            ->parse(self::UTF_8);
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->parserArgument()
+                    ->expectSingleCall(
+                        fn($value) => mb_strlen($value),
+                        MetaInformation::class
+                    )
+            )
+            ->values([self::UTF_8, self::ASCII])
+            ->successProvider(DataProvider::TYPE_STRING);
+        $builder->run();
     }
 
-    public function test_giveSubstring(): void
+    public function testGiveSubstring(): void
     {
-        AssertStringMultibyte::new()
-            ->setEncoding('UTF-8')
-            ->giveSubstring(1, 2, $this->prophesizeParser(['äü']))
-            ->parse('öäüüäö');
-
-        AssertStringMultibyte::new()
-            ->setEncoding('ISO-8859-1')
-            ->giveSubstring(1, 2, $this->prophesizeParser([substr(self::UTF_8 . self::UTF_8, 1, 2)]))
-            ->parse(self::UTF_8 . self::UTF_8);
-
-        AssertStringMultibyte::new()
-            ->giveSubstring(1, 52, $this->prophesizeParser(['']))
-            ->parse('');
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(fn() => 0)
+                    ->success(fn($value) => mb_strlen($value)),
+                $builder
+                    ->evaluatedArgument()
+                    ->success(fn() => null)
+                    ->success(fn($value) => 1),
+                $builder
+                    ->parserArgument()
+                    ->expectSingleCall(
+                        fn($value, array $args) => mb_substr($value, $args[0], $args[1]),
+                        MetaInformation::class
+                    )
+            )
+            ->values([self::UTF_8, self::ASCII])
+            ->successProvider(DataProvider::TYPE_STRING);
+        $builder->run();
     }
 
-    public function test_assertStartsWith(): void
+    public function testAssertStartsWith(): void
     {
-        AssertStringMultibyte::new()
-            ->assertStartsWith('üä')
-            ->parse('üäü');
-
-        self::expectException(ParsingException::class);
-        AssertStringMultibyte::new()
-            ->assertStartsWith('äää')
-            ->parse('ä');
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(fn($value) => mb_substr($value, 0, 3), fn($value) => $value !== '')
+                    ->error(fn($value) => md5($value)),
+                $builder
+                    ->messageArgument()
+                    ->withParameterElement('expected', 0)
+                    ->expectedWhen(fn($value, array $_, array $successes) => !$successes[0])
+            )
+            ->values([self::UTF_8, self::ASCII])
+            ->successProvider(DataProvider::TYPE_STRING);
+        $builder->run();
     }
 
-    public function test_assertEndsWith(): void
+    public function testAssertEndsWith(): void
     {
-        AssertStringMultibyte::new()
-            ->assertEndsWith('äü')
-            ->parse('üäü');
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(fn($value) => mb_substr($value, -3), fn($value) => $value !== '')
+                    ->error(fn($value) => md5($value)),
+                $builder
+                    ->messageArgument()
+                    ->withParameterElement('expected', 0)
+                    ->expectedWhen(fn($value, array $_, array $successes) => !$successes[0])
+            )
+            ->values([self::UTF_8, self::ASCII])
+            ->successProvider(DataProvider::TYPE_STRING);
+        $builder->run();
+    }
 
-        self::expectException(ParsingException::class);
-        AssertStringMultibyte::new()
-            ->assertEndsWith('äää')
-            ->parse('ä');
+    public function testGiveEncoding(): void
+    {
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->parserArgument()
+                    ->expectSingleCall(
+                        fn($value) => mb_detect_encoding($value, ['auto'], true),
+                        MetaInformation::class
+                    )
+            )
+            ->values([self::UTF_8, self::ASCII])
+            ->successProvider(DataProvider::TYPE_STRING);
+        $builder->run();
     }
 
     public function provideSetAvailableEncodingsInvalidEncodings(): array
     {
         return [
             'invalid encoding' => [['UTF-8', 'nope']],
-            'not string' => [[true]]
+            'not string' => [[true]],
         ];
     }
 

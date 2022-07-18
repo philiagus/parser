@@ -62,7 +62,7 @@ class ParseURL implements Parser
      * Overwrites the exception thrown in case the provided string cannot be parsed as an url
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      *
      * @param string $message
      *
@@ -80,7 +80,7 @@ class ParseURL implements Parser
      * If the url does not contain a scheme, an exception with the specified message is thrown.
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      *
      * @param ParserContract $parser
      * @param string $missingExceptionMessage
@@ -116,7 +116,7 @@ class ParseURL implements Parser
      * If the url does not contain a host, an exception with the specified message is thrown.
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      *
      * @param ParserContract $parser
      * @param string $missingExceptionMessage
@@ -152,7 +152,7 @@ class ParseURL implements Parser
      * If the url does not contain a port, an exception with the specified message is thrown.
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      *
      * @param ParserContract $parser
      * @param string $missingExceptionMessage
@@ -189,7 +189,7 @@ class ParseURL implements Parser
      * If the url does not contain a user, an exception with the specified message is thrown.
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      *
      * @param ParserContract $parser
      * @param string $missingExceptionMessage
@@ -225,7 +225,7 @@ class ParseURL implements Parser
      * If the url does not contain a password, an exception with the specified message is thrown.
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      *
      * @param ParserContract $parser
      * @param string $missingExceptionMessage
@@ -261,7 +261,7 @@ class ParseURL implements Parser
      * If the url does not contain a path, an exception with the specified message is thrown.
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      *
      * @param ParserContract $parser
      * @param string $missingExceptionMessage
@@ -297,7 +297,7 @@ class ParseURL implements Parser
      * If the url does not contain a query, an exception with the specified message is thrown.
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      *
      * @param ParserContract $parser
      * @param string $missingExceptionMessage
@@ -333,7 +333,7 @@ class ParseURL implements Parser
      * If the url does not contain a fragment, an exception with the specified message is thrown.
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      *
      * @param ParserContract $parser
      * @param string $missingExceptionMessage

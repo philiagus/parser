@@ -13,20 +13,20 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
-use Philiagus\Parser\Exception\ParserConfigurationException;
-use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\AssertArray;
+use Philiagus\Parser\Subject\ArrayKey;
+use Philiagus\Parser\Subject\ArrayValue;
+use Philiagus\Parser\Subject\MetaInformation;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
+use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\SetTypeExceptionMessageTest;
-use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Philiagus\Parser\Parser\AssertArray
  */
-class AssertArrayTest extends TestBase
+class AssertArrayTest extends ParserTestBase
 {
 
     use ChainableParserTest, InvalidValueParserTest, ValidValueParserTest, SetTypeExceptionMessageTest;
@@ -34,111 +34,204 @@ class AssertArrayTest extends TestBase
     public function provideInvalidValuesAndParsers(): array
     {
         return (new DataProvider(~DataProvider::TYPE_ARRAY))
-            ->map(fn($value) => [$value, fn() => AssertArray::new()])
+            ->map(static fn($value) => [$value, static fn() => AssertArray::new()])
             ->provide(false);
     }
 
     public function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider(DataProvider::TYPE_ARRAY))
-            ->map(fn($value) => [$value, fn() => AssertArray::new(), $value])
+            ->map(static fn($value) => [$value, static fn() => AssertArray::new(), $value])
             ->provide(false);
     }
 
     public function provideInvalidTypesAndParser(): array
     {
         return (new DataProvider(~DataProvider::TYPE_ARRAY))
-            ->map(fn($value) => [$value, fn() => AssertArray::new(), $value])
+            ->map(static fn($value) => [$value, static fn() => AssertArray::new(), $value])
             ->provide(false);
     }
 
-    public function testFull(): void
+    public function testGiveEachValue(): void
     {
-        AssertArray::new()
-            ->giveEachValue(
-                $this->prophesizeParser([['value 0'],['value key'],['value 1']])
+        $builder = $this->builder();
+        $builder->test()->arguments(
+            $builder
+                ->parserArgument()
+                ->expectMultipleCalls(
+                    static fn($value) => array_values($value),
+                    ArrayValue::class
+                )
+                ->willBeCalledIf(static fn($value) => !empty($value))
+        )
+            ->successProvider(DataProvider::TYPE_ARRAY);
+        $builder->run();
+    }
+
+    public function testGiveEachKey(): void
+    {
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->parserArgument()
+                    ->expectMultipleCalls(
+                        static fn($value) => array_keys($value),
+                        ArrayKey::class
+                    )
+                    ->willBeCalledIf(static fn($value) => !empty($value))
             )
-            ->giveEachKey(
-                $this->prophesizeParser([[0], ['key'], [1]])
+            ->successProvider(DataProvider::TYPE_ARRAY);
+        $builder->run();
+    }
+
+    public function testGiveKeys(): void
+    {
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->parserArgument()
+                    ->expectSingleCall(
+                        static fn($value) => array_keys($value),
+                        MetaInformation::class
+                    )
             )
-            ->giveKeys($this->prophesizeParser([
-                [[0, 'key', 1]]
-            ]))
-            ->giveKeyValue(0, $this->prophesizeParser([['value 0']]))
-            ->giveDefaultedKeyValue(0, 'default', $this->prophesizeParser([['value 0']]))
-            ->giveDefaultedKeyValue(7, 'default', $this->prophesizeParser([['default']]))
-            ->giveOptionalKeyValue('key', $this->prophesizeParser([['value key']]))
-            ->giveOptionalKeyValue('never', $this->prophesizeParser([]))
-            ->giveLength($this->prophesizeParser([[3]]))
-            ->parse([
-                0 => 'value 0',
-                'key' => 'value key',
-                1 => 'value 1'
-            ]);
+            ->successProvider(DataProvider::TYPE_ARRAY);
+        $builder->run();
+    }
+
+    public function testGiveLength(): void
+    {
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->parserArgument()
+                    ->expectSingleCall(
+                        static fn($value) => count($value),
+                        MetaInformation::class
+                    )
+            )
+            ->successProvider(DataProvider::TYPE_ARRAY);
+        $builder->run();
+    }
+
+    public function testGiveValue(): void
+    {
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(
+                        static fn($value) => array_key_first($value),
+                        static fn($value) => !empty($value)
+                    )
+                    ->error(
+                        static fn($value) => implode('|', array_keys($value)) . 'ff'
+                    ),
+                $builder
+                    ->parserArgument()
+                    ->expectSingleCall(
+                        static fn($value, $generatedArguments) => $value[$generatedArguments[0]],
+                        ArrayValue::class,
+                        static fn($value, $generatedArguments) => array_key_exists($generatedArguments[0], $value)
+                    ),
+                $builder
+                    ->messageArgument()
+                    ->expectedWhen(static fn($value, array $generatedArguments, array $successStack) => !$successStack[0] && $successStack[1])
+                    ->withParameterElement('key', 0)
+            )
+            ->successProvider(DataProvider::TYPE_ARRAY);
+        $builder->run();
+    }
+
+    public function testGiveDefaultedKeyValue(): void
+    {
+        $default = new \stdClass();
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(
+                        static fn($value) => array_key_first($value),
+                        static fn($value) => !empty($value)
+                    )
+                    ->success(
+                        static fn($value) => implode('|', array_keys($value))
+                    ),
+                $builder
+                    ->fixedArgument()
+                    ->success($default),
+                $builder
+                    ->parserArgument()
+                    ->expectSingleCall(
+                        static fn($value, $generatedValues) => array_key_exists($generatedValues[0], $value) ? $value[$generatedValues[0]] : $default,
+                        ArrayValue::class
+                    )
+            )
+            ->successProvider(DataProvider::TYPE_ARRAY);
+        $builder->run();
     }
 
     public function testAssertSequentialKeys(): void
     {
-        AssertArray::new()
-            ->assertSequentialKeys()
-            ->parse([1,2,3,4]);
-
-        self::expectException(ParsingException::class);
-        AssertArray::new()
-            ->assertSequentialKeys()
-            ->parse(
-                [1,2,3,4, 'yes' => 'no', 5,4,3,2]
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->messageArgument()
+                    ->expectedWhen(static fn($value) => !array_is_list($value))
+            )
+            ->provider(
+                DataProvider::TYPE_ARRAY,
+                static fn($value) => array_is_list($value)
             );
+        $builder->run();
     }
 
-    /**
-     * @param $invalidKey
-     *
-     * @return void
-     * @dataProvider provideInvalidArrayKeys
-     * @throws ParserConfigurationException
-     */
-    public function testExceptionOnGiveKeyValueInvalidKey($invalidKey): void
+    public function testGiveOptionalKeyValue(): void
     {
-        $parser = AssertArray::new();
-        self::expectException(ParserConfigurationException::class);
-        $parser->giveKeyValue($invalidKey, $this->prophesizeUncalledParser());
-    }
-
-    public function testElementDoesNotExistOnGiveKeyValue(): void
-    {
-        $parser = AssertArray::new()
-            ->giveKeyValue('undefined', $this->prophesizeUncalledParser());
-        self::expectException(ParsingException::class);
-        $parser->parse([]);
-    }
-
-    /**
-     * @param $invalidKey
-     *
-     * @return void
-     * @dataProvider provideInvalidArrayKeys
-     * @throws ParserConfigurationException
-     */
-    public function testExceptionOnGiveDefaultedKeyValueInvalidKey($invalidKey): void
-    {
-        $parser = AssertArray::new();
-        self::expectException(ParserConfigurationException::class);
-        $parser->giveDefaultedKeyValue($invalidKey, null, $this->prophesizeUncalledParser());
-    }
-
-    /**
-     * @param $invalidKey
-     *
-     * @return void
-     * @dataProvider provideInvalidArrayKeys
-     * @throws ParserConfigurationException
-     */
-    public function testExceptionOnGiveOptionalKeyValueInvalidKey($invalidKey): void
-    {
-        $parser = AssertArray::new();
-        self::expectException(ParserConfigurationException::class);
-        $parser->giveOptionalKeyValue($invalidKey, $this->prophesizeUncalledParser());
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(
+                        static fn($value) => array_key_first($value),
+                        static fn($value) => !empty($value)
+                    ),
+                $builder
+                    ->parserArgument()
+                    ->expectSingleCall(
+                        static fn($value, array $generated) => $value[$generated[0]],
+                        ArrayValue::class,
+                    )
+            )
+            ->successProvider(DataProvider::TYPE_ARRAY);
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(
+                        static fn($value) => implode('|', array_keys($value)) . '|'
+                    ),
+                $builder
+                    ->parserArgument()
+                    ->willBeCalledIf(static fn() => false)
+            )
+            ->successProvider(DataProvider::TYPE_ARRAY);
+        $builder->run();
     }
 
 

@@ -13,16 +13,18 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\Fixed;
 use Philiagus\Parser\Test\ChainableParserTest;
+use Philiagus\Parser\Test\TestBase;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Philiagus\Parser\Parser\Fixed
  */
-class FixedTest extends TestCase
+class FixedTest extends TestBase
 {
     use ChainableParserTest;
 
@@ -51,7 +53,7 @@ class FixedTest extends TestCase
         $obj = new \stdClass();
         self::assertSame(
             $obj,
-            Fixed::value($obj)->parse($anything)
+            Fixed::value($obj)->parse(Subject::default($anything))->getValue()
         );
     }
 }

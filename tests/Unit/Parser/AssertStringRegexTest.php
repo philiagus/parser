@@ -13,18 +13,23 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\AssertString;
 use Philiagus\Parser\Parser\AssertStringRegex;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
+use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\SetTypeExceptionMessageTest;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
 use PHPUnit\Framework\TestCase;
 
-class AssertStringRegexTest extends TestBase
+/**
+ * @covers \Philiagus\Parser\Parser\AssertStringRegex
+ */
+class AssertStringRegexTest extends ParserTestBase
 {
 
     use ChainableParserTest, ValidValueParserTest, InvalidValueParserTest, SetTypeExceptionMessageTest;
@@ -151,7 +156,7 @@ class AssertStringRegexTest extends TestBase
                 [$matches, $matches],
             ]))
             ->giveNumberOfMatches($this->prophesizeParser([$result]))
-            ->parse($subject);
+            ->parse(Subject::default($subject));
     }
 
 
@@ -159,13 +164,21 @@ class AssertStringRegexTest extends TestBase
     {
         self::expectException(ParserConfigurationException::class);
         AssertStringRegex::pattern('//')
-            ->setGlobal('invalid');
+            ->setGlobal(984651651);
     }
 
     public function testNotMatch(): void
     {
         self::expectException(ParsingException::class);
         AssertStringRegex::pattern('/u/')
-            ->parse('f');
+            ->parse(Subject::default('f'));
+    }
+
+    public function testNotMatchNoThrow(): void
+    {
+        $result = AssertStringRegex::pattern('/u/')
+            ->parse(Subject::default('f', false));
+        self::assertFalse($result->isSuccess());
+        self::assertCount(1, $result->getErrors());
     }
 }

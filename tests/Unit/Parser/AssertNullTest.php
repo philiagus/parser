@@ -16,13 +16,14 @@ use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Parser\AssertNull;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
+use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Philiagus\Parser\Parser\AssertNull
  */
-class AssertNullTest extends TestCase
+class AssertNullTest extends TestBase
 {
     use ChainableParserTest, ValidValueParserTest, InvalidValueParserTest;
 
@@ -30,7 +31,7 @@ class AssertNullTest extends TestCase
     {
         return (new DataProvider(DataProvider::TYPE_NULL))
             ->map(function ($value) {
-                return [$value, fn() => AssertNull::new(), $value];
+                return [$value, static fn() => AssertNull::new(), $value];
             })
             ->provide(false);
     }
@@ -39,7 +40,7 @@ class AssertNullTest extends TestCase
     {
         return (new DataProvider(~DataProvider::TYPE_NULL))
             ->map(function ($value) {
-                return [$value, fn() => AssertNull::new()];
+                return [$value,static  fn() => AssertNull::new()];
             })
             ->provide(false);
     }

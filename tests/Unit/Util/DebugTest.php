@@ -13,10 +13,11 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Util;
 
 use Philiagus\DataProvider\DataProvider;
+use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Util\Debug;
 use PHPUnit\Framework\TestCase;
 
-class DebugTest extends TestCase
+class DebugTest extends TestBase
 {
     public function provideAnything(): array
     {

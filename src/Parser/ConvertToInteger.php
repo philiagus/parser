@@ -77,7 +77,7 @@ class ConvertToInteger implements Parser
 
     protected function getDefaultTypeExceptionMessage(): string
     {
-        return 'Variable of type {value.type} could not be converted to an integer';
+        return 'Variable of type {subject.type} could not be converted to an integer';
     }
 
     protected function getDefaultChainDescription(Subject $subject): string

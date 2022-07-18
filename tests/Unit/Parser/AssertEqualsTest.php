@@ -16,13 +16,14 @@ use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Parser\AssertEquals;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
+use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Philiagus\Parser\Parser\AssertEquals
  */
-class AssertEqualsTest extends TestCase
+class AssertEqualsTest extends TestBase
 {
     use ChainableParserTest, ValidValueParserTest, InvalidValueParserTest;
 
@@ -35,7 +36,7 @@ class AssertEqualsTest extends TestCase
             })
             ->map(
                 function ($value) {
-                    return [$value, fn($value) => AssertEquals::value($value), $value];
+                    return [$value, static fn($value) => AssertEquals::value($value), $value];
                 }
             )
             ->provide(false);
@@ -46,7 +47,7 @@ class AssertEqualsTest extends TestCase
         return (new DataProvider(DataProvider::TYPE_ALL))
             ->map(
                 function ($value) {
-                    return [$value, fn() => AssertEquals::value($value ? false : NAN)];
+                    return [$value, static fn() => AssertEquals::value($value ? false : NAN)];
                 }
             )
             ->provide(false);

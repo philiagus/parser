@@ -45,7 +45,7 @@ class AssertFloat implements Parser
      * Asserts that the value is >= the provided minimum
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      * - min: the set minimum
      *
      * @param float $minimum
@@ -62,7 +62,7 @@ class AssertFloat implements Parser
             throw new Exception\ParserConfigurationException('Minimum must be set as a float number value. NAN and INF are not allowed');
         }
 
-        $this->assertionList[] = function (ResultBuilder $builder, float $value) use ($minimum, $exceptionMessage): void {
+        $this->assertionList[] = static function (ResultBuilder $builder, float $value) use ($minimum, $exceptionMessage): void {
             if ($minimum > $value) {
                 $builder->logErrorUsingDebug(
                     $exceptionMessage,
@@ -78,7 +78,7 @@ class AssertFloat implements Parser
      * Asserts that the value is <= the provided maximum
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      * - max: the set maximum
      *
      * @param float $maximum
@@ -95,7 +95,7 @@ class AssertFloat implements Parser
             throw new Exception\ParserConfigurationException('Maximum must be set as a float number value. NAN and INF are not allowed');
         }
 
-        $this->assertionList[] = function (ResultBuilder $builder, float $value) use ($maximum, $exceptionMessage): void {
+        $this->assertionList[] = static function (ResultBuilder $builder, float $value) use ($maximum, $exceptionMessage): void {
             if ($maximum < $value) {
                 $builder->logErrorUsingDebug(
                     $exceptionMessage,

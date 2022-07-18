@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\ParseURL;
 use Philiagus\Parser\Test\ChainableParserTest;
@@ -60,7 +61,7 @@ class ParseURLTest extends TestBase
             ->giveSchemeDefaulted('scheme defaulted', $this->prophesizeParser([['scheme defaulted']]))
             ->giveUserDefaulted('user defaulted', $this->prophesizeParser([['user defaulted']]))
             ->givePath($this->prophesizeParser([['path']]))
-            ->parse('path');
+            ->parse(Subject::default('path'));
     }
 
     public function testDefaultingOfPath(): void
@@ -69,7 +70,7 @@ class ParseURLTest extends TestBase
             ->givePathDefaulted('path default', $this->prophesizeParser([['path default']]))
             ->giveScheme($this->prophesizeParser([['https']]))
             ->giveHost($this->prophesizeParser([['example.org']]))
-            ->parse('https://example.org');
+            ->parse(Subject::default('https://example.org'));
     }
 
     public function testAllGivings(): void
@@ -83,25 +84,25 @@ class ParseURLTest extends TestBase
             ->giveScheme($this->prophesizeParser([['https']]))
             ->giveUser($this->prophesizeParser([['user']]))
             ->givePath($this->prophesizeParser([['/path']]))
-            ->parse('https://user:password@example.org:1234/path?query#fragment');
+            ->parse(Subject::default('https://user:password@example.org:1234/path?query#fragment'));
     }
 
     public function testStringCouldNotBeParsed(): void
     {
         self::expectException(ParsingException::class);
         ParseURL::new()
-            ->parse('https://');
+            ->parse(Subject::default('https://'));
     }
 
     public function testStringCouldNotBeParsed_messageOverwrite(): void
     {
-        $msg = 'MSG {value.raw}';
+        $msg = 'MSG {subject.raw}';
         $value = 'https://';
         self::expectException(ParsingException::class);
-        self::expectExceptionMessage(Debug::parseMessage($msg, ['value' => $value]));
+        self::expectExceptionMessage(Debug::parseMessage($msg, ['subject' => $value]));
         ParseURL::new()
             ->setInvalidStringExceptionMessage($msg)
-            ->parse($value);
+            ->parse(Subject::default($value));
     }
 
     public function provideMissingElementCases(): array
@@ -114,13 +115,13 @@ class ParseURLTest extends TestBase
             'missing host' => ['path', 'Host'],
             'missing fragment' => ['path', 'Fragment'],
             'missing port' => ['path', 'Port'],
-            'message overwrite missing path' => ['https://example.org', 'Path', 'MSG {value.raw}'],
-            'message overwrite missing user' => ['path', 'User', 'MSG {value.raw}'],
-            'message overwrite missing password' => ['path', 'Password', 'MSG {value.raw}'],
-            'message overwrite missing scheme' => ['path', 'Scheme', 'MSG {value.raw}'],
-            'message overwrite missing host' => ['path', 'Host', 'MSG {value.raw}'],
-            'message overwrite missing fragment' => ['path', 'Fragment', 'MSG {value.raw}'],
-            'message overwrite missing port' => ['path', 'Port', 'MSG {value.raw}'],
+            'message overwrite missing path' => ['https://example.org', 'Path', 'MSG {subject.raw}'],
+            'message overwrite missing user' => ['path', 'User', 'MSG {subject.raw}'],
+            'message overwrite missing password' => ['path', 'Password', 'MSG {subject.raw}'],
+            'message overwrite missing scheme' => ['path', 'Scheme', 'MSG {subject.raw}'],
+            'message overwrite missing host' => ['path', 'Host', 'MSG {subject.raw}'],
+            'message overwrite missing fragment' => ['path', 'Fragment', 'MSG {subject.raw}'],
+            'message overwrite missing port' => ['path', 'Port', 'MSG {subject.raw}'],
         ];
     }
 
@@ -134,11 +135,11 @@ class ParseURLTest extends TestBase
         $parser = ParseURL::new();
         if($message) {
             $parser->$method($this->prophesizeUncalledParser(), $message);
-            self::expectExceptionMessage(Debug::parseMessage($message, ['value' => $value]));
+            self::expectExceptionMessage(Debug::parseMessage($message, ['subject' => $value]));
         } else {
             $parser->$method($this->prophesizeUncalledParser());
         }
         self::expectException(ParsingException::class);
-        $parser->parse($value);
+        $parser->parse(Subject::default($value));
     }
 }

@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test;
 
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParsingException;
@@ -36,8 +37,8 @@ trait SetTypeExceptionMessageTest
         $defaultMessage = $method->invoke($parser);
 
         self::expectException(ParsingException::class);
-        self::expectExceptionMessage(Debug::parseMessage($defaultMessage, ['value' => $invalidValue]));
-        $parser->parse($invalidValue);
+        self::expectExceptionMessage(Debug::parseMessage($defaultMessage, ['subject' => $invalidValue]));
+        $parser->parse(Subject::default($invalidValue));
     }
 
     private function assertUsesTypeExceptionMessageTrait(Parser $parser): ReflectionClass
@@ -68,10 +69,10 @@ trait SetTypeExceptionMessageTest
         $parser = $parser($invalidValue);
         $this->assertUsesTypeExceptionMessageTrait($parser);
 
-        $parser->setTypeExceptionMessage('the type is {value.type}');
+        $parser->setTypeExceptionMessage('the type is {subject.type}');
         self::expectException(ParsingException::class);
         self::expectExceptionMessage('the type is ' . Debug::getType($invalidValue));
-        $parser->parse($invalidValue);
+        $parser->parse(Subject::default($invalidValue));
     }
 
 }

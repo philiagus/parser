@@ -45,7 +45,7 @@ class Error implements Contract\Error
     {
         return new self(
             $subject,
-            Debug::parseMessage($message, $replacers + ['value' => $subject->getValue()]),
+            Debug::parseMessage($message, $replacers + ['subject' => $subject->getValue()]),
             $sourceThrowable,
             $sourceErrors
         );

@@ -15,14 +15,24 @@ namespace Philiagus\Parser\Test;
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
+use Philiagus\Parser\Result;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class TestBase extends TestCase
 {
+    use ProphecyTrait;
+
     public function provideAnything(): array
     {
         return (new DataProvider(DataProvider::TYPE_ALL))
+            ->provide();
+    }
+
+    public function provideInvalidArrayKeys(): array
+    {
+        return (new DataProvider(~DataProvider::TYPE_INTEGER & ~DataProvider::TYPE_STRING))
             ->provide();
     }
 
@@ -31,13 +41,8 @@ class TestBase extends TestCase
         $parser = $this->prophesize(Parser::class);
         $parser->parse(Argument::any())->shouldNotBeCalled();
         $parser->parse(Argument::any())->shouldNotBeCalled();
-        return $parser->reveal();
-    }
 
-    public function provideInvalidArrayKeys(): array
-    {
-        return (new DataProvider(~DataProvider::TYPE_INTEGER & ~DataProvider::TYPE_STRING))
-            ->provide();
+        return $parser->reveal();
     }
 
     protected function prophesizeParser(
@@ -47,20 +52,20 @@ class TestBase extends TestCase
     {
         $parser = $this->prophesize(Parser::class);
         foreach ($inputResultPairs as $pair) {
-            if(!is_array($pair)) {
-                $pair = (array)$pair;
+            if (!is_array($pair)) {
+                $pair = (array) $pair;
             }
             if (count($pair) === 1) {
                 $pair[1] = $pair[0];
             }
             $parser
                 ->parse(
-                    $pair[0]
+                    Argument::that(fn(Subject $subject) => $subject->getValue() === $pair[0])
                 )
                 ->shouldBeCalled()
-                ->willReturn($pair[1]);
+                ->will(fn(array $args) => new Result($args[0], $pair[1], []));
         }
-        if(empty($inputResultPairs)) {
+        if (empty($inputResultPairs)) {
             $parser->parse(Argument::any())->shouldNotBeCalled();
         }
 

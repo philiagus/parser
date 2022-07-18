@@ -37,7 +37,7 @@ class AssertNull implements Parser
     /**
      * Creates a parser with a defined message if the provided value is not NULL
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      *
      * @param string $notNullExceptionMessage
      *

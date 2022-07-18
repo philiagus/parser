@@ -12,7 +12,10 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test;
 
+use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Debug;
 
 trait InvalidValueParserTest
@@ -34,17 +37,20 @@ trait InvalidValueParserTest
     public function testThatItBlocksInvalidValues(
         $value,
         \Closure $parser,
-        $expectedException = ParsingException::class
+        string|\Closure $expectedException = ParsingException::class,
+        bool $throw = true
     ): void
     {
-        $result = null;
+        $resultValue = null;
         try {
-            $result = $parser($value)->parse($value);
+            /** @var Result $result */
+            $result = $parser($value)->parse(Subject::default($value, $throw));
         } catch (\Throwable $exception) {
 
         }
         if (!isset($exception)) {
-            self::fail('No exception was thrown and parser for ' . Debug::stringify($value) . ' resulted in: ' . Debug::stringify($result));
+            $resultValue = $result->getValue();
+            self::fail('No exception was thrown and parser for ' . Debug::stringify($value) . ' resulted in: ' . Debug::stringify($resultValue));
         }
         if (is_string($expectedException)) {
             self::assertInstanceOf($expectedException, $exception, "Exception of type $expectedException not thrown");
@@ -53,7 +59,27 @@ trait InvalidValueParserTest
         } else {
             self::fail('$expectedException must be string|\Closure, ' . Debug::stringify($expectedException) . ' provided');
         }
-
+    }
+    /**
+     * @param $value
+     * @param \Closure $parser
+     * @param string|\Closure $expectedException
+     *
+     * @dataProvider provideInvalidValuesAndParsers
+     */
+    public function testThatItBlocksInvalidValuesNotThrowing(
+        $value,
+        \Closure $parser,
+        string|\Closure $expectedException = ParsingException::class
+    ): void
+    {
+        /** @var Result $result */
+        $result = $parser($value)->parse(Subject::default($value, false));
+        self::assertFalse($result->isSuccess());
+        self::assertNotEmpty($result->getErrors());
+        foreach($result->getErrors() as $error) {
+            self::assertInstanceOf(Error::class, $error);
+        }
     }
 
 

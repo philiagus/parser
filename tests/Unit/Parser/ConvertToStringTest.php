@@ -16,6 +16,7 @@ use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Parser\ConvertToString;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
+use Philiagus\Parser\Test\Mock\ParserMock;
 use Philiagus\Parser\Test\SetTypeExceptionMessageTest;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
@@ -43,6 +44,11 @@ class ConvertToStringTest extends TestBase
                 ['yes'],
                 fn() => ConvertToString::new()
                     ->setImplodeOfArrays(',', $this->prophesizeParser([['yes', false]])),
+            ],
+            'array converter resulted in exception' => [
+                ['yes'],
+                fn() => ConvertToString::new()
+                    ->setImplodeOfArrays(',', (new ParserMock())->error()),
             ],
         ];
     }

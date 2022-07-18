@@ -16,10 +16,11 @@ use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Parser\ParseFormEncodedString;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
+use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
 use PHPUnit\Framework\TestCase;
 
-class ParseFormEncodedStringTest extends TestCase
+class ParseFormEncodedStringTest extends TestBase
 {
 
     use ChainableParserTest, InvalidValueParserTest, ValidValueParserTest;

@@ -48,7 +48,7 @@ class AssertStdClass implements Parser
      * If the key does not exist an exception with the specified message is thrown.
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      * - property: The missing property as defined here
      *
      * @param string $property
@@ -64,7 +64,7 @@ class AssertStdClass implements Parser
         string $missingPropertyExceptionMessage = 'The object does not contain the requested property {property}'
     ): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder) use ($property, $parser, $missingPropertyExceptionMessage): void {
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($property, $parser, $missingPropertyExceptionMessage): void {
             $value = $builder->getCurrentValue();
             if (property_exists($value, $property)) {
                 $builder->incorporateResult(
@@ -111,7 +111,7 @@ class AssertStdClass implements Parser
      */
     public function giveOptionalPropertyValue(string $property, ParserContract $parser): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder) use ($property, $parser): void {
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($property, $parser): void {
             $value= $builder->getCurrentValue();
             if (property_exists($value, $property)) {
                 $builder->incorporateResult(
@@ -130,7 +130,7 @@ class AssertStdClass implements Parser
 
     public function giveDefaultedPropertyValue(string $property, $default, ParserContract $parser): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder) use ($property, $default, $parser): void {
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($property, $default, $parser): void {
             $value = $builder->getCurrentValue();
             $propertyValue = property_exists($value, $property) ? $value->$property : $default;
             $builder->incorporateResult(
@@ -150,7 +150,7 @@ class AssertStdClass implements Parser
      */
     public function givePropertyNames(ParserContract $arrayParser): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder) use ($arrayParser): void {
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($arrayParser): void {
             $properties = [];
             foreach ($builder->getCurrentValue() as $property => $_) {
                 $properties[] = $property;
@@ -167,7 +167,7 @@ class AssertStdClass implements Parser
 
     public function givePropertyValues(ParserContract $arrayParser): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder) use ($arrayParser): void {
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($arrayParser): void {
             $propertyValues = [];
             foreach ($builder->getCurrentValue() as $propertyValue) {
                 $propertyValues[] = $propertyValue;
@@ -191,7 +191,7 @@ class AssertStdClass implements Parser
      */
     public function giveEachPropertyName(ParserContract $stringParser): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder) use ($stringParser): void {
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($stringParser): void {
             foreach ($builder->getCurrentValue() as $property => $_) {
                 $builder->incorporateResult(
                     $stringParser->parse(
@@ -213,7 +213,7 @@ class AssertStdClass implements Parser
      */
     public function giveEachPropertyValue(ParserContract $parser): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder) use ($parser): void {
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($parser): void {
             foreach ($builder->getCurrentValue() as $property => $value) {
                 $builder->incorporateResult(
                     $parser->parse(
@@ -235,9 +235,9 @@ class AssertStdClass implements Parser
      */
     public function givePropertyCount(ParserContract $integerParser): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder) use ($integerParser): void {
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($integerParser): void {
             $count = 0;
-            foreach ($builder->getCurrentValue()->value as $_) {
+            foreach ($builder->getCurrentValue() as $_) {
                 $count++;
             }
             $builder->incorporateResult(

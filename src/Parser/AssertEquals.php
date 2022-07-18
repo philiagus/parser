@@ -47,7 +47,7 @@ class AssertEquals implements Parser
      * Shortcut constructor for assertion against a value when no by-reference check is needed
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      * - expected: The value the received value is compared against
      *
      * @param $value

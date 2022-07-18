@@ -112,7 +112,7 @@ A more customizable way of string preparation for exception messages was added. 
 
 This change brings lots of potential for the future, as it offers a better way of selecting the level of information provided in the exception strings.
 
-In some cases replacers such as `{type}` are now replaced with the more clear `{value.type}` and the older replacer will simply not be replaced.
+In some cases replacers such as `{type}` are now replaced with the more clear `{subject.type}` and the older replacer will simply not be replaced.
 
 **If you are already using custom exception messages or are relying on the string representation of an already existing exception message please align your code correspondingly.**
 

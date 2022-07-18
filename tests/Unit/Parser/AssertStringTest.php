@@ -15,14 +15,17 @@ namespace Philiagus\Parser\Test\Unit\Parser;
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\AssertString;
+use Philiagus\Parser\Subject\MetaInformation;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
+use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\SetTypeExceptionMessageTest;
-use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
-use PHPUnit\Framework\TestCase;
 
-class AssertStringTest extends TestBase
+/**
+ * @covers \Philiagus\Parser\Parser\AssertString
+ */
+class AssertStringTest extends ParserTestBase
 {
     use ChainableParserTest, ValidValueParserTest, InvalidValueParserTest, SetTypeExceptionMessageTest;
 
@@ -47,45 +50,85 @@ class AssertStringTest extends TestBase
             ->provide(false);
     }
 
-    public function test_giveLength(): void
+    public function testGiveLength(): void
     {
-        $parser = AssertString::new()
-            ->giveLength($this->prophesizeParser([0, 10]));
-        $parser->parse('');
-        $parser->parse('0123456789');
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->parserArgument()
+                    ->expectSingleCall(
+                        fn($value) => strlen($value),
+                        MetaInformation::class
+                    )
+            )
+            ->successProvider(DataProvider::TYPE_STRING);
+        $builder->run();
     }
 
-    public function test_giveSubstring(): void
+    public function testGiveSubstring(): void
     {
-        AssertString::new()
-            ->giveSubstring(0, 3, $this->prophesizeParser(['012']))
-            ->giveSubstring(9, 10, $this->prophesizeParser(['9']))
-            ->parse('0123456789');
-
-        AssertString::new()
-            ->giveSubstring(10, 1000, $this->prophesizeParser(['']))
-            ->parse('');
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(fn() => 0)
+                    ->success(fn($value) => strlen($value)),
+                $builder
+                    ->evaluatedArgument()
+                    ->success(fn() => null)
+                    ->success(fn($value) => 1),
+                $builder
+                    ->parserArgument()
+                    ->expectSingleCall(
+                        fn($value, array $args) => substr($value, $args[0], $args[1]),
+                        MetaInformation::class
+                    )
+            )
+            ->successProvider(DataProvider::TYPE_STRING);
+        $builder->run();
     }
 
-    public function test_assertStartsWith(): void
+    public function testAssertStartsWith(): void
     {
-        $parser = AssertString::new()->assertStartsWith('0123');
-        $parser->parse('0123456789');
-
-        self::expectException(ParsingException::class);
-        $parser->parse('abcdef');
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(fn($value) => substr($value, 0, 3), fn($value) => $value !== '')
+                    ->error(fn($value) => md5($value)),
+                $builder
+                    ->messageArgument()
+                    ->withParameterElement('expected', 0)
+                    ->expectedWhen(fn($value, array $_, array $successes) => !$successes[0])
+            )
+            ->successProvider(DataProvider::TYPE_STRING);
+        $builder->run();
     }
 
-    public function test_assertEndsWith(): void
+    public function testAssertEndsWith(): void
     {
-        $parser = AssertString::new()->assertEndsWith('789');
-        $parser->parse('0123456789');
-
-        self::expectException(ParsingException::class);
-        $parser->parse('abcdef');
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(fn($value) => substr($value, -3), fn($value) => $value !== '')
+                    ->error(fn($value) => md5($value)),
+                $builder
+                    ->messageArgument()
+                    ->withParameterElement('expected', 0)
+                    ->expectedWhen(fn($value, array $_, array $successes) => !$successes[0])
+            )
+            ->successProvider(DataProvider::TYPE_STRING);
+        $builder->run();
     }
-
-
 
 
 }

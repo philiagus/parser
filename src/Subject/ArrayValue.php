@@ -14,7 +14,7 @@ namespace Philiagus\Parser\Subject;
 
 use Philiagus\Parser\Base\Subject;
 
-class ArrayElement extends Subject
+class ArrayValue extends Subject
 {
 
     /**

@@ -59,7 +59,7 @@ class AssertObject implements Parser
      *
      * The message of the exception is processed using Debug::parseMessage
      * and receives the following elements:
-     * - value: The object currently being parsed
+     * - subject: The object currently being parsed
      * - class: The class the object is not an instance of
      *
      * @param string $class
@@ -72,12 +72,9 @@ class AssertObject implements Parser
         string $exceptionMessage = self::DEFAULT_INSTANCEOF_MESSAGE
     ): self
     {
-        $this->checks[] = function (ResultBuilder $builder, object $value) use ($class, $exceptionMessage): void {
+        $this->checks[] = static function (ResultBuilder $builder, object $value) use ($class, $exceptionMessage): void {
             if (!$value instanceof $class) {
-                $builder->logErrorUsingDebug(
-                    $exceptionMessage,
-                    ['class' => $class]
-                );
+                $builder->logErrorUsingDebug($exceptionMessage, ['class' => $class]);
             }
         };
 

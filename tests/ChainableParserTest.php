@@ -18,6 +18,7 @@ use Philiagus\Parser\Base\OverwritableParserDescription;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Subject\Chain;
 use Prophecy\Argument;
 
@@ -40,24 +41,28 @@ trait ChainableParserTest
     public function testThen($value, \Closure $parser, $expected): void
     {
         $parser = $parser($value);
+        /** @var Parser $parser */
         self::assertTrue(method_exists($parser, 'then'), 'method ->then doesn\'t exist on parser');
         $expectedResult = new \stdClass();
         $thenParser = $this->prophesize(Parser::class);
         /** @noinspection PhpParamsInspection */
         $thenParser
             ->parse(
-                Argument::that(function ($argument) use ($expected) {
-                    return DataProvider::isSame($expected, $argument);
+                Argument::that(function (Subject $argument) use ($expected) {
+                    return DataProvider::isSame($expected, $argument->getValue());
                 })
             )
             ->shouldBeCalledOnce()
-            ->willReturn($expectedResult);
+            ->will(function(array $args) use ($expectedResult) {
+                return new Result($args[0], $expectedResult, []);
+            });
         $thenParser = $thenParser->reveal();
+        /** @var Result $result */
         $result = $parser
             ->then($thenParser)
-            ->parse($value);
+            ->parse(Subject::default($value));
 
-        DataProvider::isSame($expectedResult, $result);
+        self::assertTrue(DataProvider::isSame($expectedResult, $result->getValue()));
     }
 
     /**
@@ -81,18 +86,19 @@ trait ChainableParserTest
         /** @noinspection PhpParamsInspection */
         $thenParser
             ->parse(
-                Argument::that(function ($argument) use ($expected) {
-                    return DataProvider::isSame($expected, $argument);
+                Argument::that(function (Subject $subject) use ($expected) {
+                    return DataProvider::isSame($expected, $subject->getValue());
                 })
             )
             ->shouldBeCalledOnce()
-            ->willReturn($expectedResult);
+            ->will(function(array $args) use ($expectedResult) {
+                return new Result($args[0], $expectedResult, []);
+            });
         $thenParser = $thenParser->reveal();
         $result = $parser
             ->then($thenParser)
-            ->parse($value);
-
-        DataProvider::isSame($expectedResult, $result);
+            ->parse(Subject::default($value));
+        self::assertTrue(DataProvider::isSame($expectedResult, $result->getValue()));
     }
 
     /**
@@ -116,18 +122,20 @@ trait ChainableParserTest
         /** @noinspection PhpParamsInspection */
         $thenParser
             ->parse(
-                Argument::that(function ($argument) use ($expected) {
-                    return DataProvider::isSame($expected, $argument);
+                Argument::that(function (Subject $subject) use ($expected) {
+                    return DataProvider::isSame($expected, $subject->getValue());
                 })
             )
             ->shouldBeCalledOnce()
-            ->willReturn($expectedResult);
+            ->will(function(array $args) use ($expectedResult) {
+                return new Result($args[0], $expectedResult, []);
+            });
         $thenParser = $thenParser->reveal();
         $result = $parser
             ->then($thenParser)
-            ->parse($value);
+            ->parse(Subject::default($value));
 
-        DataProvider::isSame($expectedResult, $result);
+        self::assertTrue(DataProvider::isSame($expectedResult, $result->getValue()));
     }
 
     abstract public static function assertTrue($condition, string $message = ''): void;

@@ -76,11 +76,11 @@ class ResultBuilder
      * @param mixed $value
      * @param bool $isPathInValue
      *
-     * @return Subject\ArrayElement
+     * @return Subject\ArrayValue
      */
-    public function subjectArrayElement(int|string $index, mixed $value, bool $isPathInValue = true): Subject\ArrayElement
+    public function subjectArrayValue(int|string $index, mixed $value, bool $isPathInValue = true): Subject\ArrayValue
     {
-        return new Subject\ArrayElement($value, (string) $index, $this->currentSubject, $isPathInValue, $this->currentSubject->throwOnError());
+        return new Subject\ArrayValue($value, (string) $index, $this->currentSubject, $isPathInValue, $this->currentSubject->throwOnError());
     }
 
     /**
@@ -93,7 +93,7 @@ class ResultBuilder
      */
     public function subjectArrayKey(int|string $key, bool $isPathInValue = true): Subject\ArrayKey
     {
-        return new Subject\ArrayKey((string) $key, $key, $this->currentSubject, $isPathInValue, $this->currentSubject->throwOnError());
+        return new Subject\ArrayKey($key, (string) $key, $this->currentSubject, $isPathInValue, $this->currentSubject->throwOnError());
     }
 
     /**
@@ -184,7 +184,7 @@ class ResultBuilder
     {
         return new Result(
             $result->getSubject(),
-            $result->getSubject()->getValue(),
+            $result->getValue(),
             [...$this->errors, ...$result->getErrors()]
         );
     }

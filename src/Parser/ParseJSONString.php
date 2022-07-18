@@ -48,7 +48,7 @@ class ParseJSONString implements Parser
      * Sets the exception message if the json is invalid or parsing failed
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      * - msg: The json parser error message
      *
      * @param string $message

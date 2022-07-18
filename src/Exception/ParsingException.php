@@ -34,11 +34,6 @@ class ParsingException extends \Exception
         parent::__construct($this->error->getMessage(), 0, $this->error->getSourceThrowable());
     }
 
-    public static function overwriteAround(string $message, Parser $around): OverwriteErrors
-    {
-        return OverwriteErrors::withMessage($message, $around);
-    }
-
     public function getSubject(): Subject
     {
         return $this->error->getSubject();

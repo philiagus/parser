@@ -29,11 +29,11 @@ class ParseArray extends AssertArray
      */
     public function modifyEachValue(ParserContract $parser): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder) use ($parser): void {
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($parser): void {
             $array = $builder->getCurrentValue();
             foreach ($array as $key => &$value) {
                 $value = $builder->incorporateResult(
-                    $parser->parse($builder->subjectArrayElement($key, $value)),
+                    $parser->parse($builder->subjectArrayValue($key, $value)),
                     $value
                 );
             }
@@ -66,7 +66,7 @@ class ParseArray extends AssertArray
         string         $newKeyIsNotUseableMessage = 'A parser resulted in an invalid array key for key {oldKey.raw}'
     ): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder) use ($parser, $newKeyIsNotUseableMessage): void {
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($parser, $newKeyIsNotUseableMessage): void {
             $array = $builder->getCurrentValue();
             $result = [];
             foreach ($array as $key => $value) {
@@ -101,7 +101,7 @@ class ParseArray extends AssertArray
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - key: The missing key
-     * - value: The value currently being parsed
+     * - subject: The value currently being parsed
      *
      *
      * @param $key
@@ -114,7 +114,7 @@ class ParseArray extends AssertArray
      */
     public function modifyKeyValue(string|int $key, ParserContract $parser, string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder) use ($key, $parser, $missingKeyExceptionMessage): void {
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($key, $parser, $missingKeyExceptionMessage): void {
             $value = $builder->getCurrentValue();
             if (!array_key_exists($key, $value)) {
                 $builder->logErrorUsingDebug(
@@ -126,7 +126,7 @@ class ParseArray extends AssertArray
             }
 
             $result = $parser->parse(
-                $builder->subjectArrayElement($key, $value[$key])
+                $builder->subjectArrayValue($key, $value[$key])
             );
             if (!$result->isSuccess()) {
                 $builder->incorporateResult($result);
@@ -149,7 +149,7 @@ class ParseArray extends AssertArray
      */
     public function defaultKey(int|string $key, $value): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder) use ($key, $value): void {
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($key, $value): void {
             $array = $builder->getCurrentValue();
             if (array_key_exists($key, $array)) {
                 return;
@@ -170,7 +170,7 @@ class ParseArray extends AssertArray
      */
     public function unionWith(array $array): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder) use ($array): void {
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($array): void {
             $builder->setCurrentSubject(
                 $builder->subjectInternal(
                     'array union', $builder->getCurrentValue() + $array
@@ -188,7 +188,7 @@ class ParseArray extends AssertArray
      */
     public function forceSequentialKeys(): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder): void {
+        $this->assertionList[] = static function (ResultBuilder $builder): void {
             $builder->setCurrentSubject($builder->subjectInternal(
                 'force sequential keys', array_values($builder->getCurrentValue())
             ));
@@ -207,14 +207,14 @@ class ParseArray extends AssertArray
      */
     public function modifyOptionalKeyValue(int|string $key, ParserContract $parser): self
     {
-        $this->assertionList[] = function (ResultBuilder $builder) use ($key, $parser): void {
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($key, $parser): void {
             $value = $builder->getCurrentValue();
             if (!array_key_exists($key, $value)) {
                 return;
 
             }
             $result = $parser->parse(
-                $builder->subjectArrayElement($key, $value[$key])
+                $builder->subjectArrayValue($key, $value[$key])
             );
             if (!$result->isSuccess()) {
                 $builder->incorporateResult($result);
