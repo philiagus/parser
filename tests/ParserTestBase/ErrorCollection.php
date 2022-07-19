@@ -41,7 +41,7 @@ class ErrorCollection
             } else {
                 $messageSubpart = ' as none were expected';
             }
-            $errors[] = "Exception message '$message' was not expected$messageSubpart";
+            $errors[] = "Exception message '$message' @ {$e->getFile()}:{$e->getLine()} was not expected$messageSubpart";
         }
 
         return $errors;

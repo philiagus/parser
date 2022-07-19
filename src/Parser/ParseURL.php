@@ -392,9 +392,9 @@ class ParseURL implements Parser
             $fieldValue = $parsed[$target] ?? null;
             if ($fieldValue === null) {
                 if ($missingExceptionMessage !== null) {
-                    $builder->logErrorUsingDebug(
-                        $missingExceptionMessage,
-                    );
+                    $builder->logErrorUsingDebug($missingExceptionMessage);
+
+                    continue;
                 }
 
                 $fieldValue = $default;

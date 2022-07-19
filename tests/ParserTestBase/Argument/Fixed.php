@@ -38,7 +38,7 @@ class Fixed implements Argument
         return $this;
     }
 
-    public function generate(mixed $subjectValue): Generator
+    public function generate(mixed $subjectValue, array $generatedArgs): Generator
     {
         foreach($this->cases as $description => [$success, $value]) {
             yield $description => [$success, fn() => $value];

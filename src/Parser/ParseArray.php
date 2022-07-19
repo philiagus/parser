@@ -38,12 +38,7 @@ class ParseArray extends AssertArray
                 );
             }
 
-            $builder->setCurrentSubject(
-                $builder->subjectInternal(
-                    'modfiy each value',
-                    $array
-                )
-            );
+            $builder->setCurrentValue('modfiy each value', $array);
         };
 
         return $this;
@@ -56,17 +51,17 @@ class ParseArray extends AssertArray
      * - newKey: The key after parsing
      *
      * @param ParserContract $parser
-     * @param string $newKeyIsNotUseableMessage
+     * @param string $newKeyIsNotUsableMessage
      *
      * @return $this
      * @see Debug::parseMessage()
      */
     public function modifyEachKey(
         ParserContract $parser,
-        string         $newKeyIsNotUseableMessage = 'A parser resulted in an invalid array key for key {oldKey.raw}'
+        string $newKeyIsNotUsableMessage = 'A parser resulted in an invalid array key for key {oldKey.raw}'
     ): self
     {
-        $this->assertionList[] = static function (ResultBuilder $builder) use ($parser, $newKeyIsNotUseableMessage): void {
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($parser, $newKeyIsNotUsableMessage): void {
             $array = $builder->getCurrentValue();
             $result = [];
             foreach ($array as $key => $value) {
@@ -79,7 +74,7 @@ class ParseArray extends AssertArray
                 $newKey = $newKeyResult->getValue();
                 if (!is_int($newKey) && !is_string($newKey)) {
                     $builder->logErrorUsingDebug(
-                        $newKeyIsNotUseableMessage,
+                        $newKeyIsNotUsableMessage,
                         ['oldKey' => $key, 'newKey' => $newKey]
                     );
                 } else {
@@ -87,9 +82,7 @@ class ParseArray extends AssertArray
                 }
             }
 
-            $builder->setCurrentSubject(
-                $builder->subjectInternal('modify each key', $result)
-            );
+            $builder->setCurrentValue('modify each key', $result);
         };
 
         return $this;
@@ -104,23 +97,19 @@ class ParseArray extends AssertArray
      * - subject: The value currently being parsed
      *
      *
-     * @param $key
+     * @param string|int $key
      * @param ParserContract $parser
      * @param string $missingKeyExceptionMessage
      *
      * @return $this
-     * @throws ParserConfigurationException
      * @see Debug::parseMessage()
      */
-    public function modifyKeyValue(string|int $key, ParserContract $parser, string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'): self
+    public function modifyValue(string|int $key, ParserContract $parser, string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'): self
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($key, $parser, $missingKeyExceptionMessage): void {
             $value = $builder->getCurrentValue();
             if (!array_key_exists($key, $value)) {
-                $builder->logErrorUsingDebug(
-                    $missingKeyExceptionMessage,
-                    ['key' => $key]
-                );
+                $builder->logErrorUsingDebug($missingKeyExceptionMessage, ['key' => $key]);
 
                 return;
             }
@@ -133,9 +122,9 @@ class ParseArray extends AssertArray
 
                 return;
             }
-            $value[$key] = $parser->parse($value[$key]);
+            $value[$key] = $result->getValue();
 
-            $builder->setCurrentSubject($builder->subjectInternal("modify key {$key} value", $value));
+            $builder->setCurrentValue("modify key {$key} value", $value);
         };
 
         return $this;
@@ -157,7 +146,7 @@ class ParseArray extends AssertArray
 
             $array[$key] = $value;
 
-            $builder->setCurrentSubject($builder->subjectInternal("defaulted key '$key", $array));
+            $builder->setCurrentValue("defaulted key '$key", $array);
         };
 
         return $this;
@@ -171,11 +160,7 @@ class ParseArray extends AssertArray
     public function unionWith(array $array): self
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($array): void {
-            $builder->setCurrentSubject(
-                $builder->subjectInternal(
-                    'array union', $builder->getCurrentValue() + $array
-                )
-            );
+            $builder->setCurrentValue('array union', $builder->getCurrentValue() + $array);
         };
 
         return $this;
@@ -189,9 +174,9 @@ class ParseArray extends AssertArray
     public function forceSequentialKeys(): self
     {
         $this->assertionList[] = static function (ResultBuilder $builder): void {
-            $builder->setCurrentSubject($builder->subjectInternal(
+            $builder->setCurrentValue(
                 'force sequential keys', array_values($builder->getCurrentValue())
-            ));
+            );
         };
 
         return $this;
@@ -205,7 +190,7 @@ class ParseArray extends AssertArray
      *
      * @return $this
      */
-    public function modifyOptionalKeyValue(int|string $key, ParserContract $parser): self
+    public function modifyOptionalValue(int|string $key, ParserContract $parser): self
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($key, $parser): void {
             $value = $builder->getCurrentValue();
@@ -223,7 +208,7 @@ class ParseArray extends AssertArray
             }
             $value[$key] = $result->getValue();
 
-            $builder->setCurrentSubject($builder->subjectInternal("modification of key '$key'", $value));
+            $builder->setCurrentValue("modification of key '$key'", $value);
         };
 
         return $this;

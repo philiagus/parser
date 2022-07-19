@@ -70,7 +70,7 @@ class AssertArray implements Parser
             $assertion($builder);
         }
 
-        return $builder->createResultBasedOnCurrentSubject();
+        return $builder->createResultWithCurrentValue();
     }
 
     /**

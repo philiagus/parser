@@ -17,6 +17,17 @@ use Philiagus\Parser\Base\Subject;
 class Internal extends Subject
 {
 
+    public function __construct(mixed $value, string $pathDescription, Subject $parent)
+    {
+        parent::__construct(
+            $value,
+            $pathDescription,
+            $parent,
+            false,
+            $parent->throwOnError()
+        );
+    }
+
     /**
      * @inheritDoc
      */

@@ -223,7 +223,11 @@ class Map implements Parser
                 case self::TYPE_PARSER:
                     /** @var Parser $from */
                     try {
-                        $builder->incorporateResult($from->parse($builder->subjectInternal('check', $subject->getValue(), true)));
+                        $builder->incorporateResult(
+                            $from->parse(
+                                $builder->subjectMeta('check', $subject->getValue(), true)
+                            )
+                        );
                     } catch (Exception\ParsingException $e) {
                         $errors[] = $e->getError();
                         break;

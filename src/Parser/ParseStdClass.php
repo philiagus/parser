@@ -32,8 +32,8 @@ class ParseStdClass extends AssertStdClass
             $value = clone $value;
             $value->$property = $defaultValue;
 
-            $builder->setCurrentSubject(
-                $builder->subjectInternal("defaulted property '$property'", $value)
+            $builder->setCurrentValue(
+                "defaulted property '$property'", $value
             );
         };
 
@@ -57,8 +57,8 @@ class ParseStdClass extends AssertStdClass
 
             if (!$cloned) return;
 
-            $builder->setCurrentSubject(
-                $builder->subjectInternal('defaulted with object', $value)
+            $builder->setCurrentValue(
+                'defaulted with object', $value
             );
         };
 
@@ -104,9 +104,7 @@ class ParseStdClass extends AssertStdClass
                 $value = clone $value;
                 $value->$property = $result->getValue();
 
-                $builder->setCurrentSubject(
-                    $builder->subjectInternal("modify property '$property'", $value)
-                );
+                $builder->setCurrentValue("modify property '$property'", $value);
 
                 return;
             }
@@ -140,10 +138,7 @@ class ParseStdClass extends AssertStdClass
             if ($result->isSuccess()) {
                 $value = clone $value;
                 $value->$property = $result->getValue();
-
-                $builder->setCurrentSubject(
-                    $builder->subjectInternal("modify property '$property' value", $value)
-                );
+                $builder->setCurrentValue("modify property '$property' value", $value);
 
                 return;
             }
@@ -194,11 +189,7 @@ class ParseStdClass extends AssertStdClass
                 $result->$oldName = $propValue;
             }
 
-            $builder->setCurrentSubject(
-                $builder->subjectInternal(
-                    'modify each property name', $result
-                )
-            );
+            $builder->setCurrentValue('modify each property name', $result);
         };
 
         return $this;
@@ -228,9 +219,7 @@ class ParseStdClass extends AssertStdClass
                 $result->$property = $value;
             }
 
-            $builder->setCurrentSubject(
-                $builder->subjectInternal('modify each property value', $result)
-            );
+            $builder->setCurrentValue('modify each property value', $result);
         };
 
         return $this;

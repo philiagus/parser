@@ -16,16 +16,20 @@ use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Parser\AssertStdClass;
 use Philiagus\Parser\Parser\ParseStdClass;
+use Philiagus\Parser\Result;
+use Philiagus\Parser\Subject\PropertyName;
+use Philiagus\Parser\Subject\PropertyValue;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
+use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\SetTypeExceptionMessageTest;
-use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
-use PHPUnit\Framework\TestCase;
 
-class ParseStdClassTest extends TestBase
+/**
+ * @covers \Philiagus\Parser\Parser\ParseStdClass
+ */
+class ParseStdClassTest extends ParserTestBase
 {
     use ChainableParserTest, ValidValueParserTest, InvalidValueParserTest, SetTypeExceptionMessageTest;
 
@@ -159,7 +163,7 @@ class ParseStdClassTest extends TestBase
             ->defaultProperty('name', 'value')
             ->parse(Subject::default($source));
         self::assertNotSame($source, $result);
-        self::assertEquals((object)['name' => 'value'], $result->getValue());
+        self::assertEquals((object) ['name' => 'value'], $result->getValue());
     }
 
     public function test_defaultProperty_notReplacing(): void
@@ -169,6 +173,170 @@ class ParseStdClassTest extends TestBase
             ->defaultProperty('name', 'nope')
             ->parse(Subject::default($source));
         self::assertSame($source, $result->getValue());
-        self::assertEquals((object)['name' => 'value'], $result->getValue());
+        self::assertEquals((object) ['name' => 'value'], $result->getValue());
+    }
+
+    public function testModifyEachPropertyValue(): void
+    {
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->parserArgument()
+                    ->expectMultipleCalls(
+                        fn($value) => array_values((array) $value),
+                        PropertyValue::class,
+                        result: fn(Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
+                    )
+            )
+            ->values(
+                [
+                    (object) ['a' => 123, 'b' => 123, 'c' => 632],
+                ],
+                successValidator: function (Subject $start, Result $result): array {
+                    $expected = (object) array_map(fn($value) => $value . 'f', (array) $start->getValue());
+                    $received = $result->getValue();
+                    if ($expected != $received) {
+                        return ['Parser changes have not been correctly applied'];
+                    }
+
+                    return [];
+                }
+            );
+        $builder->run();
+    }
+
+    public function testModifyEachPropertyName(): void
+    {
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->parserArgument()
+                    ->expectMultipleCalls(
+                        fn($value) => array_keys((array) $value),
+                        PropertyName::class,
+                        result: fn(Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
+                    )
+            )
+            ->values(
+                [
+                    (object) ['a' => 123, 'b' => 123, 'c' => 632],
+                ],
+                successValidator: function (Subject $start, Result $result): array {
+                    $expected = new \stdClass();
+                    foreach ($start->getValue() as $name => $value) {
+                        $expected->{$name . 'f'} = $value;
+                    }
+                    $received = $result->getValue();
+                    if ($expected != $received) {
+                        return ['Parser changes have not been correctly applied'];
+                    }
+
+                    return [];
+                }
+            );
+        $builder->run();
+    }
+
+
+    public function testModifyOptionalPropertyValue(): void
+    {
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(
+                        fn($value) => array_key_first((array) $value),
+                        fn($value) => !empty((array) $value)
+                    )
+                    ->success(
+                        fn($value) => implode('|', array_keys((array) $value)) . '|'
+                    ),
+                $builder
+                    ->parserArgument()
+                    ->expectSingleCall(
+                        fn($value, array $generatedValues) => $value->{$generatedValues[0]},
+                        PropertyValue::class,
+                        result: fn(Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
+                    )
+                    ->willBeCalledIf(
+                        fn($value, array $generatedValues) => property_exists($value, $generatedValues[0])
+                    )
+            )
+            ->values(
+                [
+                    (object) ['a' => 123, 'b' => 234, 'c' => 345],
+                    (object) [],
+                ],
+                successValidator: function (Subject $subject, Result $result, array $methodArgs): array {
+                    $expectedResult = clone $subject->getValue();
+                    if (property_exists($expectedResult, $methodArgs[0])) {
+                        $expectedResult->{$methodArgs[0]} .= 'f';
+                    }
+                    if ($result->getValue() != $expectedResult) {
+                        return ['Value was not altered as expected'];
+                    }
+
+                    return [];
+                }
+            )
+            ->value((object) []);
+        $builder->run();
+    }
+
+
+    public function testModifyPropertyValue(): void
+    {
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(
+                        fn($value) => array_key_first((array) $value),
+                        fn($value) => !empty((array) $value)
+                    )
+                    ->error(
+                        fn($value) => implode('|', array_keys((array) $value)) . '|'
+                    ),
+                $builder
+                    ->parserArgument()
+                    ->expectSingleCall(
+                        fn($value, array $generatedValues) => $value->{$generatedValues[0]},
+                        PropertyValue::class,
+                        result: fn(Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
+                    )
+                    ->willBeCalledIf(
+                        fn($value, array $generatedValues) => property_exists($value, $generatedValues[0])
+                    ),
+                $builder
+                    ->messageArgument()
+                    ->expectedWhen(
+                        fn($value, array $generatedValues) => !property_exists($value, $generatedValues[0])
+                    )
+            )
+            ->values(
+                [
+                    (object) ['a' => 123, 'b' => 234, 'c' => 345],
+                    (object) [],
+                ],
+                successValidator: function (Subject $subject, Result $result, array $methodArgs): array {
+                    $expectedResult = clone $subject->getValue();
+                    $expectedResult->{$methodArgs[0]} .= 'f';
+                    if ($result->getValue() != $expectedResult) {
+                        return ['Value was not altered as expected'];
+                    }
+
+                    return [];
+                }
+            )
+            ->value((object) []);
+        $builder->run();
     }
 }

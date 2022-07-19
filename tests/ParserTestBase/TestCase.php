@@ -14,18 +14,18 @@ namespace Philiagus\Parser\Test\ParserTestBase;
 
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
-use Philiagus\Parser\Exception\ParsingException;
 
 class TestCase
 {
 
     public function __construct(
-        private bool            $success,
-        private bool            $throw,
-        private Subject         $subject,
-        private \Closure        $parserBuilder,
-        private \Closure        $resultValidator,
-        private ErrorCollection $errorCollection
+        private readonly bool            $success,
+        private readonly bool            $throw,
+        private readonly Subject         $subject,
+        private readonly \Closure        $parserBuilder,
+        private readonly \Closure        $resultValidator,
+        private readonly ErrorCollection $errorCollection,
+        private readonly array           $methodArgs
     )
     {
 
@@ -43,16 +43,17 @@ class TestCase
             if (!$this->success && $this->throw) {
                 return $errors;
             }
+
             return [...$errors, 'Unexpected Exception ' . get_class($e) . ': ' . $e->getMessage()];
         }
         if (!$this->success && $this->throw) {
             return ['No exception thrown, but expected'];
         }
-        if($this->success !== $result->isSuccess()) {
+        if ($this->success !== $result->isSuccess()) {
             return ['Success mismatch'];
         }
 
-        $errors = [...$errors, ...($this->resultValidator)($this->subject, $result)];
+        $errors = [...$errors, ...($this->resultValidator)($this->subject, $result, $this->methodArgs)];
         $errors = [...$errors, ...$this->errorCollection->assertResult($result)];
 
         return $errors;

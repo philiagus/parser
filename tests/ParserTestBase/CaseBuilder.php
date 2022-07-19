@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\ParserTestBase;
 
+use Philiagus\DataProvider\DataProvider;
 use PHPUnit\Framework\Assert;
 
 class CaseBuilder
@@ -34,7 +35,7 @@ class CaseBuilder
         }
         $targetClassName = $matches['class'];
         $targetClass = new \ReflectionClass($matches['class']);
-        if($parserCreation === null) {
+        if ($parserCreation === null) {
             if (
                 !$targetClass->hasMethod('new') ||
                 !$targetClass->getMethod('new')->isStatic() ||
@@ -44,13 +45,14 @@ class CaseBuilder
             $parserCreation = fn() => $targetClassName::new();
         }
 
-        if($methodName === null) {
-            if(!preg_match('~^test_?(?<method>.++)$~', $trace[1]['function'], $matches)) {
+        if ($methodName === null) {
+            if (!preg_match('~^test_?(?<method>.++)$~', $trace[1]['function'], $matches)) {
                 Assert::fail('Cannot extract method name');
             }
 
             $methodName = lcfirst($matches['method']);
         }
+
         return $this->tests[] = new Test($parserCreation, $methodName);
     }
 
@@ -72,18 +74,27 @@ class CaseBuilder
     public function run(): void
     {
         $errors = [];
+        $hasErrors = [];
         foreach ($this->tests as $test) {
             foreach ($test->generate() as $name => $case) {
                 $result = $case->run();
-                if ($result) $errors[$name] = $result;
+                if ($result) $hasErrors = true;
+                $errors[$name] = $result;
             }
         }
 
         Assert::assertEquals(true, true);
-        if ($errors) {
+        if ($hasErrors) {
             $string = '';
             foreach ($errors as $name => $subErrors) {
-                $string .= PHP_EOL . $name . PHP_EOL;
+                $string .= PHP_EOL . $name;
+                if (empty($subErrors)) {
+                    $string .= ' => ✔';
+                    continue;
+                }
+
+                $string .= ' => ❌';
+                $string .= PHP_EOL;
                 foreach ($subErrors as $subError) {
                     $string .= "\t- $subError" . PHP_EOL;
                 }
@@ -107,6 +118,11 @@ class CaseBuilder
     public function fixedArgument(): Argument\Fixed
     {
         return new Argument\Fixed();
+    }
+
+    public function generatedArgument(int $flags = DataProvider::TYPE_ALL): Argument\Generated
+    {
+        return new Argument\Generated($flags);
     }
 
 }

@@ -58,7 +58,7 @@ class Debug
     ): string
     {
         return preg_replace_callback(
-            '~{(?<key>[a-z]+)(?:\.(?<info>[a-z]+))?}~',
+            '~{(?<key>[a-z]++)(?:\.(?<info>[a-z]+))?}~i',
             function ($matches) use ($replacers): string {
                 $key = $matches['key'];
                 if (!array_key_exists($key, $replacers)) {

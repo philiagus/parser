@@ -39,19 +39,23 @@ class Test
         return $this;
     }
 
-    public function values(array $values, ?\Closure $expectSuccess = null): self
+    public function values(
+        array     $values,
+        ?\Closure $expectSuccess = null,
+        ?\Closure $successValidator = null
+    ): self
     {
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1)[0];
         $this->success[$trace['line']][] = [
             'source' => fn() => $values,
             'success' => $expectSuccess ?? fn() => true,
-            'result' => function (Subject $start, Result $result): array {
-                if (!DataProvider::isSame($start->getValue(), $result->getValue())) {
-                    return ['Result has been altered from ' . Debug::stringify($start->getValue()) . ' to ' . Debug::stringify($result->getValue())];
-                }
+            'result' => $successValidator ?? function (Subject $start, Result $result): array {
+                    if (!DataProvider::isSame($start->getValue(), $result->getValue())) {
+                        return ['Result has been altered from ' . Debug::stringify($start->getValue()) . ' to ' . Debug::stringify($result->getValue())];
+                    }
 
-                return [];
-            },
+                    return [];
+                },
         ];
 
         return $this;
@@ -61,9 +65,9 @@ class Test
     {
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1)[0];
         $this->success[$trace['line']][] = [
-            'source' => fn() => (new DataProvider($flags))->provide(false),
-            'success' => fn() => true,
-            'result' => function (Subject $start, Result $result): array {
+            'source' => static fn() => (new DataProvider($flags))->provide(false),
+            'success' => static fn() => true,
+            'result' => static function (Subject $start, Result $result): array {
                 if (!DataProvider::isSame($start->getValue(), $result->getValue())) {
                     return ['Result has been altered from ' . Debug::stringify($start->getValue()) . ' to ' . Debug::stringify($result->getValue())];
                 }
@@ -75,25 +79,57 @@ class Test
         return $this;
     }
 
-    public function provider(int $flags, \Closure $expectSuccess = null): self
+    public function provider(
+        int $flags,
+        \Closure $expectSuccess = null,
+        ?\Closure $successValidator = null
+    ): self
     {
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1)[0];
         $this->success[$trace['line']][] = [
-            'source' => fn() => (new DataProvider($flags))->provide(false),
-            'success' => $expectSuccess ?? fn() => true,
-            'result' => function (Subject $start, Result $result): array {
-                if (!DataProvider::isSame($start->getValue(), $result->getValue())) {
-                    return ['Result has been altered from ' . Debug::stringify($start->getValue()) . ' to ' . Debug::stringify($result->getValue())];
-                }
+            'source' => static fn() => (new DataProvider($flags))->provide(false),
+            'success' => $expectSuccess ?? static fn() => true,
+            'result' => $successValidator ?? static function (Subject $start, Result $result): array {
+                    if (!DataProvider::isSame($start->getValue(), $result->getValue())) {
+                        return ['Result has been altered from ' . Debug::stringify($start->getValue()) . ' to ' . Debug::stringify($result->getValue())];
+                    }
 
-                return [];
-            },
+                    return [];
+                },
         ];
 
         return $this;
     }
 
-    private function runThroughArgStack(mixed $value, string $carryoverName = '', array $generatedArgs = [], int $offset = 0, array $successArgs = []): array
+    public function value(
+        mixed     $value,
+        ?\Closure $expectSuccess = null,
+        ?\Closure $successValidator = null
+    ): self
+    {
+        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1)[0];
+        $this->success[$trace['line']][] = [
+            'source' => fn() => [$value],
+            'success' => $expectSuccess ?? fn() => true,
+            'result' => $successValidator ?? function (Subject $start, Result $result): array {
+                    if (!DataProvider::isSame($start->getValue(), $result->getValue())) {
+                        return ['Result has been altered from ' . Debug::stringify($start->getValue()) . ' to ' . Debug::stringify($result->getValue())];
+                    }
+
+                    return [];
+                },
+        ];
+
+        return $this;
+    }
+
+    private function runThroughArgStack(
+        mixed $value,
+        string $carryoverName = '',
+        array $generatedArgs = [],
+        int $offset = 0,
+        array $successArgs = []
+    ): array
     {
         $inSuccess = !in_array(false, $successArgs);
         if (!isset($this->args[$offset])) {
@@ -102,7 +138,7 @@ class Test
             ];
         }
         $result = [];
-        foreach ($this->args[$offset]->generate($value) as $subName => [$isSuccess, $argument]) {
+        foreach ($this->args[$offset]->generate($value, $generatedArgs) as $subName => [$isSuccess, $argument]) {
             if (!$inSuccess && !$isSuccess) continue;
             foreach ($this->runThroughArgStack(
                 $value,
@@ -132,16 +168,15 @@ class Test
                                 $name . ' >> ' . $argsCase . ' >> ' .
                                 ($success ? 'success' : 'error') . ' ' . $throwLabel;
 
+                            $realArgs = [];
+                            foreach ($args as $arg) {
+                                $realArgs[] = $arg instanceof \Closure ? $arg($realArgs, $successStack, $errorCollection) : $arg;
+                            }
                             yield $caseName => new TestCase(
                                 $success,
                                 $throw,
                                 Subject::default($value, $throw),
-                                function () use ($args, $value, $successStack, $errorCollection) {
-                                    $realArgs = [];
-                                    foreach ($args as $arg) {
-                                        $realArgs[] = $arg instanceof \Closure ? $arg($realArgs, $successStack, $errorCollection) : $arg;
-                                    }
-
+                                function () use ($value, $realArgs) {
                                     return ($this->parserCreation)($value)
                                         ->{$this->method}(...$realArgs);
                                 },
@@ -156,7 +191,8 @@ class Test
 
                                     return $errors;
                                 },
-                                $errorCollection
+                                $errorCollection,
+                                $realArgs
                             );
                         }
                     }

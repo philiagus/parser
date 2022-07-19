@@ -15,13 +15,14 @@ namespace Philiagus\Parser\Test\Mock;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\ParserTestBase\ErrorCollection;
 use Philiagus\Parser\Util\Debug;
 
-class ParserMock implements \Philiagus\Parser\Contract\Parser
+class ParserMock implements Parser
 {
 
     private array $expectedCalls = [];
@@ -80,9 +81,7 @@ class ParserMock implements \Philiagus\Parser\Contract\Parser
         }
 
         $next['value']($subject);
-        if (!$next['path']($subject)) {
-            throw new \LogicException("Subject assertion does not match");
-        }
+        $next['path']($subject);
         $next['count']--;
         if ($next['count'] > 0) {
             array_unshift($this->expectedCalls, $next);

@@ -34,13 +34,15 @@ class Parser implements Argument
     public function expectSingleCall(
         mixed    $value,
         mixed    $path,
-        \Closure $eligible = null
+        \Closure $eligible = null,
+        mixed    $result = null
     ): self
     {
         $this->expectedSingleCalls[] = [
             'value' => $value instanceof \Closure ? $value : fn() => $value,
             'path' => $path instanceof \Closure ? $path : fn() => $path,
             'eligible' => $eligible ?? fn() => true,
+            'result' => $result,
         ];
 
         return $this;
@@ -49,29 +51,31 @@ class Parser implements Argument
     public function expectMultipleCalls(
         mixed    $values,
         mixed    $path,
-        \Closure $eligible = null
+        \Closure $eligible = null,
+        mixed    $result = null
     ): self
     {
         $this->expectedMultipleCalls[] = [
             'values' => $values instanceof \Closure ? $values : fn() => $values,
             'paths' => $path instanceof \Closure ? $path : fn() => $path,
             'eligible' => $eligible ?? fn() => true,
+            'result' => $result,
         ];
 
         return $this;
     }
 
-    public function generate(mixed $subjectValue): \Generator
+    public function generate(mixed $subjectValue, array $generatedArgs): \Generator
     {
         $willBeCalled = array_reduce(
             $this->willBeCalledIf,
-            fn(bool $carry, \Closure $if) => $carry && $if($subjectValue),
+            fn(bool $carry, \Closure $if) => $carry && $if($subjectValue, $generatedArgs),
             true
         );
         if (!$willBeCalled) {
             yield 'uncalled parser' => [
                 true,
-                function (array $arguments) use ($subjectValue): \Philiagus\Parser\Contract\Parser {
+                function () use ($subjectValue): \Philiagus\Parser\Contract\Parser {
                     return new ParserMock();
                 },
             ];
@@ -84,45 +88,36 @@ class Parser implements Argument
             function (array $generatedArguments, array $successStack) use ($subjectValue): \Philiagus\Parser\Contract\Parser {
                 $parser = new ParserMock();
 
-                foreach ($this->expectedSingleCalls as $index => ['value' => $valueOrClosure, 'path' => $subjectClassOrClosure, 'eligible' => $eligible]) {
+                foreach ($this->expectedSingleCalls as $index => ['value' => $valueOrClosure,
+                         'path' => $subjectClassOrClosure,
+                         'eligible' => $eligible,
+                         'result' => $resultClosure]) {
                     if (!$eligible($subjectValue, $generatedArguments, $successStack)) continue;
 
                     $valueOrClosure = $valueOrClosure($subjectValue, $generatedArguments, $successStack);
-                    $valueClosure = $valueOrClosure;
-                    if (!$valueClosure instanceof \Closure) {
-                        $valueClosure = fn($v) => DataProvider::isSame($v, $valueOrClosure);
-                    }
-
                     $subjectClassOrClosure = $subjectClassOrClosure($subjectValue, $generatedArguments, $successStack);
-                    $subjectClosure = $subjectClassOrClosure;
-                    if (!$subjectClosure instanceof \Closure) {
-                        $subjectClosure = fn(Subject $subject) => $subject instanceof $subjectClassOrClosure;
-                    }
                     $parser
                         ->expect(
-                            $valueClosure,
-                            $subjectClosure
+                            $valueOrClosure,
+                            $subjectClassOrClosure,
+                            $resultClosure
                         );
                 }
 
-                foreach ($this->expectedMultipleCalls as $index => ['values' => $valueOrClosure, 'paths' => $subjectClassOrClosure, 'eligible' => $eligible]) {
+                foreach ($this->expectedMultipleCalls as $index => ['values' => $valueOrClosure,
+                         'paths' => $subjectClassOrClosure,
+                         'eligible' => $eligible,
+                         'result' => $resultClosure]) {
                     $valueOrClosures = $valueOrClosure($subjectValue, $generatedArguments, $successStack);
 
                     $subjectClassOrClosure = $subjectClassOrClosure($subjectValue, $generatedArguments, $successStack);
-                    $subjectClosure = $subjectClassOrClosure;
-                    if (!$subjectClosure instanceof \Closure) {
-                        $subjectClosure = fn(Subject $subject) => $subject instanceof $subjectClassOrClosure;
-                    }
 
                     foreach ($valueOrClosures as $valueOrClosure) {
-                        $valueClosure = $valueOrClosure;
-                        if (!$valueClosure instanceof \Closure) {
-                            $valueClosure = fn($v) => DataProvider::isSame($v, $valueOrClosure);
-                        }
                         $parser
                             ->expect(
-                                $valueClosure,
-                                $subjectClosure
+                                $valueOrClosure,
+                                $subjectClassOrClosure,
+                                $resultClosure
                             );
                     }
                 }

@@ -18,13 +18,15 @@ use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\ParseURL;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
+use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\SetTypeExceptionMessageTest;
-use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
 use Philiagus\Parser\Util\Debug;
-use PHPUnit\Framework\TestCase;
 
-class ParseURLTest extends TestBase
+/**
+ * @covers \Philiagus\Parser\Parser\ParseURL
+ */
+class ParseURLTest extends ParserTestBase
 {
 
     use ChainableParserTest, ValidValueParserTest, InvalidValueParserTest, SetTypeExceptionMessageTest;
@@ -87,11 +89,21 @@ class ParseURLTest extends TestBase
             ->parse(Subject::default('https://user:password@example.org:1234/path?query#fragment'));
     }
 
-    public function testStringCouldNotBeParsed(): void
+    public function testSetInvalidStringExceptionMessage(): void
     {
-        self::expectException(ParsingException::class);
-        ParseURL::new()
-            ->parse(Subject::default('https://'));
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->messageArgument()
+                    ->expectedWhen(fn() => true)
+            )
+            ->value(
+                'https://',
+                expectSuccess: fn() => false
+            );
+        $builder->run();
     }
 
     public function testStringCouldNotBeParsed_messageOverwrite(): void
@@ -115,31 +127,31 @@ class ParseURLTest extends TestBase
             'missing host' => ['path', 'Host'],
             'missing fragment' => ['path', 'Fragment'],
             'missing port' => ['path', 'Port'],
-            'message overwrite missing path' => ['https://example.org', 'Path', 'MSG {subject.raw}'],
-            'message overwrite missing user' => ['path', 'User', 'MSG {subject.raw}'],
-            'message overwrite missing password' => ['path', 'Password', 'MSG {subject.raw}'],
-            'message overwrite missing scheme' => ['path', 'Scheme', 'MSG {subject.raw}'],
-            'message overwrite missing host' => ['path', 'Host', 'MSG {subject.raw}'],
-            'message overwrite missing fragment' => ['path', 'Fragment', 'MSG {subject.raw}'],
-            'message overwrite missing port' => ['path', 'Port', 'MSG {subject.raw}'],
         ];
     }
 
     /**
      * @dataProvider provideMissingElementCases
      */
-    public function testMissingElement(string $value, string $target, ?string $message = null): void
+    public function testMissingElement(string $value, string $target): void
     {
-        $method = 'give' . ucfirst($target);
-
-        $parser = ParseURL::new();
-        if($message) {
-            $parser->$method($this->prophesizeUncalledParser(), $message);
-            self::expectExceptionMessage(Debug::parseMessage($message, ['subject' => $value]));
-        } else {
-            $parser->$method($this->prophesizeUncalledParser());
-        }
-        self::expectException(ParsingException::class);
-        $parser->parse(Subject::default($value));
+        $builder = $this->builder();
+        $builder
+            ->test(
+                methodName: 'give' . ucfirst($target)
+            )
+            ->arguments(
+                $builder
+                    ->parserArgument()
+                    ->willBeCalledIf(fn() => false),
+                $builder
+                    ->messageArgument()
+                    ->expectedWhen(fn() => true)
+            )
+            ->value(
+                $value,
+                expectSuccess: fn() => false
+            );
+        $builder->run();
     }
 }

@@ -22,6 +22,9 @@ class Message implements Argument
 
     private array $eligible = [];
     private array $parameterElements = [];
+    private array $fixedElements = [];
+
+    private ?\Closure $generatedElements = null;
 
     public function __construct()
     {
@@ -29,7 +32,7 @@ class Message implements Argument
 
     public function withParameterElement(string $name, int $parameter): self
     {
-        $this->parameterElements[$parameter] = $name;
+        $this->parameterElements[$name] = $parameter;
 
         return $this;
     }
@@ -41,7 +44,7 @@ class Message implements Argument
         return $this;
     }
 
-    public function generate(mixed $subjectValue): Generator
+    public function generate(mixed $subjectValue, array $generatedArgs): Generator
     {
         yield 'without replacers' => [
             true,
@@ -51,37 +54,71 @@ class Message implements Argument
                     fn(bool $carry, \Closure $eligible) => $carry && $eligible($subjectValue, $generatedArguments, $successStack),
                     true
                 );
-                if($eligible) {
-                    $errorCollection->add('MESSAGE WITHOUT REPLACERS');
+                if ($eligible) {
+                    $count = 1;
+                    if($this->generatedElements) {
+                        $count = count(($this->generatedElements)($subjectValue, $generatedArguments, $successStack));
+                    }
+                    for(;$count>0;$count--) {
+                        $errorCollection->add('MESSAGE WITHOUT REPLACERS');
+                    }
                 }
+
                 return 'MESSAGE WITHOUT REPLACERS';
             },
         ];
 
-        if(!$this->parameterElements) return;
-
         yield 'with replacers' => [
             true,
             function (array $generatedArguments, array $successStack, ErrorCollection $errorCollection) use ($subjectValue) {
-                $message = '{subject.debug} ';
-                $replacers = ['subject' => $subjectValue,];
-                foreach($this->parameterElements as $index => $parameterElement) {
-                    $message .= "\{$parameterElement.debug} ";
-                    $replacers[$parameterElement] = $generatedArguments[$index];
+                $generated = null;
+                if ($this->generatedElements) {
+                    $generated = ($this->generatedElements)($subjectValue, $generatedArguments, $successStack);
+                };
+                if (empty($generated)) {
+                    $generated = [[]];
                 }
                 $eligible = array_reduce(
                     $this->eligible,
                     fn(bool $carry, \Closure $eligible) => $carry && $eligible($subjectValue, $generatedArguments, $successStack),
                     true
                 );
-                if($eligible) {
-                    $errorCollection->add(
-                        Debug::parseMessage($message, $replacers)
-                    );
+                $message = '{subject.debug} ';
+                foreach ($generated as $generatedGroup) {
+                    $message = '{subject.debug} ';
+                    $replacers = ['subject' => $subjectValue];
+                    foreach ($this->parameterElements as $name => $index) {
+                        $message .= "{" . $name . ".debug} ";
+                        $replacers[$name] = $generatedArguments[$index];
+                    }
+                    foreach ($generatedGroup + $this->fixedElements as $name => $value) {
+                        $message .= "{" . $name . ".debug} ";
+                        $replacers[$name] = $value;
+                    }
+                    if ($eligible) {
+                        $errorCollection->add(
+                            Debug::parseMessage($message, $replacers)
+                        );
+                    }
                 }
+
                 return $message;
             },
         ];
+    }
+
+    public function withFixedElement(string $name, mixed $value): self
+    {
+        $this->fixedElements[$name] = $value;
+
+        return $this;
+    }
+
+    public function withGeneratedElements(\Closure $generator): self
+    {
+        $this->generatedElements = $generator;
+
+        return $this;
     }
 
 

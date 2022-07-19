@@ -23,6 +23,8 @@ class ResultBuilder
 
     private Base\Subject $currentSubject;
 
+    private mixed $currentValue;
+
     /** @var Error[] */
     private array $errors = [];
 
@@ -32,9 +34,16 @@ class ResultBuilder
     )
     {
         $this->subject = new Subject\Parser($subject, $parserDescription);
-        $this->currentSubject = $this->subject;
+        $this->setCurrentSubject($this->subject);
     }
 
+    public function setCurrentSubject(Base\Subject $subject): self
+    {
+        $this->currentSubject = $subject;
+        $this->currentValue = $subject->getValue();
+
+        return $this;
+    }
 
     /**
      * Used when handing over the value of a property to another parser
@@ -107,11 +116,6 @@ class ResultBuilder
     public function subjectPropertyName(string $propertyName, bool $isPathInValue = true): Subject\PropertyName
     {
         return new Subject\PropertyName($propertyName, $propertyName, $this->currentSubject, $isPathInValue, $this->currentSubject->throwOnError());
-    }
-
-    public function subjectInternal(string $description, mixed $value, ?bool $throwOnError = null): Subject\Internal
-    {
-        return new Subject\Internal($value, $description, $this->currentSubject, false, $throwOnError ?? $this->currentSubject->throwOnError());
     }
 
     public function incorporateResult(Result $result, mixed $defaultValue = null): mixed
@@ -189,26 +193,24 @@ class ResultBuilder
         );
     }
 
-    public function getCurrentSubject(): Base\Subject
+    public function createResultWithCurrentValue(): Result
     {
-        return $this->currentSubject;
-    }
-
-    public function setCurrentSubject(Base\Subject $subject): self
-    {
-        $this->currentSubject = $subject;
-
-        return $this;
-    }
-
-    public function createResultBasedOnCurrentSubject(): Result
-    {
-        return new Result($this->currentSubject, $this->currentSubject->getValue(), $this->errors);
+        return new Result($this->currentSubject, $this->currentValue, $this->errors);
     }
 
     public function getCurrentValue(): mixed
     {
-        return $this->currentSubject->getValue();
+        return $this->currentValue;
+    }
+
+    public function setCurrentValue(string $internalDescription, mixed $value): void
+    {
+        $this->currentSubject = new Subject\Internal(
+            $value,
+            $internalDescription,
+            $this->currentSubject
+        );
+        $this->currentValue = $value;
     }
 
 }

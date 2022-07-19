@@ -98,7 +98,7 @@ class AssertStdClass implements Parser
             $this->logTypeError($builder);
         }
 
-        return $builder->createResultBasedOnCurrentSubject();
+        return $builder->createResultWithCurrentValue();
     }
 
     /**
