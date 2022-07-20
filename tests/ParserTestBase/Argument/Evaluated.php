@@ -45,7 +45,7 @@ class Evaluated implements Argument
         return $this;
     }
 
-    public function generate(mixed $subjectValue, array $generatedArgs): Generator
+    public function generate(mixed $subjectValue, array $generatedArgs, array $successes): Generator
     {
         foreach ($this->cases as $name => ['success' => $success, 'generator' => $generator, 'eligible' => $eligible]) {
             if ($eligible($subjectValue)) {
@@ -56,4 +56,8 @@ class Evaluated implements Argument
         }
     }
 
+    public function errorMeansFailure(): bool
+    {
+        return true;
+    }
 }

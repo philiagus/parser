@@ -27,6 +27,27 @@ class ParserMock implements Parser
 
     private array $expectedCalls = [];
 
+    public function error(?ErrorCollection $errorCollection = null): self
+    {
+        $this->expect(
+            fn() => true,
+            fn() => true,
+            static function (Subject $subject) use ($errorCollection) {
+                $message = uniqid(microtime());
+                $error = new Error($subject, $message);
+                $errorCollection?->add($error->getMessage());
+                if ($subject->throwOnError()) {
+                    throw new ParsingException($error);
+                }
+
+                return new Result($subject, null, [$error]);
+            },
+            INF
+        );
+
+        return $this;
+    }
+
     public function expect(
         mixed           $value,
         \Closure|string $pathType,
@@ -52,27 +73,6 @@ class ParserMock implements Parser
         return $this;
     }
 
-    public function error(?ErrorCollection $errorCollection = null): self
-    {
-        $this->expect(
-            fn() => true,
-            fn() => true,
-            static function (Subject $subject) use ($errorCollection) {
-                $message = uniqid(microtime());
-                $error = new Error($subject, $message);
-                $errorCollection?->add($error->getMessage());
-                if ($subject->throwOnError()) {
-                    throw new ParsingException($error);
-                }
-
-                return new Result($subject, null, [$error]);
-            },
-            INF
-        );
-
-        return $this;
-    }
-
     public function parse(Subject $subject): Result
     {
         $next = array_shift($this->expectedCalls);
@@ -88,5 +88,15 @@ class ParserMock implements Parser
         }
 
         return $next['result']($subject);
+    }
+
+    public function acceptAnything(null|int|float $times = null): self
+    {
+        return $this->expect(
+            fn() => true,
+            fn() => true,
+            static fn(Subject $subject) => new Result($subject, $subject->getValue(), []),
+            $times ?? INF,
+        );
     }
 }

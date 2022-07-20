@@ -258,7 +258,7 @@ class AssertStringRegex implements Parser
         }
 
         foreach ($this->numberMatchesParsers as $numberMatchesParser) {
-            $builder->incorporateResult(
+            $builder->incorporateChildResult(
                 $numberMatchesParser->parse(
                     $builder->subjectMeta('number of matches', $result)
                 )
@@ -266,7 +266,7 @@ class AssertStringRegex implements Parser
         }
 
         foreach ($this->matchesParser as $parser) {
-            $builder->incorporateResult(
+            $builder->incorporateChildResult(
                 $parser->parse(
                     $builder->subjectMeta('matches', $matches)
                 )

@@ -29,7 +29,7 @@ class Error implements Contract\Error
         foreach ($sourceErrors as $sourceError) {
             if (!$sourceError instanceof Error) {
                 throw new \LogicException(
-                    "Error class has been filled wi non-Error instance as sourceError: " . Debug::stringify($sourceError)
+                    "Error class has been filled with non-Error instance as sourceError: " . Debug::stringify($sourceError)
                 );
             }
         }

@@ -46,7 +46,7 @@ class AssertArray implements Parser
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($parser): void {
             foreach ($builder->getCurrentValue() as $key => $value) {
-                $builder->incorporateResult(
+                $builder->incorporateChildResult(
                     $parser->parse(
                         $builder->subjectArrayValue($key, $value)
                     )
@@ -82,7 +82,7 @@ class AssertArray implements Parser
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($parser): void {
             foreach ($builder->getCurrentValue() as $key => $_) {
-                $builder->incorporateResult(
+                $builder->incorporateChildResult(
                     $parser->parse(
                         $builder->subjectArrayKey($key)
                     )
@@ -101,7 +101,7 @@ class AssertArray implements Parser
     public function giveKeys(ParserContract $arrayParser): self
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($arrayParser): void {
-            $builder->incorporateResult(
+            $builder->incorporateChildResult(
                 $arrayParser->parse(
                     $builder->subjectMeta(
                         'keys',
@@ -124,7 +124,7 @@ class AssertArray implements Parser
     public function giveLength(ParserContract $integerParser): self
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($integerParser): void {
-            $builder->incorporateResult(
+            $builder->incorporateChildResult(
                 $integerParser->parse(
                     $builder->subjectMeta('length', count($builder->getCurrentValue())))
             );
@@ -161,7 +161,7 @@ class AssertArray implements Parser
 
                 return;
             }
-            $builder->incorporateResult(
+            $builder->incorporateChildResult(
                 $parser->parse($builder->subjectArrayValue($key, $value[$key]))
             );
         };
@@ -183,7 +183,7 @@ class AssertArray implements Parser
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($key, $default, $parser): void {
             $value = $builder->getCurrentValue();
-            $builder->incorporateResult(
+            $builder->incorporateChildResult(
                 $parser->parse(
                     array_key_exists($key, $value) ?
                         $builder->subjectArrayValue($key, $value[$key]) :
@@ -230,7 +230,7 @@ class AssertArray implements Parser
         $this->assertionList[] = static function (ResultBuilder $builder) use ($key, $parser): void {
             $value = $builder->getCurrentValue();
             if (array_key_exists($key, $value)) {
-                $builder->incorporateResult(
+                $builder->incorporateChildResult(
                     $parser->parse(
                         $builder->subjectArrayValue($key, $value[$key])
                     )

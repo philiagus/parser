@@ -45,7 +45,7 @@ class CaseBuilder
             $parserCreation = fn() => $targetClassName::new();
         }
 
-        if ($methodName === null) {
+        if (func_num_args() < 2) {
             if (!preg_match('~^test_?(?<method>.++)$~', $trace[1]['function'], $matches)) {
                 Assert::fail('Cannot extract method name');
             }
@@ -73,34 +73,44 @@ class CaseBuilder
 
     public function run(): void
     {
-        $errors = [];
+        $results = [];
         $hasErrors = [];
         foreach ($this->tests as $test) {
             foreach ($test->generate() as $name => $case) {
+                Assert::assertEquals(true, true);
                 $result = $case->run();
-                if ($result) $hasErrors = true;
-                $errors[$name] = $result;
+                if ($result['hasError']) $hasErrors = true;
+                $results[$name] = $result;
             }
         }
 
-        Assert::assertEquals(true, true);
         if ($hasErrors) {
-            $string = '';
-            foreach ($errors as $name => $subErrors) {
-                $string .= PHP_EOL . $name;
-                if (empty($subErrors)) {
-                    $string .= ' => ✔';
-                    continue;
-                }
-
-                $string .= ' => ❌';
-                $string .= PHP_EOL;
-                foreach ($subErrors as $subError) {
-                    $string .= "\t- $subError" . PHP_EOL;
-                }
-            }
+            $string = PHP_EOL . implode(PHP_EOL, $this->recursivePrint($results));
             Assert::fail($string);
         }
+    }
+
+    private function recursivePrint(array $results, int $indent = 0): array
+    {
+        $return = [];
+        $indentChar = str_repeat("\t", $indent);
+        $indentedChar = str_repeat("\t", $indent + 1);
+        foreach ($results as $name => $result) {
+            $errors = $result['errors'] ?? [];
+            if (!$result['hasError']) {
+                $return[] = $indentChar . '✔ ' . $name;
+                continue;
+            }
+
+            $return[] = $indentChar . '❌ ' . $name;
+            foreach ($errors as $error) {
+                $return[] = $indentedChar . "- $error";
+            }
+            if(isset($result['children'])) {
+                $return = [...$return, ...$this->recursivePrint($result['children'], $indent + 1)];
+            }
+        }
+        return $return;
     }
 
     public function reveal(): array
@@ -120,9 +130,36 @@ class CaseBuilder
         return new Argument\Fixed();
     }
 
-    public function generatedArgument(int $flags = DataProvider::TYPE_ALL): Argument\Generated
+    public function dataProviderArgument(int $flags = DataProvider::TYPE_ALL): Argument\Generated
     {
         return new Argument\Generated($flags);
+    }
+
+    public function testStaticConstructor(): Test
+    {
+        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+        $reflection = new \ReflectionClass($trace[1]['class']);
+        if (!preg_match('~@covers\s++(?<class>\S++)~', $reflection->getDocComment() ?: '', $matches)) {
+            Assert::fail("Class {$trace[0]['class']} does not define a @covers");
+        }
+        $targetClassName = $matches['class'];
+        $targetClass = new \ReflectionClass($matches['class']);
+
+
+        if (!preg_match('~^test_?(?<method>.++)$~', $trace[1]['function'], $matches)) {
+            Assert::fail('Cannot extract method name');
+        }
+
+        $methodName = lcfirst($matches['method']);
+        if (
+            !$targetClass->hasMethod($methodName) ||
+            !$targetClass->getMethod($methodName)->isStatic()
+        ) {
+            Assert::fail("Static method $methodName does not exist for class {$matches['class']}");
+        }
+        $parserCreation = fn($value, array $args) => $targetClassName::$methodName(...$args);
+
+        return $this->tests[] = new Test($parserCreation, null);
     }
 
 }

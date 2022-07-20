@@ -14,27 +14,34 @@ namespace Philiagus\Parser\Test\ParserTestBase;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Debug;
 
 class Test
 {
     /** @var Argument[] */
-    private array $args = [];
+    private array $methodArgs = [];
+
+    /** @var Argument[] */
+    private array $constructorArgs = [];
 
     /** @var array<string, \Closure> */
     private array $success = [];
 
+    private ?self $then = null;
+    private array $expectError = [];
+
     public function __construct(
         private readonly \Closure $parserCreation,
-        public readonly string    $method
+        public readonly ?string   $method
     )
     {
     }
 
     public function arguments(Argument ...$arguments): self
     {
-        $this->args = [...$this->args, ...$arguments];
+        $this->methodArgs = [...$this->methodArgs, ...$arguments];
 
         return $this;
     }
@@ -79,9 +86,14 @@ class Test
         return $this;
     }
 
+    public function then(string $method): self
+    {
+        return $this->then = new self(fn() => null, $method);
+    }
+
     public function provider(
-        int $flags,
-        \Closure $expectSuccess = null,
+        int       $flags,
+        \Closure  $expectSuccess = null,
         ?\Closure $successValidator = null
     ): self
     {
@@ -123,29 +135,39 @@ class Test
         return $this;
     }
 
+    public function expectError(\Closure $errorStringGenerator): self
+    {
+        $this->expectError[] = $errorStringGenerator;
+
+        return $this;
+    }
+
     private function runThroughArgStack(
-        mixed $value,
+        mixed  $value,
+        array  $generatedArgs,
+        array  $successArgs,
         string $carryoverName = '',
-        array $generatedArgs = [],
-        int $offset = 0,
-        array $successArgs = []
+        int    $internalOffset = 0,
+        bool $inSuccess = true
     ): array
     {
-        $inSuccess = !in_array(false, $successArgs);
-        if (!isset($this->args[$offset])) {
+        $allArgs = $this->methodArgs;
+        if (!isset($allArgs[$internalOffset])) {
             return [
                 $carryoverName => [$inSuccess, $generatedArgs, $successArgs],
             ];
         }
         $result = [];
-        foreach ($this->args[$offset]->generate($value, $generatedArgs) as $subName => [$isSuccess, $argument]) {
-            if (!$inSuccess && !$isSuccess) continue;
+        $errorMeansFailure = $allArgs[$internalOffset]->errorMeansFailure();
+        foreach ($allArgs[$internalOffset]->generate($value, $generatedArgs, $successArgs) as $subName => [$isSuccess, $argument]) {
+            if ($errorMeansFailure && !$inSuccess && !$isSuccess) continue;
             foreach ($this->runThroughArgStack(
                 $value,
-                $carryoverName . ' | ' . $subName,
                 [...$generatedArgs, $argument],
-                $offset + 1,
-                [...$successArgs, $isSuccess]
+                [...$successArgs, $isSuccess],
+                $carryoverName . ' | ' . $subName,
+                $internalOffset + 1,
+                $inSuccess && ($isSuccess || !$errorMeansFailure)
             ) as $name => $forward) {
                 $result[$name] = $forward;
             }
@@ -154,16 +176,32 @@ class Test
         return $result;
     }
 
-    public function generate(): \Generator
+    public function generate(
+        ?Parser $handedOverParser = null,
+        array   $handedOverArguments = [],
+        array   $handedOverSuccesses = []
+    ): \Generator
     {
+        $handedOverCount = count($handedOverArguments);
         foreach ($this->success as $line => $calls) {
             foreach ($calls as $callIndex => ['source' => $sourceGenerator, 'success' => $successCallback, 'result' => $resultValidator]) {
                 foreach ($sourceGenerator() as $name => $value) {
                     $isSuccess = $successCallback($value);
-                    foreach ($this->runThroughArgStack($value) as $argsCase => [$success, $args, $successStack]) {
+                    foreach (
+                        $this->runThroughArgStack(
+                            $value,
+                            generatedArgs: $handedOverArguments,
+                            successArgs: $handedOverSuccesses
+                        ) as $argsCase => [$success, $args, $successStack]
+                    ) {
                         $success = $isSuccess && $success;
                         foreach (['throw' => true, 'nothrow' => false] as $throwLabel => $throw) {
                             $errorCollection = new ErrorCollection();
+                            if(!$success) {
+                                foreach($this->expectError as $expectError) {
+                                    $errorCollection->add($expectError($value));
+                                }
+                            }
                             $caseName = $line . ' #' . $callIndex . ' [' . Debug::stringify($value) . '] ' .
                                 $name . ' >> ' . $argsCase . ' >> ' .
                                 ($success ? 'success' : 'error') . ' ' . $throwLabel;
@@ -172,13 +210,18 @@ class Test
                             foreach ($args as $arg) {
                                 $realArgs[] = $arg instanceof \Closure ? $arg($realArgs, $successStack, $errorCollection) : $arg;
                             }
+                            $methodArgs = array_slice($realArgs, $handedOverCount);
                             yield $caseName => new TestCase(
                                 $success,
                                 $throw,
                                 Subject::default($value, $throw),
-                                function () use ($value, $realArgs) {
-                                    return ($this->parserCreation)($value)
-                                        ->{$this->method}(...$realArgs);
+                                function () use ($value, $methodArgs, $handedOverParser): Parser {
+                                    $parser = $handedOverParser ?? ($this->parserCreation)($value, $this->method !== null ? [] : $methodArgs);
+                                    if ($this->method) {
+                                        $parser->{$this->method}(...$methodArgs);
+                                    }
+
+                                    return $parser;
                                 },
                                 $success ? $resultValidator : function (Subject $subject, Result $result): array {
                                     $errors = [];
@@ -192,7 +235,9 @@ class Test
                                     return $errors;
                                 },
                                 $errorCollection,
-                                $realArgs
+                                $realArgs,
+                                $successStack,
+                                $this->then
                             );
                         }
                     }

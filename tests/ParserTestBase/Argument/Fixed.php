@@ -38,10 +38,15 @@ class Fixed implements Argument
         return $this;
     }
 
-    public function generate(mixed $subjectValue, array $generatedArgs): Generator
+    public function generate(mixed $subjectValue, array $generatedArgs, array $successes): Generator
     {
         foreach($this->cases as $description => [$success, $value]) {
             yield $description => [$success, fn() => $value];
         }
+    }
+
+    public function errorMeansFailure(): bool
+    {
+        return true;
     }
 }

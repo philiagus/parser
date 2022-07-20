@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\ParserTestBase\Argument;
 
-use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
@@ -27,15 +26,25 @@ class Parser implements Argument
     private array $expectedMultipleCalls = [];
     private array $willBeCalledIf = [];
 
+    private bool $errorWillBeHidden = false;
+    private bool $errorIsFail = true;
+
     public function __construct()
     {
+    }
+
+    public function errorWillBeHidden(): self
+    {
+        $this->errorWillBeHidden = true;
+
+        return $this;
     }
 
     public function expectSingleCall(
         mixed    $value,
         mixed    $path,
         \Closure $eligible = null,
-        mixed    $result = null
+        mixed    $result = null,
     ): self
     {
         $this->expectedSingleCalls[] = [
@@ -65,11 +74,11 @@ class Parser implements Argument
         return $this;
     }
 
-    public function generate(mixed $subjectValue, array $generatedArgs): \Generator
+    public function generate(mixed $subjectValue, array $generatedArgs, array $successes): \Generator
     {
         $willBeCalled = array_reduce(
             $this->willBeCalledIf,
-            fn(bool $carry, \Closure $if) => $carry && $if($subjectValue, $generatedArgs),
+            fn(bool $carry, \Closure $if) => $carry && $if($subjectValue, $generatedArgs, $successes),
             true
         );
         if (!$willBeCalled) {
@@ -132,10 +141,12 @@ class Parser implements Argument
                 $parser->expect(
                     fn() => true,
                     fn() => true,
-                    static function (Subject $subject) use ($errorCollection) {
+                    function (Subject $subject) use ($errorCollection) {
                         $message = uniqid(microtime());
                         $error = new Error($subject, $message);
-                        $errorCollection->add($error->getMessage());
+                        if (!$this->errorWillBeHidden) {
+                            $errorCollection->add($error->getMessage());
+                        }
                         if ($subject->throwOnError()) {
                             throw new ParsingException($error);
                         }
@@ -154,5 +165,17 @@ class Parser implements Argument
         $this->willBeCalledIf[] = $condition;
 
         return $this;
+    }
+
+    public function errorDoesNotMeanFail(): self
+    {
+        $this->errorIsFail = false;
+
+        return $this;
+    }
+
+    public function errorMeansFailure(): bool
+    {
+        return $this->errorIsFail;
     }
 }

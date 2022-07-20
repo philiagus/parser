@@ -118,11 +118,9 @@ class ResultBuilder
         return new Subject\PropertyName($propertyName, $propertyName, $this->currentSubject, $isPathInValue, $this->currentSubject->throwOnError());
     }
 
-    public function incorporateResult(Result $result, mixed $defaultValue = null): mixed
+    public function incorporateChildResult(Result $result, mixed $defaultValue = null): mixed
     {
-        if ($result->isSuccess()) {
-            return $result->getValue();
-        }
+        if ($result->isSuccess()) return $result->getValue();
 
         $errors = $result->getErrors();
         if ($this->subject->throwOnError()) {
@@ -155,7 +153,7 @@ class ResultBuilder
                 $message,
                 $replacers,
                 $sourceThrowable,
-                ...$sourceErrors
+                $sourceErrors
             )
         );
     }

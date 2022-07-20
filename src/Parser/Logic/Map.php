@@ -223,9 +223,9 @@ class Map implements Parser
                 case self::TYPE_PARSER:
                     /** @var Parser $from */
                     try {
-                        $builder->incorporateResult(
+                        $builder->incorporateChildResult(
                             $from->parse(
-                                $builder->subjectMeta('check', $subject->getValue(), true)
+                                $builder->subjectMeta('check', $subject->getValue(), false)
                             )
                         );
                     } catch (Exception\ParsingException $e) {

@@ -16,7 +16,6 @@ use Philiagus\Parser\Base\Chainable;
 use Philiagus\Parser\Base\OverwritableParserDescription;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
-use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Result;
 
 
@@ -27,25 +26,25 @@ class Preserve implements Parser
 {
     use Chainable, OverwritableParserDescription;
 
-    /** @var ParserContract */
-    private ParserContract $around;
+    /** @var Parser */
+    private Parser $around;
 
     /**
      * Preserve constructor.
      *
-     * @param ParserContract $around
+     * @param Parser $around
      */
-    private function __construct(ParserContract $around)
+    private function __construct(Parser $around)
     {
         $this->around = $around;
     }
 
     /**
-     * @param ParserContract $parser
+     * @param Parser $parser
      *
      * @return static
      */
-    public static function around(ParserContract $parser): self
+    public static function around(Parser $parser): self
     {
         return new self($parser);
     }
@@ -53,7 +52,7 @@ class Preserve implements Parser
     public function parse(Subject $subject): Result
     {
         $builder = $this->createResultBuilder($subject);
-        $builder->incorporateResult(
+        $builder->incorporateChildResult(
             $this->around->parse(
                 $builder->subjectForwarded('preserved around')
             )

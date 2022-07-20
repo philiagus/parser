@@ -128,7 +128,7 @@ class ConvertToString implements Parser
                         if ($elementConverter) {
                             $conversionResult = $elementConverter->parse($newSubject);
                             if (!$conversionResult->isSuccess()) {
-                                $builder->incorporateResult($conversionResult);
+                                $builder->incorporateChildResult($conversionResult);
                                 continue;
                             }
                             $convertedElement = $conversionResult->getValue();

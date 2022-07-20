@@ -111,7 +111,7 @@ class AssertStringMultibyte implements Parser
     public function giveLength(ParserContract $integerParser): self
     {
         $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($integerParser): void {
-            $builder->incorporateResult(
+            $builder->incorporateChildResult(
                 $integerParser->parse(
                     $builder->subjectMeta('length in ' . $encoding, mb_strlen($value, $encoding))
                 )
@@ -181,7 +181,7 @@ class AssertStringMultibyte implements Parser
             } else {
                 $part = mb_substr($value, $start, $length, $encoding);
             }
-            $builder->incorporateResult(
+            $builder->incorporateChildResult(
                 $stringParser->parse(
                     $builder->subjectMeta("$encoding substring from $start to " . ($length ?? 'end'), $part)
                 )
@@ -286,7 +286,7 @@ class AssertStringMultibyte implements Parser
     public function giveEncoding(Parser $parser): self
     {
         $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($parser) {
-            $builder->incorporateResult(
+            $builder->incorporateChildResult(
                 $parser->parse(
                     $builder->subjectMeta('encoding', $encoding)
                 )

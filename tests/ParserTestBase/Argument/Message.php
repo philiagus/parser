@@ -44,7 +44,7 @@ class Message implements Argument
         return $this;
     }
 
-    public function generate(mixed $subjectValue, array $generatedArgs): Generator
+    public function generate(mixed $subjectValue, array $generatedArgs, array $successes): Generator
     {
         yield 'without replacers' => [
             true,
@@ -119,6 +119,11 @@ class Message implements Argument
         $this->generatedElements = $generator;
 
         return $this;
+    }
+
+    public function errorMeansFailure(): bool
+    {
+        return true;
     }
 
 

@@ -52,9 +52,9 @@ class OverwriteErrors implements Parser
             if($result->isSuccess()) {
                 return $builder->createResultFromResult($result);
             }
-            $errors[] = $result->getErrors();
+            $errors = $result->getErrors();
         } catch (ParsingException $exception) {
-            $errors[] = $exception->getMessage();
+            $errors[] = $exception->getError();
         }
 
         $builder->logErrorUsingDebug(

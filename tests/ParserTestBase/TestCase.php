@@ -14,9 +14,12 @@ namespace Philiagus\Parser\Test\ParserTestBase;
 
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
+use PHPUnit\Framework\Assert;
 
 class TestCase
 {
+
+    private Parser $parser;
 
     public function __construct(
         private readonly bool            $success,
@@ -25,7 +28,9 @@ class TestCase
         private readonly \Closure        $parserBuilder,
         private readonly \Closure        $resultValidator,
         private readonly ErrorCollection $errorCollection,
-        private readonly array           $methodArgs
+        private readonly array           $usedArguments,
+        private readonly array           $usedSuccesses,
+        private readonly ?Test           $followupTest
     )
     {
 
@@ -33,11 +38,37 @@ class TestCase
 
     public function run(): array
     {
+        $errors = $this->runInternally();
+        $result = [
+            'errors' => $errors,
+            'hasError' => !empty($errors)
+        ];
+        if (empty($errors) && $this->followupTest) {
+            foreach ($this->followupTest->generate(
+                $this->parser,
+                $this->usedArguments,
+                $this->usedSuccesses
+            ) as $name => $case) {
+                Assert::assertEquals(true, true);
+                $childResult = $case->run();
+                if ($childResult['hasError']) $result['hasError'] = true;
+                $result['children'][$name] = $result;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return array{hasErrors: bool, errors: array}
+     */
+    private function runInternally(): array
+    {
         $errors = [];
-        /** @var Parser $parser */
-        $parser = ($this->parserBuilder)();
+
+        $this->parser = ($this->parserBuilder)();
         try {
-            $result = $parser->parse($this->subject);
+            $result = $this->parser->parse($this->subject);
         } catch (\Throwable $e) {
             $errors = [...$errors, ...$this->errorCollection->assertException($e)];
             if (!$this->success && $this->throw) {
@@ -50,13 +81,14 @@ class TestCase
             return ['No exception thrown, but expected'];
         }
         if ($this->success !== $result->isSuccess()) {
-            return ['Success mismatch'];
+            return ['Success mismatch, should be ' . ($this->subject ? '' : 'NO ') . ' success'];
         }
 
-        $errors = [...$errors, ...($this->resultValidator)($this->subject, $result, $this->methodArgs)];
-        $errors = [...$errors, ...$this->errorCollection->assertResult($result)];
-
-        return $errors;
+        return [
+            ...$errors,
+            ...($this->resultValidator)($this->subject, $result, $this->usedArguments),
+            ...$this->errorCollection->assertResult($result),
+        ];
     }
 
 }

@@ -16,6 +16,8 @@ use Generator;
 
 interface Argument {
 
-    public function generate(mixed $subjectValue, array $generatedArgs): Generator;
+    public function generate(mixed $subjectValue, array $generatedArgs, array $successes): Generator;
+
+    public function errorMeansFailure(): bool;
 
 }

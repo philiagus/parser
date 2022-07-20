@@ -9,7 +9,11 @@
   -->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
-         colors="true" bootstrap="vendor/autoload.php" cacheResult="false">
+         colors="true"
+         bootstrap="vendor/autoload.php"
+         cacheResult="false"
+         stopOnFailure="true"
+>
   <coverage>
     <include>
       <directory>./src</directory>

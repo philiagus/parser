@@ -54,6 +54,25 @@ class AssertObjectTest extends ParserTestBase
     {
         $builder = $this->builder();
         $builder
+            ->testStaticConstructor()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(static fn($value) => get_class($value))
+                    ->error(static fn($value) => $value instanceof \stdClass ? Parser::class : \stdClass::class),
+                $builder
+                    ->messageArgument()
+                    ->withParameterElement('class', 0)
+                    ->expectedWhen(static fn($value, array $args) => !$value instanceof $args[0])
+            )
+            ->successProvider(DataProvider::TYPE_OBJECT);
+        $builder->run();
+    }
+
+    public function testAssertInstanceOf(): void
+    {
+        $builder = $this->builder();
+        $builder
             ->test()
             ->arguments(
                 $builder
@@ -63,7 +82,7 @@ class AssertObjectTest extends ParserTestBase
                 $builder
                     ->messageArgument()
                     ->withParameterElement('class', 0)
-                    ->expectedWhen(fn($value, array $args) => !$value instanceof $args[0])
+                    ->expectedWhen(static fn($value, array $args) => !$value instanceof $args[0])
             )
             ->successProvider(DataProvider::TYPE_OBJECT);
         $builder->run();

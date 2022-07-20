@@ -109,7 +109,7 @@ class ParseStdClass extends AssertStdClass
                 return;
             }
 
-            $builder->incorporateResult($result);
+            $builder->incorporateChildResult($result);
         };
 
         return $this;
@@ -143,7 +143,7 @@ class ParseStdClass extends AssertStdClass
                 return;
             }
 
-            $builder->incorporateResult($result);
+            $builder->incorporateChildResult($result);
         };
 
         return $this;
@@ -184,7 +184,7 @@ class ParseStdClass extends AssertStdClass
                     continue;
                 }
 
-                $builder->incorporateResult($newNameResult);
+                $builder->incorporateChildResult($newNameResult);
 
                 $result->$oldName = $propValue;
             }
@@ -215,7 +215,7 @@ class ParseStdClass extends AssertStdClass
 
                     continue;
                 }
-                $builder->incorporateResult($newValueResult);
+                $builder->incorporateChildResult($newValueResult);
                 $result->$property = $value;
             }
 

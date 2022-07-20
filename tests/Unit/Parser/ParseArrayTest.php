@@ -92,7 +92,7 @@ class ParseArrayTest extends ParserTestBase
                         fn(array $value) => implode('|', array_keys($value)) . '|'
                     ),
                 $builder
-                    ->generatedArgument()
+                    ->dataProviderArgument()
             )
             ->provider(
                 DataProvider::TYPE_ARRAY,
@@ -118,7 +118,7 @@ class ParseArrayTest extends ParserTestBase
             ->test()
             ->arguments(
                 $builder
-                    ->generatedArgument(DataProvider::TYPE_ARRAY)
+                    ->dataProviderArgument(DataProvider::TYPE_ARRAY)
             )
             ->provider(
                 DataProvider::TYPE_ARRAY,

@@ -63,7 +63,7 @@ class OneOf implements Parser
      */
     public function parser(Parser ...$parser): self
     {
-        $this->options = array_merge($this->options, $parser);
+        $this->options = [...$this->options, ...$parser];
 
         return $this;
     }
@@ -77,7 +77,7 @@ class OneOf implements Parser
      */
     public function sameAs(...$options): self
     {
-        $this->sameOptions = array_merge($this->sameOptions, $options);
+        $this->sameOptions = [...$this->sameOptions, ...$options];
 
         return $this;
     }
@@ -96,7 +96,7 @@ class OneOf implements Parser
      */
     public function equalTo(...$options): self
     {
-        $this->equalsOptions = array_merge($this->sameOptions, $options);
+        $this->equalsOptions = [...$this->sameOptions, ...$options];
 
         return $this;
     }
@@ -147,7 +147,7 @@ class OneOf implements Parser
                 return $builder->createResultUnchanged();
             }
 
-            $errors = new Error(
+            $errors[] = new Error(
                 $subject,
                 'Value is not same as any of these: ' . implode(', ', array_map(fn($value) => Debug::stringify($value), $this->sameOptions))
             );
@@ -158,7 +158,7 @@ class OneOf implements Parser
                 return $builder->createResultUnchanged();
             }
 
-            $errors = new Error(
+            $errors[] = new Error(
                 $subject,
                 'Value is not equal to any of these: ' . implode(', ', array_map(fn($value) => Debug::stringify($value), $this->sameOptions))
             );
@@ -181,7 +181,7 @@ class OneOf implements Parser
         }
 
         if ($this->defaultSet) {
-            return $this->default;
+            return $builder->createResult($this->default);
         }
 
         $builder->logErrorUsingDebug($this->exceptionMessage, [], null, $errors);

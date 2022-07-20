@@ -67,7 +67,9 @@ class Fork implements Parser
     {
         $builder = $this->createResultBuilder($subject);
         foreach ($this->parsers as $index => $parser) {
-            $parser->parse($builder->subjectForwarded("fork #$index"));
+            $builder->incorporateChildResult(
+                $parser->parse($builder->subjectForwarded("fork #$index"))
+            );
         }
 
         return $builder->createResultUnchanged();

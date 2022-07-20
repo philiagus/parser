@@ -25,13 +25,13 @@ trait ValidValueParserTest
     /**
      * @dataProvider provideValidValuesAndParsersAndResults
      */
-    public function testThatItAcceptsValidValuesThrowing($value, \Closure $parser, $expected): void
+    public function testThatItAcceptsValidValuesThrowing($value, \Closure $parser, $expected, bool $resultWillBeWrapped = true): void
     {
         $subject = Subject::default($value);
         /** @var Result $result */
         $result = $parser($value)->parse($subject);
         self::assertTrue($result->isSuccess());
-        self::assertSame($subject, $result->getSubject()->getParent());
+        self::assertSame($subject, $resultWillBeWrapped ? $result->getSubject()->getParent() : $result->getSubject());
         self::assertSame([], $result->getErrors());
         self::assertTrue(
             DataProvider::isSame($expected, $result->getValue()),
@@ -42,13 +42,13 @@ trait ValidValueParserTest
     /**
      * @dataProvider provideValidValuesAndParsersAndResults
      */
-    public function testThatItAcceptsValidValuesNotThrowing($value, \Closure $parser, $expected): void
+    public function testThatItAcceptsValidValuesNotThrowing($value, \Closure $parser, $expected, bool $resultWillBeWrapped = true): void
     {
         $subject = Subject::default($value, false);
         /** @var Result $result */
         $result = $parser($value)->parse($subject);
         self::assertTrue($result->isSuccess());
-        self::assertSame($subject, $result->getSubject()->getParent());
+        self::assertSame($subject, $resultWillBeWrapped ? $result->getSubject()->getParent() : $result->getSubject());
         self::assertSame([], $result->getErrors());
         self::assertTrue(
             DataProvider::isSame($expected, $result->getValue()),

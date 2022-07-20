@@ -23,11 +23,16 @@ class Generated implements Argument
 
     }
 
-    public function generate(mixed $subjectValue, array $generatedArgs): Generator
+    public function generate(mixed $subjectValue, array $generatedArgs, array $successes): Generator
     {
         $provider = new DataProvider($this->flags);
         foreach($provider->provide(false) as $name => $value) {
             yield $name => [true, $value];
         }
+    }
+
+    public function errorMeansFailure(): bool
+    {
+        return true;
     }
 }
