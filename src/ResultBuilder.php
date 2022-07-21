@@ -186,7 +186,7 @@ class ResultBuilder
     {
         return new Result(
             $result->getSubject(),
-            $result->getValue(),
+            $result->isSuccess() ? $result->getValue() : null,
             [...$this->errors, ...$result->getErrors()]
         );
     }

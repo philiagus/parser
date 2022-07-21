@@ -28,6 +28,7 @@ class Parser implements Argument
 
     private bool $errorWillBeHidden = false;
     private bool $errorIsFail = true;
+    private string $errorMessageOnError;
 
     public function __construct()
     {
@@ -78,7 +79,10 @@ class Parser implements Argument
     {
         $willBeCalled = array_reduce(
             $this->willBeCalledIf,
-            fn(bool $carry, \Closure $if) => $carry && $if($subjectValue, $generatedArgs, $successes),
+            fn(bool $carry, \Closure $if) => $carry && $if($subjectValue, array_map(
+                fn($arg) => $arg instanceof \Closure ? $arg($generatedArgs, $successes) : $arg,
+                $generatedArgs
+            ), $successes),
             true
         );
         if (!$willBeCalled) {
@@ -94,17 +98,17 @@ class Parser implements Argument
 
         yield 'parser success' => [
             true,
-            function (array $generatedArguments, array $successStack) use ($subjectValue): \Philiagus\Parser\Contract\Parser {
+            function (array $evaluatedArguments, array $successStack) use ($subjectValue): \Philiagus\Parser\Contract\Parser {
                 $parser = new ParserMock();
 
                 foreach ($this->expectedSingleCalls as $index => ['value' => $valueOrClosure,
                          'path' => $subjectClassOrClosure,
                          'eligible' => $eligible,
                          'result' => $resultClosure]) {
-                    if (!$eligible($subjectValue, $generatedArguments, $successStack)) continue;
+                    if (!$eligible($subjectValue, $evaluatedArguments, $successStack)) continue;
 
-                    $valueOrClosure = $valueOrClosure($subjectValue, $generatedArguments, $successStack);
-                    $subjectClassOrClosure = $subjectClassOrClosure($subjectValue, $generatedArguments, $successStack);
+                    $valueOrClosure = $valueOrClosure($subjectValue, $evaluatedArguments, $successStack);
+                    $subjectClassOrClosure = $subjectClassOrClosure($subjectValue, $evaluatedArguments, $successStack);
                     $parser
                         ->expect(
                             $valueOrClosure,
@@ -117,9 +121,9 @@ class Parser implements Argument
                          'paths' => $subjectClassOrClosure,
                          'eligible' => $eligible,
                          'result' => $resultClosure]) {
-                    $valueOrClosures = $valueOrClosure($subjectValue, $generatedArguments, $successStack);
+                    $valueOrClosures = $valueOrClosure($subjectValue, $evaluatedArguments, $successStack);
 
-                    $subjectClassOrClosure = $subjectClassOrClosure($subjectValue, $generatedArguments, $successStack);
+                    $subjectClassOrClosure = $subjectClassOrClosure($subjectValue, $evaluatedArguments, $successStack);
 
                     foreach ($valueOrClosures as $valueOrClosure) {
                         $parser
@@ -135,8 +139,12 @@ class Parser implements Argument
             }];
         yield 'parser error' => [
             false,
-            function (array $generatedArguments, array $successStack, ErrorCollection $errorCollection) use ($subjectValue): \Philiagus\Parser\Contract\Parser {
+            function (array $generatedArguments, array $successStack, ErrorCollection $errorCollection = null) use ($subjectValue): \Philiagus\Parser\Contract\Parser {
                 $parser = new ParserMock();
+
+                if(isset($this->errorMessageOnError)) {
+                    $errorCollection?->add($this->errorMessageOnError);
+                }
 
                 $parser->expect(
                     fn() => true,
@@ -174,8 +182,15 @@ class Parser implements Argument
         return $this;
     }
 
-    public function errorMeansFailure(): bool
+    public function getErrorMeansFail(): bool
     {
         return $this->errorIsFail;
+    }
+
+    public function expectErrorMessageOnError(string $string): self
+    {
+        $this->errorMessageOnError = $string;
+
+        return $this;
     }
 }

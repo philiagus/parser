@@ -25,23 +25,19 @@ class Map implements Parser
 {
     use Chainable, OverwritableParserDescription;
 
-    private const TYPE_SAME = 1;
-    private const TYPE_EQUALS = 2;
-    private const TYPE_SAME_LIST = 3;
-    private const TYPE_EQUALS_LIST = 4;
-    private const TYPE_PARSER = 5;
-    private const TYPE_PARSER_PIPE = 6;
+    private const TYPE_SAME = 1,
+        TYPE_EQUALS = 2,
+        TYPE_SAME_LIST = 3,
+        TYPE_EQUALS_LIST = 4,
+        TYPE_PARSER = 5,
+        TYPE_PARSER_PIPE = 6;
 
-    /** @var string */
-    private string $exceptionMessage = 'Provided value does not match any of the expected formats or values';
 
-    /** @var array */
+    /** @var array{int, mixed, Parser} */
     private array $elements = [];
-
-    /** @var bool */
     private bool $defaultSet = false;
-
-    private $default = null;
+    private mixed $default = null;
+    private string $exceptionMessage = 'Provided value does not match any of the expected formats or values';
 
     private function __construct()
     {
@@ -113,7 +109,6 @@ class Map implements Parser
      */
     public function addEquals($from, Parser $to): self
     {
-
         $this->elements[] = [self::TYPE_EQUALS, $from, $to];
 
         return $this;
@@ -194,7 +189,7 @@ class Map implements Parser
                     );
                     break;
                 case self::TYPE_SAME_LIST:
-                    if (in_array($value, $from, true)) {
+                    if (@in_array($value, $from, true)) {
                         return $builder->createResultFromResult($to->parse($builder->subjectForwarded('same list')));
                     }
                     $errors[] = new Error(
@@ -212,7 +207,8 @@ class Map implements Parser
                     );
                     break;
                 case self::TYPE_EQUALS_LIST:
-                    if (in_array($value, $from)) {
+                    // @ suppresses errors when comparing objects to scalars
+                    if (@in_array($value, $from)) {
                         return $builder->createResultFromResult($to->parse($builder->subjectForwarded('equals list')));
                     }
                     $errors[] = new Error(
@@ -223,11 +219,14 @@ class Map implements Parser
                 case self::TYPE_PARSER:
                     /** @var Parser $from */
                     try {
-                        $builder->incorporateChildResult(
-                            $from->parse(
-                                $builder->subjectMeta('check', $subject->getValue(), false)
-                            )
+                        $parserResult = $from->parse(
+                            $builder->subjectMeta('check', $subject->getValue(), false)
                         );
+
+                        if (!$parserResult->isSuccess()) {
+                            $errors = [...$errors, ...$parserResult->getErrors()];
+                            break;
+                        }
                     } catch (Exception\ParsingException $e) {
                         $errors[] = $e->getError();
                         break;
@@ -238,6 +237,10 @@ class Map implements Parser
                     /** @var Parser $from */
                     try {
                         $parserResult = $from->parse($builder->subjectForwarded('check with pipe'));
+                        if (!$parserResult->isSuccess()) {
+                            $errors = [...$errors, ...$parserResult->getErrors()];
+                            break;
+                        }
                     } catch (Exception\ParsingException $e) {
                         $errors[] = $e->getError();
                         break;
@@ -250,7 +253,7 @@ class Map implements Parser
         }
 
         if ($this->defaultSet) {
-            return $this->default;
+            return $builder->createResult($this->default);
         }
 
         $builder->logErrorUsingDebug(

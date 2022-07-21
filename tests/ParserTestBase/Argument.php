@@ -18,6 +18,6 @@ interface Argument {
 
     public function generate(mixed $subjectValue, array $generatedArgs, array $successes): Generator;
 
-    public function errorMeansFailure(): bool;
+    public function getErrorMeansFail(): bool;
 
 }

@@ -48,7 +48,7 @@ class Message implements Argument
     {
         yield 'without replacers' => [
             true,
-            function (array $generatedArguments, array $successStack, ErrorCollection $errorCollection) use ($subjectValue) {
+            function (array $generatedArguments, array $successStack, ErrorCollection $errorCollection = null) use ($subjectValue) {
                 $eligible = array_reduce(
                     $this->eligible,
                     fn(bool $carry, \Closure $eligible) => $carry && $eligible($subjectValue, $generatedArguments, $successStack),
@@ -60,7 +60,7 @@ class Message implements Argument
                         $count = count(($this->generatedElements)($subjectValue, $generatedArguments, $successStack));
                     }
                     for(;$count>0;$count--) {
-                        $errorCollection->add('MESSAGE WITHOUT REPLACERS');
+                        $errorCollection?->add('MESSAGE WITHOUT REPLACERS');
                     }
                 }
 
@@ -70,7 +70,7 @@ class Message implements Argument
 
         yield 'with replacers' => [
             true,
-            function (array $generatedArguments, array $successStack, ErrorCollection $errorCollection) use ($subjectValue) {
+            function (array $generatedArguments, array $successStack, ErrorCollection $errorCollection = null) use ($subjectValue) {
                 $generated = null;
                 if ($this->generatedElements) {
                     $generated = ($this->generatedElements)($subjectValue, $generatedArguments, $successStack);
@@ -96,7 +96,7 @@ class Message implements Argument
                         $replacers[$name] = $value;
                     }
                     if ($eligible) {
-                        $errorCollection->add(
+                        $errorCollection?->add(
                             Debug::parseMessage($message, $replacers)
                         );
                     }
@@ -121,7 +121,7 @@ class Message implements Argument
         return $this;
     }
 
-    public function errorMeansFailure(): bool
+    public function getErrorMeansFail(): bool
     {
         return true;
     }

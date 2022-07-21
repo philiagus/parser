@@ -31,7 +31,7 @@ class Generated implements Argument
         }
     }
 
-    public function errorMeansFailure(): bool
+    public function getErrorMeansFail(): bool
     {
         return true;
     }

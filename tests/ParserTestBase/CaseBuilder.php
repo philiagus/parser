@@ -85,12 +85,12 @@ class CaseBuilder
         }
 
         if ($hasErrors) {
-            $string = PHP_EOL . implode(PHP_EOL, $this->recursivePrint($results));
+            $string = PHP_EOL . implode(PHP_EOL, $this->genereateLines($results));
             Assert::fail($string);
         }
     }
 
-    private function recursivePrint(array $results, int $indent = 0): array
+    private function genereateLines(array $results, int $indent = 0): array
     {
         $return = [];
         $indentChar = str_repeat("\t", $indent);
@@ -105,9 +105,6 @@ class CaseBuilder
             $return[] = $indentChar . '❌ ' . $name;
             foreach ($errors as $error) {
                 $return[] = $indentedChar . "- $error";
-            }
-            if(isset($result['children'])) {
-                $return = [...$return, ...$this->recursivePrint($result['children'], $indent + 1)];
             }
         }
         return $return;

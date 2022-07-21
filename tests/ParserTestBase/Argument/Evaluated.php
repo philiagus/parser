@@ -14,12 +14,14 @@ namespace Philiagus\Parser\Test\ParserTestBase\Argument;
 
 use Generator;
 use Philiagus\Parser\Test\ParserTestBase\Argument;
+use Philiagus\Parser\Test\ParserTestBase\ErrorCollection;
 use Philiagus\Parser\Util\Debug;
 
 class Evaluated implements Argument
 {
 
     private array $cases = [];
+    private string $expectErrorMessage;
 
     public function success(\Closure $generator, \Closure $eligible = null, string $description = null): self
     {
@@ -33,7 +35,11 @@ class Evaluated implements Argument
         return $this;
     }
 
-    public function error(\Closure $generator, \Closure $eligible = null, string $description = null): self
+    public function error(
+        \Closure $generator,
+        \Closure $eligible = null,
+        string   $description = null
+    ): self
     {
         $description ??= count($this->cases);
         $this->cases[$description] = [
@@ -45,18 +51,34 @@ class Evaluated implements Argument
         return $this;
     }
 
+    public function expectErrorMessageOnError(string $message): self
+    {
+        $this->expectErrorMessage = $message;
+
+        return $this;
+    }
+
     public function generate(mixed $subjectValue, array $generatedArgs, array $successes): Generator
     {
         foreach ($this->cases as $name => ['success' => $success, 'generator' => $generator, 'eligible' => $eligible]) {
             if ($eligible($subjectValue)) {
                 $value = $generator($subjectValue);
                 $name = '#' . $name . ' ' . Debug::stringify($value);
-                yield $name => [$success, $value];
+                yield $name => [
+                    $success,
+                    function (array $generatedArguments, array $successStack, ErrorCollection $errorCollection = null) use ($value, $success) {
+                        if (!$success && isset($this->expectErrorMessage)) {
+                            $errorCollection?->add($this->expectErrorMessage);
+                        }
+
+                        return $value;
+                    },
+                ];
             }
         }
     }
 
-    public function errorMeansFailure(): bool
+    public function getErrorMeansFail(): bool
     {
         return true;
     }
