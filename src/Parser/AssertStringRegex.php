@@ -19,9 +19,7 @@ use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
-use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Result;
-use Philiagus\Parser\Util\Debug;
 
 class AssertStringRegex implements Parser
 {
@@ -250,7 +248,7 @@ class AssertStringRegex implements Parser
             $builder->logErrorUsingDebug(
                 $this->patternExceptionMessage,
                 [
-                    'pattern' => $this->pattern
+                    'pattern' => $this->pattern,
                 ]
             );
 

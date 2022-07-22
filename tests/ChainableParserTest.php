@@ -19,6 +19,7 @@ use Philiagus\Parser\Base\OverwritableParserDescription;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Exception\RuntimeParserConfigurationException;
 use Philiagus\Parser\Result;
 use Prophecy\Argument;
 
@@ -35,7 +36,7 @@ trait ChainableParserTest
      * @param $expected
      *
      * @throws ParsingException
-     * @throws \Philiagus\Parser\Exception\RuntimeParserConfigurationException
+     * @throws RuntimeParserConfigurationException
      * @dataProvider provideValidValuesAndParsersAndResults
      */
     public function testThen($value, \Closure $parser, $expected): void
@@ -79,7 +80,7 @@ trait ChainableParserTest
      * @param $expected
      *
      * @throws ParsingException
-     * @throws \Philiagus\Parser\Exception\RuntimeParserConfigurationException
+     * @throws RuntimeParserConfigurationException
      * @dataProvider provideValidValuesAndParsersAndResults
      */
     public function testThenWithOverwrittenParserNotValue($value, \Closure $parser, $expected): void
@@ -121,7 +122,7 @@ trait ChainableParserTest
      * @param $expected
      *
      * @throws ParsingException
-     * @throws \Philiagus\Parser\Exception\RuntimeParserConfigurationException
+     * @throws RuntimeParserConfigurationException
      * @dataProvider provideValidValuesAndParsersAndResults
      */
     public function testThenWithOverwrittenParserInValue($value, \Closure $parser, $expected): void

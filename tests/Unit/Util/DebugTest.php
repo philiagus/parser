@@ -15,7 +15,6 @@ namespace Philiagus\Parser\Test\Unit\Util;
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Util\Debug;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Philiagus\Parser\Util\Debug
@@ -30,13 +29,13 @@ class DebugTest extends TestBase
     public function provideTypeDetection(): array
     {
         $cases = [
-            'true' => [true, 'boolean'],
-            'false' => [false, 'boolean'],
+            'true' => [true, 'true'],
+            'false' => [false, 'false'],
             'NAN' => [NAN, 'NAN'],
             'INF' => [INF, 'INF'],
             '-INF' => [-INF, '-INF'],
             'integer' => [100, 'integer'],
-            'NULL' => [null, 'NULL'],
+            'NULL' => [null, 'null'],
             'resource' => [fopen('php://memory', 'r'), 'resource'],
             'array' => [['array'], 'array'],
         ];
@@ -91,9 +90,9 @@ class DebugTest extends TestBase
             'float INF' => [INF, 'INF'],
             'float -INF' => [-INF, '-INF'],
             'float NAN' => [NAN, 'NAN'],
-            'boolean TRUE' => [true, 'boolean TRUE'],
-            'boolean FALSE' => [false, 'boolean FALSE'],
-            'NULL' => [null, 'NULL'],
+            'boolean true' => [true, 'boolean true'],
+            'boolean false' => [false, 'boolean false'],
+            'null' => [null, 'null'],
             'resource' => [fopen('php://memory', 'r'), 'resource'],
             'array(0)' => [[], 'array(0)'],
             'object<stdClass>' => [(object) [], 'object<stdClass>'],
@@ -233,11 +232,11 @@ class DebugTest extends TestBase
                 '1 1',
             ],
             'all types' => [
-                '{key} {key.gettype} {key.type} {key.debug} {key.export} {key.raw}',
+                '{key} | {key.gettype} | {key.type} | {key.debug} | {key.export} | {key.raw}',
                 [
                     'key' => true,
                 ],
-                '1 boolean boolean boolean TRUE true 1',
+                '1 | boolean | true | boolean true | true | 1',
             ],
             'resource raw' => [
                 '{key} {key.raw}',
@@ -249,10 +248,10 @@ class DebugTest extends TestBase
             'object raw' => [
                 '{key} {key.raw}',
                 [
-                    'key' => (object)[],
+                    'key' => (object) [],
                 ],
                 'Object Object',
-            ]
+            ],
         ];
     }
 

@@ -60,6 +60,7 @@ trait InvalidValueParserTest
             self::fail('$expectedException must be string|\Closure, ' . Debug::stringify($expectedException) . ' provided');
         }
     }
+
     /**
      * @param $value
      * @param \Closure $parser
@@ -77,7 +78,7 @@ trait InvalidValueParserTest
         $result = $parser($value)->parse(Subject::default($value, false));
         self::assertFalse($result->isSuccess());
         self::assertNotEmpty($result->getErrors());
-        foreach($result->getErrors() as $error) {
+        foreach ($result->getErrors() as $error) {
             self::assertInstanceOf(Error::class, $error);
         }
     }

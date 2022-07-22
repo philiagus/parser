@@ -78,6 +78,11 @@ class ResultBuilder
         return new Subject\Forwarded($this->currentSubject, $description, $throwOnError);
     }
 
+    public function subjectTest(string $description, ?bool $throwOnError = null): Subject\Test
+    {
+        return new Subject\Test($this->currentSubject, $description, throwOnError: $throwOnError);
+    }
+
     /**
      * Used when handing over the value of a key of an array to another parser
      *

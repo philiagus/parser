@@ -165,19 +165,18 @@ class OneOf implements Parser
         }
 
         foreach ($this->options as $index => $option) {
+            $forwardSubject = $builder->subjectForwarded("one of parser #$index");
             try {
-                $result = $option->parse(
-                    $builder->subjectForwarded("one of parser #$index")
-                );
+                $result = $option->parse($forwardSubject);
+                if ($result->isSuccess()) {
+                    return $builder->createResultFromResult($result);
+                }
+                $childErrors = $result->getErrors();
             } catch (ParsingException $exception) {
-                $errors[] = $exception->getError();
-                continue;
+                $childErrors = [$exception->getError()];
             }
-
-            if ($result->isSuccess()) {
-                return $builder->createResultFromResult($result);
-            }
-            $errors = [...$errors, ...$result->getErrors()];
+            $errors[] = new Error($forwardSubject, 'Value could not be parsed', sourceErrors: $childErrors);
+            unset($forwardSubject);
         }
 
         if ($this->defaultSet) {

@@ -12,7 +12,8 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\ParserTestBase;
 
-enum SuccessType {
+enum SuccessType
+{
 
     case SUCCESS;
     case ERROR_THROW;

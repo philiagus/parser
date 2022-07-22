@@ -47,12 +47,12 @@ class ConvertToDateTimeTest extends ParserTestBase
                 DateTime::createFromFormat('!Y-m-d', '2001-01-01'),
             ],
             'no conversion' => [
-                $value = new \DateTime(),
+                $value = new DateTime(),
                 fn() => ConvertToDateTime::new(),
                 $value,
             ],
             'no conversion immutable' => [
-                $value = new \DateTimeImmutable(),
+                $value = new DateTimeImmutable(),
                 fn() => ConvertToDateTime::new()->setImmutable(),
                 $value,
             ],
@@ -64,8 +64,8 @@ class ConvertToDateTimeTest extends ParserTestBase
         $cases = [
             [123, '!U'],
             ['2001-02-03', '!Y-m-d'],
-            [new \DateTimeImmutable(), 'irrelevant'],
-            [new \DateTime(), 'irrelevant'],
+            [new DateTimeImmutable(), 'irrelevant'],
+            [new DateTime(), 'irrelevant'],
         ];
         $builder = $this->builder();
         $builder
@@ -136,8 +136,8 @@ class ConvertToDateTimeTest extends ParserTestBase
         $cases = [
             [123, '!U'],
             ['2001-02-03', '!Y-m-d'],
-            [new \DateTimeImmutable(), 'irrelevant'],
-            [new \DateTime(), 'irrelevant'],
+            [new DateTimeImmutable(), 'irrelevant'],
+            [new DateTime(), 'irrelevant'],
         ];
         $builder = $this->builder();
         $builder
@@ -197,7 +197,7 @@ class ConvertToDateTimeTest extends ParserTestBase
                     } else {
                         $expectedValue = DateTime::createFromInterface($value);
                     }
-                    if($arguments[3]) {
+                    if ($arguments[3]) {
                         $expectedValue = DateTimeImmutable::createFromInterface($expectedValue);
                     }
                     $a = $expectedValue::class . '[' . $expectedValue->format('r') . ']';

@@ -14,11 +14,8 @@ namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Parser\ConvertToArray;
-use Philiagus\Parser\Subject\Root;
 use Philiagus\Parser\Test\TestBase;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Philiagus\Parser\Parser\ConvertToArray
@@ -35,13 +32,14 @@ class ConvertToArrayTest extends TestBase
     public function provideArrayWithKey(): array
     {
         $cases = [];
-        foreach(
+        foreach (
             (new DataProvider())
-            ->provide(false) as $valueName => $value) {
-            foreach((new DataProvider(DataProvider::TYPE_STRING | DataProvider::TYPE_INTEGER))->provide(false) as $keyName => $key) {
+                ->provide(false) as $valueName => $value) {
+            foreach ((new DataProvider(DataProvider::TYPE_STRING | DataProvider::TYPE_INTEGER))->provide(false) as $keyName => $key) {
                 $cases["$keyName => $valueName"] = [$key, $value];
             }
         }
+
         return $cases;
     }
 
@@ -65,7 +63,7 @@ class ConvertToArrayTest extends TestBase
     {
         self::assertTrue(
             DataProvider::isSame(
-                (array)$value,
+                (array) $value,
                 ConvertToArray::usingCast()
                     ->parse(Subject::default($value))
                     ->getValue()

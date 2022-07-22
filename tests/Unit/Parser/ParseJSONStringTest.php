@@ -21,7 +21,6 @@ use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Philiagus\Parser\Parser\ParseJSONString
@@ -96,17 +95,17 @@ class ParseJSONStringTest extends TestBase
     {
         $value = PHP_INT_MAX . '1';
         self::assertSame(
-            (float)$value,
+            (float) $value,
             ParseJSONString::new()
-            ->parse(Subject::default($value))
+                ->parse(Subject::default($value))
                 ->getValue()
         );
 
         self::assertSame(
             $value,
             ParseJSONString::new()
-            ->setBigintAsString()
-            ->parse(Subject::default($value))
+                ->setBigintAsString()
+                ->parse(Subject::default($value))
                 ->getValue()
         );
     }

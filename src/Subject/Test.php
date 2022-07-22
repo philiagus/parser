@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * This file is part of philiagus/parser
  *
  * (c) Andreas Bittner <philiagus@philiagus.de>
@@ -13,29 +13,27 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Subject;
 
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Util\Debug;
 
-class Root extends Subject
+class Test extends Subject
 {
 
     public function __construct(
-        mixed   $value,
-        ?string $description = null,
-        bool    $throwOnError = true
-    )
-    {
+        Subject $subject,
+        string $description,
+        ?bool $isPathInValue = null,
+        ?bool $throwOnError = null
+    ) {
         parent::__construct(
-            $value,
-            $description ?? Debug::getType($value),
-            throwOnError: $throwOnError
+            $subject->getValue(),
+            $description,
+            $subject,
+            $isPathInValue ?? $subject->isPathInValue(),
+            $throwOnError ?? $subject->throwOnError()
         );
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function getPathStringPart(): string
     {
-        return $this->getPathDescription();
+        return ' TEST: ' . $this->getPathDescription();
     }
 }

@@ -24,7 +24,6 @@ use Philiagus\Parser\Parser\AssertString;
 use Philiagus\Parser\Parser\Extraction\Append;
 use Philiagus\Parser\Parser\Extraction\Assign;
 use Philiagus\Parser\Parser\Fixed;
-use Philiagus\Parser\Parser\Logic\Fail;
 use Philiagus\Parser\Parser\Logic\Preserve;
 use Philiagus\Parser\Parser\ParseJSONString;
 use Philiagus\Parser\Parser\ParseStdClass;

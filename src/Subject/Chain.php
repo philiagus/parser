@@ -17,7 +17,8 @@ use Philiagus\Parser\Base\Subject;
 class Chain extends Subject
 {
 
-    public function __construct(Subject $subject, mixed $value) {
+    public function __construct(Subject $subject, mixed $value)
+    {
         parent::__construct($value, '', $subject, false, $subject->throwOnError());
     }
 

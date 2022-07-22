@@ -14,7 +14,6 @@ namespace Philiagus\Parser\Test\Unit\Exception;
 
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Test\TestBase;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Philiagus\Parser\Exception\ParserConfigurationException

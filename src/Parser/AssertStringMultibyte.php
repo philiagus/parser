@@ -19,7 +19,6 @@ use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
-use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
@@ -303,7 +302,7 @@ class AssertStringMultibyte implements Parser
 
     protected function getDefaultChainDescription(Subject $subject): string
     {
-        if($this->encoding) {
+        if ($this->encoding) {
             return "assert {$this->encoding[0]} string";
         }
 

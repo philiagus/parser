@@ -92,22 +92,24 @@ class CaseBuilder
 
     private function genereateLines(array $results, int $indent = 0): array
     {
-        $return = [];
         $indentChar = str_repeat("\t", $indent);
         $indentedChar = str_repeat("\t", $indent + 1);
+        $successLines = [];
+        $errorLines = [];
         foreach ($results as $name => $result) {
             $errors = $result['errors'] ?? [];
             if (!$result['hasError']) {
-                $return[] = $indentChar . '✔ ' . $name;
+                $successLines[] = $indentChar . '✔ ' . $name;
                 continue;
             }
 
-            $return[] = $indentChar . '❌ ' . $name;
+            $errorLines[] = $indentChar . '❌ ' . $name;
             foreach ($errors as $error) {
-                $return[] = $indentedChar . "- $error";
+                $errorLines[] = $indentedChar . "- $error";
             }
         }
-        return $return;
+
+        return [...$errorLines, ...$successLines];
     }
 
     public function fixedArgument(): Argument\Fixed

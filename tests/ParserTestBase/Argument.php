@@ -14,7 +14,8 @@ namespace Philiagus\Parser\Test\ParserTestBase;
 
 use Generator;
 
-interface Argument {
+interface Argument
+{
 
     public function generate(mixed $subjectValue, array $generatedArgs, array $successes): Generator;
 

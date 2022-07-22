@@ -16,15 +16,13 @@ use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Parser\AssertString;
+use Philiagus\Parser\Exception\RuntimeParserConfigurationException;
 use Philiagus\Parser\Parser\AssertStringRegex;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
 use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\SetTypeExceptionMessageTest;
-use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Philiagus\Parser\Parser\AssertStringRegex
@@ -115,8 +113,8 @@ class AssertStringRegexTest extends ParserTestBase
      *
      * @return void
      * @throws ParserConfigurationException
-     * @throws \Philiagus\Parser\Exception\ParsingException
-     * @throws \Philiagus\Parser\Exception\RuntimeParserConfigurationException
+     * @throws ParsingException
+     * @throws RuntimeParserConfigurationException
      * @dataProvider provideCaptureVariants
      */
     public function testCaptureVariants(

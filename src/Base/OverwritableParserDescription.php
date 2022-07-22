@@ -13,8 +13,6 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Base;
 
-use Philiagus\Parser\Contract\Parser;
-use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 
 trait OverwritableParserDescription

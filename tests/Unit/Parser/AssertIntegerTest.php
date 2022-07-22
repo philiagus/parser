@@ -13,14 +13,11 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
-use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\AssertInteger;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
 use Philiagus\Parser\Test\ParserTestBase;
-use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Philiagus\Parser\Parser\AssertInteger

@@ -107,6 +107,18 @@ class Debug
      */
     public static function getType($value): string
     {
+        if ($value === true) {
+            return 'true';
+        }
+
+        if ($value === false) {
+            return 'false';
+        }
+
+        if($value === null) {
+            return 'null';
+        }
+
         if (is_object($value)) {
             return 'object<' . get_class($value) . '>';
         }
@@ -136,7 +148,7 @@ class Debug
     public static function stringify($value): string
     {
         $type = gettype($value);
-        switch (gettype($value)) {
+        switch ($type) {
             case 'integer':
                 return "$type $value";
             case 'double':
@@ -153,11 +165,7 @@ class Debug
 
                 return "float $value";
             case 'boolean':
-                if ($value) {
-                    return "$type TRUE";
-                }
-
-                return "$type FALSE";
+                return "$type " . ($value ? 'true' : 'false');
             case 'string':
                 $encoding = mb_detect_encoding($value, 'ASCII, UTF8', true);
                 $length = strlen($value);

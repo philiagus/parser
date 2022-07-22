@@ -28,7 +28,7 @@ class Result
         private readonly array   $errors
     )
     {
-        if($this->errors) {
+        if ($this->errors) {
             $this->success = false;
             foreach ($this->errors as $error) {
                 if (!$error instanceof Error) {
@@ -64,14 +64,14 @@ class Result
         return $this->errors;
     }
 
-    public function getSubject(): Subject
-    {
-        return $this->subject;
-    }
-
     public function subjectChain(): Chain
     {
         return new Chain($this->getSubject(), $this->resultValue);
+    }
+
+    public function getSubject(): Subject
+    {
+        return $this->subject;
     }
 }
 

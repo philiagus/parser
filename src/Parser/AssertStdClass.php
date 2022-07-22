@@ -18,7 +18,6 @@ use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
-use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
@@ -112,7 +111,7 @@ class AssertStdClass implements Parser
     public function giveOptionalPropertyValue(string $property, ParserContract $parser): self
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($property, $parser): void {
-            $value= $builder->getCurrentValue();
+            $value = $builder->getCurrentValue();
             if (property_exists($value, $property)) {
                 $builder->incorporateChildResult(
                     $parser->parse(

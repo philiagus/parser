@@ -14,14 +14,11 @@ namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Exception\ParserConfigurationException;
-use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\AssertNumber;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
 use Philiagus\Parser\Test\ParserTestBase;
-use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Philiagus\Parser\Parser\AssertNumber
@@ -61,7 +58,7 @@ class AssertNumberTest extends ParserTestBase
                     ->expectedWhen(fn($value, array $args) => $value < $args[0])
                     ->withParameterElement('min', 0)
             )
-            ->successProvider(DataProvider::TYPE_FLOAT|DataProvider::TYPE_INTEGER);
+            ->successProvider(DataProvider::TYPE_FLOAT | DataProvider::TYPE_INTEGER);
         $builder->run();
     }
 
@@ -80,7 +77,7 @@ class AssertNumberTest extends ParserTestBase
                     ->expectedWhen(fn($value, array $args) => $value > $args[0])
                     ->withParameterElement('max', 0)
             )
-            ->successProvider(DataProvider::TYPE_FLOAT|DataProvider::TYPE_INTEGER);
+            ->successProvider(DataProvider::TYPE_FLOAT | DataProvider::TYPE_INTEGER);
         $builder->run();
     }
 

@@ -48,6 +48,7 @@ class AssertBoolean implements Parser
         if (!is_bool($builder->getCurrentValue())) {
             $this->logTypeError($builder);
         }
+
         return $builder->createResultUnchanged();
     }
 

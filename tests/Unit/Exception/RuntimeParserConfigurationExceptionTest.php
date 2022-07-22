@@ -14,7 +14,6 @@ namespace Philiagus\Parser\Test\Unit\Exception;
 
 use Philiagus\Parser\Exception\RuntimeParserConfigurationException;
 use Philiagus\Parser\Test\TestBase;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Philiagus\Parser\Exception\RuntimeParserConfigurationException
@@ -22,7 +21,8 @@ use PHPUnit\Framework\TestCase;
 class RuntimeParserConfigurationExceptionTest extends TestBase
 {
 
-    public function testFull() {
+    public function testFull()
+    {
         $parent = new \Exception();
         $exception = new RuntimeParserConfigurationException('message', $parent);
         self::assertSame('message', $exception->getMessage());

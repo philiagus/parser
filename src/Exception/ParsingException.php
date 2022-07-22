@@ -14,8 +14,6 @@ namespace Philiagus\Parser\Exception;
 
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Error;
-use Philiagus\Parser\Contract\Parser;
-use Philiagus\Parser\Parser\Logic\OverwriteErrors;
 
 /**
  * This exception is supposed to be thrown, when the value as provided by the input does not conform with the parser
@@ -34,14 +32,14 @@ class ParsingException extends \Exception
         parent::__construct($this->error->getMessage(), 0, $this->error->getSourceThrowable());
     }
 
-    public function getSubject(): Subject
-    {
-        return $this->error->getSubject();
-    }
-
     public function getPathAsString(bool $asValuePath = true): string
     {
         return $this->getSubject()->getPathAsString($asValuePath);
+    }
+
+    public function getSubject(): Subject
+    {
+        return $this->error->getSubject();
     }
 
     /**

@@ -80,9 +80,9 @@ class Parser implements Argument
         $willBeCalled = array_reduce(
             $this->willBeCalledIf,
             fn(bool $carry, \Closure $if) => $carry && $if($subjectValue, array_map(
-                fn($arg) => $arg instanceof \Closure ? $arg($generatedArgs, $successes) : $arg,
-                $generatedArgs
-            ), $successes),
+                    fn($arg) => $arg instanceof \Closure ? $arg($generatedArgs, $successes) : $arg,
+                    $generatedArgs
+                ), $successes),
             true
         );
         if (!$willBeCalled) {
@@ -142,7 +142,7 @@ class Parser implements Argument
             function (array $generatedArguments, array $successStack, ErrorCollection $errorCollection = null) use ($subjectValue): \Philiagus\Parser\Contract\Parser {
                 $parser = new ParserMock();
 
-                if(isset($this->errorMessageOnError)) {
+                if (isset($this->errorMessageOnError)) {
                     $errorCollection?->add($this->errorMessageOnError);
                 }
 

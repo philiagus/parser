@@ -28,6 +28,7 @@ class Fixed implements Argument
     {
         $description ??= count($this->cases);
         $this->cases[$description] = [true, $value];
+
         return $this;
     }
 
@@ -35,12 +36,13 @@ class Fixed implements Argument
     {
         $description ??= count($this->cases);
         $this->cases[$description] = [false, $value];
+
         return $this;
     }
 
     public function generate(mixed $subjectValue, array $generatedArgs, array $successes): Generator
     {
-        foreach($this->cases as $description => [$success, $value]) {
+        foreach ($this->cases as $description => [$success, $value]) {
             yield $description => [$success, fn() => $value];
         }
     }

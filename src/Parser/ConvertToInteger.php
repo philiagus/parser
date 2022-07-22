@@ -53,7 +53,7 @@ class ConvertToInteger implements Parser
                 return $builder->createResultUnchanged();
             }
 
-            return $builder->createResult((int)$value);
+            return $builder->createResult((int) $value);
         }
 
         if (is_string($value)) {

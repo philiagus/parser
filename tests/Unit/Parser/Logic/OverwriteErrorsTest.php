@@ -14,7 +14,6 @@ namespace Philiagus\Parser\Test\Unit\Parser\Logic;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Parser\Any;
 use Philiagus\Parser\Parser\Logic\OverwriteErrors;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\ChainableParserTest;
@@ -43,18 +42,18 @@ class OverwriteErrorsTest extends ParserTestBase
                         fn($_1, $_2, array $successes) => !$successes[1]
                     ),
                 $builder
-                ->parserArgument()
-                ->expectSingleCall(
-                    fn() => fn() => true,
-                    fn() => fn() => true,
-                    result: fn(Subject $subject) => new Result($subject, $alteredResult, [])
-                )
-                ->errorWillBeHidden()
+                    ->parserArgument()
+                    ->expectSingleCall(
+                        fn() => fn() => true,
+                        fn() => fn() => true,
+                        result: fn(Subject $subject) => new Result($subject, $alteredResult, [])
+                    )
+                    ->errorWillBeHidden()
             )
             ->provider(
                 DataProvider::TYPE_ALL,
-                successValidator: function(Subject $subject, Result $result) use ($alteredResult) {
-                    if($result->getValue() !== $alteredResult) {
+                successValidator: function (Subject $subject, Result $result) use ($alteredResult) {
+                    if ($result->getValue() !== $alteredResult) {
                         return ['Result does not match expected format'];
                     }
 
@@ -73,14 +72,14 @@ class OverwriteErrorsTest extends ParserTestBase
                 fn() => OverwriteErrors::withMessage(
                     'message',
                     (new ParserMock())
-                    ->expect(
-                        static fn() => true,
-                        static fn() => true,
-                        fn(Subject $subject) => new Result($subject, $subject->getValue(), [])
-                    )
+                        ->expect(
+                            static fn() => true,
+                            static fn() => true,
+                            fn(Subject $subject) => new Result($subject, $subject->getValue(), [])
+                        )
                 ),
                 $value,
-                false
+                false,
             ])
             ->provide(false);
     }

@@ -18,7 +18,6 @@ use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Philiagus\Parser\Parser\AssertNull
@@ -40,7 +39,7 @@ class AssertNullTest extends TestBase
     {
         return (new DataProvider(~DataProvider::TYPE_NULL))
             ->map(function ($value) {
-                return [$value,static  fn() => AssertNull::new()];
+                return [$value, static fn() => AssertNull::new()];
             })
             ->provide(false);
     }

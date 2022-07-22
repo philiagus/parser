@@ -19,6 +19,7 @@ use Philiagus\Parser\Result;
 use Philiagus\Parser\Subject\Chain;
 use Philiagus\Parser\Subject\Forwarded;
 use Philiagus\Parser\Subject\MetaInformation;
+use Philiagus\Parser\Subject\Test;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\ParserTestBase;
 
@@ -46,7 +47,7 @@ class MapTest extends ParserTestBase
                 fn() => false
             );
 
-        $builder->run();;
+        $builder->run();
     }
 
     public function testAddSame(): void
@@ -212,7 +213,7 @@ class MapTest extends ParserTestBase
                     ->expectErrorMessageOnError('Provided value does not match any of the expected formats or values')
                     ->expectSingleCall(
                         fn($value) => $value,
-                        MetaInformation::class,
+                        Test::class,
                         result: fn(Subject $subject) => new Result($subject, new \stdClass(), [])
                     ),
                 $builder
@@ -247,7 +248,7 @@ class MapTest extends ParserTestBase
                     ->expectErrorMessageOnError('Provided value does not match any of the expected formats or values')
                     ->expectSingleCall(
                         fn($value) => $value,
-                        Forwarded::class,
+                        Test::class,
                         result: fn(Subject $subject) => new Result($subject, $forwardedValue, [])
                     ),
                 $builder

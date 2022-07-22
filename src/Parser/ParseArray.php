@@ -15,7 +15,6 @@ namespace Philiagus\Parser\Parser;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
-use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
 
@@ -58,7 +57,7 @@ class ParseArray extends AssertArray
      */
     public function modifyEachKey(
         ParserContract $parser,
-        string $newKeyIsNotUsableMessage = 'A parser resulted in an invalid array key for key {oldKey.raw}'
+        string         $newKeyIsNotUsableMessage = 'A parser resulted in an invalid array key for key {oldKey.raw}'
     ): self
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($parser, $newKeyIsNotUsableMessage): void {

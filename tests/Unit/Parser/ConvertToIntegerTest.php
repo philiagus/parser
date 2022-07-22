@@ -19,7 +19,6 @@ use Philiagus\Parser\Test\InvalidValueParserTest;
 use Philiagus\Parser\Test\SetTypeExceptionMessageTest;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Philiagus\Parser\Parser\ConvertToInteger
@@ -29,11 +28,16 @@ class ConvertToIntegerTest extends TestBase
 
     use ChainableParserTest, InvalidValueParserTest, ValidValueParserTest, SetTypeExceptionMessageTest;
 
+    public function provideInvalidTypesAndParser(): array
+    {
+        return $this->provideInvalidValuesAndParsers();
+    }
+
     public function provideInvalidValuesAndParsers(): array
     {
         return (new DataProvider(~DataProvider::TYPE_INTEGER & ~DataProvider::TYPE_FLOAT & ~DataProvider::TYPE_STRING))
             ->filter(
-                fn($value) => !is_numeric($value) || $value != (int)$value
+                fn($value) => !is_numeric($value) || $value != (int) $value
             )
             ->addCase('float', 1.2)
             ->addCase('float string', '1.2')
@@ -45,11 +49,6 @@ class ConvertToIntegerTest extends TestBase
             ->provide(false);
     }
 
-    public function provideInvalidTypesAndParser(): array
-    {
-        return $this->provideInvalidValuesAndParsers();
-    }
-
     public function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider(DataProvider::TYPE_INTEGER))
@@ -59,7 +58,7 @@ class ConvertToIntegerTest extends TestBase
             ->addCase('float -23.0', -23.0)
             ->addCase('string 0', '0000')
             ->map(
-                fn($value) => [$value, fn() => ConvertToInteger::new(), (int)$value]
+                fn($value) => [$value, fn() => ConvertToInteger::new(), (int) $value]
             )
             ->provide(false);
     }

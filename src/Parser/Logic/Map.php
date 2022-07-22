@@ -217,38 +217,48 @@ class Map implements Parser
                     );
                     break;
                 case self::TYPE_PARSER:
+                    $childErrors = null;
                     /** @var Parser $from */
                     try {
-                        $parserResult = $from->parse(
-                            $builder->subjectMeta('check', $subject->getValue(), false)
+                        $parserResult = $from->parse($builder->subjectTest('check'));
+
+                        if (!$parserResult->isSuccess()) {
+                            $childErrors = $parserResult->getErrors();
+                        }
+                    } catch (Exception\ParsingException $e) {
+                        $childErrors = [$e->getError()];
+                    }
+
+                    if($childErrors === null) {
+                        return $builder->createResultFromResult(
+                            $to->parse(
+                                $builder->subjectForwarded('parser check')
+                            )
                         );
-
-                        if (!$parserResult->isSuccess()) {
-                            $errors = [...$errors, ...$parserResult->getErrors()];
-                            break;
-                        }
-                    } catch (Exception\ParsingException $e) {
-                        $errors[] = $e->getError();
-                        break;
                     }
-
-                    return $builder->createResultFromResult($to->parse($builder->subjectForwarded('parser check')));
+                    $errors[] = new Error($subject, 'Value did not match parser', sourceErrors: $childErrors);
+                    unset($childErrors);
+                    break;
                 case self::TYPE_PARSER_PIPE:
+                    $childErrors = null;
                     /** @var Parser $from */
                     try {
-                        $parserResult = $from->parse($builder->subjectForwarded('check with pipe'));
+                        $parserResult = $from->parse($builder->subjectTest('check with pipe'));
                         if (!$parserResult->isSuccess()) {
-                            $errors = [...$errors, ...$parserResult->getErrors()];
-                            break;
+                            $childErrors = $parserResult->getErrors();
                         }
                     } catch (Exception\ParsingException $e) {
-                        $errors[] = $e->getError();
-                        break;
+                        $childErrors = [$e->getError()];
                     }
-
-                    return $builder->createResultFromResult(
-                        $to->parse($parserResult->subjectChain())
-                    );
+                    if($childErrors === null && isset($parserResult)) {
+                        return $builder->createResultFromResult(
+                            $to->parse($parserResult->subjectChain())
+                        );
+                    }
+                    $errors[] = new Error($subject, 'Value did not match parser', sourceErrors: $childErrors);
+                    unset($childErrors);
+                    unset($parserResult);
+                    break;
             }
         }
 

@@ -19,7 +19,6 @@ use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\Fixed;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\TestBase;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Philiagus\Parser\Parser\Fixed

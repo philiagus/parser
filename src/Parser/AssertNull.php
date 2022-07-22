@@ -17,8 +17,6 @@ use Philiagus\Parser\Base\Chainable;
 use Philiagus\Parser\Base\OverwritableParserDescription;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
-use Philiagus\Parser\Error;
-use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Debug;
 
@@ -53,7 +51,7 @@ class AssertNull implements Parser
     public function parse(Subject $subject): Result
     {
         $builder = $this->createResultBuilder($subject);
-        if($subject->getValue() !== null) {
+        if ($subject->getValue() !== null) {
             $builder->logErrorUsingDebug($this->exceptionMessage);
         }
 

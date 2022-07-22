@@ -19,14 +19,15 @@ use Philiagus\Parser\Test\ParserTestBase\Argument;
 class Generated implements Argument
 {
 
-    public function __construct(private readonly int $flags) {
+    public function __construct(private readonly int $flags)
+    {
 
     }
 
     public function generate(mixed $subjectValue, array $generatedArgs, array $successes): Generator
     {
         $provider = new DataProvider($this->flags);
-        foreach($provider->provide(false) as $name => $value) {
+        foreach ($provider->provide(false) as $name => $value) {
             yield $name => [true, $value];
         }
     }

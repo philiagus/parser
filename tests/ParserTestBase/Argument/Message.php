@@ -56,10 +56,10 @@ class Message implements Argument
                 );
                 if ($eligible) {
                     $count = 1;
-                    if($this->generatedElements) {
+                    if ($this->generatedElements) {
                         $count = count(($this->generatedElements)($subjectValue, $generatedArguments, $successStack));
                     }
-                    for(;$count>0;$count--) {
+                    for (; $count > 0; $count--) {
                         $errorCollection?->add('MESSAGE WITHOUT REPLACERS');
                     }
                 }
@@ -74,7 +74,7 @@ class Message implements Argument
                 $generated = null;
                 if ($this->generatedElements) {
                     $generated = ($this->generatedElements)($subjectValue, $generatedArguments, $successStack);
-                };
+                }
                 if (empty($generated)) {
                     $generated = [[]];
                 }

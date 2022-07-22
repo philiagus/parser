@@ -18,9 +18,7 @@ use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\Logic\Fail;
 use Philiagus\Parser\Test\ParserTestBase;
-use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Util\Debug;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Philiagus\Parser\Parser\Logic\Fail

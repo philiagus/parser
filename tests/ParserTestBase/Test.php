@@ -153,7 +153,7 @@ class Test
         ?array $allArgs = null
     ): array
     {
-        if(empty($allArgs)) {
+        if (empty($allArgs)) {
             $allArgs = $this->methodArgs;
             foreach ($this->calls as [$method, $args]) {
                 $allArgs = [...$allArgs, ...$args];
@@ -179,18 +179,6 @@ class Test
             ) as $name => $forward) {
                 $result[$name] = $forward;
             }
-        }
-
-        return $result;
-    }
-
-    private function splitArray(array $source, array $slices): array
-    {
-        $result = [];
-        $offset = 0;
-        foreach($slices as $slice) {
-            $result[] = array_slice($source, $offset, $slice);
-            $offset += $slice;
         }
 
         return $result;
@@ -226,13 +214,13 @@ class Test
 
                             $argumentCounts = [];
                             $methodCalls = [];
-                            if($this->method !== null) {
+                            if ($this->method !== null) {
                                 $argumentCounts[] = 0;
                                 $methodCalls[] = $this->method;
                             }
                             $argumentCounts[] = count($this->methodArgs);
 
-                            foreach($this->calls as [$method, $arguments]) {
+                            foreach ($this->calls as [$method, $arguments]) {
                                 $methodCalls[] = $method;
                                 $argumentCounts[] = count($arguments);
                             }
@@ -243,7 +231,7 @@ class Test
                                 Subject::default($value, $throw),
                                 function () use ($value, $methodArgs, $handedOverParser, $methodCalls): Parser {
                                     $parser = $handedOverParser ?? ($this->parserCreation)($value, array_shift($methodArgs));
-                                    foreach($methodCalls as $method) {
+                                    foreach ($methodCalls as $method) {
                                         $parser->{$method}(...array_shift($methodArgs));
                                     }
 
@@ -264,5 +252,17 @@ class Test
                 }
             }
         }
+    }
+
+    private function splitArray(array $source, array $slices): array
+    {
+        $result = [];
+        $offset = 0;
+        foreach ($slices as $slice) {
+            $result[] = array_slice($source, $offset, $slice);
+            $offset += $slice;
+        }
+
+        return $result;
     }
 }

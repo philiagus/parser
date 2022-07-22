@@ -14,7 +14,6 @@ namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Exception\ParserConfigurationException;
-use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\AssertStringMultibyte;
 use Philiagus\Parser\Subject\MetaInformation;
 use Philiagus\Parser\Test\ChainableParserTest;

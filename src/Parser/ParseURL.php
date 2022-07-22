@@ -18,9 +18,7 @@ use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
-use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Result;
-use Philiagus\Parser\Util\Debug;
 
 /**
  * Parses the provided string, treating is an URL, and returns the
@@ -371,7 +369,7 @@ class ParseURL implements Parser
     public function parse(Subject $subject): Result
     {
         $builder = $this->createResultBuilder($subject);
-        $value= $builder->getCurrentValue();
+        $value = $builder->getCurrentValue();
         if (!is_string($value)) {
             $this->logTypeError($builder);
 

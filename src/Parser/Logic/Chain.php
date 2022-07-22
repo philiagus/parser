@@ -15,7 +15,6 @@ namespace Philiagus\Parser\Parser\Logic;
 use Philiagus\Parser\Base\Chainable;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
-use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Result;
 
 

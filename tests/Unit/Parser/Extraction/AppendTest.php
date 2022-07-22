@@ -16,12 +16,12 @@ use ArrayAccess;
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParserConfigurationException;
+use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Exception\RuntimeParserConfigurationException;
 use Philiagus\Parser\Parser\Extraction\Append;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
-use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
 /**
@@ -37,9 +37,9 @@ class AppendTest extends TestBase
      * @param $value
      *
      * @return void
-     * @throws \Philiagus\Parser\Exception\ParserConfigurationException
-     * @throws \Philiagus\Parser\Exception\ParsingException
-     * @throws \Philiagus\Parser\Exception\RuntimeParserConfigurationException
+     * @throws ParserConfigurationException
+     * @throws ParsingException
+     * @throws RuntimeParserConfigurationException
      */
     public function testAppendsToAnything($value): void
     {

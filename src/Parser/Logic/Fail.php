@@ -14,9 +14,7 @@ namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
-use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Result;
-use Philiagus\Parser\Util\Debug;
 
 class Fail implements Parser
 {

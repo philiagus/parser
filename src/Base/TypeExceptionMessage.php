@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Base;
 
-use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
