@@ -79,11 +79,9 @@ class Debug
                         if (is_array($value)) {
                             return 'Array';
                         }
-
                         if (is_object($value)) {
                             return 'Object';
                         }
-
                         if (is_resource($value)) {
                             return self::stringify($value);
                         }

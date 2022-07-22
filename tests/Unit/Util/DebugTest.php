@@ -17,6 +17,9 @@ use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Util\Debug;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Philiagus\Parser\Util\Debug
+ */
 class DebugTest extends TestBase
 {
     public function provideAnything(): array
@@ -243,6 +246,13 @@ class DebugTest extends TestBase
                 ],
                 'resource resource',
             ],
+            'object raw' => [
+                '{key} {key.raw}',
+                [
+                    'key' => (object)[],
+                ],
+                'Object Object',
+            ]
         ];
     }
 

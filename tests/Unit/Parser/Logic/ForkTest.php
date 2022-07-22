@@ -23,6 +23,9 @@ use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\TestBase;
 use Prophecy\Argument;
 
+/**
+ * @covers \Philiagus\Parser\Parser\Logic\Fork
+ */
 class ForkTest extends TestBase
 {
     use ChainableParserTest;

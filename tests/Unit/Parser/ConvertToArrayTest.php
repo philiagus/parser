@@ -20,6 +20,9 @@ use Philiagus\Parser\Subject\Root;
 use Philiagus\Parser\Test\TestBase;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Philiagus\Parser\Parser\ConvertToArray
+ */
 class ConvertToArrayTest extends TestBase
 {
 

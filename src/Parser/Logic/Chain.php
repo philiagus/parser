@@ -48,6 +48,7 @@ class Chain implements Parser
             $subject = $result->subjectChain();
         }
 
+        /** @noinspection PhpUndefinedVariableInspection */
         return $result;
     }
 }

@@ -18,6 +18,9 @@ use Philiagus\Parser\Parser\Extraction\Assign;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\TestBase;
 
+/**
+ * @covers \Philiagus\Parser\Parser\Extraction\Assign
+ */
 class AssignTest extends TestBase
 {
     use ChainableParserTest;

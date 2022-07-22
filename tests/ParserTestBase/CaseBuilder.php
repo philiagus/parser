@@ -110,18 +110,6 @@ class CaseBuilder
         return $return;
     }
 
-    public function reveal(): array
-    {
-        $cases = [];
-        foreach ($this->tests as $index => $test) {
-            foreach ($test->generate() as $name => $case) {
-                $cases[$test->method . ' #' . $index . ' -> ' . $name] = $case;
-            }
-        }
-
-        return $cases;
-    }
-
     public function fixedArgument(): Argument\Fixed
     {
         return new Argument\Fixed();
@@ -137,7 +125,7 @@ class CaseBuilder
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
         $reflection = new \ReflectionClass($trace[1]['class']);
         if (!preg_match('~@covers\s++(?<class>\S++)~', $reflection->getDocComment() ?: '', $matches)) {
-            Assert::fail("Class {$trace[0]['class']} does not define a @covers");
+            Assert::fail("Class {$trace[1]['class']} does not define a @covers");
         }
         $targetClassName = $matches['class'];
         $targetClass = new \ReflectionClass($matches['class']);

@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test;
 
+use DateTimeInterface;
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Result;
@@ -33,11 +34,16 @@ trait ValidValueParserTest
         self::assertTrue($result->isSuccess());
         self::assertSame($subject, $resultWillBeWrapped ? $result->getSubject()->getParent() : $result->getSubject());
         self::assertSame([], $result->getErrors());
+        $resultValue = $result->getValue();
         self::assertTrue(
-            DataProvider::isSame($expected, $result->getValue()),
-            Debug::stringify($expected) . ' is not equal to ' . Debug::stringify($result->getValue())
+            $resultValue instanceof DateTimeInterface && $expected instanceof DateTimeInterface ?
+                $resultValue::class === $expected::class && $resultValue->format('Y-m-d H:i:s.u') == $expected->format('Y-m-d H:i:s.u') :
+                DataProvider::isSame($expected, $resultValue),
+            Debug::stringify($expected) . ' is not equal to ' . Debug::stringify($resultValue)
         );
     }
+
+    abstract public static function assertTrue($condition, string $message = ''): void;
 
     /**
      * @dataProvider provideValidValuesAndParsersAndResults
@@ -50,12 +56,13 @@ trait ValidValueParserTest
         self::assertTrue($result->isSuccess());
         self::assertSame($subject, $resultWillBeWrapped ? $result->getSubject()->getParent() : $result->getSubject());
         self::assertSame([], $result->getErrors());
+        $resultValue = $result->getValue();
         self::assertTrue(
-            DataProvider::isSame($expected, $result->getValue()),
-            Debug::stringify($expected) . ' is not equal to ' . Debug::stringify($result->getValue())
+            $resultValue instanceof DateTimeInterface && $expected instanceof DateTimeInterface ?
+                $resultValue::class === $expected::class && $resultValue->format('Y-m-d H:i:s.u') == $expected->format('Y-m-d H:i:s.u') :
+                DataProvider::isSame($expected, $resultValue),
+            Debug::stringify($expected) . ' is not equal to ' . Debug::stringify($resultValue)
         );
     }
-
-    abstract public static function assertTrue($condition, string $message = ''): void;
 
 }

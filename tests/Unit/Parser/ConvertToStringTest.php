@@ -21,6 +21,9 @@ use Philiagus\Parser\Test\SetTypeExceptionMessageTest;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
 
+/**
+ * @covers \Philiagus\Parser\Parser\ConvertToString
+ */
 class ConvertToStringTest extends TestBase
 {
     use SetTypeExceptionMessageTest,

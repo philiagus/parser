@@ -21,6 +21,9 @@ use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Philiagus\Parser\Parser\ConvertToInteger
+ */
 class ConvertToIntegerTest extends TestBase
 {
 

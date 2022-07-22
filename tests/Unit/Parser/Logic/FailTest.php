@@ -22,6 +22,9 @@ use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Util\Debug;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Philiagus\Parser\Parser\Logic\Fail
+ */
 class FailTest extends ParserTestBase
 {
 

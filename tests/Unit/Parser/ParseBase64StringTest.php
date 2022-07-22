@@ -22,6 +22,9 @@ use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Philiagus\Parser\Parser\ParseBase64String
+ */
 class ParseBase64StringTest extends TestBase
 {
     use ChainableParserTest, InvalidValueParserTest, ValidValueParserTest;

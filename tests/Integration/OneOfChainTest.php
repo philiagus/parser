@@ -20,6 +20,9 @@ use Philiagus\Parser\Parser\Fixed;
 use Philiagus\Parser\Parser\Logic\OneOf;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @coversNothing
+ */
 class OneOfChainTest extends TestCase
 {
     public function test()
