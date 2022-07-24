@@ -12,16 +12,16 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser\Logic;
 
-use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Result;
+use Philiagus\Parser\ResultBuilder;
+use Philiagus\Parser\Subject\Forwarded;
 
 
-class Fork implements Parser
+class Fork extends Base\Parser
 {
-    use Chainable, OverwritableParserDescription;
 
     /** @var Parser[] */
     private array $parsers;
@@ -63,12 +63,11 @@ class Fork implements Parser
     /**
      * @inheritDoc
      */
-    public function parse(Subject $subject): Result
+    public function execute(ResultBuilder $builder): Result
     {
-        $builder = $this->createResultBuilder($subject);
         foreach ($this->parsers as $index => $parser) {
             $builder->incorporateChildResult(
-                $parser->parse($builder->subjectForwarded("fork #$index"))
+                $parser->parse(new Forwarded($builder->getSubject(), "fork #$index"))
             );
         }
 

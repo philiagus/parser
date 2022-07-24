@@ -14,24 +14,23 @@ namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base\Chainable;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Contract\Parser;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Result;
 
 
-class Chain implements Parser
+class Chain implements Contract\Parser, Contract\Chainable
 {
-
     use Chainable;
 
-    /** @var Parser[] */
+    /** @var Contract\Parser[] */
     private array $parsers;
 
-    private function __construct(Parser $parser, Parser ...$parsers)
+    private function __construct(Contract\Parser $parser, Contract\Parser ...$parsers)
     {
         $this->parsers = [$parser, ...$parsers];
     }
 
-    public static function parsers(Parser $parser, Parser ...$parsers): self
+    public static function parsers(Contract\Parser $parser, Contract\Parser ...$parsers): self
     {
         return new self($parser, ...$parsers);
     }
@@ -42,12 +41,20 @@ class Chain implements Parser
     public function parse(Subject $subject): Result
     {
         foreach ($this->parsers as $parser) {
-            $result = $parser->parse($subject);
-            if (!$result->isSuccess()) return $result;
-            $subject = $result->subjectChain();
+            $subject = $parser->parse($subject);
+            if (!$subject->isSuccess()) return $subject;
         }
 
-        /** @noinspection PhpUndefinedVariableInspection */
-        return $result;
+        return $subject;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function then(Contract\Parser $parser): Chain
+    {
+        $this->parsers[] = $parser;
+
+        return $this;
     }
 }

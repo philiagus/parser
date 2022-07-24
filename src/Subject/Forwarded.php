@@ -17,20 +17,14 @@ use Philiagus\Parser\Base\Subject;
 class Forwarded extends Subject
 {
 
-    public function __construct(Subject $parent, string $description, ?bool $throwOnError = null)
+    public function __construct(Subject $subject, string $description)
     {
-        parent::__construct(
-            $parent->getValue(),
-            $description,
-            $parent,
-            false,
-            $throwOnError ?? $parent->throwOnError()
-        );
+        parent::__construct($subject, $description, $subject->getValue(), true, null);
     }
 
 
     protected function getPathStringPart(): string
     {
-        return ' -' . $this->getPathDescription() . '->';
+        return ' -' . $this->description . '->';
     }
 }

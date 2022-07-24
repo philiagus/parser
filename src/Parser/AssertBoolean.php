@@ -12,12 +12,11 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
-use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Result;
+use Philiagus\Parser\ResultBuilder;
 
 
 /**
@@ -25,9 +24,9 @@ use Philiagus\Parser\Result;
  *
  * @package Philiagus\Parser
  */
-class AssertBoolean implements Parser
+class AssertBoolean extends Base\Parser
 {
-    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
+    use TypeExceptionMessage;
 
 
     private function __construct()
@@ -42,10 +41,12 @@ class AssertBoolean implements Parser
         return new self();
     }
 
-    public function parse(Subject $subject): Result
+    /**
+     * @inheritDoc
+     */
+    public function execute(ResultBuilder $builder): Result
     {
-        $builder = $this->createResultBuilder($subject);
-        if (!is_bool($builder->getCurrentValue())) {
+        if (!is_bool($builder->getValue())) {
             $this->logTypeError($builder);
         }
 

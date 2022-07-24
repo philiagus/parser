@@ -12,16 +12,14 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Result;
+use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
 
-class AssertEquals implements Parser
+class AssertEquals extends Base\Parser
 {
-    use Chainable, OverwritableParserDescription;
 
     private const DEFAULT_MESSAGE = 'The value is not equal to the expected value';
 
@@ -63,10 +61,12 @@ class AssertEquals implements Parser
         return new self($value, $exceptionMessage);
     }
 
-    public function parse(Subject $subject): Result
+    /**
+     * @inheritDoc
+     */
+    public function execute(ResultBuilder $builder): Result
     {
-        $builder = $this->createResultBuilder($subject);
-        if ($builder->getCurrentValue() != $this->targetValue) {
+        if ($builder->getValue() != $this->targetValue) {
             $builder->logErrorUsingDebug(
                 $this->exceptionMessage,
                 ['expected' => $this->targetValue,]

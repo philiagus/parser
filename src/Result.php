@@ -14,20 +14,20 @@ namespace Philiagus\Parser;
 
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Error;
-use Philiagus\Parser\Subject\Chain;
 use Philiagus\Parser\Util\Debug;
 
-class Result
+class Result extends Subject
 {
 
     private readonly bool $success;
 
     public function __construct(
-        private readonly Subject $subject,
-        private readonly mixed   $resultValue,
-        private readonly array   $errors
+        Subject                $subject,
+        mixed                  $resultValue,
+        private readonly array $errors
     )
     {
+        parent::__construct($subject, '', $resultValue, true, null);
         if ($this->errors) {
             $this->success = false;
             foreach ($this->errors as $error) {
@@ -47,13 +47,17 @@ class Result
         return $this->success;
     }
 
+    /**
+     * Returns the result value of this parsing process
+     * If the parser resulted in an error a LogicException is thrown
+     */
     public function getValue(): mixed
     {
-        if ($this->success) return $this->resultValue;
-
-        throw new \LogicException(
-            "Trying to get result value of not successful result of path " . $this->subject->getPathAsString()
-        );
+        return $this->success
+            ? parent::getValue()
+            : throw new \LogicException(
+                "Trying to get result value of not successful path " . $this->sourceSubject->getPathAsString(true)
+            );
     }
 
     /**
@@ -64,14 +68,9 @@ class Result
         return $this->errors;
     }
 
-    public function subjectChain(): Chain
+    protected function getPathStringPart(): string
     {
-        return new Chain($this->getSubject(), $this->resultValue);
-    }
-
-    public function getSubject(): Subject
-    {
-        return $this->subject;
+        return ' then';
     }
 }
 

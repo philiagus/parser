@@ -41,16 +41,16 @@ trait InvalidValueParserTest
         bool $throw = true
     ): void
     {
-        $resultValue = null;
         try {
             /** @var Result $result */
-            $result = $parser($value)->parse(Subject::default($value, $throw));
+            $result = $parser($value)->parse(Subject::default($value, throwOnError: $throw));
         } catch (\Throwable $exception) {
 
         }
         if (!isset($exception)) {
             $resultValue = $result->getValue();
             self::fail('No exception was thrown and parser for ' . Debug::stringify($value) . ' resulted in: ' . Debug::stringify($resultValue));
+            return;
         }
         if (is_string($expectedException)) {
             self::assertInstanceOf($expectedException, $exception, "Exception of type $expectedException not thrown");
@@ -75,7 +75,7 @@ trait InvalidValueParserTest
     ): void
     {
         /** @var Result $result */
-        $result = $parser($value)->parse(Subject::default($value, false));
+        $result = $parser($value)->parse(Subject::default($value, throwOnError: false));
         self::assertFalse($result->isSuccess());
         self::assertNotEmpty($result->getErrors());
         foreach ($result->getErrors() as $error) {

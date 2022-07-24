@@ -12,19 +12,21 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
+use Philiagus\Parser\Subject\MetaInformation;
+use Philiagus\Parser\Subject\PropertyName;
+use Philiagus\Parser\Subject\PropertyValue;
 use Philiagus\Parser\Util\Debug;
 
-class AssertStdClass implements Parser
+class AssertStdClass extends Base\Parser
 {
-    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
+    use TypeExceptionMessage;
 
     /** @var \SplDoublyLinkedList<\Closure> */
     protected \SplDoublyLinkedList $assertionList;
@@ -64,11 +66,11 @@ class AssertStdClass implements Parser
     ): self
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($property, $parser, $missingPropertyExceptionMessage): void {
-            $value = $builder->getCurrentValue();
+            $value = $builder->getValue();
             if (property_exists($value, $property)) {
                 $builder->incorporateChildResult(
                     $parser->parse(
-                        $builder->subjectPropertyValue($property, $value->$property)
+                        new PropertyValue($builder->getSubject(), $property, $value->$property)
                     )
                 );
             } else {
@@ -83,13 +85,11 @@ class AssertStdClass implements Parser
     }
 
     /**
-     *
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function parse(Subject $subject): Result
+    public function execute(ResultBuilder $builder): Result
     {
-        $builder = $this->createResultBuilder($subject);
-        if ($builder->getCurrentValue() instanceof \stdClass) {
+        if ($builder->getValue() instanceof \stdClass) {
             foreach ($this->assertionList as $assertion) {
                 $assertion($builder);
             }
@@ -111,14 +111,11 @@ class AssertStdClass implements Parser
     public function giveOptionalPropertyValue(string $property, ParserContract $parser): self
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($property, $parser): void {
-            $value = $builder->getCurrentValue();
+            $value = $builder->getValue();
             if (property_exists($value, $property)) {
                 $builder->incorporateChildResult(
                     $parser->parse(
-                        $builder->subjectPropertyValue(
-                            $property,
-                            $value->$property
-                        )
+                        new PropertyValue($builder->getSubject(), $property, $value->$property)
                     )
                 );
             }
@@ -130,11 +127,11 @@ class AssertStdClass implements Parser
     public function giveDefaultedPropertyValue(string $property, $default, ParserContract $parser): self
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($property, $default, $parser): void {
-            $value = $builder->getCurrentValue();
+            $value = $builder->getValue();
             $propertyValue = property_exists($value, $property) ? $value->$property : $default;
             $builder->incorporateChildResult(
                 $parser->parse(
-                    $builder->subjectPropertyValue($property, $propertyValue)
+                    new PropertyValue($builder->getSubject(), $property, $propertyValue)
                 )
             );
         };
@@ -151,12 +148,12 @@ class AssertStdClass implements Parser
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($arrayParser): void {
             $properties = [];
-            foreach ($builder->getCurrentValue() as $property => $_) {
+            foreach ($builder->getValue() as $property => $_) {
                 $properties[] = $property;
             }
             $builder->incorporateChildResult(
                 $arrayParser->parse(
-                    $builder->subjectMeta('property names', $properties)
+                    new MetaInformation($builder->getSubject(), 'property names', $properties)
                 )
             );
         };
@@ -168,12 +165,12 @@ class AssertStdClass implements Parser
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($arrayParser): void {
             $propertyValues = [];
-            foreach ($builder->getCurrentValue() as $propertyValue) {
+            foreach ($builder->getValue() as $propertyValue) {
                 $propertyValues[] = $propertyValue;
             }
             $builder->incorporateChildResult(
                 $arrayParser->parse(
-                    $builder->subjectMeta('property values', $propertyValues)
+                    new MetaInformation($builder->getSubject(), 'property values', $propertyValues)
                 )
             );
         };
@@ -191,10 +188,10 @@ class AssertStdClass implements Parser
     public function giveEachPropertyName(ParserContract $stringParser): self
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($stringParser): void {
-            foreach ($builder->getCurrentValue() as $property => $_) {
+            foreach ($builder->getValue() as $property => $_) {
                 $builder->incorporateChildResult(
                     $stringParser->parse(
-                        $builder->subjectPropertyName($property)
+                        new PropertyName($builder->getSubject(), $property)
                     )
                 );
             }
@@ -213,10 +210,10 @@ class AssertStdClass implements Parser
     public function giveEachPropertyValue(ParserContract $parser): self
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($parser): void {
-            foreach ($builder->getCurrentValue() as $property => $value) {
+            foreach ($builder->getValue() as $property => $value) {
                 $builder->incorporateChildResult(
                     $parser->parse(
-                        $builder->subjectPropertyValue($property, $value)
+                        new PropertyValue($builder->getSubject(), $property, $value)
                     )
                 );
             }
@@ -236,12 +233,12 @@ class AssertStdClass implements Parser
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($integerParser): void {
             $count = 0;
-            foreach ($builder->getCurrentValue() as $_) {
+            foreach ($builder->getValue() as $_) {
                 $count++;
             }
             $builder->incorporateChildResult(
                 $integerParser->parse(
-                    $builder->subjectMeta('property count', $count)
+                    new MetaInformation($builder->getSubject(), 'property count', $count)
                 )
             );
         };

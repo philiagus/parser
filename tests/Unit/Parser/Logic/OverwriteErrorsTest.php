@@ -78,8 +78,7 @@ class OverwriteErrorsTest extends ParserTestBase
                             fn(Subject $subject) => new Result($subject, $subject->getValue(), [])
                         )
                 ),
-                $value,
-                false,
+                $value
             ])
             ->provide(false);
     }

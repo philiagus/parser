@@ -12,16 +12,14 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Result;
+use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
 
-class AssertNan implements Parser
+class AssertNan extends Base\Parser
 {
-    use Chainable, OverwritableParserDescription;
 
     /** @var string */
     private string $exceptionMessage;
@@ -47,10 +45,12 @@ class AssertNan implements Parser
         return new self($notNanExceptionMessage);
     }
 
-    public function parse(Subject $subject): Result
+    /**
+     * @inheritDoc
+     */
+    public function execute(ResultBuilder $builder): Result
     {
-        $builder = $this->createResultBuilder($subject);
-        $value = $subject->getValue();
+        $value = $builder->getValue();
         if (!is_float($value) || !is_nan($value)) {
             $builder->logErrorUsingDebug($this->exceptionMessage);
         }

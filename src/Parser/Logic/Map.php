@@ -12,18 +12,19 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser\Logic;
 
-use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception;
 use Philiagus\Parser\Result;
+use Philiagus\Parser\ResultBuilder;
+use Philiagus\Parser\Subject\Forwarded;
+use Philiagus\Parser\Subject\Test;
 use Philiagus\Parser\Util\Debug;
 
-class Map implements Parser
+class Map extends Base\Parser
 {
-    use Chainable, OverwritableParserDescription;
 
     private const TYPE_SAME = 1,
         TYPE_EQUALS = 2,
@@ -168,11 +169,12 @@ class Map implements Parser
         return $this;
     }
 
-
-    public function parse(Subject $subject): Result
+    /**
+     * @inheritDoc
+     */
+    public function execute(ResultBuilder $builder): Result
     {
-        $builder = $this->createResultBuilder($subject);
-        $value = $subject->getValue();
+        $value = $builder->getValue();
         $errors = [];
         /**
          * @type Parser $to
@@ -181,38 +183,42 @@ class Map implements Parser
             switch ($type) {
                 case self::TYPE_SAME:
                     if ($value === $from) {
-                        return $builder->createResultFromResult($to->parse($builder->subjectForwarded('same')));
+                        return $builder->createResultFromResult(
+                            $to->parse(new Forwarded($builder->getSubject(), 'same'))
+                        );
                     }
                     $errors[] = new Error(
-                        $subject,
+                        $builder->getSubject(),
                         'Value is not same as ' . Debug::stringify($from)
                     );
                     break;
                 case self::TYPE_SAME_LIST:
                     if (@in_array($value, $from, true)) {
-                        return $builder->createResultFromResult($to->parse($builder->subjectForwarded('same list')));
+                        return $builder->createResultFromResult($to->parse(new Forwarded($builder->getSubject(), 'same list')));
                     }
                     $errors[] = new Error(
-                        $subject,
+                        $builder->getSubject(),
                         'Value is not same as ' . implode(', ', array_map(fn($value) => Debug::stringify($value), $from))
                     );
                     break;
                 case self::TYPE_EQUALS:
                     if ($value == $from) {
-                        return $builder->createResultFromResult($to->parse($builder->subjectForwarded('equals')));
+                        return $builder->createResultFromResult($to->parse(new Forwarded($builder->getSubject(), 'equals')));
                     }
                     $errors[] = new Error(
-                        $subject,
+                        $builder->getSubject(),
                         'Value is not equal to ' . Debug::stringify($from)
                     );
                     break;
                 case self::TYPE_EQUALS_LIST:
                     // @ suppresses errors when comparing objects to scalars
                     if (@in_array($value, $from)) {
-                        return $builder->createResultFromResult($to->parse($builder->subjectForwarded('equals list')));
+                        return $builder->createResultFromResult(
+                            $to->parse(new Forwarded($builder->getSubject(), 'equals list'))
+                        );
                     }
                     $errors[] = new Error(
-                        $subject,
+                        $builder->getSubject(),
                         'Value is not equal to ' . implode(', ', array_map(fn($value) => Debug::stringify($value), $from))
                     );
                     break;
@@ -220,7 +226,7 @@ class Map implements Parser
                     $childErrors = null;
                     /** @var Parser $from */
                     try {
-                        $parserResult = $from->parse($builder->subjectTest('check'));
+                        $parserResult = $from->parse(new Test($builder->getSubject(), 'check', true));
 
                         if (!$parserResult->isSuccess()) {
                             $childErrors = $parserResult->getErrors();
@@ -229,33 +235,33 @@ class Map implements Parser
                         $childErrors = [$e->getError()];
                     }
 
-                    if($childErrors === null) {
+                    if ($childErrors === null) {
                         return $builder->createResultFromResult(
                             $to->parse(
-                                $builder->subjectForwarded('parser check')
+                                new Forwarded($builder->getSubject(), 'parser check')
                             )
                         );
                     }
-                    $errors[] = new Error($subject, 'Value did not match parser', sourceErrors: $childErrors);
+                    $errors[] = new Error($builder->getSubject(), 'Value did not match parser', sourceErrors: $childErrors);
                     unset($childErrors);
                     break;
                 case self::TYPE_PARSER_PIPE:
                     $childErrors = null;
                     /** @var Parser $from */
                     try {
-                        $parserResult = $from->parse($builder->subjectTest('check with pipe'));
+                        $parserResult = $from->parse(new Test($builder->getSubject(), 'check for pipe'));
                         if (!$parserResult->isSuccess()) {
                             $childErrors = $parserResult->getErrors();
                         }
                     } catch (Exception\ParsingException $e) {
                         $childErrors = [$e->getError()];
                     }
-                    if($childErrors === null && isset($parserResult)) {
+                    if ($childErrors === null && isset($parserResult)) {
                         return $builder->createResultFromResult(
-                            $to->parse($parserResult->subjectChain())
+                            $to->parse($parserResult)
                         );
                     }
-                    $errors[] = new Error($subject, 'Value did not match parser', sourceErrors: $childErrors);
+                    $errors[] = new Error($builder->getSubject(), 'Value did not match parser', sourceErrors: $childErrors);
                     unset($childErrors);
                     unset($parserResult);
                     break;
@@ -266,11 +272,7 @@ class Map implements Parser
             return $builder->createResult($this->default);
         }
 
-        $builder->logErrorUsingDebug(
-            $this->exceptionMessage,
-            [], null,
-            $errors
-        );
+        $builder->logErrorUsingDebug($this->exceptionMessage, sourceErrors: $errors);
 
         return $builder->createResultUnchanged();
     }

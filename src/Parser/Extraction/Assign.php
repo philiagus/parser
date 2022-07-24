@@ -13,17 +13,18 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser\Extraction;
 
+use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Chainable;
 use Philiagus\Parser\Base\OverwritableParserDescription;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Result;
+use Philiagus\Parser\ResultBuilder;
 
 
 /**
  * Stores the value into the provided variable
  */
-class Assign implements Parser
+class Assign extends Base\Parser
 {
     use Chainable, OverwritableParserDescription;
 
@@ -51,10 +52,9 @@ class Assign implements Parser
      *
      * @inheritDoc
      */
-    public function parse(Subject $subject): Result
+    public function execute(ResultBuilder $builder): Result
     {
-        $builder = $this->createResultBuilder($subject);
-        $this->target = $subject->getValue();
+        $this->target = $builder->getValue();
 
         return $builder->createResultUnchanged();
     }

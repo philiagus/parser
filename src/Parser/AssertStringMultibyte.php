@@ -12,8 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
@@ -21,11 +20,12 @@ use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
+use Philiagus\Parser\Subject\MetaInformation;
 use Philiagus\Parser\Util\Debug;
 
-class AssertStringMultibyte implements Parser
+class AssertStringMultibyte extends Base\Parser
 {
-    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
+    use TypeExceptionMessage;
 
     /** @var string[]|null */
     private ?array $encoding = null;
@@ -112,7 +112,7 @@ class AssertStringMultibyte implements Parser
         $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($integerParser): void {
             $builder->incorporateChildResult(
                 $integerParser->parse(
-                    $builder->subjectMeta('length in ' . $encoding, mb_strlen($value, $encoding))
+                    new MetaInformation($builder->getSubject(), 'length in ' . $encoding, mb_strlen($value, $encoding))
                 )
             );
         };
@@ -120,10 +120,12 @@ class AssertStringMultibyte implements Parser
         return $this;
     }
 
-    public function parse(Subject $subject): Result
+    /**
+     * @inheritDoc
+     */
+    public function execute(ResultBuilder $builder): Result
     {
-        $builder = $this->createResultBuilder($subject);
-        $value = $builder->getCurrentValue();
+        $value = $builder->getValue();
         if (!is_string($value)) {
             $this->logTypeError($builder);
 
@@ -182,7 +184,7 @@ class AssertStringMultibyte implements Parser
             }
             $builder->incorporateChildResult(
                 $stringParser->parse(
-                    $builder->subjectMeta("$encoding substring from $start to " . ($length ?? 'end'), $part)
+                    new MetaInformation($builder->getSubject(), "$encoding substring from $start to " . ($length ?? 'end'), $part)
                 )
             );
         };
@@ -287,7 +289,7 @@ class AssertStringMultibyte implements Parser
         $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($parser) {
             $builder->incorporateChildResult(
                 $parser->parse(
-                    $builder->subjectMeta('encoding', $encoding)
+                    new MetaInformation($builder->getSubject(), 'encoding', $encoding)
                 )
             );
         };

@@ -12,16 +12,14 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Result;
+use Philiagus\Parser\ResultBuilder;
 
 
-class Any implements Parser
+class Any extends Base\Parser
 {
-    use Chainable, OverwritableParserDescription;
 
     private function __construct()
     {
@@ -36,13 +34,11 @@ class Any implements Parser
     }
 
     /**
-     * @param Subject $subject
-     *
-     * @return Result
+     * @inheritDoc
      */
-    public function parse(Subject $subject): Result
+    public function execute(ResultBuilder $builder): Result
     {
-        return $this->createResultBuilder($subject)->createResultUnchanged();
+        return $builder->createResultUnchanged();
     }
 
     /**

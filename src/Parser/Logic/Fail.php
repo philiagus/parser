@@ -14,7 +14,9 @@ namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
+use Philiagus\Parser\Error;
 use Philiagus\Parser\Result;
+use Philiagus\Parser\Subject\ParserBegin;
 
 class Fail implements Parser
 {
@@ -47,14 +49,17 @@ class Fail implements Parser
     }
 
     /**
-     *
      * @inheritDoc
      */
     public function parse(Subject $subject): Result
     {
-        $builder = $subject->getResultBuilder('FAIL');
-        $builder->logErrorUsingDebug($this->message);
+        $subject = new ParserBegin($subject, 'FAIL');
 
-        return $builder->createResultUnchanged();
+        $error = Error::createUsingDebugString($subject, $this->message);
+        if ($subject->throwOnError) {
+            $error->throw();
+        }
+
+        return new Result($subject, null, [$error]);
     }
 }

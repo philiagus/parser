@@ -12,17 +12,16 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser\Logic;
 
-use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Result;
+use Philiagus\Parser\ResultBuilder;
 
-class OverwriteErrors implements Parser
+class OverwriteErrors extends Base\Parser
 {
-    use Chainable, OverwritableParserDescription;
 
     /** @var string */
     private string $message;
@@ -41,13 +40,15 @@ class OverwriteErrors implements Parser
         return new self($message, $around);
     }
 
-    public function parse(Subject $subject): Result
+    /**
+     * @inheritDoc
+     */
+    public function execute(ResultBuilder $builder): Result
     {
-        $builder = $this->createResultBuilder($subject);
         /** @var Error[] $errors */
         $errors = [];
         try {
-            $result = $this->parser->parse($subject);
+            $result = $this->parser->parse($builder->getSubject());
             if ($result->isSuccess()) {
                 return $builder->createResultFromResult($result);
             }
@@ -56,12 +57,7 @@ class OverwriteErrors implements Parser
             $errors[] = $exception->getError();
         }
 
-        $builder->logErrorUsingDebug(
-            $this->message,
-            [],
-            null,
-            $errors
-        );
+        $builder->logErrorUsingDebug($this->message, [], null, $errors);
 
         return $builder->createResultUnchanged();
     }

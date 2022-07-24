@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
+use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Chainable;
 use Philiagus\Parser\Base\OverwritableParserDescription;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
-use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Result;
-
+use Philiagus\Parser\ResultBuilder;
 
 /**
  * Parses the provided string treating it as form encoded data
@@ -26,7 +26,7 @@ use Philiagus\Parser\Result;
  *
  * @see parse_str()
  */
-class ParseFormEncodedString implements Parser
+class ParseFormEncodedString extends Base\Parser
 {
     use Chainable, OverwritableParserDescription, TypeExceptionMessage;
 
@@ -40,13 +40,11 @@ class ParseFormEncodedString implements Parser
     }
 
     /**
-     *
      * @inheritDoc
      */
-    public function parse(Subject $subject): Result
+    public function execute(ResultBuilder $builder): Result
     {
-        $builder = $this->createResultBuilder($subject);
-        $value = $builder->getCurrentValue();
+        $value = $builder->getValue();
         if (!is_string($value)) {
             $this->logTypeError($builder);
 

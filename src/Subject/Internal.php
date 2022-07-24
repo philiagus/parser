@@ -17,15 +17,9 @@ use Philiagus\Parser\Base\Subject;
 class Internal extends Subject
 {
 
-    public function __construct(mixed $value, string $pathDescription, Subject $parent)
+    public function __construct(Subject $sourceSubject, string $description, mixed $value)
     {
-        parent::__construct(
-            $value,
-            $pathDescription,
-            $parent,
-            false,
-            $parent->throwOnError()
-        );
+        parent::__construct($sourceSubject, $description, $value, true, null);
     }
 
     /**
@@ -33,6 +27,6 @@ class Internal extends Subject
      */
     protected function getPathStringPart(): string
     {
-        return "[{$this->getPathDescription()}]";
+        return "[{$this->description}]";
     }
 }

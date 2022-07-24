@@ -19,21 +19,15 @@ class Test extends Subject
 
     public function __construct(
         Subject $subject,
-        string $description,
-        ?bool $isPathInValue = null,
-        ?bool $throwOnError = null
-    ) {
-        parent::__construct(
-            $subject->getValue(),
-            $description,
-            $subject,
-            $isPathInValue ?? $subject->isPathInValue(),
-            $throwOnError ?? $subject->throwOnError()
-        );
+        string  $description,
+        bool    $forceThrowOnError = false
+    )
+    {
+        parent::__construct($subject, $description, $subject->getValue(), true, $forceThrowOnError ?: null);
     }
 
     protected function getPathStringPart(): string
     {
-        return ' TEST: ' . $this->getPathDescription();
+        return ' [TEST: ' . $this->description . ']';
     }
 }

@@ -12,12 +12,10 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Result;
-
+use Philiagus\Parser\ResultBuilder;
 
 /**
  * Class Fixed
@@ -26,9 +24,8 @@ use Philiagus\Parser\Result;
  *
  * @package Philiagus\Parser\Parser
  */
-class Fixed implements Parser
+class Fixed extends Base\Parser
 {
-    use Chainable, OverwritableParserDescription;
 
     /** @var mixed */
     private $value;
@@ -48,9 +45,12 @@ class Fixed implements Parser
         return new self($value);
     }
 
-    public function parse(Subject $subject): Result
+    /**
+     * @inheritDoc
+     */
+    public function execute(ResultBuilder $builder): Result
     {
-        return $this->createResultBuilder($subject)->createResult($this->value);
+        return $builder->createResult($this->value);
     }
 
     protected function getDefaultChainDescription(Subject $subject): string

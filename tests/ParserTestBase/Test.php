@@ -228,7 +228,7 @@ class Test
                             yield $caseName => new TestCase(
                                 $success,
                                 $throw,
-                                Subject::default($value, $throw),
+                                Subject::default($value, throwOnError: $throw),
                                 function () use ($value, $methodArgs, $handedOverParser, $methodCalls): Parser {
                                     $parser = $handedOverParser ?? ($this->parserCreation)($value, array_shift($methodArgs));
                                     foreach ($methodCalls as $method) {

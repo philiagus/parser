@@ -175,7 +175,7 @@ class AssertStringRegexTest extends ParserTestBase
     public function testNotMatchNoThrow(): void
     {
         $result = AssertStringRegex::pattern('/u/')
-            ->parse(Subject::default('f', false));
+            ->parse(Subject::default('f', throwOnError: false));
         self::assertFalse($result->isSuccess());
         self::assertCount(1, $result->getErrors());
     }

@@ -12,17 +12,16 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
-use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Result;
+use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
 
-class ParseBase64String implements Parser
+class ParseBase64String extends Base\Parser
 {
-    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
+    use TypeExceptionMessage;
 
     /** @var bool */
     private bool $strict = true;
@@ -70,13 +69,11 @@ class ParseBase64String implements Parser
     }
 
     /**
-     *
      * @inheritDoc
      */
-    public function parse(Subject $subject): Result
+    public function execute(ResultBuilder $builder): Result
     {
-        $builder = $this->createResultBuilder($subject);
-        $value = $builder->getCurrentValue();
+        $value = $builder->getValue();
         if (!is_string($value)) {
             $this->logTypeError($builder);
 

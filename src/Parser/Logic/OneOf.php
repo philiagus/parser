@@ -12,18 +12,18 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser\Logic;
 
-use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Result;
+use Philiagus\Parser\ResultBuilder;
+use Philiagus\Parser\Subject\Forwarded;
 use Philiagus\Parser\Util\Debug;
 
-class OneOf implements Parser
+class OneOf extends Base\Parser
 {
-    use Chainable, OverwritableParserDescription;
 
     /** @var string */
     private string $exceptionMessage = 'Provided value does not match any of the expected formats or values';
@@ -135,10 +135,13 @@ class OneOf implements Parser
         return $this;
     }
 
-    public function parse(Subject $subject): Result
+    /**
+     * @inheritDoc
+     */
+    public function execute(ResultBuilder $builder): Result
     {
-        $builder = $this->createResultBuilder($subject);
-        $value = $subject->getValue();
+        $value = $builder->getValue();
+        $subject = $builder->getSubject();
 
         /** @var Error[] $errors */
         $errors = [];
@@ -165,7 +168,7 @@ class OneOf implements Parser
         }
 
         foreach ($this->options as $index => $option) {
-            $forwardSubject = $builder->subjectForwarded("one of parser #$index");
+            $forwardSubject = new Forwarded($builder->getSubject(), "one of parser #$index");
             try {
                 $result = $option->parse($forwardSubject);
                 if ($result->isSuccess()) {

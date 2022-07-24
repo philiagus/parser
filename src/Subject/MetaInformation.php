@@ -17,11 +17,16 @@ use Philiagus\Parser\Base\Subject;
 class MetaInformation extends Subject
 {
 
+    public function __construct(Subject $sourceSubject, string $description, mixed $value)
+    {
+        parent::__construct($sourceSubject, $description, $value, true, null);
+    }
+
     /**
      * @inheritDoc
      */
     protected function getPathStringPart(): string
     {
-        return " {$this->getPathDescription()}";
+        return " {$this->description}";
     }
 }

@@ -43,7 +43,7 @@ class FailTest extends ParserTestBase
     {
         $parser = Fail::message('message {subject.debug}');
         $expectedMessage = Debug::parseMessage('message {subject.debug}', ['subject' => $value]);
-        $result = $parser->parse(Subject::default($value, false));
+        $result = $parser->parse(Subject::default($value, throwOnError: false));
         self::assertFalse($result->isSuccess());
         self::assertCount(1, $result->getErrors());
         self::assertSame($result->getErrors()[0]->getMessage(), $expectedMessage);

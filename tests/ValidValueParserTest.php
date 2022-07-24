@@ -26,13 +26,18 @@ trait ValidValueParserTest
     /**
      * @dataProvider provideValidValuesAndParsersAndResults
      */
-    public function testThatItAcceptsValidValuesThrowing($value, \Closure $parser, $expected, bool $resultWillBeWrapped = true): void
+    public function testThatItAcceptsValidValuesThrowing($value, \Closure $parser, $expected): void
     {
         $subject = Subject::default($value);
         /** @var Result $result */
         $result = $parser($value)->parse($subject);
         self::assertTrue($result->isSuccess());
-        self::assertSame($subject, $resultWillBeWrapped ? $result->getSubject()->getParent() : $result->getSubject());
+        $expectedSubject = $result->sourceSubject->sourceSubject;
+        self::assertSame(
+            $subject,
+            $expectedSubject,
+            'Subjects do not match, got ' . $subject::class . ' but expected ' . $expectedSubject::class
+        );
         self::assertSame([], $result->getErrors());
         $resultValue = $result->getValue();
         self::assertTrue(
@@ -50,11 +55,11 @@ trait ValidValueParserTest
      */
     public function testThatItAcceptsValidValuesNotThrowing($value, \Closure $parser, $expected, bool $resultWillBeWrapped = true): void
     {
-        $subject = Subject::default($value, false);
+        $subject = Subject::default($value, throwOnError: false);
         /** @var Result $result */
         $result = $parser($value)->parse($subject);
         self::assertTrue($result->isSuccess());
-        self::assertSame($subject, $resultWillBeWrapped ? $result->getSubject()->getParent() : $result->getSubject());
+        self::assertSame($subject, $resultWillBeWrapped ? $result->sourceSubject->sourceSubject : $result->sourceSubject);
         self::assertSame([], $result->getErrors());
         $resultValue = $result->getValue();
         self::assertTrue(

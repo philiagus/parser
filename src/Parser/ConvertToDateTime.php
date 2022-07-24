@@ -13,16 +13,15 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use DateTimeZone;
-use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
-use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Result;
+use Philiagus\Parser\ResultBuilder;
 
-class ConvertToDateTime implements Parser
+class ConvertToDateTime extends Base\Parser
 {
-    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
+    use TypeExceptionMessage;
 
     private ?string $sourceFormat = null;
     private ?DateTimeZone $sourceTimezone = null;
@@ -101,10 +100,12 @@ class ConvertToDateTime implements Parser
         return $this;
     }
 
-    public function parse(Subject $subject): Result
+    /**
+     * @inheritDoc
+     */
+    public function execute(ResultBuilder $builder): Result
     {
-        $builder = $this->createResultBuilder($subject);
-        $value = $builder->getCurrentValue();
+        $value = $builder->getValue();
         $dateTime = null;
         if ($value instanceof \DateTime) {
             $dateTime = $value;

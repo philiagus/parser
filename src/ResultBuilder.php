@@ -28,99 +28,16 @@ class ResultBuilder
     /** @var Error[] */
     private array $errors = [];
 
-    public function __construct(
-        Base\Subject $subject,
-        string       $parserDescription
-    )
+    public function __construct(Base\Subject $subject, string $parserDescription)
     {
-        $this->subject = new Subject\Parser($subject, $parserDescription);
-        $this->setCurrentSubject($this->subject);
+        $this->subject = new Subject\ParserBegin($subject, $parserDescription);
+        $this->currentSubject = $this->subject;
+        $this->currentValue = $this->subject->getValue();
     }
 
-    public function setCurrentSubject(Base\Subject $subject): self
+    public function getValue(): mixed
     {
-        $this->currentSubject = $subject;
-        $this->currentValue = $subject->getValue();
-
-        return $this;
-    }
-
-    /**
-     * Used when handing over the value of a property to another parser
-     *
-     * @param string $propertyName
-     * @param mixed $propertyValue
-     * @param bool $isPathInValue
-     *
-     * @return Subject\PropertyValue
-     */
-    public function subjectPropertyValue(string $propertyName, mixed $propertyValue, bool $isPathInValue = true): Subject\PropertyValue
-    {
-        return new Subject\PropertyValue($propertyValue, $propertyName, $this->currentSubject, $isPathInValue, $this->currentSubject->throwOnError());
-    }
-
-    /**
-     * Used when handing over meta information of a value such as the length of a string to another parser
-     *
-     * @param string $description
-     * @param mixed $value
-     * @param bool $isPathInValue
-     *
-     * @return Subject\MetaInformation
-     */
-    public function subjectMeta(string $description, mixed $value, bool $isPathInValue = true): Subject\MetaInformation
-    {
-        return new Subject\MetaInformation($value, $description, $this->currentSubject, $isPathInValue, $this->currentSubject->throwOnError());
-    }
-
-    public function subjectForwarded(string $description, ?bool $throwOnError = null): Subject\Forwarded
-    {
-        return new Subject\Forwarded($this->currentSubject, $description, $throwOnError);
-    }
-
-    public function subjectTest(string $description, ?bool $throwOnError = null): Subject\Test
-    {
-        return new Subject\Test($this->currentSubject, $description, throwOnError: $throwOnError);
-    }
-
-    /**
-     * Used when handing over the value of a key of an array to another parser
-     *
-     * @param int|string $index
-     * @param mixed $value
-     * @param bool $isPathInValue
-     *
-     * @return Subject\ArrayValue
-     */
-    public function subjectArrayValue(int|string $index, mixed $value, bool $isPathInValue = true): Subject\ArrayValue
-    {
-        return new Subject\ArrayValue($value, (string) $index, $this->currentSubject, $isPathInValue, $this->currentSubject->throwOnError());
-    }
-
-    /**
-     * Used when handing over the key of an array to another parser
-     *
-     * @param int|string $key
-     * @param bool $isPathInValue
-     *
-     * @return Subject\ArrayKey
-     */
-    public function subjectArrayKey(int|string $key, bool $isPathInValue = true): Subject\ArrayKey
-    {
-        return new Subject\ArrayKey($key, (string) $key, $this->currentSubject, $isPathInValue, $this->currentSubject->throwOnError());
-    }
-
-    /**
-     * Used when handing over the name of a property to another parser
-     *
-     * @param string $propertyName
-     * @param bool $isPathInValue
-     *
-     * @return Subject\PropertyName
-     */
-    public function subjectPropertyName(string $propertyName, bool $isPathInValue = true): Subject\PropertyName
-    {
-        return new Subject\PropertyName($propertyName, $propertyName, $this->currentSubject, $isPathInValue, $this->currentSubject->throwOnError());
+        return $this->currentValue;
     }
 
     public function incorporateChildResult(Result $result, mixed $defaultValue = null): mixed
@@ -128,7 +45,7 @@ class ResultBuilder
         if ($result->isSuccess()) return $result->getValue();
 
         $errors = $result->getErrors();
-        if ($this->subject->throwOnError()) {
+        if ($this->subject->throwOnError) {
             $errors[0]->throw();
         }
         $this->errors = [...$this->errors, ...$errors];
@@ -154,7 +71,7 @@ class ResultBuilder
     {
         $this->logError(
             Error::createUsingDebugString(
-                $this->subject,
+                $this->currentSubject,
                 $message,
                 $replacers,
                 $sourceThrowable,
@@ -170,7 +87,7 @@ class ResultBuilder
      */
     public function logError(Contract\Error $error): void
     {
-        if ($this->subject->throwOnError()) {
+        if ($this->subject->throwOnError) {
             $error->throw();
         }
 
@@ -190,7 +107,7 @@ class ResultBuilder
     public function createResultFromResult(Result $result): Result
     {
         return new Result(
-            $result->getSubject(),
+            $result->sourceSubject,
             $result->isSuccess() ? $result->getValue() : null,
             [...$this->errors, ...$result->getErrors()]
         );
@@ -201,19 +118,18 @@ class ResultBuilder
         return new Result($this->currentSubject, $this->currentValue, $this->errors);
     }
 
-    public function getCurrentValue(): mixed
+    public function setValue(string $description, mixed $value): void
     {
-        return $this->currentValue;
+        $this->currentSubject = new Subject\Internal($this->currentSubject, $description, $value);
+        $this->currentValue = $value;
     }
 
-    public function setCurrentValue(string $internalDescription, mixed $value): void
+    /**
+     * @return Base\Subject
+     */
+    public function getSubject(): Base\Subject
     {
-        $this->currentSubject = new Subject\Internal(
-            $value,
-            $internalDescription,
-            $this->currentSubject
-        );
-        $this->currentValue = $value;
+        return $this->currentSubject;
     }
 
 }

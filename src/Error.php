@@ -19,6 +19,12 @@ use Philiagus\Parser\Util\Debug;
 class Error implements Contract\Error
 {
 
+    /**
+     * @param Subject $subject
+     * @param string $message
+     * @param \Throwable|null $sourceThrowable
+     * @param array $sourceErrors
+     */
     public function __construct(
         private readonly Subject     $subject,
         private readonly string      $message,
@@ -35,6 +41,15 @@ class Error implements Contract\Error
         }
     }
 
+    /**
+     * @param Subject $subject
+     * @param string $message
+     * @param array $replacers
+     * @param \Throwable|null $sourceThrowable
+     * @param array $sourceErrors
+     *
+     * @return static
+     */
     public static function createUsingDebugString(
         Subject     $subject,
         string      $message,

@@ -12,18 +12,17 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
-use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Result;
+use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
 
-class ParseJSONString implements Parser
+class ParseJSONString extends Base\Parser
 {
-    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
+    use TypeExceptionMessage;
 
     /** @var string */
     private string $conversionExceptionMessage = 'Provided string is not a valid JSON: {msg}';
@@ -114,13 +113,11 @@ class ParseJSONString implements Parser
     }
 
     /**
-     *
      * @inheritDoc
      */
-    public function parse(Subject $subject): Result
+    public function execute(ResultBuilder $builder): Result
     {
-        $builder = $this->createResultBuilder($subject);
-        $value = $builder->getCurrentValue();
+        $value = $builder->getValue();
         if (!is_string($value)) {
             $this->logTypeError($builder);
 

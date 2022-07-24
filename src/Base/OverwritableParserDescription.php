@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Base;
 
 use Philiagus\Parser\ResultBuilder;
+use Philiagus\Parser\Util\Debug;
 
 trait OverwritableParserDescription
 {
@@ -37,10 +38,12 @@ trait OverwritableParserDescription
      *
      * @return ResultBuilder
      */
-    public function createResultBuilder(Subject $subject): ResultBuilder
+    protected function createResultBuilder(Subject $subject): ResultBuilder
     {
         return $subject->getResultBuilder(
-            $this->overwritableChainDescriptionMessage ?? $this->getDefaultChainDescription($subject)
+            Debug::parseMessage(
+                $this->overwritableChainDescriptionMessage ?? $this->getDefaultChainDescription($subject),
+                ['subject' => $subject->getValue()])
         );
     }
 

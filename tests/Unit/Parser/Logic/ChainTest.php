@@ -14,8 +14,10 @@ namespace Philiagus\Parser\Test\Unit\Parser\Logic;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Parser\Any;
+use Philiagus\Parser\Parser\Logic\Chain;
 use Philiagus\Parser\Result;
-use Philiagus\Parser\Subject\Chain;
+use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\ParserTestBase;
 
 /**
@@ -23,6 +25,8 @@ use Philiagus\Parser\Test\ParserTestBase;
  */
 class ChainTest extends ParserTestBase
 {
+    use ChainableParserTest;
+
     public function testParsers(): void
     {
         $result1 = new \stdClass();
@@ -44,7 +48,7 @@ class ChainTest extends ParserTestBase
                     ->parserArgument()
                     ->expectSingleCall(
                         fn() => $result1,
-                        Chain::class,
+                        Result::class,
                         eligible: fn($_1, $_2, array $successes) => $successes[0],
                         result: fn(Subject $subject) => new Result($subject, $result2, []),
                     ),
@@ -52,7 +56,7 @@ class ChainTest extends ParserTestBase
                     ->parserArgument()
                     ->expectSingleCall(
                         fn() => $result2,
-                        Chain::class,
+                        Result::class,
                         eligible: fn($_1, $_2, array $successes) => $successes[0] && $successes[1],
                         result: fn(Subject $subject) => new Result($subject, $result3, []),
                     ),
@@ -68,5 +72,12 @@ class ChainTest extends ParserTestBase
                 }
             );
         $builder->run();
+    }
+
+    public function provideValidValuesAndParsersAndResults(): array
+    {
+        return (new DataProvider())
+            ->map(static fn($value) => [$value, fn() => Chain::parsers(Any::new()), $value])
+            ->provide(false);
     }
 }

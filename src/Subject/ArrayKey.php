@@ -16,12 +16,16 @@ use Philiagus\Parser\Base\Subject;
 
 class ArrayKey extends Subject
 {
+    public function __construct(Subject $sourceSubject, int|string $arrayKey)
+    {
+        parent::__construct($sourceSubject, (string) $arrayKey, $arrayKey, false, null);
+    }
 
     /**
      * @inheritDoc
      */
     protected function getPathStringPart(): string
     {
-        return " key " . var_export($this->getPathDescription(), true);
+        return " key " . var_export($this->description, true);
     }
 }

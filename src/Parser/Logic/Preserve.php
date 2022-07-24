@@ -12,19 +12,19 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser\Logic;
 
-use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Result;
+use Philiagus\Parser\ResultBuilder;
+use Philiagus\Parser\Subject\Forwarded;
 
 
 /**
  * Preserves a value around another parser, shielding it from alteration
  */
-class Preserve implements Parser
+class Preserve extends Base\Parser
 {
-    use Chainable, OverwritableParserDescription;
 
     /** @var Parser */
     private Parser $around;
@@ -49,12 +49,14 @@ class Preserve implements Parser
         return new self($parser);
     }
 
-    public function parse(Subject $subject): Result
+    /**
+     * @inheritDoc
+     */
+    public function execute(ResultBuilder $builder): Result
     {
-        $builder = $this->createResultBuilder($subject);
         $builder->incorporateChildResult(
             $this->around->parse(
-                $builder->subjectForwarded('preserved around')
+                new Forwarded($builder->getSubject(), 'preserved around')
             )
         );
 

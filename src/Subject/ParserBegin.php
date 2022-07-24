@@ -14,18 +14,12 @@ namespace Philiagus\Parser\Subject;
 
 use Philiagus\Parser\Base\Subject;
 
-class Parser extends Subject
+class ParserBegin extends Subject
 {
 
-    public function __construct(Subject $parent, string $description)
+    public function __construct(Subject $originalSubject, string $description)
     {
-        parent::__construct(
-            $parent->getValue(),
-            $description,
-            $parent,
-            false,
-            $parent->throwOnError()
-        );
+        parent::__construct($originalSubject, $description, $originalSubject->getValue(), true, null);
     }
 
     /**
@@ -33,10 +27,10 @@ class Parser extends Subject
      */
     protected function getPathStringPart(): string
     {
-        if ($this->getPathDescription() === '') {
+        if ($this->description === '') {
             return '';
         }
 
-        return " parse: '{$this->getPathDescription()}'";
+        return " parse: '{$this->description}'";
     }
 }

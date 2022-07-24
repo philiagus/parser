@@ -12,17 +12,15 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
-use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 
-class AssertObject implements Parser
+class AssertObject extends Base\Parser
 {
-    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
+    use TypeExceptionMessage;
 
     private const DEFAULT_INSTANCEOF_MESSAGE = 'The provided object is not an instance of {class.raw}';
 
@@ -84,11 +82,13 @@ class AssertObject implements Parser
             ->setTypeExceptionMessage($typeExceptionMessage);
     }
 
-    public function parse(Subject $subject): Result
+    /**
+     * @inheritDoc
+     */
+    public function execute(ResultBuilder $builder): Result
     {
-        $builder = $this->createResultBuilder($subject);
-        $value = $builder->getCurrentValue();
-        if (!is_object($builder->getCurrentValue())) {
+        $value = $builder->getValue();
+        if (!is_object($builder->getValue())) {
             $this->logTypeError($builder);
         } else {
             foreach ($this->checks as $check) {

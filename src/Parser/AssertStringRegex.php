@@ -12,18 +12,19 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Result;
+use Philiagus\Parser\ResultBuilder;
+use Philiagus\Parser\Subject\MetaInformation;
 
-class AssertStringRegex implements Parser
+class AssertStringRegex extends Base\Parser
 {
-    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
+    use TypeExceptionMessage;
 
     public const DEFAULT_PATTERN_EXCEPTION_MESSAGE = 'The string does not match the expected pattern';
 
@@ -213,10 +214,12 @@ class AssertStringRegex implements Parser
         return $this;
     }
 
-    public function parse(Subject $subject): Result
+    /**
+     * @inheritDoc
+     */
+    public function execute(ResultBuilder $builder): Result
     {
-        $builder = $this->createResultBuilder($subject);
-        $value = $builder->getCurrentValue();
+        $value = $builder->getValue();
         if (!is_string($value)) {
             $this->logTypeError($builder);
 
@@ -258,7 +261,7 @@ class AssertStringRegex implements Parser
         foreach ($this->numberMatchesParsers as $numberMatchesParser) {
             $builder->incorporateChildResult(
                 $numberMatchesParser->parse(
-                    $builder->subjectMeta('number of matches', $result)
+                    new MetaInformation($builder->getSubject(), 'number of matches', $result)
                 )
             );
         }
@@ -266,7 +269,7 @@ class AssertStringRegex implements Parser
         foreach ($this->matchesParser as $parser) {
             $builder->incorporateChildResult(
                 $parser->parse(
-                    $builder->subjectMeta('matches', $matches)
+                    new MetaInformation($builder->getSubject(), 'matches', $matches)
                 )
             );
         }

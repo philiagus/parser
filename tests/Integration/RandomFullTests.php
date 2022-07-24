@@ -68,12 +68,13 @@ class RandomFullTests extends TestCase
             )
             ->then(Assign::to($preservedValue2));
         try {
-            $result = $parser->parse(Subject::default($input, false));
+            $result = $parser->parse(Subject::default($input, throwOnError: false));
         } catch (ParsingException $e) {
-            echo $e->getSubject()->getPathAsString(true), PHP_EOL,
-            $e->getSubject()->getPathAsString(false), PHP_EOL,
-            $e->getMessage();
-            self::fail();
+            self::fail(
+                $e->getSubject()->getPathAsString(true) . PHP_EOL .
+                $e->getSubject()->getPathAsString(false) . PHP_EOL .
+                $e->getMessage()
+            );
         }
 
         self::assertSame($preservedValue2, $result->getValue());

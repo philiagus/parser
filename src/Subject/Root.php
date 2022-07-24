@@ -18,16 +18,14 @@ use Philiagus\Parser\Util\Debug;
 class Root extends Subject
 {
 
-    public function __construct(
-        mixed   $value,
-        ?string $description = null,
-        bool    $throwOnError = true
-    )
+    public function __construct(mixed $value, ?string $description = null, bool $throwOnError = true)
     {
         parent::__construct(
-            $value,
+            null,
             $description ?? Debug::getType($value),
-            throwOnError: $throwOnError
+            $value,
+            false,
+            $throwOnError
         );
     }
 
@@ -36,6 +34,6 @@ class Root extends Subject
      */
     protected function getPathStringPart(): string
     {
-        return $this->getPathDescription();
+        return $this->description;
     }
 }

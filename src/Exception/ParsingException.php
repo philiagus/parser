@@ -32,9 +32,9 @@ class ParsingException extends \Exception
         parent::__construct($this->error->getMessage(), 0, $this->error->getSourceThrowable());
     }
 
-    public function getPathAsString(bool $asValuePath = true): string
+    public function getPathAsString(bool $includeUtility = false): string
     {
-        return $this->getSubject()->getPathAsString($asValuePath);
+        return $this->getSubject()->getPathAsString($includeUtility);
     }
 
     public function getSubject(): Subject

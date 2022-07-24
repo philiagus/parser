@@ -17,6 +17,8 @@ use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception;
 use Philiagus\Parser\ResultBuilder;
+use Philiagus\Parser\Subject\PropertyName;
+use Philiagus\Parser\Subject\PropertyValue;
 use Philiagus\Parser\Util\Debug;
 
 class ParseStdClass extends AssertStdClass
@@ -25,14 +27,14 @@ class ParseStdClass extends AssertStdClass
     public function defaultProperty(string $property, $defaultValue): self
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($property, $defaultValue): void {
-            $value = $builder->getCurrentValue();
+            $value = $builder->getValue();
             if (property_exists($value, $property)) {
                 return;
             }
             $value = clone $value;
             $value->$property = $defaultValue;
 
-            $builder->setCurrentValue(
+            $builder->setValue(
                 "defaulted property '$property'", $value
             );
         };
@@ -43,7 +45,7 @@ class ParseStdClass extends AssertStdClass
     public function defaultWith(\stdClass $object): self
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($object): void {
-            $value = $builder->getCurrentValue();
+            $value = $builder->getValue();
             $cloned = false;
             foreach ($object as $property => $newValue) {
                 if (!property_exists($value, $property)) {
@@ -57,7 +59,7 @@ class ParseStdClass extends AssertStdClass
 
             if (!$cloned) return;
 
-            $builder->setCurrentValue(
+            $builder->setValue(
                 'defaulted with object', $value
             );
         };
@@ -87,7 +89,7 @@ class ParseStdClass extends AssertStdClass
     ): self
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($property, $parser, $missingKeyExceptionMessage): void {
-            $value = $builder->getCurrentValue();
+            $value = $builder->getValue();
             if (!property_exists($value, $property)) {
                 $builder->logErrorUsingDebug(
                     $missingKeyExceptionMessage,
@@ -98,13 +100,13 @@ class ParseStdClass extends AssertStdClass
             }
 
             $result = $parser->parse(
-                $builder->subjectPropertyValue($property, $value->$property)
+                new PropertyValue($builder->getSubject(), $property, $value->$property)
             );
             if ($result->isSuccess()) {
                 $value = clone $value;
                 $value->$property = $result->getValue();
 
-                $builder->setCurrentValue("modify property '$property'", $value);
+                $builder->setValue("modify property '$property'", $value);
 
                 return;
             }
@@ -126,19 +128,19 @@ class ParseStdClass extends AssertStdClass
     public function modifyOptionalPropertyValue(string $property, ParserContract $parser): self
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($property, $parser): void {
-            $value = $builder->getCurrentValue();
+            $value = $builder->getValue();
             if (!property_exists($value, $property)) {
                 return;
 
             }
             $result = $parser->parse(
-                $builder->subjectPropertyValue($property, $value->$property)
+                new PropertyValue($builder->getSubject(), $property, $value->$property)
             );
 
             if ($result->isSuccess()) {
                 $value = clone $value;
                 $value->$property = $result->getValue();
-                $builder->setCurrentValue("modify property '$property' value", $value);
+                $builder->setValue("modify property '$property' value", $value);
 
                 return;
             }
@@ -164,10 +166,10 @@ class ParseStdClass extends AssertStdClass
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($newPropertyNameIsNotUsableMessage, $stringParser): void {
             $result = new \stdClass();
-            $value = $builder->getCurrentValue();
+            $value = $builder->getValue();
             foreach ($value as $oldName => $propValue) {
                 $newNameResult = $stringParser->parse(
-                    $builder->subjectPropertyName($oldName)
+                    new PropertyName($builder->getSubject(), $oldName)
                 );
                 if ($newNameResult->isSuccess()) {
                     $newName = $newNameResult->getValue();
@@ -189,7 +191,7 @@ class ParseStdClass extends AssertStdClass
                 $result->$oldName = $propValue;
             }
 
-            $builder->setCurrentValue('modify each property name', $result);
+            $builder->setValue('modify each property name', $result);
         };
 
         return $this;
@@ -206,9 +208,9 @@ class ParseStdClass extends AssertStdClass
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($parser): void {
             $result = new \stdClass();
-            foreach ($builder->getCurrentValue() as $property => $value) {
+            foreach ($builder->getValue() as $property => $value) {
                 $newValueResult = $parser->parse(
-                    $builder->subjectPropertyValue($property, $value)
+                    new PropertyValue($builder->getSubject(), $property, $value)
                 );
                 if ($newValueResult->isSuccess()) {
                     $result->$property = $newValueResult->getValue();
@@ -219,7 +221,7 @@ class ParseStdClass extends AssertStdClass
                 $result->$property = $value;
             }
 
-            $builder->setCurrentValue('modify each property value', $result);
+            $builder->setValue('modify each property value', $result);
         };
 
         return $this;

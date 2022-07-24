@@ -12,20 +12,18 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
-use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Result;
-
+use Philiagus\Parser\ResultBuilder;
 
 /**
  * Takes any input and attempts a loss free conversion of the provided value into a valid integer value
  */
-class ConvertToInteger implements Parser
+class ConvertToInteger extends Base\Parser
 {
-    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
+    use TypeExceptionMessage;
 
     private function __construct()
     {
@@ -37,10 +35,12 @@ class ConvertToInteger implements Parser
         return new self();
     }
 
-    public function parse(Subject $subject): Result
+    /**
+     * @inheritDoc
+     */
+    public function execute(ResultBuilder $builder): Result
     {
-        $builder = $this->createResultBuilder($subject);
-        $value = $builder->getCurrentValue();
+        $value = $builder->getValue();
         if (is_int($value)) {
             return $builder->createResultUnchanged();
         }

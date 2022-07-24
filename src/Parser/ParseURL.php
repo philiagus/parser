@@ -12,13 +12,14 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Result;
+use Philiagus\Parser\ResultBuilder;
+use Philiagus\Parser\Subject\MetaInformation;
 
 /**
  * Parses the provided string, treating is an URL, and returns the
@@ -26,9 +27,9 @@ use Philiagus\Parser\Result;
  *
  * @see parse_url()
  */
-class ParseURL implements Parser
+class ParseURL extends Base\Parser
 {
-    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
+    use TypeExceptionMessage;
 
     private const TARGET_SCHEME = 'scheme',
         TARGET_HOST = 'host',
@@ -363,13 +364,11 @@ class ParseURL implements Parser
     }
 
     /**
-     *
      * @inheritDoc
      */
-    public function parse(Subject $subject): Result
+    public function execute(ResultBuilder $builder): Result
     {
-        $builder = $this->createResultBuilder($subject);
-        $value = $builder->getCurrentValue();
+        $value = $builder->getValue();
         if (!is_string($value)) {
             $this->logTypeError($builder);
 
@@ -398,7 +397,7 @@ class ParseURL implements Parser
                 $fieldValue = $default;
             }
             $parser->parse(
-                $builder->subjectMeta($target, $fieldValue)
+                new MetaInformation($builder->getSubject(), $target, $fieldValue)
             );
         }
 

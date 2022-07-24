@@ -115,7 +115,7 @@ class Debug
             return 'false';
         }
 
-        if($value === null) {
+        if ($value === null) {
             return 'null';
         }
 

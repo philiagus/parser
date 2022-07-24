@@ -16,9 +16,7 @@ use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Parser\Logic\Map;
 use Philiagus\Parser\Result;
-use Philiagus\Parser\Subject\Chain;
 use Philiagus\Parser\Subject\Forwarded;
-use Philiagus\Parser\Subject\MetaInformation;
 use Philiagus\Parser\Subject\Test;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\ParserTestBase;
@@ -255,7 +253,7 @@ class MapTest extends ParserTestBase
                     ->parserArgument()
                     ->expectSingleCall(
                         fn($value) => $forwardedValue,
-                        Chain::class,
+                        Result::class,
                         result: fn(Subject $subject) => new Result($subject, $expectedResult, [])
                     )
                     ->willBeCalledIf(fn($_1, $_2, array $successes) => $successes[0]),

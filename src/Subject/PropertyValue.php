@@ -16,12 +16,16 @@ use Philiagus\Parser\Base\Subject;
 
 class PropertyValue extends Subject
 {
+    public function __construct(Subject $sourceSubject, string $propertyName, mixed $propertyValue)
+    {
+        parent::__construct($sourceSubject, $propertyName, $propertyValue, false, null);
+    }
 
     /**
      * @inheritDoc
      */
     protected function getPathStringPart(): string
     {
-        return ".{$this->getPathDescription()}";
+        return ".{$this->description}";
     }
 }

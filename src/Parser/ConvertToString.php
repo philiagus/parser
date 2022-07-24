@@ -12,19 +12,20 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\OverwritableParserDescription;
+use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\TypeExceptionMessage;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Result;
+use Philiagus\Parser\ResultBuilder;
+use Philiagus\Parser\Subject\ArrayValue;
 use Philiagus\Parser\Util\Debug;
 use Stringable;
 
-class ConvertToString implements Parser
+class ConvertToString extends Base\Parser
 {
-    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
+    use TypeExceptionMessage;
 
     /** @var array{string, string}|null */
     private ?array $booleanValues = null;
@@ -98,10 +99,12 @@ class ConvertToString implements Parser
         return $this;
     }
 
-    public function parse(Subject $subject): Result
+    /**
+     * @inheritDoc
+     */
+    public function execute(ResultBuilder $builder): Result
     {
-        $builder = $this->createResultBuilder($subject);
-        $value = $builder->getCurrentValue();
+        $value = $builder->getValue();
         if (is_string($value)) {
             return $builder->createResultUnchanged();
         }
@@ -124,7 +127,7 @@ class ConvertToString implements Parser
                     $elementConverter = $this->implode[2];
                     $convertedElements = [];
                     foreach ($value as $key => $element) {
-                        $newSubject = $builder->subjectArrayValue($key, $element);
+                        $newSubject = new ArrayValue($builder->getSubject(), $key, $element);
                         if ($elementConverter) {
                             $conversionResult = $elementConverter->parse($newSubject);
                             if (!$conversionResult->isSuccess()) {
