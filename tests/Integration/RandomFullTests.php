@@ -23,7 +23,7 @@ use Philiagus\Parser\Parser\AssertStdClass;
 use Philiagus\Parser\Parser\AssertString;
 use Philiagus\Parser\Parser\Extraction\Append;
 use Philiagus\Parser\Parser\Extraction\Assign;
-use Philiagus\Parser\Parser\Fixed;
+use Philiagus\Parser\Parser\IgnoreInput;
 use Philiagus\Parser\Parser\Logic\Preserve;
 use Philiagus\Parser\Parser\ParseJSONString;
 use Philiagus\Parser\Parser\ParseStdClass;
@@ -49,9 +49,9 @@ class RandomFullTests extends TestCase
             ->then(
                 Preserve::around(
                     ParseStdClass::new()
-                        ->modifyEachPropertyName(Fixed::value('overwritten'))
-                        ->modifyEachPropertyValue(Fixed::value('overwritten'))
-                        ->modifyPropertyValue('overwritten', AssertSame::value('overwritten')->then(Fixed::value('overwritten again')))
+                        ->modifyEachPropertyName(IgnoreInput::resultIn('overwritten'))
+                        ->modifyEachPropertyValue(IgnoreInput::resultIn('overwritten'))
+                        ->modifyPropertyValue('overwritten', AssertSame::value('overwritten')->then(IgnoreInput::resultIn('overwritten again')))
                         ->then(Assign::to($result2))
                         ->then(Append::to($result3))
                 )

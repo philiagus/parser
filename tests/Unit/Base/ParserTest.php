@@ -61,7 +61,7 @@ class ParserTest extends ParserTestBase
                 return $builder->createResult($this->expectedResult);
             }
 
-            protected function getDefaultChainDescription(Subject $subject): string
+            protected function getDefaultParserDescription(Subject $subject): string
             {
                 return 'parser';
             }
@@ -87,7 +87,7 @@ class ParserTest extends ParserTestBase
         $builder
             ->test(
                 fn() => $this->createParser(null),
-                'setChainDescription'
+                'setParserDescription'
             )
             ->arguments(
                 $builder
@@ -97,7 +97,7 @@ class ParserTest extends ParserTestBase
             ->provider(
                 DataProvider::TYPE_ALL,
                 successValidator: function (Subject $subject, Result $result, array $arguments): array {
-                    $received = $result->sourceSubject->getPathAsString(true);
+                    $received = $result->getSourceSubject()->getPathAsString(true);
                     $expectedMessage = Debug::getType($subject->getValue()) . ' ▷' . $arguments[0];
                     if ($received !== $expectedMessage) {
                         return [

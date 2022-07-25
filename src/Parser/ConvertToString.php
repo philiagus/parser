@@ -102,7 +102,7 @@ class ConvertToString extends Base\Parser
     /**
      * @inheritDoc
      */
-    public function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): Result
     {
         $value = $builder->getValue();
         if (is_string($value)) {
@@ -178,7 +178,7 @@ class ConvertToString extends Base\Parser
         return 'Variable of type {subject.type} could not be converted to a string';
     }
 
-    protected function getDefaultChainDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'convert to string';
     }

@@ -32,7 +32,7 @@ trait ValidValueParserTest
         /** @var Result $result */
         $result = $parser($value)->parse($subject);
         self::assertTrue($result->isSuccess());
-        $expectedSubject = $result->sourceSubject->sourceSubject;
+        $expectedSubject = $result->getSourceSubject()->getSourceSubject();
         self::assertSame(
             $subject,
             $expectedSubject,
@@ -59,7 +59,7 @@ trait ValidValueParserTest
         /** @var Result $result */
         $result = $parser($value)->parse($subject);
         self::assertTrue($result->isSuccess());
-        self::assertSame($subject, $resultWillBeWrapped ? $result->sourceSubject->sourceSubject : $result->sourceSubject);
+        self::assertSame($subject, $resultWillBeWrapped ? $result->getSourceSubject()->getSourceSubject() : $result->getSourceSubject());
         self::assertSame([], $result->getErrors());
         $resultValue = $result->getValue();
         self::assertTrue(

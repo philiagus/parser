@@ -43,7 +43,7 @@ class OverwriteErrors extends Base\Parser
     /**
      * @inheritDoc
      */
-    public function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): Result
     {
         /** @var Error[] $errors */
         $errors = [];
@@ -62,7 +62,7 @@ class OverwriteErrors extends Base\Parser
         return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultChainDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Subject $subject): string
     {
         return '';
     }

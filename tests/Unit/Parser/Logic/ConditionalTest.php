@@ -14,7 +14,7 @@ namespace Philiagus\Parser\Test\Unit\Parser\Logic;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Parser\Logic\Map;
+use Philiagus\Parser\Parser\Logic\Conditional;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Subject\Utility\Forwarded;
 use Philiagus\Parser\Subject\Utility\Test;
@@ -22,9 +22,9 @@ use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\ParserTestBase;
 
 /**
- * @covers \Philiagus\Parser\Parser\Logic\Map
+ * @covers \Philiagus\Parser\Parser\Logic\Conditional
  */
-class MapTest extends ParserTestBase
+class ConditionalTest extends ParserTestBase
 {
 
     use ChainableParserTest;
@@ -48,7 +48,7 @@ class MapTest extends ParserTestBase
         $builder->run();
     }
 
-    public function testAddSame(): void
+    public function testIfSameAs(): void
     {
         $expectedResult = new \stdClass();
         $builder = $this->builder();
@@ -85,7 +85,7 @@ class MapTest extends ParserTestBase
         $builder->run();
     }
 
-    public function testAddSameList(): void
+    public function testIfSameAsListElement(): void
     {
         $expectedResult = new \stdClass();
         $builder = $this->builder();
@@ -122,7 +122,7 @@ class MapTest extends ParserTestBase
         $builder->run();
     }
 
-    public function testAddEquals(): void
+    public function testIfEqualTo(): void
     {
         $expectedResult = new \stdClass();
         $builder = $this->builder();
@@ -159,7 +159,7 @@ class MapTest extends ParserTestBase
         $builder->run();
     }
 
-    public function testAddEqualsList(): void
+    public function testIfEqualToListElement(): void
     {
         $expectedResult = new \stdClass();
         $builder = $this->builder();
@@ -196,7 +196,7 @@ class MapTest extends ParserTestBase
         $builder->run();
     }
 
-    public function testAddParser(): void
+    public function testIfParser(): void
     {
         $expectedResult = new \stdClass();
         $builder = $this->builder();
@@ -234,6 +234,13 @@ class MapTest extends ParserTestBase
                 }
             );
 
+        $builder->run();
+    }
+
+    public function testIfParserPiped(): void
+    {
+        $expectedResult = new \stdClass();
+        $builder = $this->builder();
 
         // pipe
         $forwardedValue = new \stdClass();
@@ -256,10 +263,7 @@ class MapTest extends ParserTestBase
                         Result::class,
                         result: fn(Subject $subject) => new Result($subject, $expectedResult, [])
                     )
-                    ->willBeCalledIf(fn($_1, $_2, array $successes) => $successes[0]),
-                $builder
-                    ->fixedArgument()
-                    ->success(true)
+                    ->willBeCalledIf(fn($_1, $_2, array $successes) => $successes[0])
             )
             ->provider(
                 DataProvider::TYPE_ALL,
@@ -278,7 +282,7 @@ class MapTest extends ParserTestBase
     public function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider())
-            ->map(static fn($value) => [$value, fn() => Map::new()->setDefaultResult($value), $value])
+            ->map(static fn($value) => [$value, fn() => Conditional::new()->setDefaultResult($value), $value])
             ->provide(false);
     }
 }

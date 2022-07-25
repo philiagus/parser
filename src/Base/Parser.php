@@ -24,14 +24,14 @@ use Philiagus\Parser\Util\Debug;
 abstract class Parser implements Contract\Parser, Contract\Chainable
 {
 
-    private string $chainDescription;
+    private string $parserDescription;
 
     /**
-     * @see OverwritableParserDescription::setChainDescription()
+     * @see OverwritableParserDescription::setParserDescription()
      */
-    public function setChainDescription(string $description): self
+    public function setParserDescription(string $description): self
     {
-        $this->chainDescription = $description;
+        $this->parserDescription = $description;
 
         return $this;
     }
@@ -43,7 +43,7 @@ abstract class Parser implements Contract\Parser, Contract\Chainable
     {
         return $this->execute(
             $subject->getResultBuilder(
-                $this->chainDescription ?? $this->getDefaultChainDescription($subject)
+                $this->parserDescription ?? $this->getDefaultParserDescription($subject)
             )
         );
     }
@@ -56,9 +56,9 @@ abstract class Parser implements Contract\Parser, Contract\Chainable
     abstract protected function execute(ResultBuilder $builder): Result;
 
     /**
-     * @see OverwritableParserDescription::getDefaultChainDescription()
+     * @see OverwritableParserDescription::getDefaultParserDescription()
      */
-    abstract protected function getDefaultChainDescription(Subject $subject): string;
+    abstract protected function getDefaultParserDescription(Subject $subject): string;
 
     /**
      * @inheritDoc

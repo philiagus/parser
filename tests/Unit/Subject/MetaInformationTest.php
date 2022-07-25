@@ -46,14 +46,16 @@ class MetaInformationTest extends SubjectTestBase
 
         $subject = new MetaInformation($root, 'DESCRIPTION', $value);
         Util::assertSame($value, $subject->getValue());
-        self::assertSame('DESCRIPTION', $subject->description);
-        self::assertSame($throwOnError, $subject->throwOnError);
+        self::assertFalse($subject->isUtilitySubject());
+        self::assertSame($root, $subject->getSourceSubject());
+        self::assertSame('DESCRIPTION', $subject->getDescription());
+        self::assertSame($throwOnError, $subject->throwOnError());
         self::assertSame("ROOT$expectedPathPart", $subject->getPathAsString(true));
         self::assertSame("ROOT$expectedPathPart", $subject->getPathAsString(false));
         self::assertSame([$root, $subject], $subject->getSubjectChain(true));
         self::assertSame([$root, $subject], $subject->getSubjectChain(false));
         $builder = $subject->getResultBuilder('builder description');
         Util::assertSame($value, $builder->getValue());
-        self::assertSame($builder->getSubject()->description, 'builder description');
+        self::assertSame($builder->getSubject()->getDescription(), 'builder description');
     }
 }

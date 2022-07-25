@@ -155,7 +155,7 @@ class Parser implements Argument
                         if (!$this->errorWillBeHidden) {
                             $errorCollection->add($error->getMessage());
                         }
-                        if ($subject->throwOnError) {
+                        if ($subject->throwOnError()) {
                             throw new ParsingException($error);
                         }
 

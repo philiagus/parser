@@ -23,7 +23,7 @@ use Philiagus\Parser\Subject\Utility\Forwarded;
 use Philiagus\Parser\Subject\Utility\Test;
 use Philiagus\Parser\Util\Debug;
 
-class Map extends Base\Parser
+class Conditional extends Base\Parser
 {
 
     private const TYPE_SAME = 1,
@@ -77,7 +77,7 @@ class Map extends Base\Parser
      *
      * @return $this
      */
-    public function addSame($from, Parser $to): self
+    public function ifSameAs($from, Parser $to): self
     {
         $this->elements[] = [self::TYPE_SAME, $from, $to];
 
@@ -93,7 +93,7 @@ class Map extends Base\Parser
      *
      * @return $this
      */
-    public function addSameList(array $froms, Parser $to): self
+    public function ifSameAsListElement(array $froms, Parser $to): self
     {
         $this->elements[] = [self::TYPE_SAME_LIST, array_values($froms), $to];
 
@@ -103,12 +103,12 @@ class Map extends Base\Parser
     /**
      * if the value is == $from the provided parser is called with the value
      *
-     * @param $from
+     * @param mixed $from
      * @param Parser $to
      *
      * @return $this
      */
-    public function addEquals($from, Parser $to): self
+    public function ifEqualTo(mixed $from, Parser $to): self
     {
         $this->elements[] = [self::TYPE_EQUALS, $from, $to];
 
@@ -124,7 +124,7 @@ class Map extends Base\Parser
      *
      * @return $this
      */
-    public function addEqualsList(array $froms, Parser $to): self
+    public function ifEqualToListElement(array $froms, Parser $to): self
     {
 
         $this->elements[] = [self::TYPE_EQUALS_LIST, array_values($froms), $to];
@@ -133,23 +133,37 @@ class Map extends Base\Parser
     }
 
     /**
+     * TODO: Fix doc
      * Validates the value with $parser and on success calls $to with the value
      * If $pipe is true the value handed to $to is the result of $parser instead
      * of the unaltered value received by the parser
      *
      * @param Parser $parser
      * @param Parser $to
-     * @param bool $pipe
      *
      * @return $this
      */
-    public function addParser(Parser $parser, Parser $to, bool $pipe = false): self
+    public function ifParser(Parser $parser, Parser $to): self
     {
-        if ($pipe) {
-            $this->elements[] = [self::TYPE_PARSER_PIPE, $parser, $to];
-        } else {
-            $this->elements[] = [self::TYPE_PARSER, $parser, $to];
-        }
+        $this->elements[] = [self::TYPE_PARSER, $parser, $to];
+
+        return $this;
+    }
+
+    /**
+     * TODO: Fix doc
+     * Validates the value with $parser and on success calls $to with the value
+     * If $pipe is true the value handed to $to is the result of $parser instead
+     * of the unaltered value received by the parser
+     *
+     * @param Parser $parser
+     * @param Parser $to
+     *
+     * @return $this
+     */
+    public function ifParserPiped(Parser $parser, Parser $to): self
+    {
+        $this->elements[] = [self::TYPE_PARSER_PIPE, $parser, $to];
 
         return $this;
     }
@@ -172,7 +186,7 @@ class Map extends Base\Parser
     /**
      * @inheritDoc
      */
-    public function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): Result
     {
         $value = $builder->getValue();
         $errors = [];
@@ -277,7 +291,7 @@ class Map extends Base\Parser
         return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultChainDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'Map';
     }

@@ -62,7 +62,7 @@ class AssertArray extends Base\Parser
     /**
      * @inheritDoc
      */
-    public function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): Result
     {
         if (!is_array($builder->getValue())) {
             $this->logTypeError($builder);
@@ -181,7 +181,7 @@ class AssertArray extends Base\Parser
      *
      * @return $this
      */
-    public function giveDefaultedKeyValue(int|string $key, $default, ParserContract $parser): self
+    public function giveDefaultedValue(int|string $key, $default, ParserContract $parser): self
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($key, $default, $parser): void {
             $value = $builder->getValue();
@@ -231,7 +231,7 @@ class AssertArray extends Base\Parser
      *
      * @return $this
      */
-    public function giveOptionalKeyValue(int|string $key, ParserContract $parser): self
+    public function giveOptionalValue(int|string $key, ParserContract $parser): self
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($key, $parser): void {
             $value = $builder->getValue();
@@ -247,7 +247,7 @@ class AssertArray extends Base\Parser
         return $this;
     }
 
-    protected function getDefaultChainDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'assert array';
     }

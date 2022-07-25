@@ -103,7 +103,7 @@ class ConvertToDateTime extends Base\Parser
     /**
      * @inheritDoc
      */
-    public function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): Result
     {
         $value = $builder->getValue();
         $dateTime = null;
@@ -159,7 +159,7 @@ class ConvertToDateTime extends Base\Parser
         return 'Provided value could not be converted to DateTime';
     }
 
-    protected function getDefaultChainDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'convert to DateTime';
     }

@@ -29,6 +29,6 @@ class MetaInformation extends Subject
      */
     protected function getPathStringPart(bool $isLastInChain): string
     {
-        return " {$this->description}";
+        return " {$this->getDescription()}";
     }
 }

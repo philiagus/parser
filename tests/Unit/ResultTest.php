@@ -26,7 +26,9 @@ class ResultTest extends TestBase
 {
     public function testSuccess(): void
     {
-        $subject = $this->prophesize(Subject::class)->reveal();
+        $subject = $this->prophesize(Subject::class);
+        $subject->throwOnError()->willReturn(true);
+        $subject = $subject->reveal();
         $value = new \stdClass();
         $result = new Result(
             $subject,
@@ -42,6 +44,7 @@ class ResultTest extends TestBase
     public function testError(): void
     {
         $subject = $this->prophesize(Subject::class);
+        $subject->throwOnError()->willReturn(true);
         $subject->getPathAsString(true)->shouldBeCalledOnce()->willReturn('SUB');
         $subject = $subject->reveal();
         $result = new Result(
@@ -59,7 +62,9 @@ class ResultTest extends TestBase
 
     public function testExceptionOnNonError(): void
     {
-        $subject = $this->prophesize(Subject::class)->reveal();
+        $subject = $this->prophesize(Subject::class);
+        $subject->throwOnError()->willReturn(true);
+        $subject = $subject->reveal();
         self::expectException(\LogicException::class);
         new Result($subject, null, ['invalid']);
     }
@@ -85,14 +90,14 @@ class ResultTest extends TestBase
 
         $subject = new Result($root, $value, []);
         Util::assertSame($value, $subject->getValue());
-        self::assertSame('', $subject->description);
-        self::assertSame($throwOnError, $subject->throwOnError);
+        self::assertSame('', $subject->getDescription());
+        self::assertSame($throwOnError, $subject->throwOnError());
         self::assertSame("ROOT", $subject->getPathAsString(true));
         self::assertSame("ROOT", $subject->getPathAsString(false));
         self::assertSame([$root, $subject], $subject->getSubjectChain(true));
         self::assertSame([$root], $subject->getSubjectChain(false));
         $builder = $subject->getResultBuilder('builder description');
         Util::assertSame($value, $builder->getValue());
-        self::assertSame($builder->getSubject()->description, 'builder description');
+        self::assertSame($builder->getSubject()->getDescription(), 'builder description');
     }
 }

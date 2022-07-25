@@ -37,7 +37,7 @@ class AssertScalar extends Base\Parser
     /**
      * @inheritDoc
      */
-    public function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): Result
     {
         if (!is_scalar($builder->getValue())) {
             $this->logTypeError($builder);
@@ -51,7 +51,7 @@ class AssertScalar extends Base\Parser
         return 'Provided value is not scalar';
     }
 
-    protected function getDefaultChainDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'asset scalar';
     }

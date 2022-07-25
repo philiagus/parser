@@ -62,7 +62,7 @@ class Result extends Subject
      */
     public function hasErrors(): bool
     {
-        return (bool)$this->errors;
+        return (bool) $this->errors;
     }
 
     /**
@@ -74,7 +74,7 @@ class Result extends Subject
         return empty($this->errors)
             ? parent::getValue()
             : throw new \LogicException(
-                "Trying to get result value of not successful path " . $this->sourceSubject->getPathAsString(true)
+                "Trying to get result value of not successful path " . $this->getSourceSubject()->getPathAsString(true)
             );
     }
 

@@ -48,27 +48,29 @@ class RootTest extends SubjectTestBase
 
         $root = new Root($value, $description, $throwOnError);
         Util::assertSame($value, $root->getValue());
-        self::assertSame($expectedDescription, $root->description);
-        self::assertSame($throwOnError, $root->throwOnError);
+        self::assertFalse($root->isUtilitySubject());
+        self::assertSame($expectedDescription, $root->getDescription());
+        self::assertSame($throwOnError, $root->throwOnError());
         self::assertSame($expectedDescription, $root->getPathAsString(true));
         self::assertSame($expectedDescription, $root->getPathAsString(false));
         self::assertSame([$root], $root->getSubjectChain(true));
         self::assertSame([$root], $root->getSubjectChain(false));
         $builder = $root->getResultBuilder('builder description');
         Util::assertSame($value, $builder->getValue());
-        self::assertSame($builder->getSubject()->description, 'builder description');
+        self::assertSame($builder->getSubject()->getDescription(), 'builder description');
 
 
         $root = Subject::default($value, $description, $throwOnError);
         Util::assertSame($value, $root->getValue());
-        self::assertSame($expectedDescription, $root->description);
-        self::assertSame($throwOnError, $root->throwOnError);
+        self::assertFalse($root->isUtilitySubject());
+        self::assertSame($expectedDescription, $root->getDescription());
+        self::assertSame($throwOnError, $root->throwOnError());
         self::assertSame($expectedDescription, $root->getPathAsString(true));
         self::assertSame($expectedDescription, $root->getPathAsString(false));
         self::assertSame([$root], $root->getSubjectChain(true));
         self::assertSame([$root], $root->getSubjectChain(false));
         $builder = $root->getResultBuilder('builder description');
         Util::assertSame($value, $builder->getValue());
-        self::assertSame($builder->getSubject()->description, 'builder description');
+        self::assertSame($builder->getSubject()->getDescription(), 'builder description');
     }
 }

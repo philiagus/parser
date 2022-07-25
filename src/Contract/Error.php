@@ -19,7 +19,9 @@ use Philiagus\Parser\Exception\ParsingException;
 interface Error
 {
 
+
     public function getMessage(): string;
+
 
     public function getSourceThrowable(): ?\Throwable;
 

@@ -44,7 +44,7 @@ class AssertBoolean extends Base\Parser
     /**
      * @inheritDoc
      */
-    public function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): Result
     {
         if (!is_bool($builder->getValue())) {
             $this->logTypeError($builder);
@@ -58,7 +58,7 @@ class AssertBoolean extends Base\Parser
         return 'Provided value is not a boolean';
     }
 
-    protected function getDefaultChainDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'assert boolean';
     }

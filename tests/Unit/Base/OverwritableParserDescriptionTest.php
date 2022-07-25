@@ -34,7 +34,7 @@ class OverwritableParserDescriptionTest extends ParserTestBase
                     return new class() implements Parser {
                         use OverwritableParserDescription;
 
-                        protected function getDefaultChainDescription(Subject $subject): string
+                        protected function getDefaultParserDescription(Subject $subject): string
                         {
                             return 'default';
                         }
@@ -45,7 +45,7 @@ class OverwritableParserDescriptionTest extends ParserTestBase
                         }
                     };
                 },
-                'setChainDescription'
+                'setParserDescription'
             )
             ->arguments(
                 $builder
@@ -55,7 +55,7 @@ class OverwritableParserDescriptionTest extends ParserTestBase
             ->provider(
                 DataProvider::TYPE_ALL,
                 successValidator: function (Subject $subject, Result $result, array $arguments): array {
-                    $received = $result->sourceSubject->getPathAsString(true);
+                    $received = $result->getSourceSubject()->getPathAsString(true);
                     $expectedMessage = Debug::getType($subject->getValue()) . ' ▷' . $arguments[0];
                     if ($received !== $expectedMessage) {
                         return [

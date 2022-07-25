@@ -18,16 +18,16 @@ use Philiagus\Parser\ResultBuilder;
 trait OverwritableParserDescription
 {
 
-    private string $overwritableChainDescriptionMessage;
+    private string $overwritableParserDescription;
 
     /**
      * @param string $description
      *
      * @return $this
      */
-    public function setChainDescription(string $description): self
+    public function setParserDescription(string $description): self
     {
-        $this->overwritableChainDescriptionMessage = $description;
+        $this->overwritableParserDescription = $description;
 
         return $this;
     }
@@ -40,7 +40,7 @@ trait OverwritableParserDescription
     protected function createResultBuilder(Subject $subject): ResultBuilder
     {
         return $subject->getResultBuilder(
-                $this->overwritableChainDescriptionMessage ?? $this->getDefaultChainDescription($subject)
+                $this->overwritableParserDescription ?? $this->getDefaultParserDescription($subject)
         );
     }
 
@@ -49,6 +49,6 @@ trait OverwritableParserDescription
      *
      * @return string
      */
-    abstract protected function getDefaultChainDescription(Subject $subject): string;
+    abstract protected function getDefaultParserDescription(Subject $subject): string;
 
 }

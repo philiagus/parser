@@ -23,11 +23,12 @@ class AssertInteger extends Base\Parser
 {
     use OverwritableTypeErrorMessage;
 
-    /** @var callable[] */
-    private array $assertionList = [];
+    /** @var \SplDoublyLinkedList */
+    private \SplDoublyLinkedList $assertionList;
 
     private function __construct()
     {
+        $this->assertionList = new \SplDoublyLinkedList();
     }
 
     /**
@@ -129,7 +130,7 @@ class AssertInteger extends Base\Parser
     /**
      * @inheritDoc
      */
-    public function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): Result
     {
         $value = $builder->getValue();
         if (!is_int($value)) {
@@ -148,7 +149,7 @@ class AssertInteger extends Base\Parser
         return 'Provided value is not of type integer';
     }
 
-    protected function getDefaultChainDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'assert integer';
     }

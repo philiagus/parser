@@ -36,7 +36,7 @@ class ParserMock implements Parser
                 $message = uniqid(microtime());
                 $error = new Error($subject, $message);
                 $errorCollection?->add($error->getMessage());
-                if ($subject->throwOnError) {
+                if ($subject->throwOnError()) {
                     throw new ParsingException($error);
                 }
 

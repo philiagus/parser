@@ -53,7 +53,7 @@ class Fork extends Base\Parser
      *
      * @return $this
      */
-    public function addParser(Parser $parser): self
+    public function add(Parser $parser): self
     {
         $this->parsers[] = $parser;
 
@@ -63,7 +63,7 @@ class Fork extends Base\Parser
     /**
      * @inheritDoc
      */
-    public function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): Result
     {
         foreach ($this->parsers as $index => $parser) {
             $builder->incorporateResult(
@@ -77,7 +77,7 @@ class Fork extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function getDefaultChainDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'fork to multiple parsers';
     }

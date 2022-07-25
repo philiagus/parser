@@ -227,7 +227,7 @@ class ParseStdClass extends AssertStdClass
         return $this;
     }
 
-    protected function getDefaultChainDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'parse stdClass';
     }

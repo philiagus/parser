@@ -20,7 +20,7 @@ use Philiagus\Parser\Result;
 interface Parser
 {
     /**
-     * @param Subject $value
+     * @param Subject $subject
      *
      * @return Result
      * @throws RuntimeParserConfigurationException

@@ -28,8 +28,8 @@ class PropertyValue extends Subject
      */
     protected function getPathStringPart(bool $isLastInChain): string
     {
-        return preg_match('/\s/', $this->description)
-            ? "[{$this->description}]"
-            : ".{$this->description}";
+        return preg_match('/\s/', $this->getDescription())
+            ? "[{$this->getDescription()}]"
+            : ".{$this->getDescription()}";
     }
 }

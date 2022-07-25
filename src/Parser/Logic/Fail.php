@@ -56,7 +56,7 @@ class Fail implements Parser
         $subject = new ParserBegin($subject, 'FAIL');
 
         $error = Error::createUsingDebugString($subject, $this->message);
-        if ($subject->throwOnError) {
+        if ($subject->throwOnError()) {
             $error->throw();
         }
 

@@ -108,7 +108,7 @@ class AssertFloat extends Base\Parser
     /**
      * @inheritDoc
      */
-    public function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): Result
     {
         $value = $builder->getValue();
         if (!is_float($value) || is_nan($value) || is_infinite($value)) {
@@ -129,7 +129,7 @@ class AssertFloat extends Base\Parser
         return 'Provided value is not of type float';
     }
 
-    protected function getDefaultChainDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'assert float';
     }

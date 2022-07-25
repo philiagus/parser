@@ -67,7 +67,7 @@ class ForkTest extends TestBase
             DataProvider::isSame(
                 $value,
                 Fork::to($parser(1), $parser(2))
-                    ->addParser($parser(3))
+                    ->add($parser(3))
                     ->parse(Subject::default($value))
                     ->getValue()
             )

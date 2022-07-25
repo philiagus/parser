@@ -40,7 +40,7 @@ class AssertInfiniteTest extends ParserTestBase
             ->provide(false);
     }
 
-    public function testSetAssertSignToPositive(): void
+    public function testSetAssertPositive(): void
     {
         $builder = $this->builder();
         $builder
@@ -57,7 +57,7 @@ class AssertInfiniteTest extends ParserTestBase
         $builder->run();
     }
 
-    public function testSetAssertSignToNegative(): void
+    public function testSetAssertNegative(): void
     {
         $builder = $this->builder();
         $builder

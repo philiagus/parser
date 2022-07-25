@@ -17,8 +17,8 @@ use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Parser\AssertObject;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
-use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\OverwritableTypeErrorMessageTest;
+use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
 
 /**
@@ -83,6 +83,25 @@ class AssertObjectTest extends ParserTestBase
                     ->messageArgument()
                     ->withParameterElement('class', 0)
                     ->expectedWhen(static fn($value, array $args) => !$value instanceof $args[0])
+            )
+            ->successProvider(DataProvider::TYPE_OBJECT);
+        $builder->run();
+    }
+
+    public function testAssertNotInstanceOf(): void
+    {
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->error(static fn($value) => get_class($value))
+                    ->success(static fn($value) => $value instanceof \stdClass ? Parser::class : \stdClass::class),
+                $builder
+                    ->messageArgument()
+                    ->withParameterElement('class', 0)
+                    ->expectedWhen(static fn($value, array $args) => $value instanceof $args[0])
             )
             ->successProvider(DataProvider::TYPE_OBJECT);
         $builder->run();

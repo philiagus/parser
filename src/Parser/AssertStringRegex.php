@@ -217,7 +217,7 @@ class AssertStringRegex extends Base\Parser
     /**
      * @inheritDoc
      */
-    public function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): Result
     {
         $value = $builder->getValue();
         if (!is_string($value)) {
@@ -296,7 +296,7 @@ class AssertStringRegex extends Base\Parser
         return 'Provided value is not of type string';
     }
 
-    protected function getDefaultChainDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Subject $subject): string
     {
         return "assert string regex";
     }

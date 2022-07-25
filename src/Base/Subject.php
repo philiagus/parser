@@ -18,7 +18,7 @@ use Philiagus\Parser\Subject\Root;
 abstract class Subject
 {
 
-    public readonly bool $throwOnError;
+    private readonly bool $throwOnError;
 
     /**
      * Path constructor.
@@ -30,14 +30,14 @@ abstract class Subject
      * @param bool $throwOnError
      */
     protected function __construct(
-        public readonly ?self  $sourceSubject,
-        public readonly string $description,
+        private readonly ?self  $sourceSubject,
+        private readonly string $description,
         private readonly mixed $value,
-        public readonly bool   $isUtilitySubject,
+        private readonly bool   $isUtilitySubject,
         ?bool                  $throwOnError
     )
     {
-        $this->throwOnError = $throwOnError ?? $this->sourceSubject?->throwOnError ?? true;
+        $this->throwOnError = $throwOnError ?? $this->sourceSubject?->throwOnError() ?? true;
     }
 
     /**
@@ -143,4 +143,35 @@ abstract class Subject
         return new ResultBuilder($this, $description);
     }
 
+    /**
+     * @return bool
+     */
+    public function throwOnError(): bool
+    {
+        return $this->throwOnError;
+    }
+
+    /**
+     * @return Subject|null
+     */
+    public function getSourceSubject(): ?Subject
+    {
+        return $this->sourceSubject;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUtilitySubject(): bool
+    {
+        return $this->isUtilitySubject;
+    }
 }

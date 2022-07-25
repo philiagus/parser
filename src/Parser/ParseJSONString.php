@@ -115,7 +115,7 @@ class ParseJSONString extends Base\Parser
     /**
      * @inheritDoc
      */
-    public function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): Result
     {
         $value = $builder->getValue();
         if (!is_string($value)) {
@@ -152,7 +152,7 @@ class ParseJSONString extends Base\Parser
         return 'Provided value is not a string and thus not a valid JSON';
     }
 
-    protected function getDefaultChainDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'parse as JSON';
     }

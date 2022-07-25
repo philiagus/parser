@@ -36,8 +36,8 @@ class ResultBuilderTest extends TestBase
         self::assertEquals($builder, $subject0->getResultBuilder('description'));
         $subject1 = $builder->getSubject();
         self::assertInstanceOf(ParserBegin::class, $subject1);
-        self::assertSame('description', $subject1->description);
-        self::assertSame($subject0, $subject1->sourceSubject);
+        self::assertSame('description', $subject1->getDescription());
+        self::assertSame($subject0, $subject1->getSourceSubject());
         self::assertSame($value0, $builder->getValue());
         self::assertFalse($builder->hasErrors());
         $value1 = new \stdClass();
@@ -47,7 +47,7 @@ class ResultBuilderTest extends TestBase
         self::assertInstanceOf(Internal::class, $subject2);
         self::assertSame($value1, $builder->getValue());
         self::assertSame($value1, $subject2->getValue());
-        self::assertSame($subject1, $subject2->sourceSubject);
+        self::assertSame($subject1, $subject2->getSourceSubject());
         self::assertFalse($builder->hasErrors());
 
         $value2 = new \stdClass();

@@ -56,7 +56,7 @@ class AssertInfinite extends Base\Parser
      *
      * @return $this
      */
-    public function setAssertSignToPositive(
+    public function setAssertPositive(
         string $notPositiveMessage = 'Provided value is not positive infinity'
     ): self
     {
@@ -76,7 +76,7 @@ class AssertInfinite extends Base\Parser
      * @return $this
      * @see Debug::parseMessage()
      */
-    public function setAssertSignToNegative(
+    public function setAssertNegative(
         string $notNegativeMessage = 'Provided value is not negative infinity'
     ): self
     {
@@ -89,7 +89,7 @@ class AssertInfinite extends Base\Parser
     /**
      * @inheritDoc
      */
-    public function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): Result
     {
         $value = $builder->getValue();
         if (!is_float($value) || !is_infinite($value)) {
@@ -104,7 +104,7 @@ class AssertInfinite extends Base\Parser
         return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultChainDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'assert infinite';
     }

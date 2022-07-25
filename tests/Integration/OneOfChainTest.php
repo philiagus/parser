@@ -16,7 +16,7 @@ use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Parser\AssertArray;
 use Philiagus\Parser\Parser\AssertInteger;
 use Philiagus\Parser\Parser\AssertSame;
-use Philiagus\Parser\Parser\Fixed;
+use Philiagus\Parser\Parser\IgnoreInput;
 use Philiagus\Parser\Parser\Logic\OneOf;
 use PHPUnit\Framework\TestCase;
 
@@ -31,12 +31,12 @@ class OneOfChainTest extends TestCase
             ->parser(
                 AssertArray::new()
                     ->then(
-                        Fixed::value('is array')
+                        IgnoreInput::resultIn('is array')
                     )
             )
             ->parser(
                 AssertInteger::new()
-                    ->then(Fixed::value('is integer'))
+                    ->then(IgnoreInput::resultIn('is integer'))
             )
             ->then(
                 AssertSame::value('is array')

@@ -151,7 +151,7 @@ class AssertArrayTest extends ParserTestBase
         $builder->run();
     }
 
-    public function testGiveDefaultedKeyValue(): void
+    public function testGiveDefaultedValue(): void
     {
         $default = new \stdClass();
         $builder = $this->builder();
@@ -198,7 +198,7 @@ class AssertArrayTest extends ParserTestBase
         $builder->run();
     }
 
-    public function testGiveOptionalKeyValue(): void
+    public function testGiveOptionalValue(): void
     {
         $builder = $this->builder();
         $builder

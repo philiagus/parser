@@ -52,14 +52,14 @@ class Append extends Base\Parser
     /**
      * @inheritDoc
      */
-    public function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): Result
     {
         $this->target[] = $builder->getValue();
 
         return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultChainDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'extract: appended';
     }

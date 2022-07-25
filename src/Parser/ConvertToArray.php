@@ -50,7 +50,7 @@ class ConvertToArray extends Base\Parser
     /**
      * @inheritDoc
      */
-    public function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): Result
     {
         $value = $builder->getValue();
         if (is_array($value)) {
@@ -64,7 +64,7 @@ class ConvertToArray extends Base\Parser
         return $builder->createResult((array) $value);
     }
 
-    protected function getDefaultChainDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Subject $subject): string
     {
         if ($this->targetedArrayKey !== null) {
             return "treated as array, if needed with key '$this->targetedArrayKey'";

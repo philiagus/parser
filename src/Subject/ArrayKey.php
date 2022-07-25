@@ -28,8 +28,8 @@ class ArrayKey extends Subject
      */
     protected function getPathStringPart(bool $isLastInChain): string
     {
-        return preg_match('/\s/', $this->description)
-            ? " key " . var_export($this->description, true)
-            : " key {$this->description}";
+        return preg_match('/\s/', $this->getDescription())
+            ? " key " . var_export($this->getDescription(), true)
+            : " key {$this->getDescription()}";
     }
 }

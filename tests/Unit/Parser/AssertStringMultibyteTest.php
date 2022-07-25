@@ -226,4 +226,20 @@ class AssertStringMultibyteTest extends ParserTestBase
         self::expectException(ParserConfigurationException::class);
         AssertStringMultibyte::new()->setEncoding('INVALID');
     }
+
+    public function testOfEncoding(): void
+    {
+        self::assertEquals(
+            AssertStringMultibyte::ofEncoding('ASCII', 'MSG'),
+            AssertStringMultibyte::new()->setEncoding('ASCII', 'MSG')
+        );
+    }
+
+    public function testUTF8(): void
+    {
+        self::assertEquals(
+            AssertStringMultibyte::UTF8('MSG'),
+            AssertStringMultibyte::ofEncoding('UTF-8', 'MSG')
+        );
+    }
 }

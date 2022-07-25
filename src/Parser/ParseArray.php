@@ -39,7 +39,7 @@ class ParseArray extends AssertArray
                 );
             }
 
-            $builder->setValue('modfiy each value', $array);
+            $builder->setValue('modify each value', $array);
         };
 
         return $this;
@@ -132,12 +132,12 @@ class ParseArray extends AssertArray
     }
 
     /**
-     * @param $key
-     * @param $value
+     * @param int|string $key
+     * @param mixed $value
      *
      * @return $this
      */
-    public function defaultKey(int|string $key, $value): self
+    public function defaultKey(int|string $key, mixed $value): self
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($key, $value): void {
             $array = $builder->getValue();
@@ -215,7 +215,7 @@ class ParseArray extends AssertArray
         return $this;
     }
 
-    protected function getDefaultChainDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'parse array';
     }

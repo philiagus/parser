@@ -49,9 +49,7 @@ class OneOf extends Base\Parser
 
     public static function nullOr(Parser $parser): self
     {
-        return self::new()
-            ->sameAs(null)
-            ->parser($parser);
+        return self::new()->sameAs(null)->parser($parser);
     }
 
     /**
@@ -138,7 +136,7 @@ class OneOf extends Base\Parser
     /**
      * @inheritDoc
      */
-    public function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): Result
     {
         $value = $builder->getValue();
         $subject = $builder->getSubject();
@@ -191,7 +189,7 @@ class OneOf extends Base\Parser
         return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultChainDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'OneOf';
     }

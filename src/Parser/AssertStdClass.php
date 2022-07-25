@@ -87,7 +87,7 @@ class AssertStdClass extends Base\Parser
     /**
      * @inheritDoc
      */
-    public function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): Result
     {
         if ($builder->getValue() instanceof \stdClass) {
             foreach ($this->assertionList as $assertion) {
@@ -251,7 +251,7 @@ class AssertStdClass extends Base\Parser
         return 'Provided value is not an instance of \stdClass';
     }
 
-    protected function getDefaultChainDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'assert stdClass';
     }

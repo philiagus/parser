@@ -50,6 +50,16 @@ class AssertStringMultibyte extends Base\Parser
         return new self();
     }
 
+    public static function ofEncoding(string $encoding, string $exception = 'Multibyte string does not appear to be encoded in the requested encoding'): self
+    {
+        return (new self())->setEncoding($encoding, $exception);
+    }
+
+    public static function UTF8(string $exception = 'Multibyte string does not appear to be encoded in UTF-8'): self
+    {
+        return (new self())->setEncoding('UTF-8', $exception);
+    }
+
     /**
      * If no encoding is set we try to detect the encoding using mb_detect_encoding($value, "auto", true)
      * The method defines the exception message thrown if the encoding could not be detected that way
@@ -123,7 +133,7 @@ class AssertStringMultibyte extends Base\Parser
     /**
      * @inheritDoc
      */
-    public function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): Result
     {
         $value = $builder->getValue();
         if (!is_string($value)) {
@@ -208,7 +218,7 @@ class AssertStringMultibyte extends Base\Parser
      * @see Debug::parseMessage()
      *
      */
-    public function setEncoding(string $encoding, string $exception = 'Multibyte string does not appear to be of the requested encoding'): self
+    public function setEncoding(string $encoding, string $exception = 'Multibyte string does not appear to be encoded in the requested encoding'): self
     {
         $this->assertEncodings([$encoding]);
 
@@ -302,7 +312,7 @@ class AssertStringMultibyte extends Base\Parser
         return 'Provided value is not of type string';
     }
 
-    protected function getDefaultChainDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Subject $subject): string
     {
         if ($this->encoding) {
             return "assert {$this->encoding[0]} string";

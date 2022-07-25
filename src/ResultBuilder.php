@@ -78,7 +78,7 @@ class ResultBuilder
         if ($result->isSuccess()) return $result->getValue();
 
         $errors = $result->getErrors();
-        if ($this->subject->throwOnError) {
+        if ($this->subject->throwOnError()) {
             $errors[0]->throw();
         }
         $this->errors = [...$this->errors, ...$errors];
@@ -96,11 +96,10 @@ class ResultBuilder
      * @param \Throwable|null $sourceThrowable
      * @param array $sourceErrors
      *
-     * @return void
+     * @return ResultBuilder
      * @throws ParsingException
      * @see ResultBuilder::logError()
      * @see Error::createUsingDebugString()
-     *
      *
      */
     public function logErrorUsingDebug(
@@ -128,7 +127,7 @@ class ResultBuilder
      */
     public function logError(Contract\Error $error): self
     {
-        if ($this->subject->throwOnError) {
+        if ($this->subject->throwOnError()) {
             $error->throw();
         }
 
@@ -180,12 +179,12 @@ class ResultBuilder
      */
     public function createResultFromResult(Result $result): Result
     {
-        if ($this->subject->throwOnError && !$result->isSuccess()) {
+        if ($this->subject->throwOnError() && !$result->isSuccess()) {
             $result->getErrors()[0]->throw();
         }
 
         return new Result(
-            $result->sourceSubject,
+            $result->getSourceSubject(),
             $result->isSuccess() ? $result->getValue() : null,
             [...$this->errors, ...$result->getErrors()]
         );

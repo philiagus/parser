@@ -49,7 +49,7 @@ class AssertObject extends Base\Parser
     }
 
     /**
-     * Checks that the object is an instance of the specified class. On mismatch an exception is thrown.
+     * Checks that the object is an instance of the specified class
      *
      *
      * The message of the exception is processed using Debug::parseMessage
@@ -76,6 +76,34 @@ class AssertObject extends Base\Parser
         return $this;
     }
 
+    /**
+     * Checks that the object is not an instance of the specified class
+     *
+     *
+     * The message of the exception is processed using Debug::parseMessage
+     * and receives the following elements:
+     * - subject: The object currently being parsed
+     * - class: The class the object is not an instance of
+     *
+     * @param string $class
+     * @param string $exceptionMessage
+     *
+     * @return $this
+     */
+    public function assertNotInstanceOf(
+        string $class,
+        string $exceptionMessage = 'The provided object is an instance of {class.raw}'
+    ): self
+    {
+        $this->checks[] = static function (ResultBuilder $builder, object $value) use ($class, $exceptionMessage): void {
+            if ($value instanceof $class) {
+                $builder->logErrorUsingDebug($exceptionMessage, ['class' => $class]);
+            }
+        };
+
+        return $this;
+    }
+
     public static function new(string $typeExceptionMessage = 'The provided value is not an object'): self
     {
         return (new self())
@@ -85,7 +113,7 @@ class AssertObject extends Base\Parser
     /**
      * @inheritDoc
      */
-    public function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): Result
     {
         $value = $builder->getValue();
         if (!is_object($builder->getValue())) {
@@ -104,7 +132,7 @@ class AssertObject extends Base\Parser
         return 'The provided value is not an object';
     }
 
-    protected function getDefaultChainDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'assert object';
     }

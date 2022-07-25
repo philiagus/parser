@@ -41,7 +41,7 @@ class AssertSame extends Base\Parser
     /**
      * @inheritDoc
      */
-    public function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): Result
     {
         if ($builder->getValue() !== $this->value) {
             $builder->logErrorUsingDebug(
@@ -53,7 +53,7 @@ class AssertSame extends Base\Parser
         return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultChainDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'assert same';
     }

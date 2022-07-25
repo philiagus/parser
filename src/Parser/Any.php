@@ -36,7 +36,7 @@ class Any extends Base\Parser
     /**
      * @inheritDoc
      */
-    public function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): Result
     {
         return $builder->createResultUnchanged();
     }
@@ -46,7 +46,7 @@ class Any extends Base\Parser
      *
      * @return string
      */
-    protected function getDefaultChainDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'accepting any value';
     }
