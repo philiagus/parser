@@ -22,9 +22,11 @@ class ArrayValue extends Subject
     }
 
     /**
+     * @param bool $isLastInChain *
+     *
      * @inheritDoc
      */
-    protected function getPathStringPart(): string
+    protected function getPathStringPart(bool $isLastInChain): string
     {
         return "[{$this->description}]";
     }

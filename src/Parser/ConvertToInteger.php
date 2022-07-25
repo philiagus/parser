@@ -14,7 +14,7 @@ namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Base\TypeExceptionMessage;
+use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 
@@ -23,7 +23,7 @@ use Philiagus\Parser\ResultBuilder;
  */
 class ConvertToInteger extends Base\Parser
 {
-    use TypeExceptionMessage;
+    use OverwritableTypeErrorMessage;
 
     private function __construct()
     {
@@ -75,7 +75,7 @@ class ConvertToInteger extends Base\Parser
         return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultTypeExceptionMessage(): string
+    protected function getDefaultTypeErrorMessage(): string
     {
         return 'Variable of type {subject.type} could not be converted to an integer';
     }

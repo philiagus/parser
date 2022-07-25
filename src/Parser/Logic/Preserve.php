@@ -17,7 +17,7 @@ use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
-use Philiagus\Parser\Subject\Forwarded;
+use Philiagus\Parser\Subject\Utility\Forwarded;
 
 
 /**
@@ -54,7 +54,7 @@ class Preserve extends Base\Parser
      */
     public function execute(ResultBuilder $builder): Result
     {
-        $builder->incorporateChildResult(
+        $builder->incorporateResult(
             $this->around->parse(
                 new Forwarded($builder->getSubject(), 'preserved around')
             )

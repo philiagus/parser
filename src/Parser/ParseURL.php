@@ -14,7 +14,7 @@ namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Base\TypeExceptionMessage;
+use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Result;
@@ -29,7 +29,7 @@ use Philiagus\Parser\Subject\MetaInformation;
  */
 class ParseURL extends Base\Parser
 {
-    use TypeExceptionMessage;
+    use OverwritableTypeErrorMessage;
 
     private const TARGET_SCHEME = 'scheme',
         TARGET_HOST = 'host',
@@ -404,7 +404,7 @@ class ParseURL extends Base\Parser
         return $builder->createResult($parsed);
     }
 
-    protected function getDefaultTypeExceptionMessage(): string
+    protected function getDefaultTypeErrorMessage(): string
     {
         return 'Provided value is not of type string';
     }

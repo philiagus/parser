@@ -20,7 +20,7 @@ use Philiagus\Parser\Subject\PropertyValue;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
 use Philiagus\Parser\Test\ParserTestBase;
-use Philiagus\Parser\Test\SetTypeExceptionMessageTest;
+use Philiagus\Parser\Test\OverwritableTypeErrorMessageTest;
 use Philiagus\Parser\Test\ValidValueParserTest;
 
 /**
@@ -28,7 +28,7 @@ use Philiagus\Parser\Test\ValidValueParserTest;
  */
 class AssertStdClassTest extends ParserTestBase
 {
-    use ChainableParserTest, ValidValueParserTest, InvalidValueParserTest, SetTypeExceptionMessageTest;
+    use ChainableParserTest, ValidValueParserTest, InvalidValueParserTest, OverwritableTypeErrorMessageTest;
 
     public function provideValidValuesAndParsersAndResults(): array
     {

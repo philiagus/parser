@@ -22,10 +22,14 @@ class ArrayKey extends Subject
     }
 
     /**
+     * @param bool $isLastInChain *
+     *
      * @inheritDoc
      */
-    protected function getPathStringPart(): string
+    protected function getPathStringPart(bool $isLastInChain): string
     {
-        return " key " . var_export($this->description, true);
+        return preg_match('/\s/', $this->description)
+            ? " key " . var_export($this->description, true)
+            : " key {$this->description}";
     }
 }

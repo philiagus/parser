@@ -18,7 +18,7 @@ use Philiagus\Parser\Parser\AssertFloat;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
 use Philiagus\Parser\Test\ParserTestBase;
-use Philiagus\Parser\Test\SetTypeExceptionMessageTest;
+use Philiagus\Parser\Test\OverwritableTypeErrorMessageTest;
 use Philiagus\Parser\Test\ValidValueParserTest;
 
 /**
@@ -27,7 +27,7 @@ use Philiagus\Parser\Test\ValidValueParserTest;
 class AssertFloatTest extends ParserTestBase
 {
 
-    use ChainableParserTest, ValidValueParserTest, InvalidValueParserTest, ChainableParserTest, SetTypeExceptionMessageTest;
+    use ChainableParserTest, ValidValueParserTest, InvalidValueParserTest, ChainableParserTest, OverwritableTypeErrorMessageTest;
 
     public function provideInvalidValuesAndParsers(): array
     {

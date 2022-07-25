@@ -39,7 +39,7 @@ trait ChainableParserTest
      * @throws RuntimeParserConfigurationException
      * @dataProvider provideValidValuesAndParsersAndResults
      */
-    public function testThen($value, \Closure $parser, $expected): void
+    public function testThenMultichain($value, \Closure $parser, $expected): void
     {
         $parser = $parser($value);
         /** @var Contract\Chainable $parser */
@@ -75,11 +75,144 @@ trait ChainableParserTest
             ->thenAppendTo($appendTarget3)
             ->parse(Subject::default($value));
 
-        self::assertTrue(DataProvider::isSame($expectedResult, $result->getValue()));
-        self::assertTrue(DataProvider::isSame($expectedResult, $assignTarget));
-        self::assertTrue(DataProvider::isSame([$expectedResult], $appendTarget));
-        self::assertTrue(DataProvider::isSame([$expectedResult], iterator_to_array($appendTarget2)));
-        self::assertTrue(DataProvider::isSame([$expectedResult], $appendTarget3));
+        Util::assertSame($expectedResult, $result->getValue());
+        Util::assertSame($expectedResult, $assignTarget);
+        Util::assertSame([$expectedResult], $appendTarget);
+        Util::assertSame([$expectedResult], iterator_to_array($appendTarget2));
+        Util::assertSame([$expectedResult], $appendTarget3);
+    }
+
+    /**
+     * @param $value
+     * @param \Closure $parser
+     * @param $expected
+     *
+     * @throws ParsingException
+     * @throws RuntimeParserConfigurationException
+     * @dataProvider provideValidValuesAndParsersAndResults
+     */
+    public function testThen($value, \Closure $parser, $expected): void
+    {
+        $parser = $parser($value);
+        /** @var Contract\Chainable $parser */
+        self::assertInstanceOf(Contract\Chainable::class, $parser);
+        $expectedResult = new \stdClass();
+        $thenParser = $this->prophesize(Parser::class);
+        /** @noinspection PhpParamsInspection */
+        $thenParser
+            ->parse(
+                Argument::that(function (Subject $subject) use ($expected) {
+                    $value = $subject->getValue();
+                    if ($value instanceof DateTimeInterface && $expected instanceof DateTimeInterface) {
+                        return $value::class === $expected::class &&
+                            $value->format('Y-m-d H:i:s.u') == $expected->format('Y-m-d H:i:s.u');
+                    }
+
+                    return DataProvider::isSame($expected, $value);
+                })
+            )
+            ->shouldBeCalledOnce()
+            ->will(function (array $args) use ($expectedResult) {
+                return new Result($args[0], $expectedResult, []);
+            });
+        $thenParser = $thenParser->reveal();
+        /** @var Result $result */
+        $result = $parser
+            ->then($thenParser)
+            ->parse(Subject::default($value));
+
+        Util::assertSame($expectedResult, $result->getValue());
+    }
+    /**
+     * @param $value
+     * @param \Closure $parser
+     * @param $expected
+     *
+     * @throws ParsingException
+     * @throws RuntimeParserConfigurationException
+     * @dataProvider provideValidValuesAndParsersAndResults
+     */
+    public function testThenAssignTo($value, \Closure $parser, $expected): void
+    {
+        $parser = $parser($value);
+        /** @var Contract\Chainable $parser */
+        self::assertInstanceOf(Contract\Chainable::class, $parser);
+        $expectedResult = new \stdClass();
+        /** @var Result $result */
+        $result = $parser
+            ->thenAssignTo($assignTarget)
+            ->parse(Subject::default($value));
+
+        Util::assertSame($expected, $result->getValue());
+        Util::assertSame($expected, $assignTarget);
+    }
+    /**
+     * @param $value
+     * @param \Closure $parser
+     * @param $expected
+     *
+     * @throws ParsingException
+     * @throws RuntimeParserConfigurationException
+     * @dataProvider provideValidValuesAndParsersAndResults
+     */
+    public function testThenAppendTo_unsetVariable($value, \Closure $parser, $expected): void
+    {
+        $parser = $parser($value);
+        /** @var Contract\Chainable $parser */
+        self::assertInstanceOf(Contract\Chainable::class, $parser);
+        /** @var Result $result */
+        $result = $parser
+            ->thenAppendTo($appendTarget)
+            ->parse(Subject::default($value));
+
+        Util::assertSame($expected, $result->getValue());
+        Util::assertSame([$expected], $appendTarget);
+    }
+    /**
+     * @param $value
+     * @param \Closure $parser
+     * @param $expected
+     *
+     * @throws ParsingException
+     * @throws RuntimeParserConfigurationException
+     * @dataProvider provideValidValuesAndParsersAndResults
+     */
+    public function testThenAppendTo_arrayVariable($value, \Closure $parser, $expected): void
+    {
+        $parser = $parser($value);
+        /** @var Contract\Chainable $parser */
+        self::assertInstanceOf(Contract\Chainable::class, $parser);
+        /** @var Result $result */
+        $appendTarget = [];
+        $result = $parser
+            ->thenAppendTo($appendTarget)
+            ->parse(Subject::default($value));
+
+        Util::assertSame($expected, $result->getValue());
+        Util::assertSame([$expected], $appendTarget);
+    }
+    /**
+     * @param $value
+     * @param \Closure $parser
+     * @param $expected
+     *
+     * @throws ParsingException
+     * @throws RuntimeParserConfigurationException
+     * @dataProvider provideValidValuesAndParsersAndResults
+     */
+    public function testThenAppendTo_objectVariable($value, \Closure $parser, $expected): void
+    {
+        $parser = $parser($value);
+        /** @var Contract\Chainable $parser */
+        self::assertInstanceOf(Contract\Chainable::class, $parser);
+        /** @var Result $result */
+        $appendTarget = new \SplDoublyLinkedList();
+        $result = $parser
+            ->thenAppendTo($appendTarget)
+            ->parse(Subject::default($value));
+
+        Util::assertSame($expected, $result->getValue());
+        Util::assertSame([$expected], iterator_to_array($appendTarget));
     }
 
     abstract public static function assertTrue($condition, string $message = ''): void;

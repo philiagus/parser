@@ -33,7 +33,7 @@ class ParseArray extends AssertArray
         $this->assertionList[] = static function (ResultBuilder $builder) use ($parser): void {
             $array = $builder->getValue();
             foreach ($array as $key => &$value) {
-                $value = $builder->incorporateChildResult(
+                $value = $builder->incorporateResult(
                     $parser->parse(new ArrayValue($builder->getSubject(), $key, $value)),
                     $value
                 );
@@ -68,7 +68,7 @@ class ParseArray extends AssertArray
             foreach ($array as $key => $value) {
                 $newKeyResult = $parser->parse(new ArrayKey($builder->getSubject(), $key));
                 if (!$newKeyResult->isSuccess()) {
-                    $builder->incorporateChildResult($newKeyResult);
+                    $builder->incorporateResult($newKeyResult);
 
                     continue;
                 }
@@ -119,7 +119,7 @@ class ParseArray extends AssertArray
                 new ArrayValue($builder->getSubject(), $key, $value[$key])
             );
             if (!$result->isSuccess()) {
-                $builder->incorporateChildResult($result);
+                $builder->incorporateResult($result);
 
                 return;
             }
@@ -203,7 +203,7 @@ class ParseArray extends AssertArray
                 new ArrayValue($builder->getSubject(), $key, $value[$key])
             );
             if (!$result->isSuccess()) {
-                $builder->incorporateChildResult($result);
+                $builder->incorporateResult($result);
 
                 return;
             }

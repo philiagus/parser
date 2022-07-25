@@ -10,7 +10,7 @@
 
 declare(strict_types=1);
 
-namespace Philiagus\Parser\Subject;
+namespace Philiagus\Parser\Subject\Utility;
 
 use Philiagus\Parser\Base\Subject;
 
@@ -23,8 +23,9 @@ class Forwarded extends Subject
     }
 
 
-    protected function getPathStringPart(): string
+    protected function getPathStringPart(bool $isLastInChain): string
     {
-        return ' -' . $this->description . '->';
+        return ' ⇒' . $this->description . '⇒';
     }
+
 }

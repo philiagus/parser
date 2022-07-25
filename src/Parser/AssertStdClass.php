@@ -14,7 +14,7 @@ namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Base\TypeExceptionMessage;
+use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Result;
@@ -26,7 +26,7 @@ use Philiagus\Parser\Util\Debug;
 
 class AssertStdClass extends Base\Parser
 {
-    use TypeExceptionMessage;
+    use OverwritableTypeErrorMessage;
 
     /** @var \SplDoublyLinkedList<\Closure> */
     protected \SplDoublyLinkedList $assertionList;
@@ -68,7 +68,7 @@ class AssertStdClass extends Base\Parser
         $this->assertionList[] = static function (ResultBuilder $builder) use ($property, $parser, $missingPropertyExceptionMessage): void {
             $value = $builder->getValue();
             if (property_exists($value, $property)) {
-                $builder->incorporateChildResult(
+                $builder->incorporateResult(
                     $parser->parse(
                         new PropertyValue($builder->getSubject(), $property, $value->$property)
                     )
@@ -113,7 +113,7 @@ class AssertStdClass extends Base\Parser
         $this->assertionList[] = static function (ResultBuilder $builder) use ($property, $parser): void {
             $value = $builder->getValue();
             if (property_exists($value, $property)) {
-                $builder->incorporateChildResult(
+                $builder->incorporateResult(
                     $parser->parse(
                         new PropertyValue($builder->getSubject(), $property, $value->$property)
                     )
@@ -129,7 +129,7 @@ class AssertStdClass extends Base\Parser
         $this->assertionList[] = static function (ResultBuilder $builder) use ($property, $default, $parser): void {
             $value = $builder->getValue();
             $propertyValue = property_exists($value, $property) ? $value->$property : $default;
-            $builder->incorporateChildResult(
+            $builder->incorporateResult(
                 $parser->parse(
                     new PropertyValue($builder->getSubject(), $property, $propertyValue)
                 )
@@ -151,7 +151,7 @@ class AssertStdClass extends Base\Parser
             foreach ($builder->getValue() as $property => $_) {
                 $properties[] = $property;
             }
-            $builder->incorporateChildResult(
+            $builder->incorporateResult(
                 $arrayParser->parse(
                     new MetaInformation($builder->getSubject(), 'property names', $properties)
                 )
@@ -168,7 +168,7 @@ class AssertStdClass extends Base\Parser
             foreach ($builder->getValue() as $propertyValue) {
                 $propertyValues[] = $propertyValue;
             }
-            $builder->incorporateChildResult(
+            $builder->incorporateResult(
                 $arrayParser->parse(
                     new MetaInformation($builder->getSubject(), 'property values', $propertyValues)
                 )
@@ -189,7 +189,7 @@ class AssertStdClass extends Base\Parser
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($stringParser): void {
             foreach ($builder->getValue() as $property => $_) {
-                $builder->incorporateChildResult(
+                $builder->incorporateResult(
                     $stringParser->parse(
                         new PropertyName($builder->getSubject(), $property)
                     )
@@ -211,7 +211,7 @@ class AssertStdClass extends Base\Parser
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($parser): void {
             foreach ($builder->getValue() as $property => $value) {
-                $builder->incorporateChildResult(
+                $builder->incorporateResult(
                     $parser->parse(
                         new PropertyValue($builder->getSubject(), $property, $value)
                     )
@@ -236,7 +236,7 @@ class AssertStdClass extends Base\Parser
             foreach ($builder->getValue() as $_) {
                 $count++;
             }
-            $builder->incorporateChildResult(
+            $builder->incorporateResult(
                 $integerParser->parse(
                     new MetaInformation($builder->getSubject(), 'property count', $count)
                 )
@@ -246,7 +246,7 @@ class AssertStdClass extends Base\Parser
         return $this;
     }
 
-    protected function getDefaultTypeExceptionMessage(): string
+    protected function getDefaultTypeErrorMessage(): string
     {
         return 'Provided value is not an instance of \stdClass';
     }

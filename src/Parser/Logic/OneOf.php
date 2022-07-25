@@ -19,7 +19,7 @@ use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
-use Philiagus\Parser\Subject\Forwarded;
+use Philiagus\Parser\Subject\Utility\Forwarded;
 use Philiagus\Parser\Util\Debug;
 
 class OneOf extends Base\Parser

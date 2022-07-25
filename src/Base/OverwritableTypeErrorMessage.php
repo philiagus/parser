@@ -12,11 +12,12 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Base;
 
+use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
 
-trait TypeExceptionMessage
+trait OverwritableTypeErrorMessage
 {
 
     private ?string $typeExceptionMessage = null;
@@ -33,7 +34,7 @@ trait TypeExceptionMessage
      * @see Debug::parseMessage()
      *
      */
-    public function setTypeExceptionMessage(string $message): self
+    public function setTypeErrorMessage(string $message): self
     {
         $this->typeExceptionMessage = $message;
 
@@ -45,14 +46,30 @@ trait TypeExceptionMessage
      *
      * @throws ParsingException
      */
-    private function logTypeError(ResultBuilder $builder): void
+    protected function logTypeError(ResultBuilder $builder): void
     {
-        $builder->logErrorUsingDebug($this->typeExceptionMessage ?? $this->getDefaultTypeExceptionMessage());
+        $builder->logError($this->getTypeError($builder->getSubject()));
     }
 
     /**
      * @return string
      */
-    abstract protected function getDefaultTypeExceptionMessage(): string;
+    abstract protected function getDefaultTypeErrorMessage(): string;
+
+    /**
+     * @param Subject $subject
+     *
+     * @return Error
+     */
+    protected function getTypeError(Subject $subject): Error
+    {
+        return new Error(
+            $subject,
+            Debug::parseMessage(
+                $this->typeExceptionMessage ?? $this->getDefaultTypeErrorMessage(),
+                ['subject' => $subject->getValue()]
+            )
+        );
+    }
 
 }

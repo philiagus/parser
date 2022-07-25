@@ -16,7 +16,7 @@ use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Result;
-use Philiagus\Parser\Subject\ParserBegin;
+use Philiagus\Parser\Subject\Utility\ParserBegin;
 
 class Fail implements Parser
 {

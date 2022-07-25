@@ -14,7 +14,7 @@ namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Base\TypeExceptionMessage;
+use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
@@ -24,7 +24,7 @@ use Philiagus\Parser\Subject\MetaInformation;
 
 class AssertStringRegex extends Base\Parser
 {
-    use TypeExceptionMessage;
+    use OverwritableTypeErrorMessage;
 
     public const DEFAULT_PATTERN_EXCEPTION_MESSAGE = 'The string does not match the expected pattern';
 
@@ -259,7 +259,7 @@ class AssertStringRegex extends Base\Parser
         }
 
         foreach ($this->numberMatchesParsers as $numberMatchesParser) {
-            $builder->incorporateChildResult(
+            $builder->incorporateResult(
                 $numberMatchesParser->parse(
                     new MetaInformation($builder->getSubject(), 'number of matches', $result)
                 )
@@ -267,7 +267,7 @@ class AssertStringRegex extends Base\Parser
         }
 
         foreach ($this->matchesParser as $parser) {
-            $builder->incorporateChildResult(
+            $builder->incorporateResult(
                 $parser->parse(
                     new MetaInformation($builder->getSubject(), 'matches', $matches)
                 )
@@ -291,7 +291,7 @@ class AssertStringRegex extends Base\Parser
         return $this;
     }
 
-    protected function getDefaultTypeExceptionMessage(): string
+    protected function getDefaultTypeErrorMessage(): string
     {
         return 'Provided value is not of type string';
     }

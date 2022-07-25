@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * This file is part of philiagus/parser
  *
  * (c) Andreas Bittner <philiagus@philiagus.de>
@@ -10,7 +10,7 @@
 
 declare(strict_types=1);
 
-namespace Philiagus\Parser\Subject;
+namespace Philiagus\Parser\Subject\Utility;
 
 use Philiagus\Parser\Base\Subject;
 
@@ -23,10 +23,12 @@ class Internal extends Subject
     }
 
     /**
+     * @param bool $isLastInChain *
+     *
      * @inheritDoc
      */
-    protected function getPathStringPart(): string
+    protected function getPathStringPart(bool $isLastInChain): string
     {
-        return "[{$this->description}]";
+        return " {$this->description}↩";
     }
 }

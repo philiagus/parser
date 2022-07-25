@@ -16,7 +16,7 @@ use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Parser\Logic\Preserve;
 use Philiagus\Parser\Result;
-use Philiagus\Parser\Subject\Forwarded;
+use Philiagus\Parser\Subject\Utility\Forwarded;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\Mock\ParserMock;
 use Philiagus\Parser\Test\ParserTestBase;

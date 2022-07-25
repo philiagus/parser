@@ -27,9 +27,7 @@ abstract class Parser implements Contract\Parser, Contract\Chainable
     private string $chainDescription;
 
     /**
-     * @param string $description
-     *
-     * @return $this
+     * @see OverwritableParserDescription::setChainDescription()
      */
     public function setChainDescription(string $description): self
     {
@@ -38,12 +36,14 @@ abstract class Parser implements Contract\Parser, Contract\Chainable
         return $this;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function parse(Subject $subject): Result
     {
         return $this->execute(
             $subject->getResultBuilder(
-                Debug::parseMessage($this->chainDescription ?? $this->getDefaultChainDescription($subject),
-                    ['subject' => $subject->getValue()])
+                $this->chainDescription ?? $this->getDefaultChainDescription($subject)
             )
         );
     }
@@ -56,29 +56,29 @@ abstract class Parser implements Contract\Parser, Contract\Chainable
     abstract protected function execute(ResultBuilder $builder): Result;
 
     /**
-     * @param Subject $subject
-     *
-     * @return string
+     * @see OverwritableParserDescription::getDefaultChainDescription()
      */
     abstract protected function getDefaultChainDescription(Subject $subject): string;
 
+    /**
+     * @inheritDoc
+     */
     public function thenAssignTo(&$target): Chain
     {
         return $this->then(Assign::to($target));
     }
 
     /**
-     * Chains another parser to use the result of the current parser
-     *
-     * @param ParserContract $parser
-     *
-     * @return Chain
+     * @inheritDoc
      */
     public function then(ParserContract $parser): Chain
     {
         return Chain::parsers($this, $parser);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function thenAppendTo(&$target): Chain
     {
         return $this->then(Append::to($target));

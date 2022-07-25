@@ -41,11 +41,15 @@ abstract class Subject
     }
 
     /**
-     * Returns the default Path to use if no path is provided
+     * Returns the default Subject to use
      *
-     * @return static
+     * @param mixed $value
+     * @param string|null $description
+     * @param bool $throwOnError
+     *
+     * @return Root
      */
-    public static function default($value, ?string $description = null, bool $throwOnError = true): self
+    public static function default(mixed $value, ?string $description = null, bool $throwOnError = true): Root
     {
         return new Root($value, $description, $throwOnError);
     }
@@ -57,11 +61,11 @@ abstract class Subject
      *
      * @return array
      */
-    final public function flat(bool $includeUtility = false): array
+    final public function getSubjectChain(bool $includeUtility = false): array
     {
         $return = [];
         if ($this->sourceSubject) {
-            $return = $this->sourceSubject->flat($includeUtility);
+            $return = $this->sourceSubject->getSubjectChain($includeUtility);
         }
         if ($includeUtility || !$this->isUtilitySubject) {
             $return[] = $this;
@@ -81,7 +85,7 @@ abstract class Subject
      *
      * @return string
      */
-    final public function getPathAsString(bool $includeUtility = false): string
+    public function getPathAsString(bool $includeUtility = false): string
     {
         return ltrim($this->concatPathStringParts($includeUtility), ' ');
     }
@@ -90,24 +94,36 @@ abstract class Subject
      * Concat every path string part so that the furthest subject (which is the one
      * this chain started with) is first and the other follow in order
      *
-     * @param $includeUtility
+     * @param bool $includeUtility
+     * @param bool $isLastInChain
      *
      * @return string
      */
-    private function concatPathStringParts($includeUtility): string
+    private function concatPathStringParts(bool $includeUtility, bool $isLastInChain = true): string
     {
-        return ($this->sourceSubject?->concatPathStringParts($includeUtility) ?? '') .
-            ($includeUtility || !$this->isUtilitySubject ? $this->getPathStringPart() : '');
+        return (
+                $this->sourceSubject?->concatPathStringParts($includeUtility, false)
+                ?? ''
+            ) .
+            (
+            $includeUtility || !$this->isUtilitySubject
+                ? $this->getPathStringPart($isLastInChain)
+                : ''
+            );
     }
 
     /**
      * Returns the string representation of this path element
      *
+     * @param bool $isLastInChain
+     *
      * @return string
      */
-    abstract protected function getPathStringPart(): string;
+    abstract protected function getPathStringPart(bool $isLastInChain): string;
 
     /**
+     * Get the value of this subject
+     *
      * @return mixed
      */
     public function getValue(): mixed
@@ -116,6 +132,8 @@ abstract class Subject
     }
 
     /**
+     * Creates a result builder for this subject
+     *
      * @param string $description
      *
      * @return ResultBuilder

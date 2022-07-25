@@ -42,6 +42,10 @@ class Error implements Contract\Error
     }
 
     /**
+     * Creates the error using Debug::parseMessage with $message and $replacers
+     *
+     * @see Debug::parseMessage()
+     *
      * @param Subject $subject
      * @param string $message
      * @param array $replacers
@@ -67,11 +71,21 @@ class Error implements Contract\Error
     }
 
 
+    /**
+     * Returns the error message
+     *
+     * @return string
+     */
     public function getMessage(): string
     {
         return $this->message;
     }
 
+    /**
+     * Throws the error as a ParsingException
+     * @return never
+     * @throws ParsingException
+     */
     public function throw(): never
     {
         throw new ParsingException($this);
@@ -107,5 +121,13 @@ class Error implements Contract\Error
     public function hasSourceErrors(): bool
     {
         return !empty($this->sourceErrors);
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasSourceThrowable(): bool
+    {
+        return isset($this->sourceThrowable);
     }
 }

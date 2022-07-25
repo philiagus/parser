@@ -14,7 +14,7 @@ namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Base\TypeExceptionMessage;
+use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Result;
@@ -23,7 +23,7 @@ use Philiagus\Parser\Subject\MetaInformation;
 
 class AssertString extends Base\Parser
 {
-    use TypeExceptionMessage;
+    use OverwritableTypeErrorMessage;
 
     /** @var \SplDoublyLinkedList<\Closure> */
     private \SplDoublyLinkedList $assertionList;
@@ -51,7 +51,7 @@ class AssertString extends Base\Parser
     public function giveLength(ParserContract $integerParser): self
     {
         $this->assertionList[] = static function (ResultBuilder $builder, string $value) use ($integerParser): void {
-            $builder->incorporateChildResult(
+            $builder->incorporateResult(
                 $integerParser->parse(
                     new MetaInformation($builder->getSubject(), 'length', strlen($value))
                 )
@@ -99,7 +99,7 @@ class AssertString extends Base\Parser
             } else {
                 $part = substr($value, $start, $length);
             }
-            $builder->incorporateChildResult(
+            $builder->incorporateResult(
                 $stringParser->parse(
                     new MetaInformation($builder->getSubject(), "excerpt from $start to " . ($length ?? 'end'), $part)
                 )
@@ -167,7 +167,7 @@ class AssertString extends Base\Parser
         return $this;
     }
 
-    protected function getDefaultTypeExceptionMessage(): string
+    protected function getDefaultTypeErrorMessage(): string
     {
         return 'Provided value is not of type string';
     }

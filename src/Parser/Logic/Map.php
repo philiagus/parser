@@ -19,8 +19,8 @@ use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
-use Philiagus\Parser\Subject\Forwarded;
-use Philiagus\Parser\Subject\Test;
+use Philiagus\Parser\Subject\Utility\Forwarded;
+use Philiagus\Parser\Subject\Utility\Test;
 use Philiagus\Parser\Util\Debug;
 
 class Map extends Base\Parser
@@ -184,7 +184,7 @@ class Map extends Base\Parser
                 case self::TYPE_SAME:
                     if ($value === $from) {
                         return $builder->createResultFromResult(
-                            $to->parse(new Forwarded($builder->getSubject(), 'same'))
+                            $to->parse(new Forwarded($builder->getSubject(), 'same found'))
                         );
                     }
                     $errors[] = new Error(
@@ -194,7 +194,7 @@ class Map extends Base\Parser
                     break;
                 case self::TYPE_SAME_LIST:
                     if (@in_array($value, $from, true)) {
-                        return $builder->createResultFromResult($to->parse(new Forwarded($builder->getSubject(), 'same list')));
+                        return $builder->createResultFromResult($to->parse(new Forwarded($builder->getSubject(), 'same found in list')));
                     }
                     $errors[] = new Error(
                         $builder->getSubject(),
@@ -203,7 +203,7 @@ class Map extends Base\Parser
                     break;
                 case self::TYPE_EQUALS:
                     if ($value == $from) {
-                        return $builder->createResultFromResult($to->parse(new Forwarded($builder->getSubject(), 'equals')));
+                        return $builder->createResultFromResult($to->parse(new Forwarded($builder->getSubject(), 'equal found')));
                     }
                     $errors[] = new Error(
                         $builder->getSubject(),
@@ -214,7 +214,7 @@ class Map extends Base\Parser
                     // @ suppresses errors when comparing objects to scalars
                     if (@in_array($value, $from)) {
                         return $builder->createResultFromResult(
-                            $to->parse(new Forwarded($builder->getSubject(), 'equals list'))
+                            $to->parse(new Forwarded($builder->getSubject(), 'equal found in list'))
                         );
                     }
                     $errors[] = new Error(

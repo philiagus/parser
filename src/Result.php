@@ -19,8 +19,11 @@ use Philiagus\Parser\Util\Debug;
 class Result extends Subject
 {
 
-    private readonly bool $success;
-
+    /**
+     * @param Subject $subject
+     * @param mixed $resultValue
+     * @param array $errors
+     */
     public function __construct(
         Subject                $subject,
         mixed                  $resultValue,
@@ -28,23 +31,38 @@ class Result extends Subject
     )
     {
         parent::__construct($subject, '', $resultValue, true, null);
-        if ($this->errors) {
-            $this->success = false;
-            foreach ($this->errors as $error) {
-                if (!$error instanceof Error) {
-                    throw new \LogicException(
-                        "Trying to create error result with a non ResultError instance: " . Debug::getType($error)
-                    );
-                }
+        foreach ($this->errors as $error) {
+            if (!$error instanceof Error) {
+                throw new \LogicException(
+                    "Trying to create error result with a non ResultError instance: " . Debug::getType($error)
+                );
             }
-        } else {
-            $this->success = true;
         }
     }
 
+    /**
+     * Returns true if the parsing did not result in any errors
+     * If false please use getErrors to get the list of errors that cause the lack of
+     * success of this parser
+     *
+     * @return bool
+     */
     public function isSuccess(): bool
     {
-        return $this->success;
+        return empty($this->errors);
+    }
+
+    /**
+     * Returns true if this result has been loaded with errors
+     * If true it implies that this result was no success and thus
+     * isSuccess will return false
+     *
+     * @return bool
+     * @see Result::isSuccess()
+     */
+    public function hasErrors(): bool
+    {
+        return (bool)$this->errors;
     }
 
     /**
@@ -53,7 +71,7 @@ class Result extends Subject
      */
     public function getValue(): mixed
     {
-        return $this->success
+        return empty($this->errors)
             ? parent::getValue()
             : throw new \LogicException(
                 "Trying to get result value of not successful path " . $this->sourceSubject->getPathAsString(true)
@@ -61,6 +79,8 @@ class Result extends Subject
     }
 
     /**
+     * Returns the list of errors that are embedded in this result
+     *
      * @return Error[]
      */
     public function getErrors(): array
@@ -68,9 +88,12 @@ class Result extends Subject
         return $this->errors;
     }
 
-    protected function getPathStringPart(): string
+    /**
+     * @inheritDoc
+     */
+    protected function getPathStringPart(bool $isLastInChain): string
     {
-        return ' then';
+        return $isLastInChain ? '' : ' ↣';
     }
 }
 

@@ -25,18 +25,24 @@ class ParsingException extends \Exception
     /**
      * @param Error $error
      */
-    public function __construct(
-        private readonly Error $error,
-    )
+    public function __construct(private readonly Error $error)
     {
         parent::__construct($this->error->getMessage(), 0, $this->error->getSourceThrowable());
     }
 
+    /**
+     * @param bool $includeUtility
+     *
+     * @return string
+     */
     public function getPathAsString(bool $includeUtility = false): string
     {
         return $this->getSubject()->getPathAsString($includeUtility);
     }
 
+    /**
+     * @return Subject
+     */
     public function getSubject(): Subject
     {
         return $this->error->getSubject();

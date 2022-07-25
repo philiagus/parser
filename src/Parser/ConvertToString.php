@@ -14,7 +14,7 @@ namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Base\TypeExceptionMessage;
+use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Result;
@@ -25,7 +25,7 @@ use Stringable;
 
 class ConvertToString extends Base\Parser
 {
-    use TypeExceptionMessage;
+    use OverwritableTypeErrorMessage;
 
     /** @var array{string, string}|null */
     private ?array $booleanValues = null;
@@ -131,7 +131,7 @@ class ConvertToString extends Base\Parser
                         if ($elementConverter) {
                             $conversionResult = $elementConverter->parse($newSubject);
                             if (!$conversionResult->isSuccess()) {
-                                $builder->incorporateChildResult($conversionResult);
+                                $builder->incorporateResult($conversionResult);
                                 continue;
                             }
                             $convertedElement = $conversionResult->getValue();
@@ -173,7 +173,7 @@ class ConvertToString extends Base\Parser
         return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultTypeExceptionMessage(): string
+    protected function getDefaultTypeErrorMessage(): string
     {
         return 'Variable of type {subject.type} could not be converted to a string';
     }

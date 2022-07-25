@@ -16,7 +16,7 @@ use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Chainable;
 use Philiagus\Parser\Base\OverwritableParserDescription;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Base\TypeExceptionMessage;
+use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 
@@ -28,7 +28,7 @@ use Philiagus\Parser\ResultBuilder;
  */
 class ParseFormEncodedString extends Base\Parser
 {
-    use Chainable, OverwritableParserDescription, TypeExceptionMessage;
+    use Chainable, OverwritableParserDescription, OverwritableTypeErrorMessage;
 
     private function __construct()
     {
@@ -56,7 +56,7 @@ class ParseFormEncodedString extends Base\Parser
         return $builder->createResult($result);
     }
 
-    protected function getDefaultTypeExceptionMessage(): string
+    protected function getDefaultTypeErrorMessage(): string
     {
         return 'Provided value is not of type string';
     }

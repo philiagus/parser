@@ -22,10 +22,14 @@ class PropertyValue extends Subject
     }
 
     /**
+     * @param bool $isLastInChain *
+     *
      * @inheritDoc
      */
-    protected function getPathStringPart(): string
+    protected function getPathStringPart(bool $isLastInChain): string
     {
-        return ".{$this->description}";
+        return preg_match('/\s/', $this->description)
+            ? "[{$this->description}]"
+            : ".{$this->description}";
     }
 }

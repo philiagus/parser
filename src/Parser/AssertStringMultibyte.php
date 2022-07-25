@@ -14,7 +14,7 @@ namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Base\TypeExceptionMessage;
+use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
@@ -25,7 +25,7 @@ use Philiagus\Parser\Util\Debug;
 
 class AssertStringMultibyte extends Base\Parser
 {
-    use TypeExceptionMessage;
+    use OverwritableTypeErrorMessage;
 
     /** @var string[]|null */
     private ?array $encoding = null;
@@ -110,7 +110,7 @@ class AssertStringMultibyte extends Base\Parser
     public function giveLength(ParserContract $integerParser): self
     {
         $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($integerParser): void {
-            $builder->incorporateChildResult(
+            $builder->incorporateResult(
                 $integerParser->parse(
                     new MetaInformation($builder->getSubject(), 'length in ' . $encoding, mb_strlen($value, $encoding))
                 )
@@ -182,7 +182,7 @@ class AssertStringMultibyte extends Base\Parser
             } else {
                 $part = mb_substr($value, $start, $length, $encoding);
             }
-            $builder->incorporateChildResult(
+            $builder->incorporateResult(
                 $stringParser->parse(
                     new MetaInformation($builder->getSubject(), "$encoding substring from $start to " . ($length ?? 'end'), $part)
                 )
@@ -287,7 +287,7 @@ class AssertStringMultibyte extends Base\Parser
     public function giveEncoding(Parser $parser): self
     {
         $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($parser) {
-            $builder->incorporateChildResult(
+            $builder->incorporateResult(
                 $parser->parse(
                     new MetaInformation($builder->getSubject(), 'encoding', $encoding)
                 )
@@ -297,7 +297,7 @@ class AssertStringMultibyte extends Base\Parser
         return $this;
     }
 
-    protected function getDefaultTypeExceptionMessage(): string
+    protected function getDefaultTypeErrorMessage(): string
     {
         return 'Provided value is not of type string';
     }

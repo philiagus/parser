@@ -14,7 +14,7 @@ namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Base\TypeExceptionMessage;
+use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Result;
@@ -26,7 +26,7 @@ use Philiagus\Parser\Util\Debug;
 
 class AssertArray extends Base\Parser
 {
-    use TypeExceptionMessage;
+    use OverwritableTypeErrorMessage;
 
     /** @var \SplDoublyLinkedList<\Closure> */
     protected \SplDoublyLinkedList $assertionList;
@@ -48,7 +48,7 @@ class AssertArray extends Base\Parser
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($parser): void {
             foreach ($builder->getValue() as $key => $value) {
-                $builder->incorporateChildResult(
+                $builder->incorporateResult(
                     $parser->parse(
                         new ArrayValue($builder->getSubject(), $key, $value)
                     )
@@ -86,7 +86,7 @@ class AssertArray extends Base\Parser
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($parser): void {
             foreach ($builder->getValue() as $key => $_) {
-                $builder->incorporateChildResult(
+                $builder->incorporateResult(
                     $parser->parse(
                         new ArrayKey($builder->getSubject(), $key)
                     )
@@ -105,7 +105,7 @@ class AssertArray extends Base\Parser
     public function giveKeys(ParserContract $arrayParser): self
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($arrayParser): void {
-            $builder->incorporateChildResult(
+            $builder->incorporateResult(
                 $arrayParser->parse(
                     new MetaInformation($builder->getSubject(), 'keys', array_keys($builder->getValue()))
                 )
@@ -125,7 +125,7 @@ class AssertArray extends Base\Parser
     public function giveLength(ParserContract $integerParser): self
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($integerParser): void {
-            $builder->incorporateChildResult(
+            $builder->incorporateResult(
                 $integerParser->parse(
                     new MetaInformation($builder->getSubject(), 'length', count($builder->getValue()))
                 )
@@ -163,7 +163,7 @@ class AssertArray extends Base\Parser
 
                 return;
             }
-            $builder->incorporateChildResult(
+            $builder->incorporateResult(
                 $parser->parse(new ArrayValue($builder->getSubject(), $key, $value[$key]))
             );
         };
@@ -185,7 +185,7 @@ class AssertArray extends Base\Parser
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($key, $default, $parser): void {
             $value = $builder->getValue();
-            $builder->incorporateChildResult(
+            $builder->incorporateResult(
                 $parser->parse(
                     new ArrayValue(
                         $builder->getSubject(),
@@ -236,7 +236,7 @@ class AssertArray extends Base\Parser
         $this->assertionList[] = static function (ResultBuilder $builder) use ($key, $parser): void {
             $value = $builder->getValue();
             if (array_key_exists($key, $value)) {
-                $builder->incorporateChildResult(
+                $builder->incorporateResult(
                     $parser->parse(
                         new ArrayValue($builder->getSubject(), $key, $value[$key])
                     )
@@ -252,7 +252,7 @@ class AssertArray extends Base\Parser
         return 'assert array';
     }
 
-    protected function getDefaultTypeExceptionMessage(): string
+    protected function getDefaultTypeErrorMessage(): string
     {
         return 'Provided value is not an array';
     }

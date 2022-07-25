@@ -10,7 +10,7 @@
 
 declare(strict_types=1);
 
-namespace Philiagus\Parser\Subject;
+namespace Philiagus\Parser\Subject\Utility;
 
 use Philiagus\Parser\Base\Subject;
 
@@ -26,8 +26,8 @@ class Test extends Subject
         parent::__construct($subject, $description, $subject->getValue(), true, $forceThrowOnError ?: null);
     }
 
-    protected function getPathStringPart(): string
+    protected function getPathStringPart(bool $isLastInChain): string
     {
-        return ' [TEST: ' . $this->description . ']';
+        return ' ⁇' . $this->description . '⁇';
     }
 }

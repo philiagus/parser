@@ -14,7 +14,7 @@ namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Base\TypeExceptionMessage;
+use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 
@@ -26,7 +26,7 @@ use Philiagus\Parser\ResultBuilder;
  */
 class AssertBoolean extends Base\Parser
 {
-    use TypeExceptionMessage;
+    use OverwritableTypeErrorMessage;
 
 
     private function __construct()
@@ -53,7 +53,7 @@ class AssertBoolean extends Base\Parser
         return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultTypeExceptionMessage(): string
+    protected function getDefaultTypeErrorMessage(): string
     {
         return 'Provided value is not a boolean';
     }

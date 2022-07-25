@@ -17,7 +17,7 @@ use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
-use Philiagus\Parser\Subject\Forwarded;
+use Philiagus\Parser\Subject\Utility\Forwarded;
 
 
 class Fork extends Base\Parser
@@ -66,7 +66,7 @@ class Fork extends Base\Parser
     public function execute(ResultBuilder $builder): Result
     {
         foreach ($this->parsers as $index => $parser) {
-            $builder->incorporateChildResult(
+            $builder->incorporateResult(
                 $parser->parse(new Forwarded($builder->getSubject(), "fork #$index"))
             );
         }

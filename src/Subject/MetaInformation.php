@@ -19,13 +19,15 @@ class MetaInformation extends Subject
 
     public function __construct(Subject $sourceSubject, string $description, mixed $value)
     {
-        parent::__construct($sourceSubject, $description, $value, true, null);
+        parent::__construct($sourceSubject, $description, $value, false, null);
     }
 
     /**
+     * @param bool $isLastInChain *
+     *
      * @inheritDoc
      */
-    protected function getPathStringPart(): string
+    protected function getPathStringPart(bool $isLastInChain): string
     {
         return " {$this->description}";
     }
