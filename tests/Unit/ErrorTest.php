@@ -43,6 +43,9 @@ class ErrorTest extends TestBase
 
         $source = $hasSourceThrowable ? new \Exception() : null;
         $subject = $this->prophesize(Subject::class);
+        $subject->getPathAsString(true)->willReturn('PATH TRUE');
+        $subject->getPathAsString(false)->willReturn('PATH FALSE');
+        $subject->getValue()->willReturn('THE VALUE');
         $subject = $subject->reveal();
         $error1 = new Error(
             $subject,
@@ -63,6 +66,8 @@ class ErrorTest extends TestBase
 
         self::assertEquals($error1, $error2);
         self::assertSame($subject, $error1->getSubject());
+        self::assertSame($subject->getPathAsString(true), $error1->getPathAsString(true));
+        self::assertSame($subject->getPathAsString(false), $error1->getPathAsString(false));
         self::assertSame($source, $error1->getSourceThrowable());
         self::assertSame($prevErrors, $error1->getSourceErrors());
         self::assertSame($hasSourceErrors, $error1->hasSourceErrors());
