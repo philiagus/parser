@@ -13,14 +13,15 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Subject\Utility;
 
 use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract;
 
 class Test extends Subject
 {
 
     public function __construct(
-        \Philiagus\Parser\Contract\Subject $subject,
-        string                             $description,
-        bool                               $forceThrowOnError = false
+        Contract\Subject $subject,
+        string           $description,
+        bool             $forceThrowOnError = false
     )
     {
         parent::__construct($subject, $description, $subject->getValue(), true, $forceThrowOnError ?: null);

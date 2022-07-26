@@ -22,6 +22,7 @@ use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
+use Philiagus\Parser\Contract;
 
 /**
  * @covers \Philiagus\Parser\Base\OverwritableTypeErrorMessage
@@ -71,7 +72,7 @@ class OverwritableTypeErrorMessageTest extends TestCase
         return new class() implements Parser {
             use OverwritableTypeErrorMessage;
 
-            public function parse(\Philiagus\Parser\Contract\Subject $subject): never
+            public function parse(Contract\Subject $subject): never
             {
                 /** @var Error $error */
                 $error = $this->getTypeError($subject);
@@ -90,7 +91,7 @@ class OverwritableTypeErrorMessageTest extends TestCase
         return new class() implements Parser {
             use OverwritableTypeErrorMessage;
 
-            public function parse(\Philiagus\Parser\Contract\Subject $subject): never
+            public function parse(Contract\Subject $subject): never
             {
                 $builder = new ResultBuilder($subject, 'TestParser');
                 $this->logTypeError($builder);

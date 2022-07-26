@@ -13,11 +13,9 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base;
-use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Result;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\ResultBuilder;
 
-use Philiagus\Parser\Contract;
 class ConvertToArray extends Base\Parser
 {
 
@@ -28,21 +26,28 @@ class ConvertToArray extends Base\Parser
     }
 
     /**
+     * Instructs this parser to convert non-arrays into arrays by using an
+     * array cast
+     *
      * @return static
      */
-    public static function usingCast(): self
+    public static function usingCast(): static
     {
-        return new self();
+        return new static();
     }
 
     /**
+     * Instructs this parser to convert non-arrays into arrays by creating a
+     * new array with the defined key and the value of that key being the
+     * received subject value
+     *
      * @param int|string $key
      *
      * @return static
      */
-    public static function creatingArrayWithKey(int|string $key): self
+    public static function creatingArrayWithKey(int|string $key): static
     {
-        $instance = new self();
+        $instance = new static();
         $instance->targetedArrayKey = $key;
 
         return $instance;
@@ -51,7 +56,7 @@ class ConvertToArray extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         if (is_array($value)) {
@@ -65,6 +70,9 @@ class ConvertToArray extends Base\Parser
         return $builder->createResult((array) $value);
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         if ($this->targetedArrayKey !== null) {

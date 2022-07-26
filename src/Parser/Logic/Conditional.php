@@ -49,9 +49,9 @@ class Conditional extends Base\Parser
     {
     }
 
-    public static function new(): self
+    public static function new(): static
     {
-        return new self();
+        return new static();
     }
 
     /**
@@ -66,7 +66,7 @@ class Conditional extends Base\Parser
      * @see Debug::parseMessage()
      *
      */
-    public function setNonOfExceptionMessage(string $message): self
+    public function setNonOfExceptionMessage(string $message): static
     {
         $this->exceptionMessage = $message;
 
@@ -81,7 +81,7 @@ class Conditional extends Base\Parser
      *
      * @return $this
      */
-    public function ifSameAs($from, Parser $to): self
+    public function ifSameAs($from, Parser $to): static
     {
         $this->elements[] = [self::TYPE_SAME, $from, $to];
 
@@ -97,7 +97,7 @@ class Conditional extends Base\Parser
      *
      * @return $this
      */
-    public function ifSameAsListElement(array $froms, Parser $to): self
+    public function ifSameAsListElement(array $froms, Parser $to): static
     {
         $this->elements[] = [self::TYPE_SAME_LIST, array_values($froms), $to];
 
@@ -112,7 +112,7 @@ class Conditional extends Base\Parser
      *
      * @return $this
      */
-    public function ifEqualTo(mixed $from, Parser $to): self
+    public function ifEqualTo(mixed $from, Parser $to): static
     {
         $this->elements[] = [self::TYPE_EQUALS, $from, $to];
 
@@ -128,7 +128,7 @@ class Conditional extends Base\Parser
      *
      * @return $this
      */
-    public function ifEqualToListElement(array $froms, Parser $to): self
+    public function ifEqualToListElement(array $froms, Parser $to): static
     {
 
         $this->elements[] = [self::TYPE_EQUALS_LIST, array_values($froms), $to];
@@ -146,7 +146,7 @@ class Conditional extends Base\Parser
      * @return $this
      * @see ifParserPiped()
      */
-    public function ifParser(Parser $parser, Parser $to): self
+    public function ifParser(Parser $parser, Parser $to): static
     {
         $this->elements[] = [self::TYPE_PARSER, $parser, $to];
 
@@ -163,7 +163,7 @@ class Conditional extends Base\Parser
      * @return $this
      * @see ifParser()
      */
-    public function ifParserPiped(Parser $parser, Parser $to): self
+    public function ifParserPiped(Parser $parser, Parser $to): static
     {
         $this->elements[] = [self::TYPE_PARSER_PIPE, $parser, $to];
 
@@ -179,7 +179,7 @@ class Conditional extends Base\Parser
      *
      * @return $this
      */
-    public function setDefaultResult(mixed $value): self
+    public function setDefaultResult(mixed $value): static
     {
         $this->defaultSet = true;
         $this->default = $value;
@@ -190,7 +190,7 @@ class Conditional extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         $errors = [];

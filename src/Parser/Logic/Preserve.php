@@ -48,15 +48,15 @@ class Preserve extends Base\Parser
      *
      * @return static
      */
-    public static function around(Parser $parser): self
+    public static function around(Parser $parser): static
     {
-        return new self($parser);
+        return new static($parser);
     }
 
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         $builder->incorporateResult(
             $this->around->parse(

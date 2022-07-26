@@ -19,6 +19,7 @@ use Philiagus\Parser\Parser\Logic\Chain;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\ParserTestBase;
+use Philiagus\Parser\Contract;
 
 /**
  * @covers \Philiagus\Parser\Parser\Logic\Chain
@@ -41,7 +42,7 @@ class ChainTest extends ParserTestBase
                     ->expectSingleCall(
                         fn($value) => $value,
                         Subject::class,
-                        result: fn(\Philiagus\Parser\Contract\Subject $subject) => new Result($subject, $result1, [])
+                        result: fn(Contract\Subject $subject) => new Result($subject, $result1, [])
                     )
                 ,
                 $builder
@@ -50,7 +51,7 @@ class ChainTest extends ParserTestBase
                         fn() => $result1,
                         Result::class,
                         eligible: fn($_1, $_2, array $successes) => $successes[0],
-                        result: fn(\Philiagus\Parser\Contract\Subject $subject) => new Result($subject, $result2, []),
+                        result: fn(Contract\Subject $subject) => new Result($subject, $result2, []),
                     ),
                 $builder
                     ->parserArgument()
@@ -58,12 +59,12 @@ class ChainTest extends ParserTestBase
                         fn() => $result2,
                         Result::class,
                         eligible: fn($_1, $_2, array $successes) => $successes[0] && $successes[1],
-                        result: fn(\Philiagus\Parser\Contract\Subject $subject) => new Result($subject, $result3, []),
+                        result: fn(Contract\Subject $subject) => new Result($subject, $result3, []),
                     ),
             )
             ->provider(
                 DataProvider::TYPE_ALL,
-                successValidator: function (\Philiagus\Parser\Contract\Subject $subject, \Philiagus\Parser\Contract\Result $result) use ($result3) {
+                successValidator: function (Contract\Subject $subject, Contract\Result $result) use ($result3) {
                     if ($result->getValue() !== $result3) {
                         return ['The result does not match'];
                     }

@@ -13,13 +13,11 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base;
-use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Exception;
-use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
-use Philiagus\Parser\Contract;
 
 class AssertNumber extends Base\Parser
 {
@@ -33,11 +31,11 @@ class AssertNumber extends Base\Parser
     }
 
     /**
-     * @return self
+     * @return static
      */
-    public static function new(): self
+    public static function new(): static
     {
-        return new self();
+        return new static();
     }
 
     /**
@@ -50,16 +48,14 @@ class AssertNumber extends Base\Parser
      * @param float|int $minimum
      * @param string $exceptionMessage
      *
-     * @return AssertNumber
+     * @return $this
      * @throws Exception\ParserConfigurationException
      * @see Debug::parseMessage()
      *
      */
-    public function assertMinimum(float|int $minimum, string $exceptionMessage = 'Provided value of {value} is lower than the defined minimum of {min}'): self
+    public function assertMinimum(float|int $minimum, string $exceptionMessage = 'Provided value of {value} is lower than the defined minimum of {min}'): static
     {
-        if (
-            is_float($minimum) && (is_nan($minimum) || is_infinite($minimum))
-        ) {
+        if (is_float($minimum) && (is_nan($minimum) || is_infinite($minimum))) {
             throw new Exception\ParserConfigurationException('The minimum for a numeric value must be provided as integer or float');
         }
 
@@ -85,16 +81,14 @@ class AssertNumber extends Base\Parser
      * @param float|int $maximum
      * @param string $exceptionMessage
      *
-     * @return AssertNumber
+     * @return $this
      * @throws Exception\ParserConfigurationException
      * @see Debug::parseMessage()
      *
      */
-    public function assertMaximum(float|int $maximum, string $exceptionMessage = 'Provided value of {value} is greater than the defined maximum of {max}}'): self
+    public function assertMaximum(float|int $maximum, string $exceptionMessage = 'Provided value of {value} is greater than the defined maximum of {max}}'): static
     {
-        if (
-            is_float($maximum) && (is_nan($maximum) || is_infinite($maximum))
-        ) {
+        if (is_float($maximum) && (is_nan($maximum) || is_infinite($maximum))) {
             throw new Exception\ParserConfigurationException('The maximum for a numeric value must be provided as integer or float');
         }
 
@@ -113,7 +107,7 @@ class AssertNumber extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         if (

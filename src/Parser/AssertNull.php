@@ -38,19 +38,19 @@ class AssertNull extends Base\Parser
      *
      * @param string $notNullExceptionMessage
      *
-     * @return $this
+     * @return static
      * @see Debug::parseMessage()
      *
      */
-    public static function new(string $notNullExceptionMessage = 'Provided value is not NULL'): self
+    public static function new(string $notNullExceptionMessage = 'Provided value is not NULL'): static
     {
-        return new self($notNullExceptionMessage);
+        return new static($notNullExceptionMessage);
     }
 
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         if ($builder->getValue() !== null) {
             $builder->logErrorUsingDebug($this->exceptionMessage);

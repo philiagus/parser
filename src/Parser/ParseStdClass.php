@@ -25,7 +25,14 @@ use Philiagus\Parser\Contract;
 class ParseStdClass extends AssertStdClass
 {
 
-    public function defaultProperty(string $property, $defaultValue): self
+    /**
+     * If the specified property does not exist in the stdClass it is added with the provided value
+     * @param string $property
+     * @param mixed $defaultValue
+     *
+     * @return $this
+     */
+    public function defaultProperty(string $property, mixed $defaultValue): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($property, $defaultValue): void {
             $value = $builder->getValue();
@@ -43,7 +50,15 @@ class ParseStdClass extends AssertStdClass
         return $this;
     }
 
-    public function defaultWith(\stdClass $object): self
+    /**
+     * Unions the parsed stdClass with the provided stdClass, adding missing properties as needed
+     * No value is overwritten, only missing properties are added
+     *
+     * @param \stdClass $object
+     *
+     * @return $this
+     */
+    public function defaultWith(\stdClass $object): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($object): void {
             $value = $builder->getValue();
@@ -87,7 +102,7 @@ class ParseStdClass extends AssertStdClass
     public function modifyPropertyValue(
         string $property, ParserContract $parser,
         string $missingKeyExceptionMessage = 'The object does not contain the requested property {property}'
-    ): self
+    ): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($property, $parser, $missingKeyExceptionMessage): void {
             $value = $builder->getValue();
@@ -126,7 +141,7 @@ class ParseStdClass extends AssertStdClass
      *
      * @return $this
      */
-    public function modifyOptionalPropertyValue(string $property, ParserContract $parser): self
+    public function modifyOptionalPropertyValue(string $property, ParserContract $parser): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($property, $parser): void {
             $value = $builder->getValue();
@@ -163,7 +178,7 @@ class ParseStdClass extends AssertStdClass
     public function modifyEachPropertyName(
         ParserContract $stringParser,
         string         $newPropertyNameIsNotUsableMessage = 'Modifying the property name "{old.raw}" resulted in an invalid type {new.type}, expected string'
-    ): self
+    ): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($newPropertyNameIsNotUsableMessage, $stringParser): void {
             $result = new \stdClass();
@@ -205,7 +220,7 @@ class ParseStdClass extends AssertStdClass
      *
      * @return $this
      */
-    public function modifyEachPropertyValue(ParserContract $parser): self
+    public function modifyEachPropertyValue(ParserContract $parser): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($parser): void {
             $result = new \stdClass();
@@ -228,6 +243,9 @@ class ParseStdClass extends AssertStdClass
         return $this;
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'parse stdClass';

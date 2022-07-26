@@ -13,17 +13,15 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base;
-use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
-use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\ArrayKey;
 use Philiagus\Parser\Subject\ArrayValue;
 use Philiagus\Parser\Subject\MetaInformation;
 use Philiagus\Parser\Util\Debug;
-use Philiagus\Parser\Contract;
 
 class AssertArray extends Base\Parser
 {
@@ -40,12 +38,20 @@ class AssertArray extends Base\Parser
     /**
      * @return static
      */
-    public static function new()
+    public static function new(): static
     {
         return new static();
     }
 
-    public function giveEachValue(ParserContract $parser): self
+    /**
+     * Instructs the parser to hand every value in the array in sequence to the provided parser
+     * The provided parser will be called once for every element of the array
+     *
+     * @param ParserContract $parser
+     *
+     * @return $this
+     */
+    public function giveEachValue(ParserContract $parser): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($parser): void {
             foreach ($builder->getValue() as $key => $value) {
@@ -61,29 +67,14 @@ class AssertArray extends Base\Parser
     }
 
     /**
-     * @inheritDoc
-     */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
-    {
-        if (!is_array($builder->getValue())) {
-            $this->logTypeError($builder);
-
-            return $builder->createResultUnchanged();
-        }
-
-        foreach ($this->assertionList as $assertion) {
-            $assertion($builder);
-        }
-
-        return $builder->createResultWithCurrentValue();
-    }
-
-    /**
+     * Gives each key of the array to the provided parser. The parser is called once
+     * per key
+     *
      * @param ParserContract $parser
      *
-     * @return $this
+     * @return static
      */
-    public function giveEachKey(ParserContract $parser): self
+    public function giveEachKey(ParserContract $parser): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($parser): void {
             foreach ($builder->getValue() as $key => $_) {
@@ -99,11 +90,13 @@ class AssertArray extends Base\Parser
     }
 
     /**
+     * Provides the list of keys to the defined parser as array
+     *
      * @param ParserContract $arrayParser
      *
-     * @return $this
+     * @return static
      */
-    public function giveKeys(ParserContract $arrayParser): self
+    public function giveKeys(ParserContract $arrayParser): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($arrayParser): void {
             $builder->incorporateResult(
@@ -123,7 +116,7 @@ class AssertArray extends Base\Parser
      *
      * @return $this
      */
-    public function giveLength(ParserContract $integerParser): self
+    public function giveLength(ParserContract $integerParser): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($integerParser): void {
             $builder->incorporateResult(
@@ -152,7 +145,10 @@ class AssertArray extends Base\Parser
      * @return $this
      * @see Debug::parseMessage()
      */
-    public function giveValue(int|string $key, ParserContract $parser, string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'): self
+    public function giveValue(
+        int|string $key, ParserContract $parser,
+        string     $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'
+    ): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($key, $parser, $missingKeyExceptionMessage): void {
             $value = $builder->getValue();
@@ -176,13 +172,13 @@ class AssertArray extends Base\Parser
      * Performs a parser on the value of a key or the $default if the given key does not exist
      * in the array
      *
-     * @param $key
-     * @param $default
+     * @param int|string $key
+     * @param mixed $default
      * @param ParserContract $parser
      *
      * @return $this
      */
-    public function giveDefaultedValue(int|string $key, $default, ParserContract $parser): self
+    public function giveDefaultedValue(int|string $key, mixed $default, ParserContract $parser): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($key, $default, $parser): void {
             $value = $builder->getValue();
@@ -213,7 +209,7 @@ class AssertArray extends Base\Parser
      * @return $this
      * @see Debug::parseMessage()
      */
-    public function assertSequentialKeys(string $exceptionMessage = 'The array is not a sequential numerical array starting at 0'): self
+    public function assertSequentialKeys(string $exceptionMessage = 'The array is not a sequential numerical array starting at 0'): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($exceptionMessage): void {
             if (!array_is_list($builder->getValue())) {
@@ -232,7 +228,7 @@ class AssertArray extends Base\Parser
      *
      * @return $this
      */
-    public function giveOptionalValue(int|string $key, ParserContract $parser): self
+    public function giveOptionalValue(int|string $key, ParserContract $parser): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($key, $parser): void {
             $value = $builder->getValue();
@@ -246,6 +242,24 @@ class AssertArray extends Base\Parser
         };
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function execute(ResultBuilder $builder): Contract\Result
+    {
+        if (!is_array($builder->getValue())) {
+            $this->logTypeError($builder);
+
+            return $builder->createResultUnchanged();
+        }
+
+        foreach ($this->assertionList as $assertion) {
+            $assertion($builder);
+        }
+
+        return $builder->createResultWithCurrentValue();
     }
 
     protected function getDefaultParserDescription(Contract\Subject $subject): string

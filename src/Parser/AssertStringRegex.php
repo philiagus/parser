@@ -13,16 +13,17 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base;
-use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
-use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\MetaInformation;
-use Philiagus\Parser\Contract;
 
+/**
+ * Parser used to assert a value as string and using a regex to check that string
+ */
 class AssertStringRegex extends Base\Parser
 {
     use OverwritableTypeErrorMessage;
@@ -74,7 +75,7 @@ class AssertStringRegex extends Base\Parser
     public function setPattern(
         string $pattern,
         string $exceptionMessage = self::DEFAULT_PATTERN_EXCEPTION_MESSAGE
-    ): self
+    ): static
     {
         if (@preg_match($pattern, '') === false) {
             throw new ParserConfigurationException(
@@ -101,9 +102,9 @@ class AssertStringRegex extends Base\Parser
      * @return static
      * @throws ParserConfigurationException
      */
-    public static function pattern(string $pattern, string $exceptionMessage = self::DEFAULT_PATTERN_EXCEPTION_MESSAGE): self
+    public static function pattern(string $pattern, string $exceptionMessage = self::DEFAULT_PATTERN_EXCEPTION_MESSAGE): static
     {
-        return new self($pattern, $exceptionMessage);
+        return new static($pattern, $exceptionMessage);
     }
 
     /**
@@ -123,7 +124,7 @@ class AssertStringRegex extends Base\Parser
      * @return $this
      * @throws ParserConfigurationException
      */
-    public function setGlobal(bool|int $matchType): self
+    public function setGlobal(bool|int $matchType): static
     {
         if ($matchType === false) {
             $this->global = false;
@@ -155,7 +156,7 @@ class AssertStringRegex extends Base\Parser
      *
      * @return $this
      */
-    public function setOffset(int $offset): self
+    public function setOffset(int $offset): static
     {
         $this->offset = $offset;
 
@@ -172,7 +173,7 @@ class AssertStringRegex extends Base\Parser
      *
      * @return $this
      */
-    public function setOffsetCapture(bool $offsetCapture = true): self
+    public function setOffsetCapture(bool $offsetCapture = true): static
     {
         $this->offsetCapture = $offsetCapture;
 
@@ -189,7 +190,7 @@ class AssertStringRegex extends Base\Parser
      *
      * @return $this
      */
-    public function setUnmatchedAsNull(bool $unmatchedAsNull = true): self
+    public function setUnmatchedAsNull(bool $unmatchedAsNull = true): static
     {
         $this->unmatchedAsNull = $unmatchedAsNull;
 
@@ -206,7 +207,7 @@ class AssertStringRegex extends Base\Parser
      *
      * @return $this
      */
-    public function giveMatches(ParserContract $parser): self
+    public function giveMatches(ParserContract $parser): static
     {
         $this->matchesParser[] = $parser;
 
@@ -214,9 +215,23 @@ class AssertStringRegex extends Base\Parser
     }
 
     /**
+     * Adds a parser the number of matches are passed to
+     *
+     * @param ParserContract $parser
+     *
+     * @return $this
+     */
+    public function giveNumberOfMatches(Parser $parser): static
+    {
+        $this->numberMatchesParsers[] = $parser;
+
+        return $this;
+    }
+
+    /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         if (!is_string($value)) {
@@ -277,24 +292,16 @@ class AssertStringRegex extends Base\Parser
     }
 
     /**
-     * Adds a parser the number of matches are passed to
-     *
-     * @param ParserContract $parser
-     *
-     * @return $this
+     * @inheritDoc
      */
-    public function giveNumberOfMatches(Parser $parser): self
-    {
-        $this->numberMatchesParsers[] = $parser;
-
-        return $this;
-    }
-
     protected function getDefaultTypeErrorMessage(): string
     {
         return 'Provided value is not of type string';
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return "assert string regex";

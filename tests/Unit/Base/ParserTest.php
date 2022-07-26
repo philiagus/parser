@@ -21,7 +21,7 @@ use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Util\Debug;
-
+use Philiagus\Parser\Contract;
 /**
  * @covers \Philiagus\Parser\Base\Parser
  */
@@ -48,7 +48,7 @@ class ParserTest extends ParserTestBase
         );
     }
 
-    private function createParser(mixed $expectedResult): \Philiagus\Parser\Contract\Parser&Chainable
+    private function createParser(mixed $expectedResult): Contract\Parser&Chainable
     {
         return new class($expectedResult) extends Parser {
 
@@ -56,12 +56,12 @@ class ParserTest extends ParserTestBase
             {
             }
 
-            protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+            protected function execute(ResultBuilder $builder): Contract\Result
             {
                 return $builder->createResult($this->expectedResult);
             }
 
-            protected function getDefaultParserDescription(\Philiagus\Parser\Contract\Subject $subject): string
+            protected function getDefaultParserDescription(Contract\Subject $subject): string
             {
                 return 'parser';
             }
@@ -96,7 +96,7 @@ class ParserTest extends ParserTestBase
             )
             ->provider(
                 DataProvider::TYPE_ALL,
-                successValidator: function (\Philiagus\Parser\Contract\Subject $subject, \Philiagus\Parser\Contract\Result $result, array $arguments): array {
+                successValidator: function (Contract\Subject $subject, Contract\Result $result, array $arguments): array {
                     $received = $result->getSourceSubject()->getPathAsString(true);
                     $expectedMessage = Debug::getType($subject->getValue()) . ' ▷' . $arguments[0];
                     if ($received !== $expectedMessage) {

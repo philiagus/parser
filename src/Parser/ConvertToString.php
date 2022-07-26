@@ -13,23 +13,21 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base;
-use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Error;
-use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\ArrayValue;
 use Philiagus\Parser\Util\Debug;
 use Stringable;
-use Philiagus\Parser\Contract;
 
 class ConvertToString extends Base\Parser
 {
     use OverwritableTypeErrorMessage;
 
-    /** @var array{string, string}|null */
-    private ?array $booleanValues = null;
+    private ?string $trueValue = null;
+    private ?string $falseValue = null;
 
     private ?string $nullValue = null;
 
@@ -41,30 +39,40 @@ class ConvertToString extends Base\Parser
 
     }
 
-    public static function new(): self
+    /**
+     * Creates a new instance of this parser
+     *
+     * @return static
+     */
+    public static function new(): static
     {
-        return new self();
+        return new static();
     }
 
     /**
+     * Defines the string representations of true and false
+     *
      * @param string $true
      * @param string $false
      *
      * @return $this
      */
-    public function setBooleanValues(string $true, string $false): self
+    public function setBooleanValues(string $true, string $false): static
     {
-        $this->booleanValues = [$false, $true];
+        $this->trueValue = $true;
+        $this->falseValue = $false;
 
         return $this;
     }
 
     /**
+     * Defines the string representation of null values
+     *
      * @param string $value
      *
      * @return $this
      */
-    public function setNullValue(string $value): self
+    public function setNullValue(string $value): static
     {
         $this->nullValue = $value;
 
@@ -93,7 +101,7 @@ class ConvertToString extends Base\Parser
         string  $delimiter,
         ?Parser $elementConverter = null,
         string  $exceptionMessage = 'A value at index {key} was not of type string but of type {culprit.type}'
-    ): self
+    ): static
     {
         $this->implode = [$delimiter, $exceptionMessage, $elementConverter];
 
@@ -103,7 +111,7 @@ class ConvertToString extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         if (is_string($value)) {
@@ -118,9 +126,12 @@ class ConvertToString extends Base\Parser
             case is_int($value):
                 return $builder->createResult((string) $value);
             case is_bool($value):
-                if ($this->booleanValues) {
-                    return $builder->createResult($this->booleanValues[$value]);
+                if ($value && $this->trueValue !== null) {
+                    return $builder->createResult($this->trueValue);
+                } elseif (!$value && $this->falseValue !== null) {
+                    return $builder->createResult($this->falseValue);
                 }
+
                 break;
             case is_array($value):
                 if ($this->implode !== null) {
@@ -174,11 +185,17 @@ class ConvertToString extends Base\Parser
         return $builder->createResultUnchanged();
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function getDefaultTypeErrorMessage(): string
     {
         return 'Variable of type {subject.type} could not be converted to a string';
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'convert to string';

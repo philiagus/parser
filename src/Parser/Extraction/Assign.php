@@ -44,15 +44,15 @@ class Assign extends Base\Parser
      *
      * @return static
      */
-    public static function to(&$target): self
+    public static function to(&$target): static
     {
-        return new self($target);
+        return new static($target);
     }
 
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         $this->target = $builder->getValue();
 

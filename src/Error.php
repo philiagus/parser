@@ -15,7 +15,7 @@ namespace Philiagus\Parser;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
 
-class Error implements Contract\Error
+final class Error implements Contract\Error
 {
 
     /**
@@ -49,7 +49,7 @@ class Error implements Contract\Error
      * @param \Throwable|null $sourceThrowable
      * @param array $sourceErrors
      *
-     * @return static
+     * @return Error
      * @see Debug::parseMessage()
      *
      */
@@ -59,9 +59,9 @@ class Error implements Contract\Error
         array                              $replacers = [],
         ?\Throwable                        $sourceThrowable = null,
         array                              $sourceErrors = []
-    ): self
+    ): Error
     {
-        return new self(
+        return new Error(
             $subject,
             Debug::parseMessage($message, $replacers + ['subject' => $subject->getValue()]),
             $sourceThrowable,

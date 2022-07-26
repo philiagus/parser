@@ -13,11 +13,9 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base;
-use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
-use Philiagus\Parser\Result;
-use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
+use Philiagus\Parser\ResultBuilder;
 
 /**
  * Takes any input and attempts a loss free conversion of the provided value into a valid integer value
@@ -31,15 +29,20 @@ class ConvertToInteger extends Base\Parser
 
     }
 
-    public static function new(): self
+    /**
+     * Create a new instance of this parser
+     *
+     * @return static
+     */
+    public static function new(): static
     {
-        return new self();
+        return new static();
     }
 
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         if (is_int($value)) {
@@ -76,11 +79,17 @@ class ConvertToInteger extends Base\Parser
         return $builder->createResultUnchanged();
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function getDefaultTypeErrorMessage(): string
     {
         return 'Variable of type {subject.type} could not be converted to an integer';
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'convert to integer';

@@ -15,6 +15,7 @@ namespace Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Result;
+use Philiagus\Parser\Contract;
 
 class ErrorCollection
 {
@@ -47,7 +48,7 @@ class ErrorCollection
         return $errors;
     }
 
-    public function assertResult(\Philiagus\Parser\Contract\Result $result): array
+    public function assertResult(Contract\Result $result): array
     {
         $errors = array_map(fn(Error $error) => $error->getMessage(), $result->getErrors());
         sort($errors);

@@ -13,10 +13,11 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Subject;
 
 use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract;
 
 class PropertyValue extends Subject
 {
-    public function __construct(\Philiagus\Parser\Contract\Subject $sourceSubject, string $propertyName, mixed $propertyValue)
+    public function __construct(Contract\Subject $sourceSubject, string $propertyName, mixed $propertyValue)
     {
         parent::__construct($sourceSubject, $propertyName, $propertyValue, false, null);
     }

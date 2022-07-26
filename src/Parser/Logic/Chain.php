@@ -42,15 +42,15 @@ class Chain implements Contract\Parser, Contract\Chainable
      *
      * @return static
      */
-    public static function parsers(Contract\Parser $parser, Contract\Parser ...$parsers): self
+    public static function parsers(Contract\Parser $parser, Contract\Parser ...$parsers): static
     {
-        return new self($parser, ...$parsers);
+        return new static($parser, ...$parsers);
     }
 
     /**
      * @inheritDoc
      */
-    public function parse(Contract\Subject $subject): \Philiagus\Parser\Contract\Result
+    public function parse(Contract\Subject $subject): Contract\Result
     {
         foreach ($this->parsers as $parser) {
             $subject = $parser->parse($subject);

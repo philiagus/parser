@@ -19,6 +19,7 @@ use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\Mock\ParserMock;
 use Philiagus\Parser\Test\ParserTestBase\Argument;
 use Philiagus\Parser\Test\ParserTestBase\ErrorCollection;
+use Philiagus\Parser\Contract;
 
 class Parser implements Argument
 {
@@ -88,7 +89,7 @@ class Parser implements Argument
         if (!$willBeCalled) {
             yield 'uncalled parser' => [
                 true,
-                function () use ($subjectValue): \Philiagus\Parser\Contract\Parser {
+                function () use ($subjectValue): Contract\Parser {
                     return new ParserMock();
                 },
             ];
@@ -98,7 +99,7 @@ class Parser implements Argument
 
         yield 'parser success' => [
             true,
-            function (array $evaluatedArguments, array $successStack) use ($subjectValue): \Philiagus\Parser\Contract\Parser {
+            function (array $evaluatedArguments, array $successStack) use ($subjectValue): Contract\Parser {
                 $parser = new ParserMock();
 
                 foreach ($this->expectedSingleCalls as $index => ['value' => $valueOrClosure,
@@ -139,7 +140,7 @@ class Parser implements Argument
             }];
         yield 'parser error' => [
             false,
-            function (array $generatedArguments, array $successStack, ErrorCollection $errorCollection = null) use ($subjectValue): \Philiagus\Parser\Contract\Parser {
+            function (array $generatedArguments, array $successStack, ErrorCollection $errorCollection = null) use ($subjectValue): Contract\Parser {
                 $parser = new ParserMock();
 
                 if (isset($this->errorMessageOnError)) {
@@ -149,7 +150,7 @@ class Parser implements Argument
                 $parser->expect(
                     fn() => true,
                     fn() => true,
-                    function (\Philiagus\Parser\Contract\Subject $subject) use ($errorCollection) {
+                    function (Contract\Subject $subject) use ($errorCollection) {
                         $message = uniqid(microtime());
                         $error = new Error($subject, $message);
                         if (!$this->errorWillBeHidden) {

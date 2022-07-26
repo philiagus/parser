@@ -28,7 +28,7 @@ abstract class Parser implements Contract\Parser, Contract\Chainable
     /**
      * @see OverwritableParserDescription::setParserDescription()
      */
-    public function setParserDescription(string $description): self
+    public function setParserDescription(string $description): static
     {
         $this->parserDescription = $description;
 

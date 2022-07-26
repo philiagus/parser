@@ -13,11 +13,9 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base;
-use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
-use Philiagus\Parser\Result;
-use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
+use Philiagus\Parser\ResultBuilder;
 
 class AssertObject extends Base\Parser
 {
@@ -44,9 +42,9 @@ class AssertObject extends Base\Parser
     public static function instanceOf(
         string $class,
         string $exceptionMessage = self::DEFAULT_INSTANCEOF_MESSAGE
-    ): self
+    ): static
     {
-        return self::new()->assertInstanceOf($class, $exceptionMessage);
+        return static::new()->assertInstanceOf($class, $exceptionMessage);
     }
 
     /**
@@ -66,7 +64,7 @@ class AssertObject extends Base\Parser
     public function assertInstanceOf(
         string $class,
         string $exceptionMessage = self::DEFAULT_INSTANCEOF_MESSAGE
-    ): self
+    ): static
     {
         $this->checks[] = static function (ResultBuilder $builder, object $value) use ($class, $exceptionMessage): void {
             if (!$value instanceof $class) {
@@ -75,6 +73,16 @@ class AssertObject extends Base\Parser
         };
 
         return $this;
+    }
+
+    /**
+     * Creates a new instance of this parser
+     *
+     * @return static
+     */
+    public static function new(): static
+    {
+        return new static();
     }
 
     /**
@@ -94,7 +102,7 @@ class AssertObject extends Base\Parser
     public function assertNotInstanceOf(
         string $class,
         string $exceptionMessage = 'The provided object is an instance of {class.raw}'
-    ): self
+    ): static
     {
         $this->checks[] = static function (ResultBuilder $builder, object $value) use ($class, $exceptionMessage): void {
             if ($value instanceof $class) {
@@ -105,16 +113,10 @@ class AssertObject extends Base\Parser
         return $this;
     }
 
-    public static function new(string $typeExceptionMessage = 'The provided value is not an object'): self
-    {
-        return (new self())
-            ->setTypeErrorMessage($typeExceptionMessage);
-    }
-
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         if (!is_object($builder->getValue())) {

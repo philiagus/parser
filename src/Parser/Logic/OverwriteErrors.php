@@ -55,19 +55,19 @@ class OverwriteErrors extends Base\Parser
      * @param string $message
      * @param Parser $around
      *
-     * @return OverwriteErrors
+     * @return static
      * @see Debug::parseMessage()
      * @see Error::getSourceErrors()
      */
-    public static function withMessage(string $message, Parser $around)
+    public static function withMessage(string $message, Parser $around): static
     {
-        return new self($message, $around);
+        return new static($message, $around);
     }
 
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         /** @var Error[] $errors */
         $errors = [];

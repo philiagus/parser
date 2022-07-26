@@ -14,11 +14,9 @@ namespace Philiagus\Parser\Parser;
 
 use DateTimeZone;
 use Philiagus\Parser\Base;
-use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
-use Philiagus\Parser\Result;
-use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
+use Philiagus\Parser\ResultBuilder;
 
 class ConvertToDateTime extends Base\Parser
 {
@@ -42,7 +40,7 @@ class ConvertToDateTime extends Base\Parser
      * @param DateTimeZone|null $timeZone
      * @param string $exceptionMessage
      *
-     * @return self
+     * @return static
      * @see ConvertToDateTime::setStringSourceFormat()
      *
      */
@@ -50,9 +48,9 @@ class ConvertToDateTime extends Base\Parser
         string       $format,
         DateTimeZone $timeZone = null,
         string       $exceptionMessage = 'The provided string is not in the format {format.raw}'
-    ): self
+    ): static
     {
-        return self::new()->setStringSourceFormat($format, $timeZone, $exceptionMessage);
+        return static::new()->setStringSourceFormat($format, $timeZone, $exceptionMessage);
     }
 
     /**
@@ -75,7 +73,7 @@ class ConvertToDateTime extends Base\Parser
         string       $format,
         DateTimeZone $timeZone = null,
         string       $exceptionMessage = 'The provided string is not in the format {format.raw}'
-    ): self
+    ): static
     {
         $this->sourceFormat = $format;
         $this->sourceTimezone = $timeZone;
@@ -84,9 +82,14 @@ class ConvertToDateTime extends Base\Parser
         return $this;
     }
 
-    public static function new(): self
+    /**
+     * Returns a new instance of this parser
+     *
+     * @return static
+     */
+    public static function new(): static
     {
-        return new self();
+        return new static();
     }
 
     /**
@@ -94,7 +97,7 @@ class ConvertToDateTime extends Base\Parser
      *
      * @return $this
      */
-    public function setImmutable(bool $immutable = true): self
+    public function setImmutable(bool $immutable = true): static
     {
         $this->immutable = $immutable;
 
@@ -104,7 +107,7 @@ class ConvertToDateTime extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         $dateTime = null;
@@ -148,18 +151,24 @@ class ConvertToDateTime extends Base\Parser
      *
      * @return $this
      */
-    public function setTimezone(DateTimeZone $timeZone): self
+    public function setTimezone(DateTimeZone $timeZone): static
     {
         $this->timezone = $timeZone;
 
         return $this;
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function getDefaultTypeErrorMessage(): string
     {
         return 'Provided value could not be converted to DateTime';
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'convert to DateTime';

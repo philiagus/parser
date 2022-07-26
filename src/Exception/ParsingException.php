@@ -14,6 +14,7 @@ namespace Philiagus\Parser\Exception;
 
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Error;
+use Philiagus\Parser\Contract;
 
 /**
  * This exception is supposed to be thrown, when the value as provided by the input does not conform with the parser
@@ -46,9 +47,9 @@ class ParsingException extends \Exception
     /**
      * Returns the subject that this error was identified on
      *
-     * @return \Philiagus\Parser\Contract\Subject
+     * @return Contract\Subject
      */
-    public function getSubject(): \Philiagus\Parser\Contract\Subject
+    public function getSubject(): Contract\Subject
     {
         return $this->error->getSubject();
     }

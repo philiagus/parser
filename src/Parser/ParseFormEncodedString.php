@@ -15,11 +15,9 @@ namespace Philiagus\Parser\Parser;
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Chainable;
 use Philiagus\Parser\Base\OverwritableParserDescription;
-use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
-use Philiagus\Parser\Result;
-use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
+use Philiagus\Parser\ResultBuilder;
 
 /**
  * Parses the provided string treating it as form encoded data
@@ -35,15 +33,20 @@ class ParseFormEncodedString extends Base\Parser
     {
     }
 
-    public static function new(): self
+    /**
+     * Returns a new instance of this parser
+     *
+     * @return static
+     */
+    public static function new(): static
     {
-        return new self();
+        return new static();
     }
 
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         if (!is_string($value)) {
@@ -57,11 +60,17 @@ class ParseFormEncodedString extends Base\Parser
         return $builder->createResult($result);
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function getDefaultTypeErrorMessage(): string
     {
         return 'Provided value is not of type string';
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'parse form encoded';

@@ -19,6 +19,7 @@ use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Contract;
 
 /**
  * @covers \Philiagus\Parser\Base\OverwritableParserDescription
@@ -34,12 +35,12 @@ class OverwritableParserDescriptionTest extends ParserTestBase
                     return new class() implements Parser {
                         use OverwritableParserDescription;
 
-                        protected function getDefaultParserDescription(\Philiagus\Parser\Contract\Subject $subject): string
+                        protected function getDefaultParserDescription(Contract\Subject $subject): string
                         {
                             return 'default';
                         }
 
-                        public function parse(\Philiagus\Parser\Contract\Subject $subject): \Philiagus\Parser\Contract\Result
+                        public function parse(Contract\Subject $subject): Contract\Result
                         {
                             return $this->createResultBuilder($subject)->createResultUnchanged();
                         }
@@ -54,7 +55,7 @@ class OverwritableParserDescriptionTest extends ParserTestBase
             )
             ->provider(
                 DataProvider::TYPE_ALL,
-                successValidator: function (\Philiagus\Parser\Contract\Subject $subject, \Philiagus\Parser\Contract\Result $result, array $arguments): array {
+                successValidator: function (Contract\Subject $subject, Contract\Result $result, array $arguments): array {
                     $received = $result->getSourceSubject()->getPathAsString(true);
                     $expectedMessage = Debug::getType($subject->getValue()) . ' ▷' . $arguments[0];
                     if ($received !== $expectedMessage) {

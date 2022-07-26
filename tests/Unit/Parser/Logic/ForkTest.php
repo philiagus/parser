@@ -22,7 +22,7 @@ use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\TestBase;
 use Prophecy\Argument;
-
+use Philiagus\Parser\Contract;
 /**
  * @covers \Philiagus\Parser\Parser\Logic\Fork
  */
@@ -51,7 +51,7 @@ class ForkTest extends TestBase
             $parser
                 ->parse(
                     Argument::that(
-                        fn(\Philiagus\Parser\Contract\Subject $subject) => DataProvider::isSame($subject->getValue(), $value)
+                        fn(Contract\Subject $subject) => DataProvider::isSame($subject->getValue(), $value)
                     )
                 )
                 ->shouldBeCalled()

@@ -13,11 +13,12 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Subject\Utility;
 
 use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract;
 
 class Internal extends Subject
 {
 
-    public function __construct(\Philiagus\Parser\Contract\Subject $sourceSubject, string $description, mixed $value)
+    public function __construct(Contract\Subject $sourceSubject, string $description, mixed $value)
     {
         parent::__construct($sourceSubject, $description, $value, true, null);
     }

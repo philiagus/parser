@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser\Logic;
 
 use Philiagus\DataProvider\DataProvider;
-use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Parser\Logic\Preserve;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Subject\Utility\Forwarded;
@@ -40,12 +40,12 @@ class PreserveTest extends ParserTestBase
                     ->expectSingleCall(
                         fn($value) => $value,
                         Forwarded::class,
-                        result: fn(\Philiagus\Parser\Contract\Subject $subject) => new Result($subject, !$subject->getValue(), [])
+                        result: fn(Contract\Subject $subject) => new Result($subject, !$subject->getValue(), [])
                     )
             )
             ->provider(
                 DataProvider::TYPE_ALL,
-                successValidator: function (\Philiagus\Parser\Contract\Subject $subject, \Philiagus\Parser\Contract\Result $result) {
+                successValidator: function (Contract\Subject $subject, Contract\Result $result) {
                     if (!DataProvider::isSame($subject->getValue(), $result->getValue())) {
                         return ['Result value does not match'];
                     }

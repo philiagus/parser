@@ -13,48 +13,45 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base;
-use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Parser\Logic\Fail;
-use Philiagus\Parser\Result;
-use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
+use Philiagus\Parser\ResultBuilder;
 
 /**
- * Class Fixed
- *
- * The Fixed parser ignores its received value and replaces it with a predefined value
- *
- * @package Philiagus\Parser\Parser
+ * This parser ignores its received value and replaces it with a predefined value
  */
 class IgnoreInput extends Base\Parser
 {
 
-    /** @var mixed */
-    private mixed $value;
-
-    private function __construct($value)
+    /**
+     * @param mixed $value
+     */
+    private function __construct(private readonly mixed $value)
     {
-        $this->value = $value;
     }
 
     /**
+     * Creates a new instance of this parser which will result in the provided value
+     *
      * @param mixed $value
      *
-     * @return self
+     * @return static
      */
-    public static function resultIn(mixed $value): self
+    public static function resultIn(mixed $value): static
     {
-        return new self($value);
+        return new static($value);
     }
 
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         return $builder->createResult($this->value);
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'replace with fixed value';

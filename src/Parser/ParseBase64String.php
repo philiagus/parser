@@ -13,13 +13,18 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base;
-use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
-use Philiagus\Parser\Result;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
-use Philiagus\Parser\Contract;
 
+/**
+ * Parser used to base64 decode a string
+ * This parser uses strict decoding by default, but can be set to be non-strict using
+ * the setStrict method
+ *
+ * @see base64_decode()
+ */
 class ParseBase64String extends Base\Parser
 {
     use OverwritableTypeErrorMessage;
@@ -34,9 +39,14 @@ class ParseBase64String extends Base\Parser
     {
     }
 
-    public static function new(): self
+    /**
+     * Returns a new instance of this parser
+     *
+     * @return static
+     */
+    public static function new(): static
     {
-        return new self();
+        return new static();
     }
 
     /**
@@ -51,7 +61,7 @@ class ParseBase64String extends Base\Parser
      * @see Debug::parseMessage()
      *
      */
-    public function setNotBase64ExceptionMessage(string $message): self
+    public function setNotBase64ExceptionMessage(string $message): static
     {
         $this->notBase64ExceptionMessage = $message;
 
@@ -59,11 +69,14 @@ class ParseBase64String extends Base\Parser
     }
 
     /**
+     * Sets the base64 decode to be no-strict
+     *
      * @param bool $strict
      *
      * @return $this
+     * @see base64_decode()
      */
-    public function setStrict(bool $strict = true): self
+    public function setStrict(bool $strict = true): static
     {
         $this->strict = $strict;
 
@@ -73,7 +86,7 @@ class ParseBase64String extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         if (!is_string($value)) {
@@ -95,11 +108,17 @@ class ParseBase64String extends Base\Parser
         return $builder->createResult($result);
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function getDefaultTypeErrorMessage(): string
     {
         return 'Provided value is not of type string';
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'parse as base64 string';

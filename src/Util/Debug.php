@@ -70,9 +70,9 @@ class Debug
                     case 'gettype':
                         return gettype($value);
                     case 'type':
-                        return self::getType($value);
+                        return static::getType($value);
                     case 'debug':
-                        return self::stringify($value);
+                        return static::stringify($value);
                     case 'export':
                         return var_export($value, true);
                     case 'raw':
@@ -83,7 +83,7 @@ class Debug
                             return 'Object';
                         }
                         if (is_resource($value)) {
-                            return self::stringify($value);
+                            return static::stringify($value);
                         }
 
                         return (string) $value;
@@ -179,8 +179,8 @@ class Debug
                 if ($encoding === 'binary') {
                     $print = '';
                 } else {
-                    if (mb_strlen($value, 'UTF8') > self::MAX_STRING_LENGTH) {
-                        $print = '"' . mb_substr($value, 0, self::MAX_STRING_LENGTH - 1) . "\u{2026}\"";
+                    if (mb_strlen($value, 'UTF8') > static::MAX_STRING_LENGTH) {
+                        $print = '"' . mb_substr($value, 0, static::MAX_STRING_LENGTH - 1) . "\u{2026}\"";
                     } else {
                         $print = '"' . $value . '"';
                     }
@@ -195,7 +195,7 @@ class Debug
                 $valueType = null;
                 foreach ($value as $arrayKey => $arrayValue) {
                     if ($keyType !== 'mixed') {
-                        $currentKeyType = self::getType($arrayKey);
+                        $currentKeyType = static::getType($arrayKey);
                         if ($keyType === null) {
                             $keyType = $currentKeyType;
                         } elseif ($keyType !== $currentKeyType) {
@@ -204,7 +204,7 @@ class Debug
                     }
 
                     if ($valueType !== 'mixed') {
-                        $currentValueType = self::getType($arrayValue);
+                        $currentValueType = static::getType($arrayValue);
                         if ($valueType === null) {
                             $valueType = $currentValueType;
                         } elseif ($valueType !== $currentValueType) {
@@ -221,7 +221,7 @@ class Debug
             case "unknown type":
             case "NULL":
             default:
-                return self::getType($value);
+                return static::getType($value);
         }
     }
 

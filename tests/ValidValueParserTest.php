@@ -17,6 +17,7 @@ use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Contract;
 
 trait ValidValueParserTest
 {
@@ -29,7 +30,7 @@ trait ValidValueParserTest
     public function testThatItAcceptsValidValuesThrowing($value, \Closure $parser, $expected): void
     {
         $subject = Subject::default($value);
-        /** @var \Philiagus\Parser\Contract\Result $result */
+        /** @var Contract\Result $result */
         $result = $parser($value)->parse($subject);
         self::assertTrue($result->isSuccess());
         $expectedSubject = $result->getSourceSubject()->getSourceSubject();
@@ -56,7 +57,7 @@ trait ValidValueParserTest
     public function testThatItAcceptsValidValuesNotThrowing($value, \Closure $parser, $expected, bool $resultWillBeWrapped = true): void
     {
         $subject = Subject::default($value, throwOnError: false);
-        /** @var \Philiagus\Parser\Contract\Result $result */
+        /** @var Contract\Result $result */
         $result = $parser($value)->parse($subject);
         self::assertTrue($result->isSuccess());
         self::assertSame($subject, $resultWillBeWrapped ? $result->getSourceSubject()->getSourceSubject() : $result->getSourceSubject());

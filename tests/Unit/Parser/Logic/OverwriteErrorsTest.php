@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser\Logic;
 
 use Philiagus\DataProvider\DataProvider;
-use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Parser\Logic\OverwriteErrors;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\ChainableParserTest;
@@ -46,13 +46,13 @@ class OverwriteErrorsTest extends ParserTestBase
                     ->expectSingleCall(
                         fn() => fn() => true,
                         fn() => fn() => true,
-                        result: fn(\Philiagus\Parser\Contract\Subject $subject) => new Result($subject, $alteredResult, [])
+                        result: fn(Contract\Subject $subject) => new Result($subject, $alteredResult, [])
                     )
                     ->errorWillBeHidden()
             )
             ->provider(
                 DataProvider::TYPE_ALL,
-                successValidator: function (\Philiagus\Parser\Contract\Subject $subject, \Philiagus\Parser\Contract\Result $result) use ($alteredResult) {
+                successValidator: function (Contract\Subject $subject, Contract\Result $result) use ($alteredResult) {
                     if ($result->getValue() !== $alteredResult) {
                         return ['Result does not match expected format'];
                     }
@@ -75,10 +75,10 @@ class OverwriteErrorsTest extends ParserTestBase
                         ->expect(
                             static fn() => true,
                             static fn() => true,
-                            fn(\Philiagus\Parser\Contract\Subject $subject) => new Result($subject, $subject->getValue(), [])
+                            fn(Contract\Subject $subject) => new Result($subject, $subject->getValue(), [])
                         )
                 ),
-                $value
+                $value,
             ])
             ->provide(false);
     }

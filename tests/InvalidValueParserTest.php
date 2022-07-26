@@ -17,6 +17,7 @@ use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Contract;
 
 trait InvalidValueParserTest
 {
@@ -42,7 +43,7 @@ trait InvalidValueParserTest
     ): void
     {
         try {
-            /** @var \Philiagus\Parser\Contract\Result $result */
+            /** @var Contract\Result $result */
             $result = $parser($value)->parse(Subject::default($value, throwOnError: $throw));
         } catch (\Throwable $exception) {
 
@@ -74,7 +75,7 @@ trait InvalidValueParserTest
         string|\Closure $expectedException = ParsingException::class
     ): void
     {
-        /** @var \Philiagus\Parser\Contract\Result $result */
+        /** @var Contract\Result $result */
         $result = $parser($value)->parse(Subject::default($value, throwOnError: false));
         self::assertFalse($result->isSuccess());
         self::assertNotEmpty($result->getErrors());

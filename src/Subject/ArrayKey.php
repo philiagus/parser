@@ -13,10 +13,11 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Subject;
 
 use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract;
 
 class ArrayKey extends Subject
 {
-    public function __construct(\Philiagus\Parser\Contract\Subject $sourceSubject, int|string $arrayKey)
+    public function __construct(Contract\Subject $sourceSubject, int|string $arrayKey)
     {
         parent::__construct($sourceSubject, (string) $arrayKey, $arrayKey, false, null);
     }

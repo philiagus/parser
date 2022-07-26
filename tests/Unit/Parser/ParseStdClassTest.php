@@ -25,6 +25,7 @@ use Philiagus\Parser\Test\InvalidValueParserTest;
 use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\OverwritableTypeErrorMessageTest;
 use Philiagus\Parser\Test\ValidValueParserTest;
+use Philiagus\Parser\Contract;
 
 /**
  * @covers \Philiagus\Parser\Parser\ParseStdClass
@@ -187,14 +188,14 @@ class ParseStdClassTest extends ParserTestBase
                     ->expectMultipleCalls(
                         fn($value) => array_values((array) $value),
                         PropertyValue::class,
-                        result: fn(\Philiagus\Parser\Contract\Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
+                        result: fn(Contract\Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
                     )
             )
             ->values(
                 [
                     (object) ['a' => 123, 'b' => 123, 'c' => 632],
                 ],
-                successValidator: function (\Philiagus\Parser\Contract\Subject $start, \Philiagus\Parser\Contract\Result $result): array {
+                successValidator: function (Contract\Subject $start, Contract\Result $result): array {
                     $expected = (object) array_map(fn($value) => $value . 'f', (array) $start->getValue());
                     $received = $result->getValue();
                     if ($expected != $received) {
@@ -218,14 +219,14 @@ class ParseStdClassTest extends ParserTestBase
                     ->expectMultipleCalls(
                         fn($value) => array_keys((array) $value),
                         PropertyName::class,
-                        result: fn(\Philiagus\Parser\Contract\Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
+                        result: fn(Contract\Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
                     )
             )
             ->values(
                 [
                     (object) ['a' => 123, 'b' => 123, 'c' => 632],
                 ],
-                successValidator: function (\Philiagus\Parser\Contract\Subject $start, \Philiagus\Parser\Contract\Result $result): array {
+                successValidator: function (Contract\Subject $start, Contract\Result $result): array {
                     $expected = new \stdClass();
                     foreach ($start->getValue() as $name => $value) {
                         $expected->{$name . 'f'} = $value;
@@ -262,7 +263,7 @@ class ParseStdClassTest extends ParserTestBase
                     ->expectSingleCall(
                         fn($value, array $generatedValues) => $value->{$generatedValues[0]},
                         PropertyValue::class,
-                        result: fn(\Philiagus\Parser\Contract\Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
+                        result: fn(Contract\Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
                     )
                     ->willBeCalledIf(
                         fn($value, array $generatedValues) => property_exists($value, $generatedValues[0])
@@ -273,7 +274,7 @@ class ParseStdClassTest extends ParserTestBase
                     (object) ['a' => 123, 'b' => 234, 'c' => 345],
                     (object) [],
                 ],
-                successValidator: function (\Philiagus\Parser\Contract\Subject $subject, \Philiagus\Parser\Contract\Result $result, array $methodArgs): array {
+                successValidator: function (Contract\Subject $subject, Contract\Result $result, array $methodArgs): array {
                     $expectedResult = clone $subject->getValue();
                     if (property_exists($expectedResult, $methodArgs[0])) {
                         $expectedResult->{$methodArgs[0]} .= 'f';
@@ -310,7 +311,7 @@ class ParseStdClassTest extends ParserTestBase
                     ->expectSingleCall(
                         fn($value, array $generatedValues) => $value->{$generatedValues[0]},
                         PropertyValue::class,
-                        result: fn(\Philiagus\Parser\Contract\Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
+                        result: fn(Contract\Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
                     )
                     ->willBeCalledIf(
                         fn($value, array $generatedValues) => property_exists($value, $generatedValues[0])
@@ -326,7 +327,7 @@ class ParseStdClassTest extends ParserTestBase
                     (object) ['a' => 123, 'b' => 234, 'c' => 345],
                     (object) [],
                 ],
-                successValidator: function (\Philiagus\Parser\Contract\Subject $subject, \Philiagus\Parser\Contract\Result $result, array $methodArgs): array {
+                successValidator: function (Contract\Subject $subject, Contract\Result $result, array $methodArgs): array {
                     $expectedResult = clone $subject->getValue();
                     $expectedResult->{$methodArgs[0]} .= 'f';
                     if ($result->getValue() != $expectedResult) {

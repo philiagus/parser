@@ -18,6 +18,7 @@ use Philiagus\Parser\Parser\Logic\OneOf;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\ParserTestBase;
+use Philiagus\Parser\Contract;
 
 /**
  * @covers \Philiagus\Parser\Parser\Logic\OneOf
@@ -177,7 +178,7 @@ class OneOfTest extends ParserTestBase
             )
             ->provider(
                 DataProvider::TYPE_ALL,
-                successValidator: function (\Philiagus\Parser\Contract\Subject $subject, \Philiagus\Parser\Contract\Result $result, array $generatedArguments) {
+                successValidator: function (Contract\Subject $subject, Contract\Result $result, array $generatedArguments) {
                     if (!DataProvider::isSame($generatedArguments[0], $result->getValue())) {
                         return ['Result value does not match'];
                     }

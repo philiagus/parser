@@ -33,11 +33,11 @@ class AssertInteger extends Base\Parser
     }
 
     /**
-     * @return self
+     * @return static
      */
-    public static function new(): self
+    public static function new(): static
     {
-        return new self();
+        return new static();
     }
 
     /**
@@ -54,7 +54,7 @@ class AssertInteger extends Base\Parser
      * @see Debug::parseMessage()
      *
      */
-    public function assertMinimum(int $minimum, string $exceptionMessage = 'Provided value {subject.debug} is lower than the defined minimum of {min}'): self
+    public function assertMinimum(int $minimum, string $exceptionMessage = 'Provided value {subject.debug} is lower than the defined minimum of {min}'): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder, int $value) use ($minimum, $exceptionMessage): void {
             if ($minimum > $value) {
@@ -78,11 +78,11 @@ class AssertInteger extends Base\Parser
      * @param int $maximum
      * @param string $exceptionMessage
      *
-     * @return AssertInteger
+     * @return $this
      * @see Debug::parseMessage()
      *
      */
-    public function assertMaximum(int $maximum, string $exceptionMessage = 'Provided value {subject.debug} is greater than the defined maximum of {max}}'): self
+    public function assertMaximum(int $maximum, string $exceptionMessage = 'Provided value {subject.debug} is greater than the defined maximum of {max}}'): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder, int $value) use ($maximum, $exceptionMessage): void {
             if ($maximum < $value) {
@@ -106,14 +106,14 @@ class AssertInteger extends Base\Parser
      * @param int $base
      * @param string $exceptionMessage
      *
-     * @return AssertInteger
+     * @return $this
      * @see Debug::parseMessage()
      *
      */
     public function assertMultipleOf(
         int    $base,
         string $exceptionMessage = 'Provided value {subject.debug} is not a multiple of {base}'
-    ): self
+    ): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder, int $value) use ($base, $exceptionMessage): void {
             if ($value === 0 && $base === 0) return;
@@ -131,7 +131,7 @@ class AssertInteger extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         if (!is_int($value)) {

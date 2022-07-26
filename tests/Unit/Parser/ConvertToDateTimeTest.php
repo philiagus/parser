@@ -17,9 +17,8 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
 use Philiagus\DataProvider\DataProvider;
-use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Parser\ConvertToDateTime;
-use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
 use Philiagus\Parser\Test\ParserTestBase;
@@ -98,7 +97,7 @@ class ConvertToDateTimeTest extends ParserTestBase
             )
             ->values(
                 array_column($cases, 0),
-                successValidator: function (\Philiagus\Parser\Contract\Subject $subject, \Philiagus\Parser\Contract\Result $result, array $arguments) use ($cases) {
+                successValidator: function (Contract\Subject $subject, Contract\Result $result, array $arguments) use ($cases) {
                     $relevantFormat = null;
                     $value = $subject->getValue();
                     $resultValue = $result->getValue();
@@ -177,7 +176,7 @@ class ConvertToDateTimeTest extends ParserTestBase
             )
             ->values(
                 array_column($cases, 0),
-                successValidator: function (\Philiagus\Parser\Contract\Subject $subject, \Philiagus\Parser\Contract\Result $result, array $arguments) use ($cases) {
+                successValidator: function (Contract\Subject $subject, Contract\Result $result, array $arguments) use ($cases) {
                     $relevantFormat = null;
                     $value = $subject->getValue();
                     $resultValue = $result->getValue();
@@ -229,7 +228,7 @@ class ConvertToDateTimeTest extends ParserTestBase
                     new DateTimeImmutable(),
                     new DateTime(),
                 ],
-                successValidator: function (\Philiagus\Parser\Contract\Subject $subject, \Philiagus\Parser\Contract\Result $result, array $arguments) {
+                successValidator: function (Contract\Subject $subject, Contract\Result $result, array $arguments) {
                     $value = $subject->getValue();
                     $resultValue = $result->getValue();
                     if (!$resultValue instanceof DateTimeInterface) {

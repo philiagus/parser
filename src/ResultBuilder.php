@@ -97,7 +97,7 @@ class ResultBuilder
      * @param \Throwable|null $sourceThrowable
      * @param array $sourceErrors
      *
-     * @return ResultBuilder
+     * @return static
      * @throws ParsingException
      * @see ResultBuilder::logError()
      * @see Error::createUsingDebugString()
@@ -108,7 +108,7 @@ class ResultBuilder
         array       $replacers = [],
         ?\Throwable $sourceThrowable = null,
         array       $sourceErrors = []
-    ): self
+    ): static
     {
         return $this->logError(
             Error::createUsingDebugString($this->currentSubject, $message, $replacers, $sourceThrowable, $sourceErrors)
@@ -123,10 +123,10 @@ class ResultBuilder
      *
      * @param Contract\Error $error
      *
-     * @return ResultBuilder
+     * @return static
      * @throws ParsingException
      */
-    public function logError(Contract\Error $error): self
+    public function logError(Contract\Error $error): static
     {
         if ($this->subject->throwOnError()) {
             $error->throw();
@@ -215,12 +215,12 @@ class ResultBuilder
      * @param string $description
      * @param mixed $value
      *
-     * @return ResultBuilder
+     * @return static
      * @see \Philiagus\Parser\Subject\Utility\Internal
      * @see ResultBuilder::getSubject()
      * @see ResultBuilder::getValue()
      */
-    public function setValue(string $description, mixed $value): self
+    public function setValue(string $description, mixed $value): static
     {
         $this->currentSubject = new Subject\Utility\Internal($this->currentSubject, $description, $value);
         $this->currentValue = $value;
@@ -233,10 +233,10 @@ class ResultBuilder
      * This method is most times used when creating a new Subject for a child parser, such as when
      * an array key is handed over to another parser for further parsing
      *
-     * @return \Philiagus\Parser\Contract\Subject
+     * @return Contract\Subject
      * @see ResultBuilder::setValue()
      */
-    public function getSubject(): \Philiagus\Parser\Contract\Subject
+    public function getSubject(): Contract\Subject
     {
         return $this->currentSubject;
     }

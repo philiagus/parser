@@ -13,14 +13,12 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base;
-use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
-use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\MetaInformation;
-use Philiagus\Parser\Contract;
 
 /**
  * Parses the provided string, treating is an URL, and returns the
@@ -51,11 +49,13 @@ class ParseURL extends Base\Parser
     }
 
     /**
-     * @return self
+     * Creates a new instance of this parser
+     *
+     * @return static
      */
-    public static function new(): self
+    public static function new(): static
     {
-        return new self();
+        return new static();
     }
 
     /**
@@ -68,7 +68,7 @@ class ParseURL extends Base\Parser
      *
      * @return $this
      */
-    public function setInvalidStringExceptionMessage(string $message): self
+    public function setInvalidStringExceptionMessage(string $message): static
     {
         $this->invalidStringExceptionMessage = $message;
 
@@ -87,7 +87,7 @@ class ParseURL extends Base\Parser
      *
      * @return $this
      */
-    public function giveScheme(ParserContract $parser, string $missingExceptionMessage = 'The provided URL does not specify a scheme'): self
+    public function giveScheme(ParserContract $parser, string $missingExceptionMessage = 'The provided URL does not specify a scheme'): static
     {
         $this->giveElements[] = [self::TARGET_SCHEME, null, $parser, $missingExceptionMessage];
 
@@ -104,7 +104,7 @@ class ParseURL extends Base\Parser
      *
      * @return $this
      */
-    public function giveSchemeDefaulted(string $default, ParserContract $parser): self
+    public function giveSchemeDefaulted(string $default, ParserContract $parser): static
     {
         $this->giveElements[] = [self::TARGET_SCHEME, $default, $parser, null];
 
@@ -123,7 +123,7 @@ class ParseURL extends Base\Parser
      *
      * @return $this
      */
-    public function giveHost(ParserContract $parser, string $missingExceptionMessage = 'The provided URL does not specify a host'): self
+    public function giveHost(ParserContract $parser, string $missingExceptionMessage = 'The provided URL does not specify a host'): static
     {
         $this->giveElements[] = [self::TARGET_HOST, null, $parser, $missingExceptionMessage];
 
@@ -140,7 +140,7 @@ class ParseURL extends Base\Parser
      *
      * @return $this
      */
-    public function giveHostDefaulted(string $default, ParserContract $parser): self
+    public function giveHostDefaulted(string $default, ParserContract $parser): static
     {
         $this->giveElements[] = [self::TARGET_HOST, $default, $parser, null];
 
@@ -159,7 +159,7 @@ class ParseURL extends Base\Parser
      *
      * @return $this
      */
-    public function givePort(ParserContract $parser, string $missingExceptionMessage = 'The provided URL does not specify a port'): self
+    public function givePort(ParserContract $parser, string $missingExceptionMessage = 'The provided URL does not specify a port'): static
     {
         $this->giveElements[] = [self::TARGET_PORT, null, $parser, $missingExceptionMessage];
 
@@ -177,7 +177,7 @@ class ParseURL extends Base\Parser
      *
      * @return $this
      */
-    public function givePortDefaulted(int $default, ParserContract $parser): self
+    public function givePortDefaulted(int $default, ParserContract $parser): static
     {
         $this->giveElements[] = [self::TARGET_PORT, $default, $parser, null];
 
@@ -196,7 +196,7 @@ class ParseURL extends Base\Parser
      *
      * @return $this
      */
-    public function giveUser(ParserContract $parser, string $missingExceptionMessage = 'The provided URL does not specify a user'): self
+    public function giveUser(ParserContract $parser, string $missingExceptionMessage = 'The provided URL does not specify a user'): static
     {
         $this->giveElements[] = [self::TARGET_USER, null, $parser, $missingExceptionMessage];
 
@@ -213,7 +213,7 @@ class ParseURL extends Base\Parser
      *
      * @return $this
      */
-    public function giveUserDefaulted(string $default, ParserContract $parser): self
+    public function giveUserDefaulted(string $default, ParserContract $parser): static
     {
         $this->giveElements[] = [self::TARGET_USER, $default, $parser, null];
 
@@ -232,7 +232,7 @@ class ParseURL extends Base\Parser
      *
      * @return $this
      */
-    public function givePassword(ParserContract $parser, string $missingExceptionMessage = 'The provided URL does not specify a password'): self
+    public function givePassword(ParserContract $parser, string $missingExceptionMessage = 'The provided URL does not specify a password'): static
     {
         $this->giveElements[] = [self::TARGET_PASS, null, $parser, $missingExceptionMessage];
 
@@ -249,7 +249,7 @@ class ParseURL extends Base\Parser
      *
      * @return $this
      */
-    public function givePasswordDefaulted(string $default, ParserContract $parser): self
+    public function givePasswordDefaulted(string $default, ParserContract $parser): static
     {
         $this->giveElements[] = [self::TARGET_PASS, $default, $parser, null];
 
@@ -268,7 +268,7 @@ class ParseURL extends Base\Parser
      *
      * @return $this
      */
-    public function givePath(ParserContract $parser, string $missingExceptionMessage = 'The provided URL does not specify a path'): self
+    public function givePath(ParserContract $parser, string $missingExceptionMessage = 'The provided URL does not specify a path'): static
     {
         $this->giveElements[] = [self::TARGET_PATH, null, $parser, $missingExceptionMessage];
 
@@ -285,7 +285,7 @@ class ParseURL extends Base\Parser
      *
      * @return $this
      */
-    public function givePathDefaulted(string $default, ParserContract $parser): self
+    public function givePathDefaulted(string $default, ParserContract $parser): static
     {
         $this->giveElements[] = [self::TARGET_PATH, $default, $parser, null];
 
@@ -304,7 +304,7 @@ class ParseURL extends Base\Parser
      *
      * @return $this
      */
-    public function giveQuery(ParserContract $parser, string $missingExceptionMessage = 'The provided URL does not specify a query'): self
+    public function giveQuery(ParserContract $parser, string $missingExceptionMessage = 'The provided URL does not specify a query'): static
     {
         $this->giveElements[] = [self::TARGET_QUERY, null, $parser, $missingExceptionMessage];
 
@@ -321,7 +321,7 @@ class ParseURL extends Base\Parser
      *
      * @return $this
      */
-    public function giveQueryDefaulted(string $default, ParserContract $parser): self
+    public function giveQueryDefaulted(string $default, ParserContract $parser): static
     {
         $this->giveElements[] = [self::TARGET_QUERY, $default, $parser, null];
 
@@ -340,7 +340,7 @@ class ParseURL extends Base\Parser
      *
      * @return $this
      */
-    public function giveFragment(ParserContract $parser, string $missingExceptionMessage = 'The provided URL does not specify a fragment'): self
+    public function giveFragment(ParserContract $parser, string $missingExceptionMessage = 'The provided URL does not specify a fragment'): static
     {
         $this->giveElements[] = [self::TARGET_FRAGMENT, null, $parser, $missingExceptionMessage];
 
@@ -357,7 +357,7 @@ class ParseURL extends Base\Parser
      *
      * @return $this
      */
-    public function giveFragmentDefaulted(string $default, ParserContract $parser): self
+    public function giveFragmentDefaulted(string $default, ParserContract $parser): static
     {
         $this->giveElements[] = [self::TARGET_FRAGMENT, $default, $parser, null];
 
@@ -367,7 +367,7 @@ class ParseURL extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         if (!is_string($value)) {

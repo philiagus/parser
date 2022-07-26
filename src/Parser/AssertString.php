@@ -13,15 +13,21 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base;
-use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
-use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\MetaInformation;
-use Philiagus\Parser\Contract;
 
+/**
+ * Parser used to assert that a value is a string. This parser treats the value as a normal PHP string,
+ * ignoring the encoding of the string and not trying to identify it.
+ * If you need to respect the encoding of the string (such as when dealing with multibyte character sequences
+ * as used in for example UTF-8), please use the AssertStringMultibyte parser
+ *
+ * @see AssertStringMultibyte
+ */
 class AssertString extends Base\Parser
 {
     use OverwritableTypeErrorMessage;
@@ -35,11 +41,13 @@ class AssertString extends Base\Parser
     }
 
     /**
-     * @return self
+     * Returns a new instance of this parser
+     *
+     * @return static
      */
-    public static function new(): self
+    public static function new(): static
     {
-        return new self();
+        return new static();
     }
 
     /**
@@ -49,7 +57,7 @@ class AssertString extends Base\Parser
      *
      * @return $this
      */
-    public function giveLength(ParserContract $integerParser): self
+    public function giveLength(ParserContract $integerParser): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder, string $value) use ($integerParser): void {
             $builder->incorporateResult(
@@ -60,23 +68,6 @@ class AssertString extends Base\Parser
         };
 
         return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
-    {
-        $value = $builder->getValue();
-        if (is_string($value)) {
-            foreach ($this->assertionList as $assertion) {
-                $assertion($builder, $value);
-            }
-        } else {
-            $this->logTypeError($builder);
-        }
-
-        return $builder->createResultUnchanged();
     }
 
     /**
@@ -92,7 +83,7 @@ class AssertString extends Base\Parser
         int            $start,
         ?int           $length,
         ParserContract $stringParser
-    ): self
+    ): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder, string $value) use ($start, $length, $stringParser): void {
             if ($value === '') {
@@ -125,7 +116,7 @@ class AssertString extends Base\Parser
     public function assertStartsWith(
         string $string,
         string $message = 'The string does not start with {expected.debug}'
-    ): self
+    ): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder, string $value) use ($string, $message): void {
             if (!str_starts_with($value, $string)) {
@@ -154,7 +145,7 @@ class AssertString extends Base\Parser
     public function assertEndsWith(
         string $string,
         string $message = 'The string does not end with {expected.debug}'
-    ): self
+    ): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder, string $value) use ($string, $message): void {
             if (!str_ends_with($value, $string)) {
@@ -166,6 +157,23 @@ class AssertString extends Base\Parser
         };
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function execute(ResultBuilder $builder): Contract\Result
+    {
+        $value = $builder->getValue();
+        if (is_string($value)) {
+            foreach ($this->assertionList as $assertion) {
+                $assertion($builder, $value);
+            }
+        } else {
+            $this->logTypeError($builder);
+        }
+
+        return $builder->createResultUnchanged();
     }
 
     protected function getDefaultTypeErrorMessage(): string

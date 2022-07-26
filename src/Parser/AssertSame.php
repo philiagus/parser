@@ -32,17 +32,17 @@ class AssertSame extends Base\Parser
      * @param mixed $value
      * @param string $exceptionMessage
      *
-     * @return self
+     * @return static
      */
-    public static function value(mixed $value, string $exceptionMessage = 'The value is not the same as the expected value'): self
+    public static function value(mixed $value, string $exceptionMessage = 'The value is not the same as the expected value'): static
     {
-        return new self($value, $exceptionMessage);
+        return new static($value, $exceptionMessage);
     }
 
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         if ($builder->getValue() !== $this->value) {
             $builder->logErrorUsingDebug(

@@ -40,12 +40,12 @@ class AssertInfinite extends Base\Parser
      *
      * @param string $notInfiniteExceptionMessage
      *
-     * @return $this
+     * @return static
      * @see Debug::parseMessage()
      */
-    public static function new(string $notInfiniteExceptionMessage = 'Provided value is not INF'): self
+    public static function new(string $notInfiniteExceptionMessage = 'Provided value is not INF'): static
     {
-        return new self($notInfiniteExceptionMessage);
+        return new static($notInfiniteExceptionMessage);
     }
 
     /**
@@ -59,7 +59,7 @@ class AssertInfinite extends Base\Parser
      */
     public function setAssertPositive(
         string $notPositiveMessage = 'Provided value is not positive infinity'
-    ): self
+    ): static
     {
         $this->assertPositive = true;
         $this->assertSignMessage = $notPositiveMessage;
@@ -79,7 +79,7 @@ class AssertInfinite extends Base\Parser
      */
     public function setAssertNegative(
         string $notNegativeMessage = 'Provided value is not negative infinity'
-    ): self
+    ): static
     {
         $this->assertPositive = false;
         $this->assertSignMessage = $notNegativeMessage;
@@ -90,7 +90,7 @@ class AssertInfinite extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         if (!is_float($value) || !is_infinite($value)) {

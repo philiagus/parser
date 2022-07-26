@@ -37,19 +37,19 @@ class AssertNan extends Base\Parser
      *
      * @param string $notNanExceptionMessage
      *
-     * @return $this
+     * @return static
      * @see Debug::parseMessage()
      *
      */
-    public static function new(string $notNanExceptionMessage = 'Provided value is not NAN'): self
+    public static function new(string $notNanExceptionMessage = 'Provided value is not NAN'): static
     {
-        return new self($notNanExceptionMessage);
+        return new static($notNanExceptionMessage);
     }
 
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         if (!is_float($value) || !is_nan($value)) {

@@ -13,30 +13,25 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base;
-use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Result;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
 
-use Philiagus\Parser\Contract;
 class AssertEquals extends Base\Parser
 {
 
     private const DEFAULT_MESSAGE = 'The value is not equal to the expected value';
 
-    /** @var string */
     private string $exceptionMessage;
-
-    /** @var mixed */
-    private $targetValue;
+    private mixed $targetValue;
 
     /**
      * AssertEquals constructor.
      *
-     * @param $value
+     * @param mixed $value
      * @param string $exceptionMessage
      */
-    private function __construct($value, string $exceptionMessage = self::DEFAULT_MESSAGE)
+    private function __construct(mixed $value, string $exceptionMessage = self::DEFAULT_MESSAGE)
     {
         $this->targetValue = $value;
         $this->exceptionMessage = $exceptionMessage;
@@ -57,15 +52,15 @@ class AssertEquals extends Base\Parser
      * @see Debug::parseMessage()
      *
      */
-    public static function value($value, string $exceptionMessage = self::DEFAULT_MESSAGE): self
+    public static function value($value, string $exceptionMessage = self::DEFAULT_MESSAGE): static
     {
-        return new self($value, $exceptionMessage);
+        return new static($value, $exceptionMessage);
     }
 
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         if ($builder->getValue() != $this->targetValue) {
             $builder->logErrorUsingDebug(

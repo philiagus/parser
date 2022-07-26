@@ -64,7 +64,7 @@ class AssertStdClass extends Base\Parser
     public function givePropertyValue(
         string $property, ParserContract $parser,
         string $missingPropertyExceptionMessage = 'The object does not contain the requested property {property}'
-    ): self
+    ): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($property, $parser, $missingPropertyExceptionMessage): void {
             $value = $builder->getValue();
@@ -88,7 +88,7 @@ class AssertStdClass extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         if ($builder->getValue() instanceof \stdClass) {
             foreach ($this->assertionList as $assertion) {
@@ -109,7 +109,7 @@ class AssertStdClass extends Base\Parser
      *
      * @return $this
      */
-    public function giveOptionalPropertyValue(string $property, ParserContract $parser): self
+    public function giveOptionalPropertyValue(string $property, ParserContract $parser): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($property, $parser): void {
             $value = $builder->getValue();
@@ -125,7 +125,7 @@ class AssertStdClass extends Base\Parser
         return $this;
     }
 
-    public function giveDefaultedPropertyValue(string $property, $default, ParserContract $parser): self
+    public function giveDefaultedPropertyValue(string $property, $default, ParserContract $parser): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($property, $default, $parser): void {
             $value = $builder->getValue();
@@ -145,7 +145,7 @@ class AssertStdClass extends Base\Parser
      *
      * @return $this
      */
-    public function givePropertyNames(ParserContract $arrayParser): self
+    public function givePropertyNames(ParserContract $arrayParser): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($arrayParser): void {
             $properties = [];
@@ -162,7 +162,7 @@ class AssertStdClass extends Base\Parser
         return $this;
     }
 
-    public function givePropertyValues(ParserContract $arrayParser): self
+    public function givePropertyValues(ParserContract $arrayParser): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($arrayParser): void {
             $propertyValues = [];
@@ -186,7 +186,7 @@ class AssertStdClass extends Base\Parser
      *
      * @return $this
      */
-    public function giveEachPropertyName(ParserContract $stringParser): self
+    public function giveEachPropertyName(ParserContract $stringParser): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($stringParser): void {
             foreach ($builder->getValue() as $property => $_) {
@@ -208,7 +208,7 @@ class AssertStdClass extends Base\Parser
      *
      * @return $this
      */
-    public function giveEachPropertyValue(ParserContract $parser): self
+    public function giveEachPropertyValue(ParserContract $parser): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($parser): void {
             foreach ($builder->getValue() as $property => $value) {
@@ -230,7 +230,7 @@ class AssertStdClass extends Base\Parser
      *
      * @return $this
      */
-    public function givePropertyCount(ParserContract $integerParser): self
+    public function givePropertyCount(ParserContract $integerParser): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($integerParser): void {
             $count = 0;

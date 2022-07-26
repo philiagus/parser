@@ -55,9 +55,9 @@ class OneOf extends Base\Parser
      *
      * @return static
      */
-    public static function nullOr(Parser $parser): self
+    public static function nullOr(Parser $parser): static
     {
-        return self::new()->sameAs(null)->parser($parser);
+        return static::new()->sameAs(null)->parser($parser);
     }
 
     /**
@@ -67,7 +67,7 @@ class OneOf extends Base\Parser
      *
      * @return $this
      */
-    public function parser(Parser ...$parser): self
+    public function parser(Parser ...$parser): static
     {
         $this->options = [...$this->options, ...$parser];
 
@@ -81,16 +81,16 @@ class OneOf extends Base\Parser
      *
      * @return $this
      */
-    public function sameAs(...$options): self
+    public function sameAs(...$options): static
     {
         $this->sameOptions = [...$this->sameOptions, ...$options];
 
         return $this;
     }
 
-    public static function new(): self
+    public static function new(): static
     {
-        return new self();
+        return new static();
     }
 
     /**
@@ -100,7 +100,7 @@ class OneOf extends Base\Parser
      *
      * @return $this
      */
-    public function equalTo(...$options): self
+    public function equalTo(...$options): static
     {
         $this->equalsOptions = [...$this->sameOptions, ...$options];
 
@@ -119,7 +119,7 @@ class OneOf extends Base\Parser
      * @see Debug::parseMessage()
      *
      */
-    public function setNonOfExceptionMessage(string $message): self
+    public function setNonOfExceptionMessage(string $message): static
     {
         $this->exceptionMessage = $message;
 
@@ -133,7 +133,7 @@ class OneOf extends Base\Parser
      *
      * @return $this
      */
-    public function setDefaultResult($value): self
+    public function setDefaultResult($value): static
     {
         $this->defaultSet = true;
         $this->default = $value;
@@ -144,7 +144,7 @@ class OneOf extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         $subject = $builder->getSubject();

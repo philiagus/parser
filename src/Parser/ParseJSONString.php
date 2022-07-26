@@ -13,14 +13,17 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base;
-use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
-use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
-use Philiagus\Parser\Contract;
 
+/**
+ * Parses as string as JSON and returns the parsed result
+ *
+ * @see json_decode()
+ */
 class ParseJSONString extends Base\Parser
 {
     use OverwritableTypeErrorMessage;
@@ -38,9 +41,14 @@ class ParseJSONString extends Base\Parser
     {
     }
 
-    public static function new(): self
+    /**
+     * Creates a new instance of the parser
+     *
+     * @return static
+     */
+    public static function new(): static
     {
-        return new self();
+        return new static();
     }
 
     /**
@@ -56,7 +64,7 @@ class ParseJSONString extends Base\Parser
      * @see Debug::parseMessage()
      *
      */
-    public function setConversionExceptionMessage(string $message): self
+    public function setConversionExceptionMessage(string $message): static
     {
         $this->conversionExceptionMessage = $message;
 
@@ -71,7 +79,7 @@ class ParseJSONString extends Base\Parser
      * @return $this
      * @see https://www.php.net/manual/de/function.json-decode.php
      */
-    public function setObjectsAsArrays(bool $objectsAsArrays = true): self
+    public function setObjectsAsArrays(bool $objectsAsArrays = true): static
     {
         $this->objectAsArrays = $objectsAsArrays;
 
@@ -87,7 +95,7 @@ class ParseJSONString extends Base\Parser
      * @throws ParserConfigurationException
      * @see https://www.php.net/manual/de/function.json-decode.php
      */
-    public function setMaxDepth(int $maxDepth = 512): self
+    public function setMaxDepth(int $maxDepth = 512): static
     {
         if ($maxDepth < 1) {
             throw new ParserConfigurationException("The maximum depth for ParseJSONString must be at least 1");
@@ -106,7 +114,7 @@ class ParseJSONString extends Base\Parser
      * @return $this
      * @see https://www.php.net/manual/de/function.json-decode.php
      */
-    public function setBigintAsString(bool $bigintAsString = true): self
+    public function setBigintAsString(bool $bigintAsString = true): static
     {
         $this->bigintAsString = $bigintAsString;
 
@@ -116,7 +124,7 @@ class ParseJSONString extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         if (!is_string($value)) {

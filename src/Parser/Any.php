@@ -31,17 +31,17 @@ class Any extends Base\Parser
     /**
      * Return a new instance of this parser
      *
-     * @return self
+     * @return static
      */
-    public static function new(): self
+    public static function new(): static
     {
-        return new self();
+        return new static();
     }
 
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         return $builder->createResultUnchanged();
     }

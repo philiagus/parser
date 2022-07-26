@@ -13,17 +13,18 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base;
-use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
-use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\MetaInformation;
 use Philiagus\Parser\Util\Debug;
-use Philiagus\Parser\Contract;
 
+/**
+ * Parser used to assert that a value is a string in a certain encoding
+ */
 class AssertStringMultibyte extends Base\Parser
 {
     use OverwritableTypeErrorMessage;
@@ -44,41 +45,50 @@ class AssertStringMultibyte extends Base\Parser
     }
 
     /**
-     * @return self
+     * Creates a new instance of this parser
+     *
+     * @return static
      */
-    public static function new(): self
+    public static function new(): static
     {
-        return new self();
-    }
-
-    public static function ofEncoding(string $encoding, string $exception = 'Multibyte string does not appear to be encoded in the requested encoding'): self
-    {
-        return (new self())->setEncoding($encoding, $exception);
-    }
-
-    public static function UTF8(string $exception = 'Multibyte string does not appear to be encoded in UTF-8'): self
-    {
-        return (new self())->setEncoding('UTF-8', $exception);
+        return new static();
     }
 
     /**
-     * If no encoding is set we try to detect the encoding using mb_detect_encoding($value, "auto", true)
-     * The method defines the exception message thrown if the encoding could not be detected that way
+     * Creates a new instance of this parser that checks and treats the value as
+     * being a value of the defined encoding
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * @param string $encoding
+     * @param string $exception
+     *
+     * @return static
+     */
+    public static function ofEncoding(string $encoding, string $exception = 'Multibyte string does not appear to be encoded in the requested encoding'): static
+    {
+        return (new static())->setEncoding($encoding, $exception);
+    }
+
+    /**
+     * Defines the encoding of the string. The code is checked to have this encoding
+     * and every other method uses this encoding.
+     *
+     * The exception message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
+     * - encoding: The specified encoding
      *
-     * @param string[] $encodings
-     * @param string $message
+     * @param string $encoding
+     * @param string $exception
      *
      * @return $this
      * @throws ParserConfigurationException
+     * @see Debug::parseMessage()
+     *
      */
-    public function setAvailableEncodings(array $encodings, string $message = 'The provided string does not match any expected encoding'): self
+    public function setEncoding(string $encoding, string $exception = 'Multibyte string does not appear to be encoded in the requested encoding'): static
     {
-        $this->assertEncodings($encodings);
-        $this->availableEncodings = $encodings;
-        $this->encodingDetectionExceptionMessage = $message;
+        $this->assertEncodings([$encoding]);
+
+        $this->encoding = [$encoding, $exception];
 
         return $this;
     }
@@ -111,6 +121,40 @@ class AssertStringMultibyte extends Base\Parser
     }
 
     /**
+     * Creates a new instance of this parser, setting the expected and used encoding to UTF-8
+     *
+     * @param string $exception
+     *
+     * @return static
+     */
+    public static function UTF8(string $exception = 'Multibyte string does not appear to be encoded in UTF-8'): static
+    {
+        return (new static())->setEncoding('UTF-8', $exception);
+    }
+
+    /**
+     * If no encoding is set we try to detect the encoding using mb_detect_encoding($value, "auto", true)
+     * The method defines the exception message thrown if the encoding could not be detected that way
+     *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - subject: The value currently being parsed
+     *
+     * @param string[] $encodings
+     * @param string $message
+     *
+     * @return $this
+     * @throws ParserConfigurationException
+     */
+    public function setAvailableEncodings(array $encodings, string $message = 'The provided string does not match any expected encoding'): static
+    {
+        $this->assertEncodings($encodings);
+        $this->availableEncodings = $encodings;
+        $this->encodingDetectionExceptionMessage = $message;
+
+        return $this;
+    }
+
+    /**
      * Executes mb_strlen on the string and hands the result over to the parser
      * The encoding will be guessed if not defined using setEncoding
      *
@@ -118,7 +162,7 @@ class AssertStringMultibyte extends Base\Parser
      *
      * @return $this
      */
-    public function giveLength(ParserContract $integerParser): self
+    public function giveLength(ParserContract $integerParser): static
     {
         $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($integerParser): void {
             $builder->incorporateResult(
@@ -132,9 +176,121 @@ class AssertStringMultibyte extends Base\Parser
     }
 
     /**
+     * Performs mb_substr on the string and executes the parser on that part of the string
+     * The encoding will be guessed if not defined using setEncoding
+     *
+     * @param int $start
+     * @param null|int $length
+     * @param ParserContract $stringParser
+     *
+     * @return $this
+     */
+    public function giveSubstring(
+        int            $start,
+        ?int           $length,
+        ParserContract $stringParser
+    ): static
+    {
+        $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($start, $length, $stringParser): void {
+            if ($value === '') {
+                $part = '';
+            } else {
+                $part = mb_substr($value, $start, $length, $encoding);
+            }
+            $builder->incorporateResult(
+                $stringParser->parse(
+                    new MetaInformation($builder->getSubject(), "$encoding substring from $start to " . ($length ?? 'end'), $part)
+                )
+            );
+        };
+
+        return $this;
+    }
+
+    /**
+     * Checks that the string starts with the provided string and fails if it doesn't.
+     * Compares the binary of the strings, so the encoding is not relevant
+     *
+     * The exception message is processed using Debug::parseMessage and receives the following elements:
+     * - subject: The value currently being parsed
+     * - expected: The expected string
+     *
+     * @param string $string
+     * @param string $message
+     *
+     * @return $this
+     */
+    public function assertStartsWith(
+        string $string,
+        string $message = 'The string does not start with {expected.debug}'
+    ): static
+    {
+        $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($string, $message): void {
+            if (!str_starts_with($value, $string)) {
+                $builder->logErrorUsingDebug(
+                    $message,
+                    ['expected' => $string]
+                );
+            }
+        };
+
+        return $this;
+    }
+
+    /**
+     * Checks that the string ends with the provided string and fails if it doesn't.
+     * Compares the binary of the strings, so the encoding is not relevant
+     *
+     * The exception message is processed using Debug::parseMessage and receives the following elements:
+     * - subject: The value currently being parsed
+     * - expected: The expected string
+     *
+     * @param string $string
+     * @param string $message
+     *
+     * @return $this
+     */
+    public function assertEndsWith(
+        string $string,
+        string $message = 'The string does not end with {expected.debug}'
+    ): static
+    {
+        $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($string, $message): void {
+            if (!str_ends_with($value, $string)) {
+                $builder->logErrorUsingDebug(
+                    $message,
+                    ['expected' => $string]
+                );
+            }
+        };
+
+        return $this;
+    }
+
+    /**
+     * Provides the set or detected encoding to the defined parser
+     *
+     * @param ParserContract $parser
+     *
+     * @return $this
+     */
+    public function giveEncoding(Parser $parser): static
+    {
+        $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($parser) {
+            $builder->incorporateResult(
+                $parser->parse(
+                    new MetaInformation($builder->getSubject(), 'encoding', $encoding)
+                )
+            );
+        };
+
+        return $this;
+    }
+
+    /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         if (!is_string($value)) {
@@ -172,147 +328,16 @@ class AssertStringMultibyte extends Base\Parser
     }
 
     /**
-     * Performs mb_substr on the string and executes the parser on that part of the string
-     * The encoding will be guessed if not defined using setEncoding
-     *
-     * @param int $start
-     * @param null|int $length
-     * @param ParserContract $stringParser
-     *
-     * @return $this
+     * @inheritDoc
      */
-    public function giveSubstring(
-        int            $start,
-        ?int           $length,
-        ParserContract $stringParser
-    ): self
-    {
-        $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($start, $length, $stringParser): void {
-            if ($value === '') {
-                $part = '';
-            } else {
-                $part = mb_substr($value, $start, $length, $encoding);
-            }
-            $builder->incorporateResult(
-                $stringParser->parse(
-                    new MetaInformation($builder->getSubject(), "$encoding substring from $start to " . ($length ?? 'end'), $part)
-                )
-            );
-        };
-
-        return $this;
-    }
-
-    /**
-     * Defines the encoding of the string. The code is checked to have this encoding
-     * and every other method uses this encoding.
-     *
-     * The exception message is processed using Debug::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
-     * - encoding: The specified encoding
-     *
-     * @param string $encoding
-     * @param string $exception
-     *
-     * @return $this
-     * @throws ParserConfigurationException
-     * @see Debug::parseMessage()
-     *
-     */
-    public function setEncoding(string $encoding, string $exception = 'Multibyte string does not appear to be encoded in the requested encoding'): self
-    {
-        $this->assertEncodings([$encoding]);
-
-        $this->encoding = [$encoding, $exception];
-
-        return $this;
-    }
-
-    /**
-     * Checks that the string starts with the provided string and fails if it doesn't.
-     * Compares the binary of the strings, so the encoding is not relevant
-     *
-     * The exception message is processed using Debug::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
-     * - expected: The expected string
-     *
-     * @param string $string
-     * @param string $message
-     *
-     * @return $this
-     */
-    public function assertStartsWith(
-        string $string,
-        string $message = 'The string does not start with {expected.debug}'
-    ): self
-    {
-        $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($string, $message): void {
-            if (!str_starts_with($value, $string)) {
-                $builder->logErrorUsingDebug(
-                    $message,
-                    ['expected' => $string]
-                );
-            }
-        };
-
-        return $this;
-    }
-
-    /**
-     * Checks that the string ends with the provided string and fails if it doesn't.
-     * Compares the binary of the strings, so the encoding is not relevant
-     *
-     * The exception message is processed using Debug::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
-     * - expected: The expected string
-     *
-     * @param string $string
-     * @param string $message
-     *
-     * @return $this
-     */
-    public function assertEndsWith(
-        string $string,
-        string $message = 'The string does not end with {expected.debug}'
-    ): self
-    {
-        $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($string, $message): void {
-            if (!str_ends_with($value, $string)) {
-                $builder->logErrorUsingDebug(
-                    $message,
-                    ['expected' => $string]
-                );
-            }
-        };
-
-        return $this;
-    }
-
-    /**
-     * Provides the set or detected encoding to the defined parser
-     *
-     * @param ParserContract $parser
-     *
-     * @return $this
-     */
-    public function giveEncoding(Parser $parser): self
-    {
-        $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($parser) {
-            $builder->incorporateResult(
-                $parser->parse(
-                    new MetaInformation($builder->getSubject(), 'encoding', $encoding)
-                )
-            );
-        };
-
-        return $this;
-    }
-
     protected function getDefaultTypeErrorMessage(): string
     {
         return 'Provided value is not of type string';
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         if ($this->encoding) {

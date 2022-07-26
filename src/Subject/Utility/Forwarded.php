@@ -13,11 +13,12 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Subject\Utility;
 
 use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract;
 
 class Forwarded extends Subject
 {
 
-    public function __construct(\Philiagus\Parser\Contract\Subject $subject, string $description)
+    public function __construct(Contract\Subject $subject, string $description)
     {
         parent::__construct($subject, $description, $subject->getValue(), true, null);
     }

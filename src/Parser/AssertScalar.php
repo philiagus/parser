@@ -28,17 +28,17 @@ class AssertScalar extends Base\Parser
     }
 
     /**
-     * @return self
+     * @return static
      */
-    public static function new(): self
+    public static function new(): static
     {
-        return new self();
+        return new static();
     }
 
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         if (!is_scalar($builder->getValue())) {
             $this->logTypeError($builder);

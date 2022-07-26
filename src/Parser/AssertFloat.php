@@ -33,11 +33,11 @@ class AssertFloat extends Base\Parser
     }
 
     /**
-     * @return self
+     * @return static
      */
-    public static function new(): self
+    public static function new(): static
     {
-        return new self();
+        return new static();
     }
 
     /**
@@ -50,12 +50,12 @@ class AssertFloat extends Base\Parser
      * @param float $minimum
      * @param string $exceptionMessage
      *
-     * @return AssertFloat
+     * @return $this
      * @throws Exception\ParserConfigurationException
      * @see Debug::parseMessage()
      *
      */
-    public function assertMinimum(float $minimum, string $exceptionMessage = 'Provided value of {value} is lower than the defined minimum of {min}'): self
+    public function assertMinimum(float $minimum, string $exceptionMessage = 'Provided value of {value} is lower than the defined minimum of {min}'): static
     {
         if (is_nan($minimum) || is_infinite($minimum)) {
             throw new Exception\ParserConfigurationException('Minimum must be set as a float number value. NAN and INF are not allowed');
@@ -83,12 +83,12 @@ class AssertFloat extends Base\Parser
      * @param float $maximum
      * @param string $exceptionMessage
      *
-     * @return AssertFloat
+     * @return $this
      * @throws Exception\ParserConfigurationException
      * @see Debug::parseMessage()
      *
      */
-    public function assertMaximum(float $maximum, string $exceptionMessage = 'Provided value of {value} is greater than the defined maximum of {max}}'): self
+    public function assertMaximum(float $maximum, string $exceptionMessage = 'Provided value of {value} is greater than the defined maximum of {max}}'): static
     {
         if (is_nan($maximum) || is_infinite($maximum)) {
             throw new Exception\ParserConfigurationException('Maximum must be set as a float number value. NAN and INF are not allowed');
@@ -109,7 +109,7 @@ class AssertFloat extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         if (!is_float($value) || is_nan($value) || is_infinite($value)) {

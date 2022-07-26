@@ -48,9 +48,9 @@ class Fork extends Base\Parser
      *
      * @return static
      */
-    public static function to(Parser ...$parsers): self
+    public static function to(Parser ...$parsers): static
     {
-        return new self(...$parsers);
+        return new static(...$parsers);
     }
 
     /**
@@ -60,7 +60,7 @@ class Fork extends Base\Parser
      *
      * @return $this
      */
-    public function add(Parser $parser): self
+    public function add(Parser $parser): static
     {
         $this->parsers[] = $parser;
 
@@ -70,7 +70,7 @@ class Fork extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
+    protected function execute(ResultBuilder $builder): Contract\Result
     {
         foreach ($this->parsers as $index => $parser) {
             $builder->incorporateResult(
