@@ -56,12 +56,12 @@ class ParserTest extends ParserTestBase
             {
             }
 
-            protected function execute(ResultBuilder $builder): Result
+            protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
             {
                 return $builder->createResult($this->expectedResult);
             }
 
-            protected function getDefaultParserDescription(Subject $subject): string
+            protected function getDefaultParserDescription(\Philiagus\Parser\Contract\Subject $subject): string
             {
                 return 'parser';
             }
@@ -96,7 +96,7 @@ class ParserTest extends ParserTestBase
             )
             ->provider(
                 DataProvider::TYPE_ALL,
-                successValidator: function (Subject $subject, Result $result, array $arguments): array {
+                successValidator: function (\Philiagus\Parser\Contract\Subject $subject, \Philiagus\Parser\Contract\Result $result, array $arguments): array {
                     $received = $result->getSourceSubject()->getPathAsString(true);
                     $expectedMessage = Debug::getType($subject->getValue()) . ' ▷' . $arguments[0];
                     if ($received !== $expectedMessage) {

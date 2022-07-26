@@ -13,19 +13,20 @@ declare(strict_types=1);
 namespace Philiagus\Parser;
 
 use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Error;
 use Philiagus\Parser\Util\Debug;
 
-class Result extends Subject
+class Result extends Subject implements Contract\Result
 {
 
     /**
-     * @param Subject $subject
+     * @param Contract\Subject $subject
      * @param mixed $resultValue
      * @param array $errors
      */
     public function __construct(
-        Subject                $subject,
+        Contract\Subject       $subject,
         mixed                  $resultValue,
         private readonly array $errors
     )
@@ -41,11 +42,7 @@ class Result extends Subject
     }
 
     /**
-     * Returns true if the parsing did not result in any errors
-     * If false please use getErrors to get the list of errors that cause the lack of
-     * success of this parser
-     *
-     * @return bool
+     * @inheritDoc
      */
     public function isSuccess(): bool
     {
@@ -53,12 +50,7 @@ class Result extends Subject
     }
 
     /**
-     * Returns true if this result has been loaded with errors
-     * If true it implies that this result was no success and thus
-     * isSuccess will return false
-     *
-     * @return bool
-     * @see Result::isSuccess()
+     * @inheritDoc
      */
     public function hasErrors(): bool
     {
@@ -66,8 +58,7 @@ class Result extends Subject
     }
 
     /**
-     * Returns the result value of this parsing process
-     * If the parser resulted in an error a LogicException is thrown
+     * @inheritDoc
      */
     public function getValue(): mixed
     {
@@ -79,9 +70,7 @@ class Result extends Subject
     }
 
     /**
-     * Returns the list of errors that are embedded in this result
-     *
-     * @return Error[]
+     * @inheritDoc
      */
     public function getErrors(): array
     {

@@ -20,6 +20,7 @@ use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\MetaInformation;
+use Philiagus\Parser\Contract;
 
 /**
  * Parses the provided string, treating is an URL, and returns the
@@ -366,7 +367,7 @@ class ParseURL extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
     {
         $value = $builder->getValue();
         if (!is_string($value)) {
@@ -409,7 +410,7 @@ class ParseURL extends Base\Parser
         return 'Provided value is not of type string';
     }
 
-    protected function getDefaultParserDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'parse URL';
     }

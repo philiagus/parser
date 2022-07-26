@@ -14,12 +14,11 @@ namespace Philiagus\Parser\Base;
 
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser as ParserContract;
+use Philiagus\Parser\Contract\Subject;
 use Philiagus\Parser\Parser\Extraction\Append;
 use Philiagus\Parser\Parser\Extraction\Assign;
 use Philiagus\Parser\Parser\Logic\Chain;
-use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
-use Philiagus\Parser\Util\Debug;
 
 abstract class Parser implements Contract\Parser, Contract\Chainable
 {
@@ -39,7 +38,7 @@ abstract class Parser implements Contract\Parser, Contract\Chainable
     /**
      * @inheritDoc
      */
-    public function parse(Subject $subject): Result
+    public function parse(Subject $subject): Contract\Result
     {
         return $this->execute(
             $subject->getResultBuilder(
@@ -49,11 +48,13 @@ abstract class Parser implements Contract\Parser, Contract\Chainable
     }
 
     /**
+     * Executes the provided builder and performs the specific parsing
+     *
      * @param ResultBuilder $builder
      *
-     * @return Result
+     * @return Contract\Result
      */
-    abstract protected function execute(ResultBuilder $builder): Result;
+    abstract protected function execute(ResultBuilder $builder): Contract\Result;
 
     /**
      * @see OverwritableParserDescription::getDefaultParserDescription()
@@ -79,7 +80,7 @@ abstract class Parser implements Contract\Parser, Contract\Chainable
     /**
      * @inheritDoc
      */
-    public function thenAppendTo(&$target): Chain
+    public function thenAppendTo(null|\ArrayAccess|array &$target): Chain
     {
         return $this->then(Append::to($target));
     }

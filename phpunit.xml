@@ -12,7 +12,6 @@
          colors="true"
          bootstrap="vendor/autoload.php"
          cacheResult="false"
-         stopOnFailure="true"
 >
   <coverage>
     <include>

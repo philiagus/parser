@@ -16,8 +16,11 @@ use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
+use Philiagus\Parser\Contract;
 
-
+/**
+ * A parser that matches any value without further validation
+ */
 class Any extends Base\Parser
 {
 
@@ -26,7 +29,9 @@ class Any extends Base\Parser
     }
 
     /**
-     * @return static
+     * Return a new instance of this parser
+     *
+     * @return self
      */
     public static function new(): self
     {
@@ -36,17 +41,15 @@ class Any extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
     {
         return $builder->createResultUnchanged();
     }
 
     /**
-     * @param Subject $subject
-     *
-     * @return string
+     * @inheritDoc
      */
-    protected function getDefaultParserDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'accepting any value';
     }

@@ -17,7 +17,7 @@ use Philiagus\Parser\Base\Subject;
 class Forwarded extends Subject
 {
 
-    public function __construct(Subject $subject, string $description)
+    public function __construct(\Philiagus\Parser\Contract\Subject $subject, string $description)
     {
         parent::__construct($subject, $description, $subject->getValue(), true, null);
     }

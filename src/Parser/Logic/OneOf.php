@@ -21,7 +21,13 @@ use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\Utility\Forwarded;
 use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Contract;
 
+/**
+ * Checks that the value provided matches one of the provided values or parsers
+ * Please be aware that these values are not evaluated in order. For performance reasons the same and equal
+ * values are accumulated and performed before the list of parsers are checked.
+ */
 class OneOf extends Base\Parser
 {
 
@@ -30,30 +36,32 @@ class OneOf extends Base\Parser
 
     /** @var Parser[] */
     private array $options = [];
-
-    /** @var array */
     private array $sameOptions = [];
-
-    /** @var array */
     private array $equalsOptions = [];
 
     /** @var bool */
     private bool $defaultSet = false;
-
-    /** @var mixed */
     private mixed $default = null;
 
     private function __construct()
     {
     }
 
+    /**
+     * Shortcut to create a OneOf parser that allows for a NULL value or the provided parser value
+     * This is purely syntactical sugar to easily allow for nullable values
+     *
+     * @param Parser $parser
+     *
+     * @return static
+     */
     public static function nullOr(Parser $parser): self
     {
         return self::new()->sameAs(null)->parser($parser);
     }
 
     /**
-     * Adds another potential parser the provided value might match
+     * Adds another option the provided value could match
      *
      * @param Parser ...$parser
      *
@@ -119,7 +127,7 @@ class OneOf extends Base\Parser
     }
 
     /**
-     * Defines a default to be returned if none of the provided options match
+     * Defines a default value to be returned if none of the provided options matches or results in a success
      *
      * @param $value
      *
@@ -136,7 +144,7 @@ class OneOf extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
     {
         $value = $builder->getValue();
         $subject = $builder->getSubject();
@@ -148,25 +156,21 @@ class OneOf extends Base\Parser
                 return $builder->createResultUnchanged();
             }
 
-            $errors[] = new Error(
-                $subject,
-                'Value is not same as any of these: ' . implode(', ', array_map(fn($value) => Debug::stringify($value), $this->sameOptions))
-            );
+            $errors[] = new Error($subject, 'Value is not same as any of the provided values');
         }
 
         if (!empty($this->equalsOptions)) {
-            if (in_array($value, $this->equalsOptions)) {
-                return $builder->createResultUnchanged();
+            foreach($this->equalsOptions as $equalsOption) {
+                if($value == $equalsOption) {
+                    return $builder->createResultUnchanged();
+                }
             }
 
-            $errors[] = new Error(
-                $subject,
-                'Value is not equal to any of these: ' . implode(', ', array_map(fn($value) => Debug::stringify($value), $this->sameOptions))
-            );
+            $errors[] = new Error($subject, 'Value is not equal to any of the provided values');
         }
 
         foreach ($this->options as $index => $option) {
-            $forwardSubject = new Forwarded($builder->getSubject(), "one of parser #$index");
+            $forwardSubject = new Forwarded($builder->getSubject(), "OneOf parser #$index");
             try {
                 $result = $option->parse($forwardSubject);
                 if ($result->isSuccess()) {
@@ -189,7 +193,10 @@ class OneOf extends Base\Parser
         return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultParserDescription(Subject $subject): string
+    /**
+     * @inheritDoc
+     */
+    protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'OneOf';
     }

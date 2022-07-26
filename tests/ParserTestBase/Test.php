@@ -62,7 +62,7 @@ class Test
         $this->success[$trace['line']][] = [
             'source' => fn() => $values,
             'success' => $expectSuccess ?? fn() => true,
-            'result' => $successValidator ?? function (Subject $start, Result $result): array {
+            'result' => $successValidator ?? function (\Philiagus\Parser\Contract\Subject $start, \Philiagus\Parser\Contract\Result $result): array {
                     if (!DataProvider::isSame($start->getValue(), $result->getValue())) {
                         return ['Result has been altered from ' . Debug::stringify($start->getValue()) . ' to ' . Debug::stringify($result->getValue())];
                     }
@@ -80,7 +80,7 @@ class Test
         $this->success[$trace['line']][] = [
             'source' => static fn() => (new DataProvider($flags))->provide(false),
             'success' => static fn() => true,
-            'result' => static function (Subject $start, Result $result): array {
+            'result' => static function (\Philiagus\Parser\Contract\Subject $start, \Philiagus\Parser\Contract\Result $result): array {
                 if (!DataProvider::isSame($start->getValue(), $result->getValue())) {
                     return ['Result has been altered from ' . Debug::stringify($start->getValue()) . ' to ' . Debug::stringify($result->getValue())];
                 }
@@ -102,7 +102,7 @@ class Test
         $this->success[$trace['line']][] = [
             'source' => static fn() => (new DataProvider($flags))->provide(false),
             'success' => $expectSuccess ?? static fn() => true,
-            'result' => $successValidator ?? static function (Subject $start, Result $result): array {
+            'result' => $successValidator ?? static function (\Philiagus\Parser\Contract\Subject $start, \Philiagus\Parser\Contract\Result $result): array {
                     if (!DataProvider::isSame($start->getValue(), $result->getValue())) {
                         return ['Result has been altered from ' . Debug::stringify($start->getValue()) . ' to ' . Debug::stringify($result->getValue())];
                     }
@@ -124,7 +124,7 @@ class Test
         $this->success[$trace['line']][] = [
             'source' => fn() => [$value],
             'success' => $expectSuccess ?? fn() => true,
-            'result' => $successValidator ?? function (Subject $start, Result $result): array {
+            'result' => $successValidator ?? function (\Philiagus\Parser\Contract\Subject $start, \Philiagus\Parser\Contract\Result $result): array {
                     if (!DataProvider::isSame($start->getValue(), $result->getValue())) {
                         return ['Result has been altered from ' . Debug::stringify($start->getValue()) . ' to ' . Debug::stringify($result->getValue())];
                     }
@@ -237,7 +237,7 @@ class Test
 
                                     return $parser;
                                 },
-                                $success ? $resultValidator : function (Subject $subject, Result $result): array {
+                                $success ? $resultValidator : function (\Philiagus\Parser\Contract\Subject $subject, \Philiagus\Parser\Contract\Result $result): array {
                                     $errors = [];
                                     if ($result->isSuccess()) $errors[] = 'Should be a success, but is error';
                                     if (empty($result->getErrors())) $errors[] = 'Errors should not be empty';

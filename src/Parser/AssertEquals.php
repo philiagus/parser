@@ -18,6 +18,7 @@ use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
 
+use Philiagus\Parser\Contract;
 class AssertEquals extends Base\Parser
 {
 
@@ -64,7 +65,7 @@ class AssertEquals extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
     {
         if ($builder->getValue() != $this->targetValue) {
             $builder->logErrorUsingDebug(
@@ -76,7 +77,7 @@ class AssertEquals extends Base\Parser
         return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultParserDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'assert equals';
     }

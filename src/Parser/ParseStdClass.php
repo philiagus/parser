@@ -20,6 +20,7 @@ use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\PropertyName;
 use Philiagus\Parser\Subject\PropertyValue;
 use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Contract;
 
 class ParseStdClass extends AssertStdClass
 {
@@ -69,7 +70,7 @@ class ParseStdClass extends AssertStdClass
 
     /**
      * Tests that the key exists and performs the parser on the value if present
-     * If the key does not exist an exception with the specified message is thrown.
+     * In case the key does not exist an exception with the specified message is thrown.
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
@@ -227,7 +228,7 @@ class ParseStdClass extends AssertStdClass
         return $this;
     }
 
-    protected function getDefaultParserDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'parse stdClass';
     }

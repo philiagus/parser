@@ -13,13 +13,22 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base;
-use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
+use Philiagus\Parser\Util\Debug;
 
+/**
+ * This parser catches the parsing errors generate by the child parser and overwrite the
+ * error with a new Error that has a provided message
+ * This is used to create more meaningful error messages for consumers of the parser
+ * This also means, that the subject of the resulting error is the subject provided
+ * to this OverwriteErrors parser rather than the subject that any caught error might
+ * originate from.
+ */
 class OverwriteErrors extends Base\Parser
 {
 
@@ -35,6 +44,21 @@ class OverwriteErrors extends Base\Parser
         $this->parser = $parser;
     }
 
+    /**
+     * Creates the OverwriteError parser with a defined error message and a parser
+     * If the parser results in or throws an error, the error is caught and
+     * a new error is created, receiving the errors of the parser as sourceErrors
+     *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - subject: The value currently being parsed
+     *
+     * @param string $message
+     * @param Parser $around
+     *
+     * @return OverwriteErrors
+     * @see Debug::parseMessage()
+     * @see Error::getSourceErrors()
+     */
     public static function withMessage(string $message, Parser $around)
     {
         return new self($message, $around);
@@ -43,7 +67,7 @@ class OverwriteErrors extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
     {
         /** @var Error[] $errors */
         $errors = [];
@@ -62,7 +86,10 @@ class OverwriteErrors extends Base\Parser
         return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultParserDescription(Subject $subject): string
+    /**
+     * @inheritDoc
+     */
+    protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return '';
     }

@@ -19,6 +19,7 @@ use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\ArrayKey;
 use Philiagus\Parser\Subject\ArrayValue;
 use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Contract;
 
 class ParseArray extends AssertArray
 {
@@ -91,7 +92,7 @@ class ParseArray extends AssertArray
 
     /**
      * Tests that the key exists and performs the parser on the value if present
-     * If the key does not exist an exception with the specified message is thrown
+     * In case the key does not exist an exception with the specified message is thrown
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - key: The missing key
@@ -215,7 +216,7 @@ class ParseArray extends AssertArray
         return $this;
     }
 
-    protected function getDefaultParserDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'parse array';
     }

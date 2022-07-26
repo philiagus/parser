@@ -17,6 +17,7 @@ use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
+use Philiagus\Parser\Contract;
 
 class AssertObject extends Base\Parser
 {
@@ -113,7 +114,7 @@ class AssertObject extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
     {
         $value = $builder->getValue();
         if (!is_object($builder->getValue())) {
@@ -132,7 +133,7 @@ class AssertObject extends Base\Parser
         return 'The provided value is not an object';
     }
 
-    protected function getDefaultParserDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'assert object';
     }

@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Base;
 
-use Philiagus\Parser\Contract\Parser as ParserContract;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Parser\Extraction\Append;
 use Philiagus\Parser\Parser\Extraction\Assign;
 use Philiagus\Parser\Parser\Logic\Chain;
@@ -21,7 +21,7 @@ trait Chainable
 {
 
     /**
-     * @see \Philiagus\Parser\Contract\Chainable::thenAssignTo()
+     * @see Contract\Chainable::thenAssignTo()
      */
     public function thenAssignTo(&$target): Chain
     {
@@ -29,12 +29,12 @@ trait Chainable
     }
 
     /**
-     * @see \Philiagus\Parser\Contract\Chainable::then()
+     * @see Contract\Chainable::then()
      */
-    public function then(ParserContract $parser): Chain
+    public function then(Contract\Parser $parser): Chain
     {
         /** @noinspection PhpInstanceofIsAlwaysTrueInspection */
-        if (!$this instanceof ParserContract) {
+        if (!$this instanceof Contract\Parser) {
             throw new \LogicException('Chainable can only be used by implementations of the Parser interface');
         }
 
@@ -42,9 +42,9 @@ trait Chainable
     }
 
     /**
-     * @see \Philiagus\Parser\Contract\Chainable::thenAppendTo()
+     * @see Contract\Chainable::thenAppendTo()
      */
-    public function thenAppendTo(&$target): Chain
+    public function thenAppendTo(null|\ArrayAccess|array &$target): Chain
     {
         return $this->then(Append::to($target));
     }

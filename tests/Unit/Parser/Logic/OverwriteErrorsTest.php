@@ -46,13 +46,13 @@ class OverwriteErrorsTest extends ParserTestBase
                     ->expectSingleCall(
                         fn() => fn() => true,
                         fn() => fn() => true,
-                        result: fn(Subject $subject) => new Result($subject, $alteredResult, [])
+                        result: fn(\Philiagus\Parser\Contract\Subject $subject) => new Result($subject, $alteredResult, [])
                     )
                     ->errorWillBeHidden()
             )
             ->provider(
                 DataProvider::TYPE_ALL,
-                successValidator: function (Subject $subject, Result $result) use ($alteredResult) {
+                successValidator: function (\Philiagus\Parser\Contract\Subject $subject, \Philiagus\Parser\Contract\Result $result) use ($alteredResult) {
                     if ($result->getValue() !== $alteredResult) {
                         return ['Result does not match expected format'];
                     }
@@ -75,7 +75,7 @@ class OverwriteErrorsTest extends ParserTestBase
                         ->expect(
                             static fn() => true,
                             static fn() => true,
-                            fn(Subject $subject) => new Result($subject, $subject->getValue(), [])
+                            fn(\Philiagus\Parser\Contract\Subject $subject) => new Result($subject, $subject->getValue(), [])
                         )
                 ),
                 $value

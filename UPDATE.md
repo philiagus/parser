@@ -1,12 +1,15 @@
 # Migration document
 ## v1.2.0 to v2.0.0
 
-*This is a major rewrite of the entire Parser structure, naming and behaviour. In addition, we dropped support for PHP 7.2 nd moved to PHP 7.4*
+**This is a major rewrite of the entire Parser structure, naming and behaviour. In addition, we dropped support for PHP 7.2 and moved all the way up to PHP 8.1**
 
 This means that the best update strategy would be to check every location where you are using the parsers and correspondingly migrate to the new phrasing and setup.
 
-- Dropped support for PHP 7.2! Requires >=PHP7.4 now
-- A major rename of almost every method should clean up the interface and improve readability
+Noteable fundamental changes are:
+- Parsers are no longer called with a value and a path - these elements have been combined into a Subject value (see `Philiagus\Parser\Contract\Subject`)
+- The result of a parser is no longer just the value - instead it is a Result object (see `Philiagus\Parser\Contract\Result`)
+  - You can retreive the value of the result via `->getValue()`
+- The parsers can be run in a non-throwing collection mode, which allows to collect multiple errors in a single response. Throw/Not-throw behaviour is controlled by providing the corresponding setting in the subject (see `Philiagus\Parser\Subject\Root` or `Philiagus\Parser\Base\Subject::default`)
 
 ## v1.1.0 to v1.2.0
 

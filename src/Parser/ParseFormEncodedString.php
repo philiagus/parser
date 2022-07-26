@@ -19,6 +19,7 @@ use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
+use Philiagus\Parser\Contract;
 
 /**
  * Parses the provided string treating it as form encoded data
@@ -42,7 +43,7 @@ class ParseFormEncodedString extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
     {
         $value = $builder->getValue();
         if (!is_string($value)) {
@@ -61,7 +62,7 @@ class ParseFormEncodedString extends Base\Parser
         return 'Provided value is not of type string';
     }
 
-    protected function getDefaultParserDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'parse form encoded';
     }

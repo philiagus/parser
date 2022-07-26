@@ -13,15 +13,16 @@ declare(strict_types=1);
 namespace Philiagus\Parser;
 
 use Philiagus\Parser\Base;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Subject;
 
 class ResultBuilder
 {
 
-    private readonly Base\Subject $subject;
+    private readonly Contract\Subject $subject;
 
-    private Base\Subject $currentSubject;
+    private Contract\Subject $currentSubject;
 
     private mixed $currentValue;
 
@@ -36,10 +37,10 @@ class ResultBuilder
      * The parser description is injected into the subject chain via the ParserBegin subject,
      * which is used if the subject string is created excluding utility elements
      *
-     * @param Base\Subject $subject
+     * @param Contract\Subject $subject
      * @param string $parserDescription
      */
-    public function __construct(Base\Subject $subject, string $parserDescription)
+    public function __construct(Contract\Subject $subject, string $parserDescription)
     {
         $this->subject = $subject;
         $this->currentSubject = new Subject\Utility\ParserBegin($this->subject, $parserDescription);
@@ -232,10 +233,10 @@ class ResultBuilder
      * This method is most times used when creating a new Subject for a child parser, such as when
      * an array key is handed over to another parser for further parsing
      *
-     * @return Base\Subject
+     * @return \Philiagus\Parser\Contract\Subject
      * @see ResultBuilder::setValue()
      */
-    public function getSubject(): Base\Subject
+    public function getSubject(): \Philiagus\Parser\Contract\Subject
     {
         return $this->currentSubject;
     }

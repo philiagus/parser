@@ -23,6 +23,7 @@ use Philiagus\Parser\Subject\MetaInformation;
 use Philiagus\Parser\Subject\PropertyName;
 use Philiagus\Parser\Subject\PropertyValue;
 use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Contract;
 
 class AssertStdClass extends Base\Parser
 {
@@ -46,7 +47,7 @@ class AssertStdClass extends Base\Parser
 
     /**
      * Tests that the key exists and performs the parser on the value if present
-     * If the key does not exist an exception with the specified message is thrown.
+     * In case the key does not exist an exception with the specified message is thrown.
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
@@ -87,7 +88,7 @@ class AssertStdClass extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
     {
         if ($builder->getValue() instanceof \stdClass) {
             foreach ($this->assertionList as $assertion) {
@@ -251,7 +252,7 @@ class AssertStdClass extends Base\Parser
         return 'Provided value is not an instance of \stdClass';
     }
 
-    protected function getDefaultParserDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'assert stdClass';
     }

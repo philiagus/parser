@@ -71,7 +71,7 @@ class OverwritableTypeErrorMessageTest extends TestCase
         return new class() implements Parser {
             use OverwritableTypeErrorMessage;
 
-            public function parse(Subject $subject): never
+            public function parse(\Philiagus\Parser\Contract\Subject $subject): never
             {
                 /** @var Error $error */
                 $error = $this->getTypeError($subject);
@@ -90,7 +90,7 @@ class OverwritableTypeErrorMessageTest extends TestCase
         return new class() implements Parser {
             use OverwritableTypeErrorMessage;
 
-            public function parse(Subject $subject): never
+            public function parse(\Philiagus\Parser\Contract\Subject $subject): never
             {
                 $builder = new ResultBuilder($subject, 'TestParser');
                 $this->logTypeError($builder);

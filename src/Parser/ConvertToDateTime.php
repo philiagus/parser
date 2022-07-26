@@ -18,6 +18,7 @@ use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
+use Philiagus\Parser\Contract;
 
 class ConvertToDateTime extends Base\Parser
 {
@@ -103,7 +104,7 @@ class ConvertToDateTime extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
     {
         $value = $builder->getValue();
         $dateTime = null;
@@ -159,7 +160,7 @@ class ConvertToDateTime extends Base\Parser
         return 'Provided value could not be converted to DateTime';
     }
 
-    protected function getDefaultParserDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'convert to DateTime';
     }

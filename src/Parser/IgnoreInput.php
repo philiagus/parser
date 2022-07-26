@@ -17,6 +17,7 @@ use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Parser\Logic\Fail;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
+use Philiagus\Parser\Contract;
 
 /**
  * Class Fixed
@@ -49,12 +50,12 @@ class IgnoreInput extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
     {
         return $builder->createResult($this->value);
     }
 
-    protected function getDefaultParserDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'replace with fixed value';
     }

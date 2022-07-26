@@ -40,12 +40,12 @@ class PreserveTest extends ParserTestBase
                     ->expectSingleCall(
                         fn($value) => $value,
                         Forwarded::class,
-                        result: fn(Subject $subject) => new Result($subject, !$subject->getValue(), [])
+                        result: fn(\Philiagus\Parser\Contract\Subject $subject) => new Result($subject, !$subject->getValue(), [])
                     )
             )
             ->provider(
                 DataProvider::TYPE_ALL,
-                successValidator: function (Subject $subject, Result $result) {
+                successValidator: function (\Philiagus\Parser\Contract\Subject $subject, \Philiagus\Parser\Contract\Result $result) {
                     if (!DataProvider::isSame($subject->getValue(), $result->getValue())) {
                         return ['Result value does not match'];
                     }

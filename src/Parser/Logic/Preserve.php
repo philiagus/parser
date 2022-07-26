@@ -13,11 +13,11 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base;
-use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\Utility\Forwarded;
+use Philiagus\Parser\Contract;
 
 
 /**
@@ -40,6 +40,10 @@ class Preserve extends Base\Parser
     }
 
     /**
+     * Returns an instance of this parser. The provided parser is executed and - on success -
+     * the original value provided to the Preserve parser is returned instead of the
+     * potentially altered value of the provided parser
+     *
      * @param Parser $parser
      *
      * @return static
@@ -52,7 +56,7 @@ class Preserve extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
     {
         $builder->incorporateResult(
             $this->around->parse(
@@ -63,7 +67,10 @@ class Preserve extends Base\Parser
         return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultParserDescription(Subject $subject): string
+    /**
+     * @inheritDoc
+     */
+    protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'preserved';
     }

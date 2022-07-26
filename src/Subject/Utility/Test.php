@@ -18,9 +18,9 @@ class Test extends Subject
 {
 
     public function __construct(
-        Subject $subject,
-        string  $description,
-        bool    $forceThrowOnError = false
+        \Philiagus\Parser\Contract\Subject $subject,
+        string                             $description,
+        bool                               $forceThrowOnError = false
     )
     {
         parent::__construct($subject, $description, $subject->getValue(), true, $forceThrowOnError ?: null);

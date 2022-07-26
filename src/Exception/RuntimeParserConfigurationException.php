@@ -13,7 +13,8 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Exception;
 
 /**
- * This exception is supposed to be thrown when a Parser gets wrongly configured
+ * This exception is supposed to be thrown when a Parser gets wrongly configured and the
+ * error in configuration is only identified during parser execution
  */
 class RuntimeParserConfigurationException extends ParserConfigurationException
 {

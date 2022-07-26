@@ -18,8 +18,13 @@ use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\Utility\Forwarded;
+use Philiagus\Parser\Contract;
 
-
+/**
+ * Forks out the received subject to multiple other parsers
+ * The result of this parser is identical to the received value, even
+ * if any of the provided parsers changes the value
+ */
 class Fork extends Base\Parser
 {
 
@@ -37,6 +42,8 @@ class Fork extends Base\Parser
     }
 
     /**
+     * Creates this parser with a list of other parsers to fork the value to
+     *
      * @param Parser ...$parsers
      *
      * @return static
@@ -47,7 +54,7 @@ class Fork extends Base\Parser
     }
 
     /**
-     * Adds a parser to fork the value to without alteration
+     * Adds a parser to fork the value to
      *
      * @param Parser $parser
      *
@@ -63,7 +70,7 @@ class Fork extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
     {
         foreach ($this->parsers as $index => $parser) {
             $builder->incorporateResult(
@@ -77,7 +84,7 @@ class Fork extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function getDefaultParserDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'fork to multiple parsers';
     }

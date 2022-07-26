@@ -19,6 +19,7 @@ use Philiagus\Parser\Exception;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Contract;
 
 class AssertFloat extends Base\Parser
 {
@@ -108,7 +109,7 @@ class AssertFloat extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
     {
         $value = $builder->getValue();
         if (!is_float($value) || is_nan($value) || is_infinite($value)) {
@@ -129,7 +130,7 @@ class AssertFloat extends Base\Parser
         return 'Provided value is not of type float';
     }
 
-    protected function getDefaultParserDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'assert float';
     }

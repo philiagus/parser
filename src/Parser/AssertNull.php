@@ -18,6 +18,7 @@ use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Contract;
 
 class AssertNull extends Base\Parser
 {
@@ -49,7 +50,7 @@ class AssertNull extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
     {
         if ($builder->getValue() !== null) {
             $builder->logErrorUsingDebug($this->exceptionMessage);
@@ -58,7 +59,7 @@ class AssertNull extends Base\Parser
         return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultParserDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'assert null';
     }

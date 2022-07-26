@@ -15,7 +15,6 @@ namespace Philiagus\Parser\Contract;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Exception\RuntimeParserConfigurationException;
-use Philiagus\Parser\Result;
 
 interface Parser
 {

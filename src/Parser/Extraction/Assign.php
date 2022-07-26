@@ -19,6 +19,7 @@ use Philiagus\Parser\Base\OverwritableParserDescription;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
+use Philiagus\Parser\Contract;
 
 
 /**
@@ -37,7 +38,7 @@ class Assign extends Base\Parser
     }
 
     /**
-     * Returns a parser that assigns the provided value to the target
+     * Returns a parser that assigns the provided value to the target when the parser is executed
      *
      * @param $target
      *
@@ -49,17 +50,19 @@ class Assign extends Base\Parser
     }
 
     /**
-     *
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
     {
         $this->target = $builder->getValue();
 
         return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultParserDescription(Subject $subject): string
+    /**
+     * @inheritDoc
+     */
+    protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'extract: assign';
     }

@@ -39,7 +39,7 @@ class Debug
      * "{arrayKey.infoType}", transforming the value before replacing.
      *
      * infoType can be one of the following:
-     * gettype: The result of a call to gettype on the replacers element
+     * gettype: The result of a call to gettype on the replacers' element
      * type: the same as gettype for anything but objects. For objects its "object<className>"
      * debug: a string representation of the value, tying to show as much of the content as possible, see Debug::stringify
      * export: the result of var_export of the value

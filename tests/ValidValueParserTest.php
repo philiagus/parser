@@ -29,7 +29,7 @@ trait ValidValueParserTest
     public function testThatItAcceptsValidValuesThrowing($value, \Closure $parser, $expected): void
     {
         $subject = Subject::default($value);
-        /** @var Result $result */
+        /** @var \Philiagus\Parser\Contract\Result $result */
         $result = $parser($value)->parse($subject);
         self::assertTrue($result->isSuccess());
         $expectedSubject = $result->getSourceSubject()->getSourceSubject();
@@ -56,7 +56,7 @@ trait ValidValueParserTest
     public function testThatItAcceptsValidValuesNotThrowing($value, \Closure $parser, $expected, bool $resultWillBeWrapped = true): void
     {
         $subject = Subject::default($value, throwOnError: false);
-        /** @var Result $result */
+        /** @var \Philiagus\Parser\Contract\Result $result */
         $result = $parser($value)->parse($subject);
         self::assertTrue($result->isSuccess());
         self::assertSame($subject, $resultWillBeWrapped ? $result->getSourceSubject()->getSourceSubject() : $result->getSourceSubject());

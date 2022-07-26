@@ -17,7 +17,7 @@ use Philiagus\Parser\Base\Subject;
 class ParserBegin extends Subject
 {
 
-    public function __construct(Subject $originalSubject, string $description)
+    public function __construct(\Philiagus\Parser\Contract\Subject $originalSubject, string $description)
     {
         parent::__construct($originalSubject, $description, $originalSubject->getValue(), true, null);
     }

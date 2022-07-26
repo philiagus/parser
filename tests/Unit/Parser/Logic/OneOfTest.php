@@ -177,7 +177,7 @@ class OneOfTest extends ParserTestBase
             )
             ->provider(
                 DataProvider::TYPE_ALL,
-                successValidator: function (Subject $subject, Result $result, array $generatedArguments) {
+                successValidator: function (\Philiagus\Parser\Contract\Subject $subject, \Philiagus\Parser\Contract\Result $result, array $generatedArguments) {
                     if (!DataProvider::isSame($generatedArguments[0], $result->getValue())) {
                         return ['Result value does not match'];
                     }

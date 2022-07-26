@@ -14,9 +14,18 @@ namespace Philiagus\Parser\Exception;
 
 /**
  * This exception is supposed to be thrown when a Parser gets wrongly configured
+ *
+ * If the error in configuration is identified while the parser is being executed,
+ * please throw a RuntimeParserConfigurationException instead
+ *
+ * @see RuntimeParserConfigurationException
  */
-class ParserConfigurationException extends \Exception
+class ParserConfigurationException extends \LogicException
 {
+    /**
+     * @param string $message
+     * @param \Throwable|null $previous
+     */
     public function __construct(string $message, \Throwable $previous = null)
     {
         parent::__construct($message, 0, $previous);

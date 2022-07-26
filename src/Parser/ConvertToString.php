@@ -22,6 +22,7 @@ use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\ArrayValue;
 use Philiagus\Parser\Util\Debug;
 use Stringable;
+use Philiagus\Parser\Contract;
 
 class ConvertToString extends Base\Parser
 {
@@ -71,7 +72,7 @@ class ConvertToString extends Base\Parser
     }
 
     /**
-     * Specifies a value to implode the array with. Before performing this implode every element inside the array
+     * Specifies a value to implode the array with. Before performing this implodes every element inside the array
      * is checked to be a string. If violating elements are found, an exception is thrown
      * The element converter parser can be used to convert elements of the array before type checking them to be string
      *
@@ -102,7 +103,7 @@ class ConvertToString extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
     {
         $value = $builder->getValue();
         if (is_string($value)) {
@@ -178,7 +179,7 @@ class ConvertToString extends Base\Parser
         return 'Variable of type {subject.type} could not be converted to a string';
     }
 
-    protected function getDefaultParserDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'convert to string';
     }

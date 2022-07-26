@@ -17,6 +17,7 @@ use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 
+use Philiagus\Parser\Contract;
 class ConvertToArray extends Base\Parser
 {
 
@@ -50,7 +51,7 @@ class ConvertToArray extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
     {
         $value = $builder->getValue();
         if (is_array($value)) {
@@ -64,7 +65,7 @@ class ConvertToArray extends Base\Parser
         return $builder->createResult((array) $value);
     }
 
-    protected function getDefaultParserDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         if ($this->targetedArrayKey !== null) {
             return "treated as array, if needed with key '$this->targetedArrayKey'";

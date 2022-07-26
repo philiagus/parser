@@ -98,7 +98,7 @@ class ConvertToDateTimeTest extends ParserTestBase
             )
             ->values(
                 array_column($cases, 0),
-                successValidator: function (Subject $subject, Result $result, array $arguments) use ($cases) {
+                successValidator: function (\Philiagus\Parser\Contract\Subject $subject, \Philiagus\Parser\Contract\Result $result, array $arguments) use ($cases) {
                     $relevantFormat = null;
                     $value = $subject->getValue();
                     $resultValue = $result->getValue();
@@ -177,7 +177,7 @@ class ConvertToDateTimeTest extends ParserTestBase
             )
             ->values(
                 array_column($cases, 0),
-                successValidator: function (Subject $subject, Result $result, array $arguments) use ($cases) {
+                successValidator: function (\Philiagus\Parser\Contract\Subject $subject, \Philiagus\Parser\Contract\Result $result, array $arguments) use ($cases) {
                     $relevantFormat = null;
                     $value = $subject->getValue();
                     $resultValue = $result->getValue();
@@ -229,7 +229,7 @@ class ConvertToDateTimeTest extends ParserTestBase
                     new DateTimeImmutable(),
                     new DateTime(),
                 ],
-                successValidator: function (Subject $subject, Result $result, array $arguments) {
+                successValidator: function (\Philiagus\Parser\Contract\Subject $subject, \Philiagus\Parser\Contract\Result $result, array $arguments) {
                     $value = $subject->getValue();
                     $resultValue = $result->getValue();
                     if (!$resultValue instanceof DateTimeInterface) {

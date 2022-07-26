@@ -47,10 +47,11 @@ class ForkTest extends TestBase
     {
         $parser = function ($result) use ($value): Parser {
             $parser = $this->prophesize(Parser::class);
+            /** @noinspection PhpParamsInspection */
             $parser
                 ->parse(
                     Argument::that(
-                        fn(Subject $subject) => DataProvider::isSame($subject->getValue(), $value)
+                        fn(\Philiagus\Parser\Contract\Subject $subject) => DataProvider::isSame($subject->getValue(), $value)
                     )
                 )
                 ->shouldBeCalled()

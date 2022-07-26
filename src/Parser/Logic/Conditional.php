@@ -22,7 +22,12 @@ use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\Utility\Forwarded;
 use Philiagus\Parser\Subject\Utility\Test;
 use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Contract;
 
+/**
+ * This parser allows to set match the provided value against configured values and - on match - call a
+ * corresponding followup parser. Think of it as the PHP switch construct in parser form.
+ */
 class Conditional extends Base\Parser
 {
 
@@ -50,7 +55,7 @@ class Conditional extends Base\Parser
     }
 
     /**
-     * Defines the exception message to use if none of the provided parsers matches
+     * Defines the exception message to use if none of the provided values matches
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
@@ -69,8 +74,7 @@ class Conditional extends Base\Parser
     }
 
     /**
-     * Compares the value === $from and on success calls the defined parser with
-     * the value
+     * Compares the value === $from and on success calls the defined parser with the value
      *
      * @param $from
      * @param Parser $to
@@ -101,7 +105,7 @@ class Conditional extends Base\Parser
     }
 
     /**
-     * if the value is == $from the provided parser is called with the value
+     * If the value is == $from the provided parser is called with the value
      *
      * @param mixed $from
      * @param Parser $to
@@ -133,15 +137,14 @@ class Conditional extends Base\Parser
     }
 
     /**
-     * TODO: Fix doc
-     * Validates the value with $parser and on success calls $to with the value
-     * If $pipe is true the value handed to $to is the result of $parser instead
-     * of the unaltered value received by the parser
+     * Validates the value with $parser and on success calls $to with the original value
+     * If you want to hand the result of $parser to $to, please use the ifParserPiped() method
      *
      * @param Parser $parser
      * @param Parser $to
      *
      * @return $this
+     * @see ifParserPiped()
      */
     public function ifParser(Parser $parser, Parser $to): self
     {
@@ -151,15 +154,14 @@ class Conditional extends Base\Parser
     }
 
     /**
-     * TODO: Fix doc
-     * Validates the value with $parser and on success calls $to with the value
-     * If $pipe is true the value handed to $to is the result of $parser instead
-     * of the unaltered value received by the parser
+     * Validates the value with $parser and on success calls $to with the result of $parser
+     * If you want to hand the original value over, please use the ifParser() method
      *
      * @param Parser $parser
      * @param Parser $to
      *
      * @return $this
+     * @see ifParser()
      */
     public function ifParserPiped(Parser $parser, Parser $to): self
     {
@@ -170,12 +172,14 @@ class Conditional extends Base\Parser
 
     /**
      * Defines a default to be returned if none of the provided options match
+     * Please be aware that this default result is only used if none of the checks match
+     * If the mapped parser results in an error, that error will not be prevented
      *
-     * @param $value
+     * @param mixed $value
      *
      * @return $this
      */
-    public function setDefaultResult($value): self
+    public function setDefaultResult(mixed $value): self
     {
         $this->defaultSet = true;
         $this->default = $value;
@@ -186,7 +190,7 @@ class Conditional extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
     {
         $value = $builder->getValue();
         $errors = [];
@@ -291,7 +295,10 @@ class Conditional extends Base\Parser
         return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultParserDescription(Subject $subject): string
+    /**
+     * @inheritDoc
+     */
+    protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'Map';
     }

@@ -18,6 +18,7 @@ use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Contract;
 
 class AssertInteger extends Base\Parser
 {
@@ -130,7 +131,7 @@ class AssertInteger extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
     {
         $value = $builder->getValue();
         if (!is_int($value)) {
@@ -149,7 +150,7 @@ class AssertInteger extends Base\Parser
         return 'Provided value is not of type integer';
     }
 
-    protected function getDefaultParserDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'assert integer';
     }

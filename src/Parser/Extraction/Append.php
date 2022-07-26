@@ -12,39 +12,43 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser\Extraction;
 
-use ArrayAccess;
 use Philiagus\Parser\Base;
-use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
+use Philiagus\Parser\Contract;
 
 /**
  * Whenever this parser is called the value received by this parser is appended to the provided target
- * If the provided target is not an array at that point, Append will convert `null` to an empty array and
- * in all other cases throw a ParserConfigurationException
+ * If the provided target is not an array at that point, Append will convert `null` to an empty array
+ * Based on PHP reference rules this parser takes some type possession of the provided target
+ * The target can only be null|array|\ArrayAccess
  */
 class Append extends Base\Parser
 {
-
-    /** @var null|array|ArrayAccess */
-    private null|array|ArrayAccess $target;
+    private null|array|\ArrayAccess $target;
 
     /**
      * Append constructor.
      *
      * @param mixed $target
      */
-    private function __construct(null|array|ArrayAccess &$target)
+    private function __construct(null|array|\ArrayAccess &$target)
     {
+        $target ??= [];
         $this->target =& $target;
     }
 
     /**
-     * @param ArrayAccess|array|null $target
+     * Creates an instance of this parser and sets the value provided to this parser to be appended to
+     * the $target
+     * Based on PHP reference rules this parser takes type possession of the provided target
+     * The target can only be null|array|\ArrayAccess
+     *
+     * @param \ArrayAccess|array|null $target
      *
      * @return static
      */
-    public static function to(null|ArrayAccess|array &$target): self
+    public static function to(null|\ArrayAccess|array &$target): self
     {
         return new self($target);
     }
@@ -52,14 +56,17 @@ class Append extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
     {
         $this->target[] = $builder->getValue();
 
         return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultParserDescription(Subject $subject): string
+    /**
+     * @inheritDoc
+     */
+    protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'extract: appended';
     }

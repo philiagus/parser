@@ -47,7 +47,7 @@ class ErrorCollection
         return $errors;
     }
 
-    public function assertResult(Result $result): array
+    public function assertResult(\Philiagus\Parser\Contract\Result $result): array
     {
         $errors = array_map(fn(Error $error) => $error->getMessage(), $result->getErrors());
         sort($errors);

@@ -12,36 +12,70 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Base;
 
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\Root;
 
-abstract class Subject
+abstract class Subject implements Contract\Subject
 {
 
     private readonly bool $throwOnError;
 
     /**
-     * Path constructor.
+     * Creates a new instance of the Subject
+     * Please make sure that this method is called from every extending class via
+     * parent::__construct(), providing the needed data
      *
-     * @param Subject|null $sourceSubject
-     * @param string $description
-     * @param mixed $value
-     * @param bool $isUtilitySubject
-     * @param bool $throwOnError
+     * If $throwOnError is not provided, the throwOnError setting of the $sourceSubject
+     * is used. If no $sourceSubject is provided, throwOnError is set to TRUE by default.
+     *
+     * The setting $isUtilitySubject is only used to
+     *
+     * @param Contract\Subject|null $sourceSubject The subject this subject is created from - this value is supposed to
+     *                                             be set for every subject with only exception being the Root subject
+     *                                             which is where the parsing start. Providing the $sourceSubject
+     *                                             allows for creation of a path identifying the location at which
+     *                                             an Error might have been encountered
+     *
+     * @param string $description A meaningful description of the subject. Please be aware that this description is
+     *                            later wrapped into subject class specific string parts, configured via the
+     *                            getPathStringPart() method
+     *
+     * @param mixed $value The value to be parsed
+     *
+     * @param bool $isUtilitySubject This value is used to identify whether this subject is added to the result of
+     *                               getPathAsString() and getSubjectChain() or not. Essentially, utility subjects
+     *                               are subjects that do not directly point at a location in the parsed value but
+     *                               rather document the steps used in the parsing. Utility subjects should help
+     *                               in debugging the parser chain used, non-utility subjects should help to
+     *                               identify the location of the error in the provided subject.
+     *
+     * @param bool|null $throwOnError If $throwOnError is not provided, the throwOnError setting of the
+     *                                $sourceSubject is used. If no $sourceSubject is provided,
+     *                                $throwOnError is set to TRUE by default.
      */
     protected function __construct(
-        private readonly ?self  $sourceSubject,
-        private readonly string $description,
-        private readonly mixed $value,
-        private readonly bool   $isUtilitySubject,
-        ?bool                  $throwOnError
+        private readonly ?Contract\Subject $sourceSubject,
+        private readonly string            $description,
+        private readonly mixed             $value,
+        private readonly bool              $isUtilitySubject,
+        ?bool                              $throwOnError
     )
     {
         $this->throwOnError = $throwOnError ?? $this->sourceSubject?->throwOnError() ?? true;
     }
 
     /**
-     * Returns the default Subject to use
+     * @inheritDoc
+     */
+    public function throwOnError(): bool
+    {
+        return $this->throwOnError;
+    }
+
+    /**
+     * Returns the default subject to use. This is a convenience function to easily create a Root subject
+     * instance, which is the only subject that should be used on the entry point into the parsers.
      *
      * @param mixed $value
      * @param string|null $description
@@ -55,11 +89,7 @@ abstract class Subject
     }
 
     /**
-     * Returns an array with the first element being the start of the path
-     *
-     * @param bool $includeUtility
-     *
-     * @return array
+     * @inheritDoc
      */
     final public function getSubjectChain(bool $includeUtility = false): array
     {
@@ -75,15 +105,7 @@ abstract class Subject
     }
 
     /**
-     * Returns a string representation of the path that lead to this current subject
-     * if $includeUtility is true the path will also include utility subjects
-     * created in the process. If false the result will generate a path string that hints to a
-     * location in the originally provided source, such as "Array[0].name" for the name value of this
-     * json: [{"name": "current location of the subject"}]
-     *
-     * @param bool $includeUtility
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getPathAsString(bool $includeUtility = false): string
     {
@@ -113,18 +135,19 @@ abstract class Subject
     }
 
     /**
-     * Returns the string representation of this path element
+     * Returns the string representation of this path element, which should always include the
+     * description as provided by getDescription()
      *
      * @param bool $isLastInChain
      *
      * @return string
+     * @see getDescription()
+     *
      */
     abstract protected function getPathStringPart(bool $isLastInChain): string;
 
     /**
-     * Get the value of this subject
-     *
-     * @return mixed
+     * @inheritDoc
      */
     public function getValue(): mixed
     {
@@ -132,11 +155,7 @@ abstract class Subject
     }
 
     /**
-     * Creates a result builder for this subject
-     *
-     * @param string $description
-     *
-     * @return ResultBuilder
+     * @inheritDoc
      */
     public function getResultBuilder(string $description): ResultBuilder
     {
@@ -144,23 +163,15 @@ abstract class Subject
     }
 
     /**
-     * @return bool
+     * @inheritDoc
      */
-    public function throwOnError(): bool
-    {
-        return $this->throwOnError;
-    }
-
-    /**
-     * @return Subject|null
-     */
-    public function getSourceSubject(): ?Subject
+    public function getSourceSubject(): ?Contract\Subject
     {
         return $this->sourceSubject;
     }
 
     /**
-     * @return string
+     * @inheritDoc
      */
     public function getDescription(): string
     {
@@ -168,7 +179,7 @@ abstract class Subject
     }
 
     /**
-     * @return bool
+     * @inheritDoc
      */
     public function isUtilitySubject(): bool
     {

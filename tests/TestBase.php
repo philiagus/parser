@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test;
 
 use Philiagus\DataProvider\DataProvider;
-use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Result;
 use PHPUnit\Framework\TestCase;
@@ -58,9 +58,10 @@ class TestBase extends TestCase
             if (count($pair) === 1) {
                 $pair[1] = $pair[0];
             }
+            /** @noinspection PhpParamsInspection */
             $parser
                 ->parse(
-                    Argument::that(fn(Subject $subject) => $subject->getValue() === $pair[0])
+                    Argument::that(fn(Contract\Subject $subject) => $subject->getValue() === $pair[0])
                 )
                 ->shouldBeCalled()
                 ->will(fn(array $args) => new Result($args[0], $pair[1], []));

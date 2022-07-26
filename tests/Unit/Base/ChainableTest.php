@@ -73,7 +73,7 @@ class ChainableTest extends TestCase
         return new class() implements Contract\Parser, Contract\Chainable {
             use Chainable;
 
-            public function parse(Subject $subject): Result
+            public function parse(\Philiagus\Parser\Contract\Subject $subject): \Philiagus\Parser\Contract\Result
             {
                 return new Result($subject, null, []);
             }

@@ -17,7 +17,11 @@ use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Subject\Utility\ParserBegin;
+use Philiagus\Parser\Contract;
 
+/**
+ * Parser that always fails, generating an error with a defined message
+ */
 class Fail implements Parser
 {
     private string $message;
@@ -51,7 +55,7 @@ class Fail implements Parser
     /**
      * @inheritDoc
      */
-    public function parse(Subject $subject): Result
+    public function parse(Contract\Subject $subject): \Philiagus\Parser\Contract\Result
     {
         $subject = new ParserBegin($subject, 'FAIL');
 

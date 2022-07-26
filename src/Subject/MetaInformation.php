@@ -17,7 +17,7 @@ use Philiagus\Parser\Base\Subject;
 class MetaInformation extends Subject
 {
 
-    public function __construct(Subject $sourceSubject, string $description, mixed $value)
+    public function __construct(\Philiagus\Parser\Contract\Subject $sourceSubject, string $description, mixed $value)
     {
         parent::__construct($sourceSubject, $description, $value, false, null);
     }

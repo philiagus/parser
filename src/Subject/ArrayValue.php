@@ -16,7 +16,7 @@ use Philiagus\Parser\Base\Subject;
 
 class ArrayValue extends Subject
 {
-    public function __construct(Subject $sourceSubject, string|int $arrayKey, mixed $value)
+    public function __construct(\Philiagus\Parser\Contract\Subject $sourceSubject, string|int $arrayKey, mixed $value)
     {
         parent::__construct($sourceSubject, (string) $arrayKey, $value, false, null);
     }

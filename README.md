@@ -6,10 +6,9 @@ PHP classes to assert, convert and parse data.
 
 Tested on the following PHP Version:
 
-- PHP7.4
-- PHP8.0
+- PHP8.1
 
-100% test covered. Test coverage generated on PHP7.2
+100% test covered. Test coverage generated on PHP8.1
 
 ## Why do I need it?
 
@@ -26,21 +25,25 @@ A simple example:
 
 ```php
 <?php
-use Philiagus\Parser\Parser\AssertInteger;use Philiagus\Parser\Parser\Extraction\Assign;
+use Philiagus\Parser\Parser\AssertInteger;
+use Philiagus\Parser\Parser\Extraction\Assign;
+use Philiagus\Parser\Base\Subject;
 
 $integer = 100;
 
 $parsingResult = AssertInteger::new()
     ->assertMinimum(0)
     ->assertMaximum(100)
-    ->parse($integer);
+    ->parse(Subject::default($integer))
+    ->getValue();
 
 // or, also possible:
 AssertInteger::new()
     ->assertMinimum(0)
     ->assertMaximum(10)
-    ->then(Assign::to($target))
-    ->parse($integer);
+    ->thenAssignTo($target)
+    ->parse(Subject::default($integer))
+    ->getValue();
 ```
 
 The real fun begins, when you start stacking parsers into one another:
@@ -52,6 +55,7 @@ use Philiagus\Parser\Parser\AssertInteger;
 use Philiagus\Parser\Parser\Logic\OneOf;
 use Philiagus\Parser\Parser\ParseArray;
 use Philiagus\Parser\Parser\Extraction\Append;
+use Philiagus\Parser\Base\Subject;
 
 $input = [
     1, 1.0, 2, 4, 4.20
@@ -67,21 +71,90 @@ ParseArray::new()
             ->parser(
                 AssertInteger::new()
                     ->assertMinimum(0)
-                    ->then(Append::to($integers))
-                    ,
+                    ->thenAppendTo($integers),
                 AssertFloat::new()
                     ->assertMinimum(0.0)
-                    ->then(Append::to($floats))
+                    ->thenAssignTo($floats)
             )
     )
-->parse($input);
+->parse(Subject::default($input));
 
 // $integers will contain [1, 2, 4]
 // $floats will contain [1.0, 4.20]
 
 ```
 
+Lets say: You have an API which receives requests from a client in JSON format, and you need to find the relevant information.
+
+```php
+<?php
+use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Parser\AssertInteger;
+use Philiagus\Parser\Parser\AssertStdClass;
+use Philiagus\Parser\Parser\AssertStringMultibyte;
+use Philiagus\Parser\Parser\ConvertToDateTime;
+use Philiagus\Parser\Parser\ParseJSONString;
+
+$sourceValue = '{"name":"Frank Herbert","birthday":"1920-10-08"}';
+
+$parser = ParseJSONString::new()
+    ->then(
+        AssertStdClass::new()
+            ->givePropertyValue(
+                'name',
+                AssertStringMultibyte::UTF8()
+                    ->giveLength(
+                        AssertInteger::new()
+                            ->assertMinimum(1)
+                            ->assertMaximum(64)
+                    )
+                    ->thenAssignTo($name)
+            )
+            ->givePropertyValue(
+                'birthday',
+                ConvertToDateTime::fromSourceFormat(
+                    '!Y-m-d', new \DateTimeZone('UTC'),
+                    'The provided birthday is not a valid date'
+                )
+                    ->setTimezone(new \DateTimeZone('UTC'))
+                    ->thenAssignTo($birthday)
+            )
+    );
+    
+$result = $parser->parse(Subject::default($sourceValue, 'Input', false));
+
+if ($result->hasErrors()) {
+    foreach ($result->getErrors() as $error) {
+        echo $error->getPathAsString(), ': ', $error->getMessage(), PHP_EOL;
+    }
+    exit;
+}
+
+$today = new \DateTime();
+$delta = $today->diff($birthday);
+if ($today < $birthday) {
+    echo "$name will be born in ", $delta->y, " years", PHP_EOL;
+} else {
+    echo "$name was born ", $delta->y, " years ago", PHP_EOL;
+}
+```
+
+If you execute this code the result will be `Frank herbert was born 101 years ago` (at least on the date of this typing).
+
+Would you change the input to `{"name":123,"birthday":"1920-10-0f"}`, the result would be:
+```text
+Input.name: Provided value is not of type string
+Input.birthday: The provided birthday is not a valid date
+```
+
 ## What if something is missing?
 
 Fear not! All parsers implement `Philiagus\Parser\Contract\Parser`, so you can easily write your own to fit your
-specific need.
+specific need. Check out `Philiagus\Parser\Base\Parser` for a base class you can easily extend.
+
+Some hints:
+- If your parser validates a type (example: a parser the reads an XML, so non-strings are a no go), the `Philiagus\Parser\Base\OverwritableTypeErrorMessage`-Trait might help
+- The `Philiagus\Parser\Base\Parser` already implements basic things such as chaining using `->then($parser)` among other things, so you don't have to worry about that
+- If you need more control over the behaviour of the parser or just don't like the `ResultBuilder`, you only need to implement the `Philiagus\Parser\Contract\Parser`-Interface to be interoperable with other parsers. Just be aware that you MUST
+  - create a `ParserBegin` subject when you enter the parser, wrapping the provided subject into another subject to ensure that the value chain is upheld
+  - respect the `throwOnError()` info of the subject: If an error occurs and `throwOnError()` is active, you have to throw the Error (most times using `$error->throw()`). Accordingly, if `throwOnError()` is not active you have to add the Errors to the Result object.

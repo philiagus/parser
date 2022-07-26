@@ -149,7 +149,7 @@ class Parser implements Argument
                 $parser->expect(
                     fn() => true,
                     fn() => true,
-                    function (Subject $subject) use ($errorCollection) {
+                    function (\Philiagus\Parser\Contract\Subject $subject) use ($errorCollection) {
                         $message = uniqid(microtime());
                         $error = new Error($subject, $message);
                         if (!$this->errorWillBeHidden) {

@@ -21,6 +21,7 @@ use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\MetaInformation;
+use Philiagus\Parser\Contract;
 
 class AssertStringRegex extends Base\Parser
 {
@@ -57,9 +58,7 @@ class AssertStringRegex extends Base\Parser
     }
 
     /**
-     * Defines the pattern to be matched against with this regular expression.
-     * This methods must be called in order for the parser to work correctly.
-     * The method can only be called once
+     * Overwrites the pattern to be matched against with this regular expression.
      *
      *
      * The exception message is processed using Debug::parseMessage and receives the following elements:
@@ -217,7 +216,7 @@ class AssertStringRegex extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
     {
         $value = $builder->getValue();
         if (!is_string($value)) {
@@ -296,7 +295,7 @@ class AssertStringRegex extends Base\Parser
         return 'Provided value is not of type string';
     }
 
-    protected function getDefaultParserDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return "assert string regex";
     }

@@ -19,6 +19,7 @@ use Philiagus\Parser\Exception;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Contract;
 
 class AssertNumber extends Base\Parser
 {
@@ -112,7 +113,7 @@ class AssertNumber extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
     {
         $value = $builder->getValue();
         if (
@@ -134,7 +135,7 @@ class AssertNumber extends Base\Parser
         return 'Provided value is not of float or integer';
     }
 
-    protected function getDefaultParserDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'asset number';
     }

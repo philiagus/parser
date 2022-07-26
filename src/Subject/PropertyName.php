@@ -17,7 +17,7 @@ use Philiagus\Parser\Base\Subject;
 class PropertyName extends Subject
 {
 
-    public function __construct(Subject $sourceSubject, string $propertyName)
+    public function __construct(\Philiagus\Parser\Contract\Subject $sourceSubject, string $propertyName)
     {
         parent::__construct($sourceSubject, $propertyName, $propertyName, false, null);
     }

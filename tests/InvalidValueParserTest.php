@@ -42,7 +42,7 @@ trait InvalidValueParserTest
     ): void
     {
         try {
-            /** @var Result $result */
+            /** @var \Philiagus\Parser\Contract\Result $result */
             $result = $parser($value)->parse(Subject::default($value, throwOnError: $throw));
         } catch (\Throwable $exception) {
 
@@ -74,7 +74,7 @@ trait InvalidValueParserTest
         string|\Closure $expectedException = ParsingException::class
     ): void
     {
-        /** @var Result $result */
+        /** @var \Philiagus\Parser\Contract\Result $result */
         $result = $parser($value)->parse(Subject::default($value, throwOnError: false));
         self::assertFalse($result->isSuccess());
         self::assertNotEmpty($result->getErrors());

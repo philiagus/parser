@@ -18,13 +18,13 @@ class TestCase
 {
 
     public function __construct(
-        private readonly bool            $success,
-        private readonly bool            $throw,
-        private readonly Subject         $subject,
-        private readonly \Closure        $parserBuilder,
-        private readonly \Closure        $resultValidator,
-        private readonly ErrorCollection $errorCollection,
-        private readonly array           $usedArguments
+        private readonly bool                               $success,
+        private readonly bool                               $throw,
+        private readonly \Philiagus\Parser\Contract\Subject $subject,
+        private readonly \Closure                           $parserBuilder,
+        private readonly \Closure                           $resultValidator,
+        private readonly ErrorCollection                    $errorCollection,
+        private readonly array                              $usedArguments
     )
     {
 

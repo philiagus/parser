@@ -18,6 +18,10 @@ use Philiagus\Parser\Contract;
 use Philiagus\Parser\Result;
 
 
+/**
+ * Parser used to chain multiple parsers after one another, feeding the result of the previous parser
+ * to the next. The chain is broken when a parsers result has errors.
+ */
 class Chain implements Contract\Parser, Contract\Chainable
 {
     use Chainable;
@@ -30,6 +34,14 @@ class Chain implements Contract\Parser, Contract\Chainable
         $this->parsers = [$parser, ...$parsers];
     }
 
+    /**
+     * Chains the provided list of parsers after one another, feeding the result of the previous parser
+     * to the next. The chain is broken when a parsers result has errors.
+     * @param Contract\Parser $parser
+     * @param Contract\Parser ...$parsers
+     *
+     * @return static
+     */
     public static function parsers(Contract\Parser $parser, Contract\Parser ...$parsers): self
     {
         return new self($parser, ...$parsers);
@@ -38,7 +50,7 @@ class Chain implements Contract\Parser, Contract\Chainable
     /**
      * @inheritDoc
      */
-    public function parse(Subject $subject): Result
+    public function parse(Contract\Subject $subject): \Philiagus\Parser\Contract\Result
     {
         foreach ($this->parsers as $parser) {
             $subject = $parser->parse($subject);

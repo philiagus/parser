@@ -16,7 +16,7 @@ use Philiagus\Parser\Base\Subject;
 
 class ArrayKey extends Subject
 {
-    public function __construct(Subject $sourceSubject, int|string $arrayKey)
+    public function __construct(\Philiagus\Parser\Contract\Subject $sourceSubject, int|string $arrayKey)
     {
         parent::__construct($sourceSubject, (string) $arrayKey, $arrayKey, false, null);
     }

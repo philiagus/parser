@@ -31,9 +31,12 @@ class ParsingException extends \Exception
     }
 
     /**
+     * Returns the path string of the subject the error in this parsing exception was targeting
+     *
      * @param bool $includeUtility
      *
      * @return string
+     * @see Subject::getPathAsString()
      */
     public function getPathAsString(bool $includeUtility = false): string
     {
@@ -41,14 +44,18 @@ class ParsingException extends \Exception
     }
 
     /**
-     * @return Subject
+     * Returns the subject that this error was identified on
+     *
+     * @return \Philiagus\Parser\Contract\Subject
      */
-    public function getSubject(): Subject
+    public function getSubject(): \Philiagus\Parser\Contract\Subject
     {
         return $this->error->getSubject();
     }
 
     /**
+     * Returns the error that lead to this exception
+     *
      * @return Error
      */
     public function getError(): Error

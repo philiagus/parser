@@ -17,6 +17,7 @@ use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
+use Philiagus\Parser\Contract;
 
 class AssertScalar extends Base\Parser
 {
@@ -37,7 +38,7 @@ class AssertScalar extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
     {
         if (!is_scalar($builder->getValue())) {
             $this->logTypeError($builder);
@@ -51,7 +52,7 @@ class AssertScalar extends Base\Parser
         return 'Provided value is not scalar';
     }
 
-    protected function getDefaultParserDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'asset scalar';
     }

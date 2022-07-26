@@ -19,6 +19,7 @@ use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Contract;
 
 class ParseJSONString extends Base\Parser
 {
@@ -115,7 +116,7 @@ class ParseJSONString extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
     {
         $value = $builder->getValue();
         if (!is_string($value)) {
@@ -152,7 +153,7 @@ class ParseJSONString extends Base\Parser
         return 'Provided value is not a string and thus not a valid JSON';
     }
 
-    protected function getDefaultParserDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'parse as JSON';
     }

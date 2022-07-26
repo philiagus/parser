@@ -14,13 +14,13 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Mock;
 
 use Philiagus\DataProvider\DataProvider;
-use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\ParserTestBase\ErrorCollection;
 use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Contract;
 
 class ParserMock implements Parser
 {
@@ -32,7 +32,7 @@ class ParserMock implements Parser
         $this->expect(
             fn() => true,
             fn() => true,
-            static function (Subject $subject) use ($errorCollection) {
+            static function (Contract\Subject $subject) use ($errorCollection) {
                 $message = uniqid(microtime());
                 $error = new Error($subject, $message);
                 $errorCollection?->add($error->getMessage());
@@ -56,24 +56,24 @@ class ParserMock implements Parser
     ): self
     {
         $this->expectedCalls[] = [
-            'value' => $value instanceof \Closure ? $value : static function (Subject $subject) use ($value): void {
+            'value' => $value instanceof \Closure ? $value : static function (Contract\Subject $subject) use ($value): void {
                 if (!DataProvider::isSame($subject->getValue(), $value)) {
                     throw new \RuntimeException("Value does not match " . Debug::stringify($subject->getValue()) . " <-> " . Debug::stringify($value));
                 }
             },
-            'path' => $pathType instanceof \Closure ? $pathType : static function (Subject $subject) use ($pathType) {
+            'path' => $pathType instanceof \Closure ? $pathType : static function (Contract\Subject $subject) use ($pathType) {
                 if (!$subject instanceof $pathType) {
                     throw new \RuntimeException("Path type " . $subject::class . " does not match expected $pathType");
                 }
             },
-            'result' => $result ?? static fn(Subject $subject) => new Result($subject, $subject->getValue(), []),
+            'result' => $result ?? static fn(Contract\Subject $subject) => new Result($subject, $subject->getValue(), []),
             'count' => $count,
         ];
 
         return $this;
     }
 
-    public function parse(Subject $subject): Result
+    public function parse(Contract\Subject $subject): Contract\Result
     {
         $next = array_shift($this->expectedCalls);
         if (!$next) {
@@ -95,7 +95,7 @@ class ParserMock implements Parser
         return $this->expect(
             fn() => true,
             fn() => true,
-            static fn(Subject $subject) => new Result($subject, $subject->getValue(), []),
+            static fn(Contract\Subject $subject) => new Result($subject, $subject->getValue(), []),
             $times ?? INF,
         );
     }

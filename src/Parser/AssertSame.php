@@ -16,6 +16,7 @@ use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
+use Philiagus\Parser\Contract;
 
 class AssertSame extends Base\Parser
 {
@@ -41,7 +42,7 @@ class AssertSame extends Base\Parser
     /**
      * @inheritDoc
      */
-    protected function execute(ResultBuilder $builder): Result
+    protected function execute(ResultBuilder $builder): \Philiagus\Parser\Contract\Result
     {
         if ($builder->getValue() !== $this->value) {
             $builder->logErrorUsingDebug(
@@ -53,7 +54,7 @@ class AssertSame extends Base\Parser
         return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultParserDescription(Subject $subject): string
+    protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'assert same';
     }

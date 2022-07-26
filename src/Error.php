@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser;
 
-use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
 
@@ -20,16 +19,16 @@ class Error implements Contract\Error
 {
 
     /**
-     * @param Subject $subject
+     * @param Contract\Subject $subject
      * @param string $message
      * @param \Throwable|null $sourceThrowable
      * @param array $sourceErrors
      */
     public function __construct(
-        private readonly Subject     $subject,
-        private readonly string      $message,
-        private readonly ?\Throwable $sourceThrowable = null,
-        private readonly array       $sourceErrors = []
+        private readonly Contract\Subject $subject,
+        private readonly string                             $message,
+        private readonly ?\Throwable                        $sourceThrowable = null,
+        private readonly array                              $sourceErrors = []
     )
     {
         foreach ($sourceErrors as $sourceError) {
@@ -44,22 +43,22 @@ class Error implements Contract\Error
     /**
      * Creates the error using Debug::parseMessage with $message and $replacers
      *
-     * @see Debug::parseMessage()
-     *
-     * @param Subject $subject
+     * @param Contract\Subject $subject
      * @param string $message
      * @param array $replacers
      * @param \Throwable|null $sourceThrowable
      * @param array $sourceErrors
      *
      * @return static
+     * @see Debug::parseMessage()
+     *
      */
     public static function createUsingDebugString(
-        Subject     $subject,
-        string      $message,
-        array       $replacers = [],
-        ?\Throwable $sourceThrowable = null,
-        array       $sourceErrors = []
+        Contract\Subject $subject,
+        string                             $message,
+        array                              $replacers = [],
+        ?\Throwable                        $sourceThrowable = null,
+        array                              $sourceErrors = []
     ): self
     {
         return new self(
@@ -72,7 +71,7 @@ class Error implements Contract\Error
 
 
     /**
-     * Returns the error message
+     * The message describing the error
      *
      * @return string
      */
@@ -82,9 +81,7 @@ class Error implements Contract\Error
     }
 
     /**
-     * Throws the error as a ParsingException
-     * @return never
-     * @throws ParsingException
+     * @inheritDoc
      */
     public function throw(): never
     {
@@ -92,15 +89,15 @@ class Error implements Contract\Error
     }
 
     /**
-     * @return Subject
+     * @inheritDoc
      */
-    public function getSubject(): Subject
+    public function getSubject(): Contract\Subject
     {
         return $this->subject;
     }
 
     /**
-     * @return \Throwable|null
+     * @inheritDoc
      */
     public function getSourceThrowable(): ?\Throwable
     {
@@ -108,7 +105,7 @@ class Error implements Contract\Error
     }
 
     /**
-     * @return Error[]
+     * @inheritDoc
      */
     public function getSourceErrors(): array
     {
@@ -116,7 +113,7 @@ class Error implements Contract\Error
     }
 
     /**
-     * @return bool
+     * @inheritDoc
      */
     public function hasSourceErrors(): bool
     {
@@ -124,10 +121,18 @@ class Error implements Contract\Error
     }
 
     /**
-     * @return bool
+     * @inheritDoc
      */
     public function hasSourceThrowable(): bool
     {
         return isset($this->sourceThrowable);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPathAsString(bool $includeUtility = false): string
+    {
+        return $this->subject->getPathAsString($includeUtility);
     }
 }
