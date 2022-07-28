@@ -14,12 +14,10 @@ namespace Philiagus\Parser\Test\Unit\Base;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\OverwritableParserDescription;
-use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
-use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Util\Debug;
-use Philiagus\Parser\Contract;
 
 /**
  * @covers \Philiagus\Parser\Base\OverwritableParserDescription

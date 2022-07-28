@@ -13,11 +13,10 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
-use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\Utility\Forwarded;
-use Philiagus\Parser\Contract;
 
 
 /**

@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test;
 
-use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;

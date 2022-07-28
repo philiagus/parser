@@ -12,14 +12,13 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\ParserTestBase\Argument;
 
-use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\Mock\ParserMock;
 use Philiagus\Parser\Test\ParserTestBase\Argument;
 use Philiagus\Parser\Test\ParserTestBase\ErrorCollection;
-use Philiagus\Parser\Contract;
 
 class Parser implements Argument
 {

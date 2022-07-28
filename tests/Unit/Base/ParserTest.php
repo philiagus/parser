@@ -15,13 +15,13 @@ namespace Philiagus\Parser\Test\Unit\Base;
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Chainable;
-use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Util\Debug;
-use Philiagus\Parser\Contract;
+
 /**
  * @covers \Philiagus\Parser\Base\Parser
  */

@@ -15,9 +15,8 @@ namespace Philiagus\Parser\Test;
 use DateTimeInterface;
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Result;
-use Philiagus\Parser\Util\Debug;
 use Philiagus\Parser\Contract;
+use Philiagus\Parser\Util\Debug;
 
 trait ValidValueParserTest
 {

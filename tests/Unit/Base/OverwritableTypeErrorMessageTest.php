@@ -15,6 +15,7 @@ namespace Philiagus\Parser\Test\Unit\Base;
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
 use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
@@ -22,7 +23,6 @@ use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
-use Philiagus\Parser\Contract;
 
 /**
  * @covers \Philiagus\Parser\Base\OverwritableTypeErrorMessage

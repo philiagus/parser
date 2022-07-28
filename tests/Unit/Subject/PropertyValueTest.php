@@ -14,7 +14,6 @@ namespace Philiagus\Parser\Test\Unit\Subject;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Subject\ArrayValue;
 use Philiagus\Parser\Subject\PropertyValue;
 use Philiagus\Parser\Test\SubjectTestBase;
 use Philiagus\Parser\Test\Util;

@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test;
 
-abstract class SubjectTestBase extends TestBase {
+abstract class SubjectTestBase extends TestBase
+{
 
 }

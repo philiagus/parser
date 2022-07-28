@@ -13,9 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
-use Philiagus\Parser\Result;
 
 
 /**
@@ -37,6 +35,7 @@ class Chain implements Contract\Parser, Contract\Chainable
     /**
      * Chains the provided list of parsers after one another, feeding the result of the previous parser
      * to the next. The chain is broken when a parsers result has errors.
+     *
      * @param Contract\Parser $parser
      * @param Contract\Parser ...$parsers
      *

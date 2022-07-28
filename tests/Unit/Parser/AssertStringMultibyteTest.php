@@ -18,8 +18,8 @@ use Philiagus\Parser\Parser\AssertStringMultibyte;
 use Philiagus\Parser\Subject\MetaInformation;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
-use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\OverwritableTypeErrorMessageTest;
+use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
 
 /**

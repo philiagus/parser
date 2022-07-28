@@ -12,11 +12,9 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\Unit\Exception;
 
-use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Error;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Test\TestBase;
-use Philiagus\Parser\Contract;
 
 class ParsingExceptionTest extends TestBase
 {

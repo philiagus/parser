@@ -15,7 +15,7 @@ namespace Philiagus\Parser;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
 
-final class Error implements Contract\Error
+class Error implements Contract\Error
 {
 
     /**
@@ -26,9 +26,9 @@ final class Error implements Contract\Error
      */
     public function __construct(
         private readonly Contract\Subject $subject,
-        private readonly string                             $message,
-        private readonly ?\Throwable                        $sourceThrowable = null,
-        private readonly array                              $sourceErrors = []
+        private readonly string           $message,
+        private readonly ?\Throwable      $sourceThrowable = null,
+        private readonly array            $sourceErrors = []
     )
     {
         foreach ($sourceErrors as $sourceError) {
@@ -55,10 +55,10 @@ final class Error implements Contract\Error
      */
     public static function createUsingDebugString(
         Contract\Subject $subject,
-        string                             $message,
-        array                              $replacers = [],
-        ?\Throwable                        $sourceThrowable = null,
-        array                              $sourceErrors = []
+        string           $message,
+        array            $replacers = [],
+        ?\Throwable      $sourceThrowable = null,
+        array            $sourceErrors = []
     ): Error
     {
         return new Error(

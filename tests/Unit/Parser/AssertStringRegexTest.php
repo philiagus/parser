@@ -20,8 +20,8 @@ use Philiagus\Parser\Exception\RuntimeParserConfigurationException;
 use Philiagus\Parser\Parser\AssertStringRegex;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
-use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\OverwritableTypeErrorMessageTest;
+use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
 
 /**

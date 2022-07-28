@@ -12,16 +12,13 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\Unit\Base;
 
-use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Chainable;
-use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Parser\Any;
 use Philiagus\Parser\Parser\Extraction\Append;
 use Philiagus\Parser\Parser\Extraction\Assign;
 use Philiagus\Parser\Parser\Logic\Chain;
 use Philiagus\Parser\Result;
-use Philiagus\Parser\Util\Debug;
 use PHPUnit\Framework\TestCase;
 
 /**

@@ -17,7 +17,6 @@ use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
 

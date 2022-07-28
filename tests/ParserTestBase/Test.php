@@ -14,10 +14,9 @@ namespace Philiagus\Parser\Test\ParserTestBase;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Contract\Parser;
-use Philiagus\Parser\Result;
-use Philiagus\Parser\Util\Debug;
 use Philiagus\Parser\Contract;
+use Philiagus\Parser\Contract\Parser;
+use Philiagus\Parser\Util\Debug;
 
 class Test
 {

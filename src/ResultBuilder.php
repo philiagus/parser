@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser;
 
-use Philiagus\Parser\Base;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Subject;

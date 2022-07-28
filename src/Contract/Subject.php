@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Contract;
 
+use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\ResultBuilder;
 
 interface Subject
@@ -55,21 +56,37 @@ interface Subject
     public function getResultBuilder(string $description): ResultBuilder;
 
     /**
+     * Returns true if the subject wants parsers to throw a ParsingException on Error instead of
+     * adding the error to the result
+     *
      * @return bool
+     * @see Error
+     * @see ParsingException
+     * @see Result
      */
     public function throwOnError(): bool;
 
     /**
+     * Returns the subject this subject is based on, or NULL if this subject has no parent subject
+     *
      * @return null|Subject
      */
     public function getSourceSubject(): ?Subject;
 
     /**
+     * Returns the string description of this subject. Please be aware
+     * that this string description is the raw description. This description is
+     * wrapped into a subject specific string when used in the context of the
+     * getPathAsString() method
+     *
      * @return string
+     * @see getPathAsString()
      */
     public function getDescription(): string;
 
     /**
+     * Returns true if this subject is a utility subject
+     *
      * @return bool
      */
     public function isUtilitySubject(): bool;

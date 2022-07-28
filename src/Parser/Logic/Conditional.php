@@ -13,16 +13,14 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base;
-use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception;
-use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\Utility\Forwarded;
 use Philiagus\Parser\Subject\Utility\Test;
 use Philiagus\Parser\Util\Debug;
-use Philiagus\Parser\Contract;
 
 /**
  * This parser allows to set match the provided value against configured values and - on match - call a

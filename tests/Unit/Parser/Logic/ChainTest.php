@@ -14,12 +14,12 @@ namespace Philiagus\Parser\Test\Unit\Parser\Logic;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Parser\Any;
 use Philiagus\Parser\Parser\Logic\Chain;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\ParserTestBase;
-use Philiagus\Parser\Contract;
 
 /**
  * @covers \Philiagus\Parser\Parser\Logic\Chain

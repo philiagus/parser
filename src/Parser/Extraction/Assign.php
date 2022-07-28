@@ -16,10 +16,8 @@ namespace Philiagus\Parser\Parser\Extraction;
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Chainable;
 use Philiagus\Parser\Base\OverwritableParserDescription;
-use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Result;
-use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
+use Philiagus\Parser\ResultBuilder;
 
 
 /**

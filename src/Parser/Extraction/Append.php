@@ -13,9 +13,8 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Extraction;
 
 use Philiagus\Parser\Base;
-use Philiagus\Parser\Result;
-use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
+use Philiagus\Parser\ResultBuilder;
 
 /**
  * Whenever this parser is called the value received by this parser is appended to the provided target

@@ -14,6 +14,7 @@ namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\ParseStdClass;
@@ -22,10 +23,9 @@ use Philiagus\Parser\Subject\PropertyName;
 use Philiagus\Parser\Subject\PropertyValue;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
-use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\OverwritableTypeErrorMessageTest;
+use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
-use Philiagus\Parser\Contract;
 
 /**
  * @covers \Philiagus\Parser\Parser\ParseStdClass

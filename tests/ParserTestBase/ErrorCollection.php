@@ -12,10 +12,9 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\ParserTestBase;
 
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Result;
-use Philiagus\Parser\Contract;
 
 class ErrorCollection
 {

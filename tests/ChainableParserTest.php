@@ -14,7 +14,6 @@ namespace Philiagus\Parser\Test;
 
 use DateTimeInterface;
 use Philiagus\DataProvider\DataProvider;
-use Philiagus\Parser\Base\Chainable;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
@@ -27,6 +26,8 @@ use SplDoublyLinkedList;
 trait ChainableParserTest
 {
     use ValidValueParserTest;
+
+    abstract public static function assertTrue($condition, string $message = ''): void;
 
     abstract public function expectException(string $exception): void;
 
@@ -123,6 +124,7 @@ trait ChainableParserTest
 
         Util::assertSame($expectedResult, $result->getValue());
     }
+
     /**
      * @param $value
      * @param \Closure $parser
@@ -145,6 +147,7 @@ trait ChainableParserTest
         Util::assertSame($expected, $result->getValue());
         Util::assertSame($expected, $assignTarget);
     }
+
     /**
      * @param $value
      * @param \Closure $parser
@@ -167,6 +170,7 @@ trait ChainableParserTest
         Util::assertSame($expected, $result->getValue());
         Util::assertSame([$expected], $appendTarget);
     }
+
     /**
      * @param $value
      * @param \Closure $parser
@@ -190,6 +194,7 @@ trait ChainableParserTest
         Util::assertSame($expected, $result->getValue());
         Util::assertSame([$expected], $appendTarget);
     }
+
     /**
      * @param $value
      * @param \Closure $parser
@@ -205,7 +210,7 @@ trait ChainableParserTest
         /** @var Contract\Chainable $parser */
         self::assertInstanceOf(Contract\Chainable::class, $parser);
         /** @var Contract\Result $result */
-        $appendTarget = new \SplDoublyLinkedList();
+        $appendTarget = new SplDoublyLinkedList();
         $result = $parser
             ->thenAppendTo($appendTarget)
             ->parse(Subject::default($value));
@@ -213,7 +218,5 @@ trait ChainableParserTest
         Util::assertSame($expected, $result->getValue());
         Util::assertSame([$expected], iterator_to_array($appendTarget));
     }
-
-    abstract public static function assertTrue($condition, string $message = ''): void;
 
 }

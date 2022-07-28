@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Exception;
 
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Contract\Error;
 use Philiagus\Parser\Contract;
+use Philiagus\Parser\Contract\Error;
 
 /**
  * This exception is supposed to be thrown, when the value as provided by the input does not conform with the parser

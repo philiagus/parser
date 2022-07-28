@@ -14,6 +14,7 @@ namespace Philiagus\Parser\Test\Unit\Parser\Logic;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
@@ -22,7 +23,7 @@ use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\TestBase;
 use Prophecy\Argument;
-use Philiagus\Parser\Contract;
+
 /**
  * @covers \Philiagus\Parser\Parser\Logic\Fork
  */

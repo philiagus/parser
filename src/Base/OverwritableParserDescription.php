@@ -50,13 +50,14 @@ trait OverwritableParserDescription
     protected function createResultBuilder(Subject $subject): ResultBuilder
     {
         return $subject->getResultBuilder(
-                $this->overwritableParserDescription ?? $this->getDefaultParserDescription($subject)
+            $this->overwritableParserDescription ?? $this->getDefaultParserDescription($subject)
         );
     }
 
     /**
      * Provides a default description for this parser used if the description is not overwritten
      * by the user of the parser using the setParserDescription method
+     *
      * @param Subject $subject
      *
      * @return string

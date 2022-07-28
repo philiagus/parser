@@ -12,12 +12,11 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser\Logic;
 
-use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Subject\Utility\ParserBegin;
-use Philiagus\Parser\Contract;
 
 /**
  * Parser that always fails, generating an error with a defined message

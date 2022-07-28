@@ -14,13 +14,13 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Mock;
 
 use Philiagus\DataProvider\DataProvider;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\ParserTestBase\ErrorCollection;
 use Philiagus\Parser\Util\Debug;
-use Philiagus\Parser\Contract;
 
 class ParserMock implements Parser
 {

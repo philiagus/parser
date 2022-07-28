@@ -13,17 +13,15 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base;
-use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
-use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\MetaInformation;
 use Philiagus\Parser\Subject\PropertyName;
 use Philiagus\Parser\Subject\PropertyValue;
 use Philiagus\Parser\Util\Debug;
-use Philiagus\Parser\Contract;
 
 class AssertStdClass extends Base\Parser
 {
@@ -83,22 +81,6 @@ class AssertStdClass extends Base\Parser
         };
 
         return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function execute(ResultBuilder $builder): Contract\Result
-    {
-        if ($builder->getValue() instanceof \stdClass) {
-            foreach ($this->assertionList as $assertion) {
-                $assertion($builder);
-            }
-        } else {
-            $this->logTypeError($builder);
-        }
-
-        return $builder->createResultWithCurrentValue();
     }
 
     /**
@@ -245,6 +227,22 @@ class AssertStdClass extends Base\Parser
         };
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function execute(ResultBuilder $builder): Contract\Result
+    {
+        if ($builder->getValue() instanceof \stdClass) {
+            foreach ($this->assertionList as $assertion) {
+                $assertion($builder);
+            }
+        } else {
+            $this->logTypeError($builder);
+        }
+
+        return $builder->createResultWithCurrentValue();
     }
 
     protected function getDefaultTypeErrorMessage(): string

@@ -15,10 +15,8 @@ namespace Philiagus\Parser\Test\Unit\Subject;
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Subject\ArrayKey;
-use Philiagus\Parser\Subject\Root;
 use Philiagus\Parser\Test\SubjectTestBase;
 use Philiagus\Parser\Test\Util;
-use Philiagus\Parser\Util\Debug;
 
 /**
  * @covers \Philiagus\Parser\Subject\ArrayKey
@@ -46,7 +44,7 @@ class ArrayKeyTest extends SubjectTestBase
     public function testCreation(mixed $value, bool $throwOnError): void
     {
         $root = Subject::default(null, 'ROOT', $throwOnError);
-        $expectedPathPart = preg_match('/\s/', (string)$value)
+        $expectedPathPart = preg_match('/\s/', (string) $value)
             ? " key " . var_export($value, true)
             : " key {$value}";
 
@@ -54,7 +52,7 @@ class ArrayKeyTest extends SubjectTestBase
         Util::assertSame($value, $subject->getValue());
         self::assertFalse($subject->isUtilitySubject());
         self::assertSame($root, $subject->getSourceSubject());
-        self::assertSame((string)$value, $subject->getDescription());
+        self::assertSame((string) $value, $subject->getDescription());
         self::assertSame($throwOnError, $subject->throwOnError());
         self::assertSame("ROOT$expectedPathPart", $subject->getPathAsString(true));
         self::assertSame("ROOT$expectedPathPart", $subject->getPathAsString(false));

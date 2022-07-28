@@ -17,7 +17,6 @@ use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Util\Debug;
-use PHPUnit\Framework\TestCase;
 
 class ErrorTest extends TestBase
 {
@@ -30,12 +29,13 @@ class ErrorTest extends TestBase
      */
     public function test(bool $hasSourceThrowable, bool $hasSourceErrors): void
     {
-        $createError = function() {
+        $createError = function () {
             $subject = $this->prophesize(Subject::class)->reveal();
+
             return new Error($subject, 'MESSAGE');
         };
 
-        if($hasSourceErrors) {
+        if ($hasSourceErrors) {
             $prevErrors = [$createError(), $createError(), $createError()];
         } else {
             $prevErrors = [];

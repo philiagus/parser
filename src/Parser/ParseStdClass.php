@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
-use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception;
@@ -20,13 +20,13 @@ use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\PropertyName;
 use Philiagus\Parser\Subject\PropertyValue;
 use Philiagus\Parser\Util\Debug;
-use Philiagus\Parser\Contract;
 
 class ParseStdClass extends AssertStdClass
 {
 
     /**
      * If the specified property does not exist in the stdClass it is added with the provided value
+     *
      * @param string $property
      * @param mixed $defaultValue
      *

@@ -13,11 +13,10 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test;
 
 use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Debug;
-use Philiagus\Parser\Contract;
 
 trait InvalidValueParserTest
 {
@@ -51,6 +50,7 @@ trait InvalidValueParserTest
         if (!isset($exception)) {
             $resultValue = $result->getValue();
             self::fail('No exception was thrown and parser for ' . Debug::stringify($value) . ' resulted in: ' . Debug::stringify($resultValue));
+
             return;
         }
         if (is_string($expectedException)) {

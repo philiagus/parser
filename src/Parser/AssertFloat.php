@@ -13,13 +13,11 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base;
-use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Exception;
-use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
-use Philiagus\Parser\Contract;
 
 class AssertFloat extends Base\Parser
 {

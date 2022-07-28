@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
-use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Parser\ParseArray;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Subject\ArrayKey;
@@ -22,7 +22,6 @@ use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
 use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\ValidValueParserTest;
-use Philiagus\Parser\Contract;
 
 /**
  * @covers \Philiagus\Parser\Parser\ParseArray

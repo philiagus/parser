@@ -56,16 +56,6 @@ trait OverwritableTypeErrorMessage
     }
 
     /**
-     * Provide the default type error message used to create the error in logTypeError or getTypeError
-     * if the message has not been overwritten
-     *
-     * @return string
-     * @see logTypeError()
-     * @see getTypeError()
-     */
-    abstract protected function getDefaultTypeErrorMessage(): string;
-
-    /**
      * Creates an Error object for the provided subject which represents a type error
      * Please add this error to the returned response or throw it directly, if throwOnError
      * is set for the Subject provided. This method does not throw the error outright and only
@@ -85,5 +75,15 @@ trait OverwritableTypeErrorMessage
             )
         );
     }
+
+    /**
+     * Provide the default type error message used to create the error in logTypeError or getTypeError
+     * if the message has not been overwritten
+     *
+     * @return string
+     * @see logTypeError()
+     * @see getTypeError()
+     */
+    abstract protected function getDefaultTypeErrorMessage(): string;
 
 }

@@ -23,6 +23,7 @@ class Util
         if ($a instanceof \DateTimeInterface && $b instanceof \DateTimeInterface) {
             Assert::assertInstanceOf($a::class, $b);
             Assert::assertSame($a->format('r'), $b->format('r'));
+
             return;
         } elseif (gettype($a) === gettype($b)) {
             if (is_float($a) && is_nan($a)) {
@@ -41,6 +42,7 @@ class Util
                 foreach ($a as $key => $value) {
                     self::assertSame($value, $b[$key]);
                 }
+
                 return;
             }
         }

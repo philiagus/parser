@@ -13,15 +13,13 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base;
-use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\Utility\Forwarded;
 use Philiagus\Parser\Util\Debug;
-use Philiagus\Parser\Contract;
 
 /**
  * Checks that the value provided matches one of the provided values or parsers
@@ -160,8 +158,8 @@ class OneOf extends Base\Parser
         }
 
         if (!empty($this->equalsOptions)) {
-            foreach($this->equalsOptions as $equalsOption) {
-                if($value == $equalsOption) {
+            foreach ($this->equalsOptions as $equalsOption) {
+                if ($value == $equalsOption) {
                     return $builder->createResultUnchanged();
                 }
             }
