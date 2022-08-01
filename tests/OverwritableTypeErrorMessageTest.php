@@ -30,10 +30,15 @@ trait OverwritableTypeErrorMessageTest
     public function testSetTypeErrorMessageDefaultMessage($invalidValue, \Closure $parser): void
     {
         $parser = $parser($invalidValue);
+        /** @var Parser $parser */
         $reflection = $this->assertUsesTypeErrorMessageTrait($parser);
 
         $method = $reflection->getMethod('getDefaultTypeErrorMessage');
         $defaultMessage = $method->invoke($parser);
+
+        $result = $parser->parse(Subject::default($invalidValue, throwOnError: false));
+        self::assertTrue($result->hasErrors());
+        self::assertCount(1, $result->getErrors());
 
         self::expectException(ParsingException::class);
         self::expectExceptionMessage(Debug::parseMessage($defaultMessage, ['subject' => $invalidValue]));
@@ -66,9 +71,15 @@ trait OverwritableTypeErrorMessageTest
     public function testSetTypeErrorMessageOverwrittenMessage($invalidValue, \Closure $parser): void
     {
         $parser = $parser($invalidValue);
+        /** @var Parser $parser */
         $this->assertUsesTypeErrorMessageTrait($parser);
 
         $parser->setTypeErrorMessage('the type is {subject.type}');
+
+        $result = $parser->parse(Subject::default($invalidValue, throwOnError: false));
+        self::assertTrue($result->hasErrors());
+        self::assertCount(1, $result->getErrors());
+
         self::expectException(ParsingException::class);
         self::expectExceptionMessage('the type is ' . Debug::getType($invalidValue));
         $parser->parse(Subject::default($invalidValue));

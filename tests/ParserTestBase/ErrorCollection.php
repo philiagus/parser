@@ -14,18 +14,25 @@ namespace Philiagus\Parser\Test\ParserTestBase;
 
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Error;
+use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 
 class ErrorCollection
 {
 
     private array $errors = [];
+    private bool $configException = false;
 
     public function add(string $message): self
     {
         $this->errors[] = $message;
 
         return $this;
+    }
+
+    public function isConfigExceptionExpected(): bool
+    {
+        return $this->configException;
     }
 
     public function assertException(\Throwable $e): array
@@ -61,6 +68,16 @@ class ErrorCollection
         }
 
         return [];
+    }
+
+    /**
+     * @return $this
+     */
+    public function expectConfigException(): self
+    {
+        $this->configException = true;
+
+        return $this;
     }
 
 }

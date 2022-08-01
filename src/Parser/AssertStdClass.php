@@ -17,6 +17,7 @@ use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
+use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\MetaInformation;
 use Philiagus\Parser\Subject\PropertyName;
@@ -44,8 +45,8 @@ class AssertStdClass extends Base\Parser
     }
 
     /**
-     * Tests that the key exists and performs the parser on the value if present
-     * In case the key does not exist an exception with the specified message is thrown.
+     * Tests that the property exists and performs the parser on the value if present
+     * In case the property does not exist an exception with the specified message is thrown.
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
@@ -107,7 +108,17 @@ class AssertStdClass extends Base\Parser
         return $this;
     }
 
-    public function giveDefaultedPropertyValue(string $property, $default, ParserContract $parser): static
+    /**
+     * Provides the value of the specified property to the parser. If the object does not contain the
+     * property the default value is provided to the parser instead
+     *
+     * @param string $property
+     * @param mixed $default
+     * @param ParserContract $parser
+     *
+     * @return $this
+     */
+    public function giveDefaultedPropertyValue(string $property, mixed $default, ParserContract $parser): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($property, $default, $parser): void {
             $value = $builder->getValue();
@@ -123,6 +134,9 @@ class AssertStdClass extends Base\Parser
     }
 
     /**
+     * Gives the name of every property in the object to the provided parser. That means that the parser
+     * is called once per property in the object
+     *
      * @param ParserContract $arrayParser
      *
      * @return $this
@@ -144,6 +158,13 @@ class AssertStdClass extends Base\Parser
         return $this;
     }
 
+    /**
+     * Provides every the value of every property in the object to the specified parser
+     *
+     * @param ParserContract $arrayParser
+     *
+     * @return $this
+     */
     public function givePropertyValues(ParserContract $arrayParser): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($arrayParser): void {
@@ -224,6 +245,107 @@ class AssertStdClass extends Base\Parser
                     new MetaInformation($builder->getSubject(), 'property count', $count)
                 )
             );
+        };
+
+        return $this;
+    }
+
+    /**
+     * Asserts that the defined list of properties exist in the object. This method ignores surplus properties.
+     * If you want to make sure that no surplus properties exist in the object, please use assertNoSurplusPropertiesExist()
+     *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - subject: The value currently being parsed
+     * - property: The name of the missing property
+     *
+     * @param string[] $expectedPropertyNames
+     * @param string $missingPropertyMassage
+     *
+     * @return $this
+     * @see assertNoSurplusPropertiesExist()
+     */
+    public function assertPropertiesExist(
+        array  $expectedPropertyNames = [],
+        string $missingPropertyMassage = 'Object is missing the property {property}'
+    ): static
+    {
+        self::assertValueIsListOfPropertyNames($expectedPropertyNames);
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($expectedPropertyNames, $missingPropertyMassage): void {
+            $existingProperties = self::extractPropertyNames($builder->getValue());
+
+            foreach ($expectedPropertyNames as $propertyName) {
+                if (!in_array($propertyName, $existingProperties)) {
+                    $builder->logErrorUsingDebug($missingPropertyMassage, ['property' => $propertyName]);
+                }
+            }
+        };
+
+        return $this;
+    }
+
+    /**
+     * @param array $list
+     *
+     * @return void
+     * @throws ParserConfigurationException
+     */
+    protected static function assertValueIsListOfPropertyNames(array $list): void
+    {
+        foreach ($list as $element) {
+            if (!is_string($element)) {
+                throw new ParserConfigurationException("Property names must be provided as string");
+            }
+        }
+    }
+
+    /**
+     * Provides the list of object property names
+     *
+     * @param \stdClass $object
+     *
+     * @return string[]
+     */
+    protected static function extractPropertyNames(\stdClass $object): array
+    {
+        $result = [];
+        foreach ($object as $key => $_) {
+            $result[] = $key;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Asserts that the object does not contain an unexpected properties. This method does not assert that
+     * the provided properties do actually exist. It only makes sure, that no property not listed in the provided
+     * list of property names exists. In order to check that all required properties exist, please use the
+     * assertPropertiesExist() method
+     *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - subject: The value currently being parsed
+     * - property: The name of the surplus property
+     *
+     * @param string[] $expectedPropertyNames
+     * @param string $surplusPropertyMessage
+     *
+     * @return $this
+     * @see Debug::parseMessage()
+     * @see assertPropertiesExist()
+     */
+    public function assertNoSurplusPropertiesExist(
+        array  $expectedPropertyNames = [],
+        string $surplusPropertyMessage = 'Object contains unexpected property {property}'
+    ): static
+    {
+        self::assertValueIsListOfPropertyNames($expectedPropertyNames);
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($expectedPropertyNames, $surplusPropertyMessage): void {
+            $existingProperties = self::extractPropertyNames($builder->getValue());
+
+            foreach ($existingProperties as $propertyName) {
+                if (!in_array($propertyName, $expectedPropertyNames)) {
+                    $builder->logErrorUsingDebug($surplusPropertyMessage, ['property' => $propertyName]);
+                }
+            }
         };
 
         return $this;

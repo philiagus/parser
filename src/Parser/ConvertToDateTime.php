@@ -121,7 +121,7 @@ class ConvertToDateTime extends Base\Parser
             if (!$this->immutable) {
                 $dateTime = \DateTime::createFromImmutable($value);
             }
-        } elseif ((is_string($value) || is_int($value)) && $this->sourceFormat !== null) {
+        } elseif ((is_string($value) || is_int($value) || is_float($value)) && $this->sourceFormat !== null) {
             if ($this->immutable) {
                 $dateTime = @\DateTimeImmutable::createFromFormat($this->sourceFormat, (string) $value, $this->sourceTimezone);
             } else {

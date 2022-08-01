@@ -20,6 +20,8 @@ use Philiagus\Parser\Util\Debug;
 class Evaluated implements Argument
 {
 
+    private const TYPE_SUCCESS = 1, TYPE_ERROR = 2, TYPE_EXCEPTION = 3;
+
     private array $cases = [];
     private string $expectErrorMessage;
 
@@ -27,7 +29,7 @@ class Evaluated implements Argument
     {
         $description ??= count($this->cases);
         $this->cases[$description] = [
-            'success' => true,
+            'type' => self::TYPE_SUCCESS,
             'generator' => $generator,
             'eligible' => $eligible ?? fn() => true,
         ];
@@ -43,7 +45,7 @@ class Evaluated implements Argument
     {
         $description ??= count($this->cases);
         $this->cases[$description] = [
-            'success' => false,
+            'type' => self::TYPE_ERROR,
             'generator' => $generator,
             'eligible' => $eligible ?? fn() => true,
         ];
@@ -60,15 +62,17 @@ class Evaluated implements Argument
 
     public function generate(mixed $subjectValue, array $generatedArgs, array $successes): Generator
     {
-        foreach ($this->cases as $name => ['success' => $success, 'generator' => $generator, 'eligible' => $eligible]) {
+        foreach ($this->cases as $name => ['type' => $type, 'generator' => $generator, 'eligible' => $eligible]) {
             if ($eligible($subjectValue)) {
                 $value = $generator($subjectValue);
                 $name = '#' . $name . ' ' . Debug::stringify($value);
                 yield $name => [
-                    $success,
-                    function (array $generatedArguments, array $successStack, ErrorCollection $errorCollection = null) use ($value, $success) {
-                        if (!$success && isset($this->expectErrorMessage)) {
+                    $type === self::TYPE_SUCCESS,
+                    function (array $generatedArguments, array $successStack, ErrorCollection $errorCollection = null) use ($value, $type) {
+                        if ($type === self::TYPE_ERROR && isset($this->expectErrorMessage)) {
                             $errorCollection?->add($this->expectErrorMessage);
+                        } elseif($type === self::TYPE_EXCEPTION) {
+                            $errorCollection?->expectConfigException();
                         }
 
                         return $value;
@@ -81,5 +85,17 @@ class Evaluated implements Argument
     public function getErrorMeansFail(): bool
     {
         return true;
+    }
+
+    public function configException(\Closure $generator, \Closure $eligible = null, string $description = null): self
+    {
+        $description ??= count($this->cases);
+        $this->cases[$description] = [
+            'type' => self::TYPE_EXCEPTION,
+            'generator' => $generator,
+            'eligible' => $eligible ?? fn() => true,
+        ];
+
+        return $this;
     }
 }

@@ -17,6 +17,7 @@ use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
+use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\ArrayKey;
 use Philiagus\Parser\Subject\ArrayValue;
@@ -150,13 +151,11 @@ class AssertArray extends Base\Parser
         string     $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'
     ): static
     {
+        $key = self::normalizeArrayKey($key);
         $this->assertionList[] = static function (ResultBuilder $builder) use ($key, $parser, $missingKeyExceptionMessage): void {
             $value = $builder->getValue();
             if (!array_key_exists($key, $value)) {
-                $builder->logErrorUsingDebug(
-                    $missingKeyExceptionMessage,
-                    ['key' => $key]
-                );
+                $builder->logErrorUsingDebug($missingKeyExceptionMessage, ['key' => $key]);
 
                 return;
             }
@@ -166,6 +165,27 @@ class AssertArray extends Base\Parser
         };
 
         return $this;
+    }
+
+    /**
+     * Takes a value and tries to convert it to its matching array key
+     * Integers stay unchanged, strings are converted to integer if they contain only that integer with
+     * no leading zeroes, otherwise strings are unchanged
+     * Every other value leads to a ParserConfigurationException
+     *
+     * @param mixed $key
+     *
+     * @return string|int
+     */
+    protected function normalizeArrayKey(mixed $key): string|int
+    {
+        if (is_int($key)) return $key;
+        if (!is_string($key)) {
+            throw new ParserConfigurationException("Array keys can only be int or string");
+        }
+        if (preg_match('/^[1-9]\d*$/', $key)) return (int) $key;
+
+        return $key;
     }
 
     /**
@@ -180,6 +200,7 @@ class AssertArray extends Base\Parser
      */
     public function giveDefaultedValue(int|string $key, mixed $default, ParserContract $parser): static
     {
+        $key = self::normalizeArrayKey($key);
         $this->assertionList[] = static function (ResultBuilder $builder) use ($key, $default, $parser): void {
             $value = $builder->getValue();
             $builder->incorporateResult(
@@ -230,6 +251,7 @@ class AssertArray extends Base\Parser
      */
     public function giveOptionalValue(int|string $key, ParserContract $parser): static
     {
+        $key = self::normalizeArrayKey($key);
         $this->assertionList[] = static function (ResultBuilder $builder) use ($key, $parser): void {
             $value = $builder->getValue();
             if (array_key_exists($key, $value)) {
@@ -238,6 +260,82 @@ class AssertArray extends Base\Parser
                         new ArrayValue($builder->getSubject(), $key, $value[$key])
                     )
                 );
+            }
+        };
+
+        return $this;
+    }
+
+    /**
+     * Asserts that the defined list of keys exist in the array. This method ignores surplus keys.
+     * If you want to make sure that no surplus keys exist in the array, please use assertNoSurplusKeysExist()
+     *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - subject: The value currently being parsed
+     * - key: The key that was found missing
+     *
+     * @param array<int|string> $expectedKeys
+     * @param string $missingKeyMassage
+     *
+     * @return $this
+     * @see assertNoSurplusKeysExist()
+     * @see Debug::parseMessage()
+     */
+    public function assertKeysExist(
+        array  $expectedKeys,
+        string $missingKeyMassage = 'Array is missing the key {key}'
+    ): static
+    {
+        $normalizedKeys = [];
+        foreach ($expectedKeys as $key) {
+            $normalizedKeys[] = self::normalizeArrayKey($key);
+        }
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($normalizedKeys, $missingKeyMassage): void {
+            $value = $builder->getValue();
+
+            foreach ($normalizedKeys as $key) {
+                if (!array_key_exists($key, $value)) {
+                    $builder->logErrorUsingDebug($missingKeyMassage, ['key' => $key]);
+                }
+            }
+        };
+
+        return $this;
+    }
+
+    /**
+     * Asserts that the array does not contain an unexpected keys. This method does not assert that
+     * the provided keys do actually exist. It only makes sure, that no key not listed in the provided
+     * list of keys exists. In order to check that all required keys exist, please use the
+     * assertKeysExists() method
+     *
+     * The message is processed using Debug::parseMessage and receives the following elements:
+     * - subject: The value currently being parsed
+     * - key: The key that was found missing
+     *
+     * @param array<int|string> $expectedKeys
+     * @param string $surplusKeyMessage
+     *
+     * @return $this
+     * @see assertKeysExist()
+     * @see Debug::parseMessage()
+     */
+    public function assertNoSurplusKeysExist(
+        array  $expectedKeys,
+        string $surplusKeyMessage = 'Array contains unexpected key {key}'
+    ): static
+    {
+        $normalizedKeys = [];
+        foreach ($expectedKeys as $key) {
+            $normalizedKeys[] = self::normalizeArrayKey($key);
+        }
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($normalizedKeys, $surplusKeyMessage): void {
+            $value = $builder->getValue();
+
+            foreach (array_keys($value) as $key) {
+                if (!in_array($key, $normalizedKeys)) {
+                    $builder->logErrorUsingDebug($surplusKeyMessage, ['key' => $key]);
+                }
             }
         };
 

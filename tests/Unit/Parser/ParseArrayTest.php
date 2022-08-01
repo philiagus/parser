@@ -21,6 +21,7 @@ use Philiagus\Parser\Subject\ArrayValue;
 use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
 use Philiagus\Parser\Test\ParserTestBase;
+use Philiagus\Parser\Test\Util;
 use Philiagus\Parser\Test\ValidValueParserTest;
 
 /**
@@ -305,6 +306,38 @@ class ParseArrayTest extends ParserTestBase
                     $expectedResult[$methodArgs[0]] .= 'f';
                     if ($result->getValue() !== $expectedResult) {
                         return ['Value was not altered as expected'];
+                    }
+
+                    return [];
+                }
+            );
+        $builder->run();
+    }
+
+    public function testRemoveSurplusElements(): void
+    {
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(fn($value) => [array_key_first($value)], fn($value) => !empty($value))
+                    ->success(fn($value) => [implode('|', array_keys($value)) . '|'])
+                    ->success(fn() => [])
+                    ->configException(fn($value) => [INF])
+                    ->configException(fn($value) => [new \stdClass()])
+            )
+            ->provider(
+                DataProvider::TYPE_ARRAY,
+                successValidator: function (Contract\Subject $subject, Contract\Result $result, array $methodArgs): array {
+                    $expectedResult = array_intersect_key($subject->getValue(), array_flip($methodArgs[0]));
+                    if (!Util::isSame($result->getValue(), $expectedResult)) {
+                        return [
+                            'Value was not altered as expected, from ' .
+                            '[' . implode(', ', array_keys($expectedResult)) . '] expected against ' .
+                            '[' . implode(', ', array_keys($result->getValue())) . ']',
+                        ];
                     }
 
                     return [];

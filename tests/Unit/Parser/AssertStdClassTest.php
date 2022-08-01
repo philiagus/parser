@@ -264,5 +264,73 @@ class AssertStdClassTest extends ParserTestBase
         $builder->run();
     }
 
+    public function testAssertNoSurplusPropertiesExist(): void
+    {
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(fn($value) => array_map('strval', array_keys((array) $value)))
+                    ->error(fn($value) => [], fn($value) => !empty((array) $value))
+                    ->configException(fn($value) => [INF])
+                    ->configException(fn($value) => [new \stdClass()]),
+                $builder
+                    ->messageArgument()
+                    ->withGeneratedElements(
+                        function ($value, array $arguments) {
+                            $properties = array_filter($arguments[0], fn($v) => is_string($v));
+
+                            return array_map(
+                                fn($property) => ['property' => (string) $property],
+                                array_diff(array_keys((array) $value), $properties)
+                            );
+                        }
+                    )
+                    ->expectedWhen(fn($_0, $_1, array $success) => !$success[0])
+            )
+            ->values([
+                (object) ['a' => 1, 'b' => 2],
+                (object) [1, 2],
+                (object) [],
+            ]);
+        $builder->run();
+    }
+
+    public function testAssertPropertiesExist(): void
+    {
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(fn($value) => array_map('strval', array_keys((array) $value)))
+                    ->error(fn($value) => [implode('|', array_keys((array) $value)) . '|'])
+                    ->configException(fn($value) => [INF])
+                    ->configException(fn($value) => [new \stdClass()]),
+                $builder
+                    ->messageArgument()
+                    ->withGeneratedElements(
+                        function ($value, array $arguments) {
+                            $properties = array_filter($arguments[0], fn($v) => is_string($v));
+
+                            return array_map(
+                                fn($property) => ['property' => (string) $property],
+                                array_diff($properties, array_keys((array) $value))
+                            );
+                        }
+                    )
+                    ->expectedWhen(fn($_0, $_1, array $success) => !$success[0])
+            )
+            ->values([
+                (object) ['a' => 1, 'b' => 2],
+                (object) [1, 2],
+                (object) [],
+            ]);
+        $builder->run();
+    }
+
 
 }

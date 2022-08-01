@@ -63,6 +63,7 @@ class Util
         if ($a instanceof \DateTimeInterface && $b instanceof \DateTimeInterface) {
             if ($a::class !== $b::class) return false;
             if ($a->format('r') !== $b->format('r')) return false;
+            return true;
         } elseif (gettype($a) === gettype($b)) {
             if (is_float($a) && is_nan($a)) {
                 return is_nan($b);

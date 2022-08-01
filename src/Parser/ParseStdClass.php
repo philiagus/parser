@@ -203,8 +203,6 @@ class ParseStdClass extends AssertStdClass
                 }
 
                 $builder->incorporateResult($newNameResult);
-
-                $result->$oldName = $propValue;
             }
 
             $builder->setValue('modify each property name', $result);
@@ -238,6 +236,33 @@ class ParseStdClass extends AssertStdClass
             }
 
             $builder->setValue('modify each property value', $result);
+        };
+
+        return $this;
+    }
+
+    /**
+     * Removes all properties form the object, whose name is not listed in the provided list of expected property names.
+     * This does not assert, that the list of expected properties is actually present! It only removes
+     * unexpected properties. In order to assert that a list of expected properties is present, please use the
+     * assertPropertiesExist() method
+     *
+     * @param string[] $propertyNameWhitelist Accept these property names
+     *
+     * @return $this
+     * @see assertPropertiesExist()
+     */
+    public function removeSurplusProperties(array $propertyNameWhitelist): static
+    {
+        self::assertValueIsListOfPropertyNames($propertyNameWhitelist);
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($propertyNameWhitelist): void {
+            $newObject = new \stdClass();
+            foreach ($builder->getValue() as $propertyName => $propertyValue) {
+                if (in_array($propertyName, $propertyNameWhitelist, true)) {
+                    $newObject->$propertyName = $propertyValue;
+                }
+            }
+            $builder->setValue('removed unknown properties', $newObject);
         };
 
         return $this;

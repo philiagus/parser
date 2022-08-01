@@ -25,6 +25,7 @@ use Philiagus\Parser\Test\ChainableParserTest;
 use Philiagus\Parser\Test\InvalidValueParserTest;
 use Philiagus\Parser\Test\OverwritableTypeErrorMessageTest;
 use Philiagus\Parser\Test\ParserTestBase;
+use Philiagus\Parser\Test\Util;
 use Philiagus\Parser\Test\ValidValueParserTest;
 
 /**
@@ -338,6 +339,42 @@ class ParseStdClassTest extends ParserTestBase
                 }
             )
             ->value((object) []);
+        $builder->run();
+    }
+
+
+    public function testRemoveSurplusProperties(): void
+    {
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(fn($value) => [(string)array_key_first((array) $value)], fn($value) => !empty((array) $value))
+                    ->success(fn($value) => [implode('|', array_keys((array) $value)) . '|'])
+                    ->success(fn() => [])
+                    ->configException(fn($value) => [666])
+            )
+            ->values(
+                [
+                    (object) ['a' => 1, 'b' => 2],
+                    (object) [1, 2],
+                    (object) [],
+                ],
+                successValidator: function (Contract\Subject $subject, Contract\Result $result, array $methodArgs): array {
+                    $expectedResult = (object)array_intersect_key((array) $subject->getValue(), array_flip($methodArgs[0]));
+                    if ($result->getValue() != $expectedResult) {
+                        return [
+                            'Value was not altered as expected, from ' .
+                            '[' . implode(', ', array_keys((array)$expectedResult)) . '] expected against ' .
+                            '[' . implode(', ', array_keys((array)$result->getValue())) . ']',
+                        ];
+                    }
+
+                    return [];
+                }
+            );
         $builder->run();
     }
 }

@@ -234,5 +234,65 @@ class AssertArrayTest extends ParserTestBase
         $builder->run();
     }
 
+    public function testAssertNoSurplusKeysExist(): void
+    {
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(fn($value) => array_keys($value))
+                    ->error(fn($value) => [], fn($value) => !empty($value))
+                    ->configException(fn($value) => [INF])
+                    ->configException(fn($value) => [new \stdClass()]),
+                $builder
+                    ->messageArgument()
+                    ->withGeneratedElements(
+                        function ($value, array $arguments) {
+                            $keys = array_filter($arguments[0], fn($v) => is_scalar($v));
+
+                            return array_map(
+                                fn($key) => ['key' => $key],
+                                array_diff(array_keys($value), $keys)
+                            );
+                        }
+                    )
+                    ->expectedWhen(fn($_0, $_1, array $successes) => !$successes[0])
+            )
+            ->provider(DataProvider::TYPE_ARRAY);
+        $builder->run();
+    }
+
+    public function testAssertKeysExist(): void
+    {
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(fn($value) => array_keys($value))
+                    ->error(fn($value) => [implode('|', array_keys($value)) . '|'])
+                    ->configException(fn($value) => [INF])
+                    ->configException(fn($value) => [new \stdClass()]),
+                $builder
+                    ->messageArgument()
+                    ->withGeneratedElements(
+                        function ($value, array $arguments) {
+                            $keys = array_filter($arguments[0], fn($v) => is_scalar($v));
+
+                            return array_map(
+                                fn($key) => ['key' => $key],
+                                array_diff($keys, array_keys($value))
+                            );
+                        }
+                    )
+                    ->expectedWhen(fn($_0, $_1, array $successes) => !$successes[0])
+            )
+            ->provider(DataProvider::TYPE_ARRAY);
+        $builder->run();
+    }
+
 
 }

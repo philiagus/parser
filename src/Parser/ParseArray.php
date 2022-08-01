@@ -53,6 +53,8 @@ class ParseArray extends AssertArray
     }
 
     /**
+     * Changes every key in the array using the parser. The parser must result in a string or integer, otherwise
+     * an Error is created with the $newKeyIsNotUsableMessage
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - oldKey: The key before parsing it
@@ -114,6 +116,7 @@ class ParseArray extends AssertArray
      */
     public function modifyValue(string|int $key, ParserContract $parser, string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'): static
     {
+        $key = self::normalizeArrayKey($key);
         $this->assertionList[] = static function (ResultBuilder $builder) use ($key, $parser, $missingKeyExceptionMessage): void {
             $value = $builder->getValue();
             if (!array_key_exists($key, $value)) {
@@ -148,6 +151,7 @@ class ParseArray extends AssertArray
      */
     public function defaultKey(int|string $key, mixed $value): static
     {
+        $key = self::normalizeArrayKey($key);
         $this->assertionList[] = static function (ResultBuilder $builder) use ($key, $value): void {
             $array = $builder->getValue();
             if (array_key_exists($key, $array)) {
@@ -205,6 +209,7 @@ class ParseArray extends AssertArray
      */
     public function modifyOptionalValue(int|string $key, ParserContract $parser): static
     {
+        $key = self::normalizeArrayKey($key);
         $this->assertionList[] = static function (ResultBuilder $builder) use ($key, $parser): void {
             $value = $builder->getValue();
             if (!array_key_exists($key, $value)) {
@@ -222,6 +227,31 @@ class ParseArray extends AssertArray
             $value[$key] = $result->getValue();
 
             $builder->setValue("modification of key '$key'", $value);
+        };
+
+        return $this;
+    }
+
+    /**
+     * Removes every element form the array, whose key is not listed in the provided list of expected keys.
+     * This does not assert, that the list of expected keys is actually present! It only removes
+     * unexpected keys. In order to assert that a list of expected keys is present, please use the assertKeysExist()
+     * method
+     *
+     * @param array<int|string> $expectedKeys
+     *
+     * @return $this
+     * @see assertKeysExist()
+     */
+    public function removeSurplusElements(array $expectedKeys): static
+    {
+        $keys = [];
+        foreach ($expectedKeys as $key) {
+            $keys[] = self::normalizeArrayKey($key);
+        }
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($keys): void {
+            $newValue = array_intersect_key($builder->getValue(), array_flip($keys));
+            $builder->setValue('remove surplus keys', $newValue);
         };
 
         return $this;

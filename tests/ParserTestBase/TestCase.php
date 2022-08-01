@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\ParserTestBase;
 
 use Philiagus\Parser\Contract;
+use Philiagus\Parser\Exception\ParserConfigurationException;
 
 class TestCase
 {
@@ -47,11 +48,18 @@ class TestCase
     {
         $errors = [];
 
-        $parser = ($this->parserBuilder)();
         try {
+            $parser = ($this->parserBuilder)();
             $result = $parser->parse($this->subject);
         } catch (\Throwable $e) {
-            $errors = [...$errors, ...$this->errorCollection->assertException($e)];
+            if (
+                $this->errorCollection->isConfigExceptionExpected()
+                && $e instanceof ParserConfigurationException
+            ) {
+                return [];
+            }
+
+            $errors = $this->errorCollection->assertException($e);
             if (!$this->success && $this->throw) {
                 return $errors;
             }
