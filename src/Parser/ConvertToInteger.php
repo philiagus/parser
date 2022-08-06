@@ -19,6 +19,8 @@ use Philiagus\Parser\ResultBuilder;
 
 /**
  * Takes any input and attempts a loss free conversion of the provided value into a valid integer value
+ * Conversion is attempted for floats and strings
+ * Please use other parsers in order to convert input values to strings/floats
  */
 class ConvertToInteger extends Base\Parser
 {

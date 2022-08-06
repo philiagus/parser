@@ -21,8 +21,7 @@ use Philiagus\Parser\Subject\ArrayValue;
 use Philiagus\Parser\Util\Debug;
 
 /**
- * Parser to not only validate an array but also later it by changing its values
- * using further parsers
+ * Parser to not only validate an array but also alter it
  */
 class ParseArray extends AssertArray
 {

@@ -65,7 +65,7 @@ class Result extends Subject implements Contract\Result
         return empty($this->errors)
             ? parent::getValue()
             : throw new \LogicException(
-                "Trying to get result value of not successful path " . $this->getSourceSubject()->getPathAsString(true)
+                "Trying to get result value of failed parsing: " . $this->getSourceSubject()->getPathAsString(true)
             );
     }
 

@@ -42,7 +42,7 @@ class CaseBuilder
                 !empty($targetClass->getMethod('new')->getAttributes())) {
                 Assert::fail("Static new does not exist for class {$matches['class']}");
             }
-            $parserCreation = fn() => $targetClassName::new();
+            $parserCreation = static fn() => $targetClassName::new();
         }
 
         if (func_num_args() < 2) {
@@ -144,7 +144,7 @@ class CaseBuilder
         ) {
             Assert::fail("Static method $methodName does not exist for class {$matches['class']}");
         }
-        $parserCreation = fn($value, array $args) => $targetClassName::$methodName(...$args);
+        $parserCreation = static fn($value, array $args) => $targetClassName::$methodName(...$args);
 
         return $this->tests[] = new Test($parserCreation, null);
     }
