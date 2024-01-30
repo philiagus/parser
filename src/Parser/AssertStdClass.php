@@ -2,7 +2,7 @@
 /*
  * This file is part of philiagus/parser
  *
- * (c) Andreas Bittner <philiagus@philiagus.de>
+ * (c) Andreas Eicher <philiagus@philiagus.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -15,7 +15,6 @@ namespace Philiagus\Parser\Parser;
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
 use Philiagus\Parser\Contract;
-use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\ResultBuilder;
@@ -36,10 +35,7 @@ class AssertStdClass extends Base\Parser
         $this->assertionList = new \SplDoublyLinkedList();
     }
 
-    /**
-     * @return static
-     */
-    public static function new()
+    public static function new(): static
     {
         return new static();
     }
@@ -351,10 +347,8 @@ class AssertStdClass extends Base\Parser
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function execute(ResultBuilder $builder): Contract\Result
+    /** @inheritDoc */
+    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
     {
         if ($builder->getValue() instanceof \stdClass) {
             foreach ($this->assertionList as $assertion) {
@@ -367,12 +361,14 @@ class AssertStdClass extends Base\Parser
         return $builder->createResultWithCurrentValue();
     }
 
-    protected function getDefaultTypeErrorMessage(): string
+    /** @inheritDoc */
+    #[\Override] protected function getDefaultTypeErrorMessage(): string
     {
         return 'Provided value is not an instance of \stdClass';
     }
 
-    protected function getDefaultParserDescription(Contract\Subject $subject): string
+    /** @inheritDoc */
+    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'assert stdClass';
     }

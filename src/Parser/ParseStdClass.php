@@ -1,8 +1,8 @@
 <?php
-/**
+/*
  * This file is part of philiagus/parser
  *
- * (c) Andreas Bittner <philiagus@philiagus.de>
+ * (c) Andreas Eicher <philiagus@philiagus.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Contract;
-use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception;
 use Philiagus\Parser\ResultBuilder;
@@ -252,9 +251,8 @@ class ParseStdClass extends AssertStdClass
      * @return $this
      * @see assertPropertiesExist()
      */
-    public function removeSurplusProperties(array $propertyNameWhitelist): static
+    public function removeSurplusProperties(string ...$propertyNameWhitelist): static
     {
-        self::assertValueIsListOfPropertyNames($propertyNameWhitelist);
         $this->assertionList[] = static function (ResultBuilder $builder) use ($propertyNameWhitelist): void {
             $newObject = new \stdClass();
             foreach ($builder->getValue() as $propertyName => $propertyValue) {
@@ -268,10 +266,8 @@ class ParseStdClass extends AssertStdClass
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function getDefaultParserDescription(Contract\Subject $subject): string
+    /** @inheritDoc */
+    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'parse stdClass';
     }

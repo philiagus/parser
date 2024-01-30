@@ -17,7 +17,7 @@ use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Exception\RuntimeParserConfigurationException;
 use Philiagus\Parser\Parser\Extraction\Assign;
-use Philiagus\Parser\Test\ChainableParserTest;
+use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\TestBase;
 
 /**
@@ -25,7 +25,7 @@ use Philiagus\Parser\Test\TestBase;
  */
 class AssignTest extends TestBase
 {
-    use ChainableParserTest;
+    use ChainableParserTestTrait;
 
     public function provideValidValuesAndParsersAndResults(): array
     {

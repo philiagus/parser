@@ -17,7 +17,7 @@ use Philiagus\Parser\Contract;
 use Philiagus\Parser\Parser\Logic\Preserve;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Subject\Utility\Forwarded;
-use Philiagus\Parser\Test\ChainableParserTest;
+use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\Mock\ParserMock;
 use Philiagus\Parser\Test\ParserTestBase;
 
@@ -27,7 +27,7 @@ use Philiagus\Parser\Test\ParserTestBase;
 class PreserveTest extends ParserTestBase
 {
 
-    use ChainableParserTest;
+    use ChainableParserTestTrait;
 
     public function testAround(): void
     {

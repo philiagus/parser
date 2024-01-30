@@ -2,7 +2,7 @@
 /*
  * This file is part of philiagus/parser
  *
- * (c) Andreas Bittner <philiagus@philiagus.de>
+ * (c) Andreas Eicher <philiagus@philiagus.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -46,10 +46,8 @@ class Chain implements Contract\Parser, Contract\Chainable
         return new static($parser, ...$parsers);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function parse(Contract\Subject $subject): Contract\Result
+    /** @inheritDoc */
+    #[\Override] public function parse(Contract\Subject $subject): Contract\Result
     {
         foreach ($this->parsers as $parser) {
             $subject = $parser->parse($subject);
@@ -59,10 +57,8 @@ class Chain implements Contract\Parser, Contract\Chainable
         return $subject;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function then(Contract\Parser $parser): Chain
+    /** @inheritDoc */
+    #[\Override] public function then(Contract\Parser $parser): Chain
     {
         $this->parsers[] = $parser;
 

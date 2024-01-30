@@ -14,18 +14,18 @@ namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Parser\AssertBoolean;
-use Philiagus\Parser\Test\ChainableParserTest;
-use Philiagus\Parser\Test\InvalidValueParserTest;
-use Philiagus\Parser\Test\OverwritableTypeErrorMessageTest;
+use Philiagus\Parser\Test\ChainableParserTestTrait;
+use Philiagus\Parser\Test\InvalidValueParserTestTrait;
+use Philiagus\Parser\Test\OverwritableTypeErrorMessageTestTrait;
 use Philiagus\Parser\Test\TestBase;
-use Philiagus\Parser\Test\ValidValueParserTest;
+use Philiagus\Parser\Test\ValidValueParserTestTrait;
 
 /**
  * @covers \Philiagus\Parser\Parser\AssertBoolean
  */
 class AssertBooleanTest extends TestBase
 {
-    use ChainableParserTest, ValidValueParserTest, InvalidValueParserTest, OverwritableTypeErrorMessageTest;
+    use ChainableParserTestTrait, ValidValueParserTestTrait, InvalidValueParserTestTrait, OverwritableTypeErrorMessageTestTrait;
 
     public function provideValidValuesAndParsersAndResults(): array
     {

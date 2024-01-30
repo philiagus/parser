@@ -19,7 +19,7 @@ use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Parser\ConvertToEnum;
 use Philiagus\Parser\Test\Mock\BackedEnumMock;
 use Philiagus\Parser\Test\Mock\UnitEnumMock;
-use Philiagus\Parser\Test\OverwritableTypeErrorMessageTest;
+use Philiagus\Parser\Test\OverwritableTypeErrorMessageTestTrait;
 use Philiagus\Parser\Test\ParserTestBase;
 
 /**
@@ -27,7 +27,7 @@ use Philiagus\Parser\Test\ParserTestBase;
  */
 class ConvertToEnumTest extends ParserTestBase
 {
-    use OverwritableTypeErrorMessageTest;
+    use OverwritableTypeErrorMessageTestTrait;
 
     public function testByName(): void
     {
@@ -279,67 +279,5 @@ class ConvertToEnumTest extends ParserTestBase
         }
 
         return $cases;
-    }
-
-    public function testSetDefault(): void
-    {
-        $builder = $this->builder();
-
-        $builder
-            ->test(fn() => ConvertToEnum::byName(UnitEnumMock::class))
-            ->arguments(
-                $builder
-                ->fixedArgument()
-                ->success(UnitEnumMock::VALUE1)
-                ->exception(BackedEnumMock::VALUE1)
-            )
-            ->value(
-                'unmatched',
-                successValidator: function(Subject $subject, Result $result): array {
-                    if($result->getValue() !== UnitEnumMock::VALUE1) {
-                        return ['Value mismatched'];
-                    }
-                    return [];
-                }
-            )
-            ->value(
-                UnitEnumMock::VALUE3->name,
-                successValidator: function(Subject $subject, Result $result): array {
-                    if($result->getValue() !== UnitEnumMock::VALUE3) {
-                        return ['Value mismatched'];
-                    }
-                    return [];
-                }
-            );
-
-
-        $builder
-            ->test(fn() => ConvertToEnum::byValue(BackedEnumMock::class))
-            ->arguments(
-                $builder
-                    ->fixedArgument()
-                    ->success(BackedEnumMock::VALUE1)
-                    ->exception(UnitEnumMock::VALUE1)
-            )
-            ->value(
-                'unmatched',
-                successValidator: function(Subject $subject, Result $result): array {
-                    if($result->getValue() !== BackedEnumMock::VALUE1) {
-                        return ['Value mismatched'];
-                    }
-                    return [];
-                }
-            )
-            ->value(
-                BackedEnumMock::VALUE4->value,
-                successValidator: function(Subject $subject, Result $result): array {
-                    if($result->getValue() !== BackedEnumMock::VALUE4) {
-                        return ['Value mismatched'];
-                    }
-                    return [];
-                }
-            );
-
-        $builder->run();
     }
 }

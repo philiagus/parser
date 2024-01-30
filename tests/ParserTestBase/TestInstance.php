@@ -18,7 +18,7 @@ use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Util\Debug;
 
-class Test
+class TestInstance
 {
     /** @var Argument[] */
     private array $methodArgs = [];
@@ -29,6 +29,7 @@ class Test
     /** @var array<string, \Closure> */
     private array $success = [];
 
+    /** @var array<\Closure> */
     private array $expectError = [];
 
     public function __construct(

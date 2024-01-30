@@ -2,7 +2,7 @@
 /*
  * This file is part of philiagus/parser
  *
- * (c) Andreas Bittner <philiagus@philiagus.de>
+ * (c) Andreas Eicher <philiagus@philiagus.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -21,9 +21,8 @@ use Philiagus\Parser\Subject\Utility\ParserBegin;
 /**
  * Parser that always fails, generating an error with a defined message
  */
-final class Fail implements Parser
+final readonly class Fail implements Parser
 {
-    private string $message;
 
     /**
      * The message is processed using Debug::parseMessage and receives the following elements:
@@ -31,9 +30,8 @@ final class Fail implements Parser
      *
      * @param string $message
      */
-    private function __construct(string $message)
+    private function __construct(private string $message)
     {
-        $this->message = $message;
     }
 
     /**
@@ -51,10 +49,8 @@ final class Fail implements Parser
         return new self($message);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function parse(Contract\Subject $subject): Contract\Result
+    /** @inheritDoc */
+    #[\Override] public function parse(Contract\Subject $subject): Contract\Result
     {
         $subject = new ParserBegin($subject, 'FAIL');
 

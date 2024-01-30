@@ -2,7 +2,7 @@
 /*
  * This file is part of philiagus/parser
  *
- * (c) Andreas Bittner <philiagus@philiagus.de>
+ * (c) Andreas Eicher <philiagus@philiagus.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -29,7 +29,7 @@ use Philiagus\Parser\Util\Debug;
 class Conditional extends Base\Parser
 {
 
-    private const TYPE_SAME = 1,
+    private const int TYPE_SAME = 1,
         TYPE_EQUALS = 2,
         TYPE_SAME_LIST = 3,
         TYPE_EQUALS_LIST = 4,
@@ -128,7 +128,6 @@ class Conditional extends Base\Parser
      */
     public function ifEqualToListElement(array $froms, Parser $to): static
     {
-
         $this->elements[] = [self::TYPE_EQUALS_LIST, array_values($froms), $to];
 
         return $this;
@@ -185,10 +184,8 @@ class Conditional extends Base\Parser
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function execute(ResultBuilder $builder): Contract\Result
+    /** @inheritDoc */
+    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         $errors = [];
@@ -293,11 +290,9 @@ class Conditional extends Base\Parser
         return $builder->createResultUnchanged();
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function getDefaultParserDescription(Contract\Subject $subject): string
+    /** @inheritDoc */
+    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
-        return 'Map';
+        return 'Conditional';
     }
 }

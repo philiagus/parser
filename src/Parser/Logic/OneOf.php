@@ -2,7 +2,7 @@
 /*
  * This file is part of philiagus/parser
  *
- * (c) Andreas Bittner <philiagus@philiagus.de>
+ * (c) Andreas Eicher <philiagus@philiagus.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -55,7 +55,9 @@ class OneOf extends Base\Parser
      */
     public static function nullOr(Parser $parser): static
     {
-        return static::new()->sameAs(null)->parser($parser);
+        return static::new()
+            ->sameAs(null)
+            ->parser($parser);
     }
 
     /**
@@ -139,10 +141,8 @@ class OneOf extends Base\Parser
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function execute(ResultBuilder $builder): Contract\Result
+    /** @inheritDoc */
+    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         $subject = $builder->getSubject();
@@ -158,10 +158,8 @@ class OneOf extends Base\Parser
         }
 
         if (!empty($this->equalsOptions)) {
-            foreach ($this->equalsOptions as $equalsOption) {
-                if ($value == $equalsOption) {
-                    return $builder->createResultUnchanged();
-                }
+            if (in_array($value, $this->equalsOptions)) {
+                return $builder->createResultUnchanged();
             }
 
             $errors[] = new Error($subject, 'Value is not equal to any of the provided values');
@@ -191,10 +189,8 @@ class OneOf extends Base\Parser
         return $builder->createResultUnchanged();
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function getDefaultParserDescription(Contract\Subject $subject): string
+    /** @inheritDoc */
+    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'OneOf';
     }

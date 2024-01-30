@@ -18,7 +18,7 @@ use PHPUnit\Framework\Assert;
 class CaseBuilder
 {
 
-    /** @var Test[] */
+    /** @var TestInstance[] */
     private array $tests = [];
 
     public function __construct()
@@ -26,7 +26,7 @@ class CaseBuilder
 
     }
 
-    public function test(?\Closure $parserCreation = null, ?string $methodName = null): Test
+    public function test(?\Closure $parserCreation = null, ?string $methodName = null): TestInstance
     {
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
         $reflection = new \ReflectionClass($trace[1]['class']);
@@ -53,7 +53,7 @@ class CaseBuilder
             $methodName = lcfirst($matches['method']);
         }
 
-        return $this->tests[] = new Test($parserCreation, $methodName);
+        return $this->tests[] = new TestInstance($parserCreation, $methodName);
     }
 
     public function parserArgument(): Argument\Parser
@@ -122,7 +122,7 @@ class CaseBuilder
         return new Argument\Generated($flags);
     }
 
-    public function testStaticConstructor(): Test
+    public function testStaticConstructor(): TestInstance
     {
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
         $reflection = new \ReflectionClass($trace[1]['class']);
@@ -146,7 +146,7 @@ class CaseBuilder
         }
         $parserCreation = static fn($value, array $args) => $targetClassName::$methodName(...$args);
 
-        return $this->tests[] = new Test($parserCreation, null);
+        return $this->tests[] = new TestInstance($parserCreation, null);
     }
 
 }

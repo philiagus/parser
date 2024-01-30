@@ -14,17 +14,17 @@ namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Parser\AssertEquals;
-use Philiagus\Parser\Test\ChainableParserTest;
-use Philiagus\Parser\Test\InvalidValueParserTest;
+use Philiagus\Parser\Test\ChainableParserTestTrait;
+use Philiagus\Parser\Test\InvalidValueParserTestTrait;
 use Philiagus\Parser\Test\TestBase;
-use Philiagus\Parser\Test\ValidValueParserTest;
+use Philiagus\Parser\Test\ValidValueParserTestTrait;
 
 /**
  * @covers \Philiagus\Parser\Parser\AssertEquals
  */
 class AssertEqualsTest extends TestBase
 {
-    use ChainableParserTest, ValidValueParserTest, InvalidValueParserTest;
+    use ChainableParserTestTrait, ValidValueParserTestTrait, InvalidValueParserTestTrait;
 
     public function provideValidValuesAndParsersAndResults(): array
     {

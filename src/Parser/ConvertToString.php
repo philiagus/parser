@@ -1,8 +1,8 @@
 <?php
-/**
+/*
  * This file is part of philiagus/parser
  *
- * (c) Andreas Bittner <philiagus@philiagus.de>
+ * (c) Andreas Eicher <philiagus@philiagus.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -33,17 +33,15 @@ class ConvertToString extends Base\Parser
 
     /** @var null|array{string, string, null|Parser} */
     private ?array $implode = null;
+    private null|int $numberFormat_Decimals = null;
+    private null|string $numberFormat_ThousandsSeparator = null;
+    private null|string $numberFormat_DecimalSeparator = null;
 
     private function __construct()
     {
 
     }
 
-    /**
-     * Creates a new instance of this parser
-     *
-     * @return static
-     */
     public static function new(): static
     {
         return new static();
@@ -109,9 +107,24 @@ class ConvertToString extends Base\Parser
     }
 
     /**
-     * @inheritDoc
+     * Defines number conversion to use number_format with the provided arguments
+     * @param int $decimals
+     * @param string $decimalSeparator
+     * @param string $thousandsSeparator
+     * @return $this
+     * @see number_format()
      */
-    protected function execute(ResultBuilder $builder): Contract\Result
+    public function setNumberFormat(int $decimals, string $decimalSeparator = '.', string $thousandsSeparator = ','): static
+    {
+        $this->numberFormat_Decimals = $decimals;
+        $this->numberFormat_DecimalSeparator = $decimalSeparator;
+        $this->numberFormat_ThousandsSeparator = $thousandsSeparator;
+
+        return $this;
+    }
+
+    /** @inheritDoc */
+    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         if (is_string($value)) {
@@ -124,7 +137,17 @@ class ConvertToString extends Base\Parser
             case is_float($value):
                 if (is_infinite($value) || is_nan($value)) break;
             case is_int($value):
-                return $builder->createResult((string) $value);
+                if ($this->numberFormat_Decimals !== null) {
+                    return $builder->createResult(
+                        number_format(
+                            $value,
+                            $this->numberFormat_Decimals,
+                            $this->numberFormat_DecimalSeparator,
+                            $this->numberFormat_ThousandsSeparator
+                        )
+                    );
+                }
+                return $builder->createResult((string)$value);
             case is_bool($value):
                 if ($value && $this->trueValue !== null) {
                     return $builder->createResult($this->trueValue);
@@ -175,7 +198,7 @@ class ConvertToString extends Base\Parser
                 break;
             case is_object($value):
                 if ($value instanceof Stringable) {
-                    return $builder->createResult((string) $value);
+                    return $builder->createResult((string)$value);
                 }
                 break;
         }
@@ -185,18 +208,14 @@ class ConvertToString extends Base\Parser
         return $builder->createResultUnchanged();
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function getDefaultTypeErrorMessage(): string
+    /** @inheritDoc */
+    #[\Override] protected function getDefaultTypeErrorMessage(): string
     {
         return 'Variable of type {subject.type} could not be converted to a string';
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function getDefaultParserDescription(Contract\Subject $subject): string
+    /** @inheritDoc */
+    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'convert to string';
     }

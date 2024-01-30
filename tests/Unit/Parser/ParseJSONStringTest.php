@@ -17,10 +17,10 @@ use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\ParseJSONString;
-use Philiagus\Parser\Test\ChainableParserTest;
-use Philiagus\Parser\Test\InvalidValueParserTest;
+use Philiagus\Parser\Test\ChainableParserTestTrait;
+use Philiagus\Parser\Test\InvalidValueParserTestTrait;
 use Philiagus\Parser\Test\TestBase;
-use Philiagus\Parser\Test\ValidValueParserTest;
+use Philiagus\Parser\Test\ValidValueParserTestTrait;
 
 /**
  * @covers \Philiagus\Parser\Parser\ParseJSONString
@@ -28,7 +28,7 @@ use Philiagus\Parser\Test\ValidValueParserTest;
 class ParseJSONStringTest extends TestBase
 {
 
-    use ChainableParserTest, InvalidValueParserTest, ValidValueParserTest;
+    use ChainableParserTestTrait, InvalidValueParserTestTrait, ValidValueParserTestTrait;
 
     public function provideInvalidValuesAndParsers(): array
     {

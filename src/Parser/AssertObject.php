@@ -2,7 +2,7 @@
 /*
  * This file is part of philiagus/parser
  *
- * (c) Andreas Bittner <philiagus@philiagus.de>
+ * (c) Andreas Eicher <philiagus@philiagus.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -21,7 +21,7 @@ class AssertObject extends Base\Parser
 {
     use OverwritableTypeErrorMessage;
 
-    private const DEFAULT_INSTANCEOF_MESSAGE = 'The provided object is not an instance of {class.raw}';
+    private const string DEFAULT_INSTANCEOF_MESSAGE = 'The provided object is not an instance of {class.raw}';
 
     /** @var callable[] */
     private array $checks = [];
@@ -75,11 +75,6 @@ class AssertObject extends Base\Parser
         return $this;
     }
 
-    /**
-     * Creates a new instance of this parser
-     *
-     * @return static
-     */
     public static function new(): static
     {
         return new static();
@@ -113,10 +108,8 @@ class AssertObject extends Base\Parser
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function execute(ResultBuilder $builder): Contract\Result
+    /** @inheritDoc */
+    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         if (!is_object($builder->getValue())) {
@@ -130,12 +123,14 @@ class AssertObject extends Base\Parser
         return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultTypeErrorMessage(): string
+    /** @inheritDoc */
+    #[\Override] protected function getDefaultTypeErrorMessage(): string
     {
         return 'The provided value is not an object';
     }
 
-    protected function getDefaultParserDescription(Contract\Subject $subject): string
+    /** @inheritDoc */
+    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'assert object';
     }

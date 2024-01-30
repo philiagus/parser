@@ -21,19 +21,19 @@ use Philiagus\Parser\Parser\ParseStdClass;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Subject\PropertyName;
 use Philiagus\Parser\Subject\PropertyValue;
-use Philiagus\Parser\Test\ChainableParserTest;
-use Philiagus\Parser\Test\InvalidValueParserTest;
-use Philiagus\Parser\Test\OverwritableTypeErrorMessageTest;
+use Philiagus\Parser\Test\ChainableParserTestTrait;
+use Philiagus\Parser\Test\InvalidValueParserTestTrait;
+use Philiagus\Parser\Test\OverwritableTypeErrorMessageTestTrait;
 use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\Util;
-use Philiagus\Parser\Test\ValidValueParserTest;
+use Philiagus\Parser\Test\ValidValueParserTestTrait;
 
 /**
  * @covers \Philiagus\Parser\Parser\ParseStdClass
  */
 class ParseStdClassTest extends ParserTestBase
 {
-    use ChainableParserTest, ValidValueParserTest, InvalidValueParserTest, OverwritableTypeErrorMessageTest;
+    use ChainableParserTestTrait, ValidValueParserTestTrait, InvalidValueParserTestTrait, OverwritableTypeErrorMessageTestTrait;
 
     public function provideValidValuesAndParsersAndResults(): array
     {
@@ -351,10 +351,8 @@ class ParseStdClassTest extends ParserTestBase
             ->arguments(
                 $builder
                     ->evaluatedArgument()
-                    ->success(fn($value) => [(string)array_key_first((array) $value)], fn($value) => !empty((array) $value))
-                    ->success(fn($value) => [implode('|', array_keys((array) $value)) . '|'])
-                    ->success(fn() => [])
-                    ->configException(fn($value) => [666])
+                    ->success(fn($value) => (string)array_key_first((array) $value), fn($value) => !empty((array) $value))
+                    ->success(fn($value) => implode('|', array_keys((array) $value)) . '|')
             )
             ->values(
                 [
@@ -363,7 +361,7 @@ class ParseStdClassTest extends ParserTestBase
                     (object) [],
                 ],
                 successValidator: function (Contract\Subject $subject, Contract\Result $result, array $methodArgs): array {
-                    $expectedResult = (object)array_intersect_key((array) $subject->getValue(), array_flip($methodArgs[0]));
+                    $expectedResult = (object)array_intersect_key((array) $subject->getValue(), array_flip($methodArgs));
                     if ($result->getValue() != $expectedResult) {
                         return [
                             'Value was not altered as expected, from ' .

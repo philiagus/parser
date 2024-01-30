@@ -18,7 +18,7 @@ use Philiagus\Parser\Contract;
 use Philiagus\Parser\Parser\Any;
 use Philiagus\Parser\Parser\Logic\Chain;
 use Philiagus\Parser\Result;
-use Philiagus\Parser\Test\ChainableParserTest;
+use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\ParserTestBase;
 
 /**
@@ -26,7 +26,7 @@ use Philiagus\Parser\Test\ParserTestBase;
  */
 class ChainTest extends ParserTestBase
 {
-    use ChainableParserTest;
+    use ChainableParserTestTrait;
 
     public function testParsers(): void
     {

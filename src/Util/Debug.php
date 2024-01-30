@@ -1,8 +1,8 @@
 <?php
-/**
+/*
  * This file is part of philiagus/parser
  *
- * (c) Andreas Bittner <philiagus@philiagus.de>
+ * (c) Andreas Eicher <philiagus@philiagus.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -18,12 +18,12 @@ class Debug
     /**
      * Defines the maximum string length
      */
-    private const MAX_STRING_LENGTH = 32;
+    private const int MAX_STRING_LENGTH = 32;
 
     /**
      * List of control characters that can be replaced with corresponding unicode characters
      */
-    private const CONTROL_REPLACERS = [
+    private const array CONTROL_REPLACERS = [
         "\x00" => '␀', "\x01" => '␁', "\x02" => '␂', "\x03" => '␃', "\x04" => '␄',
         "\x05" => '␅', "\x06" => '␆', "\x07" => '␇', "\x08" => '␈', "\x09" => '␉',
         "\x0A" => '␊', "\x0B" => '␋', "\x0C" => '␌', "\x0D" => '␍', "\x0E" => '␎',
@@ -76,17 +76,14 @@ class Debug
                     case 'export':
                         return var_export($value, true);
                     case 'raw':
-                        if (is_array($value)) {
+                        if (is_array($value))
                             return 'Array';
-                        }
-                        if (is_object($value)) {
+                        if (is_object($value))
                             return 'Object';
-                        }
-                        if (is_resource($value)) {
+                        if (is_resource($value))
                             return static::stringify($value);
-                        }
 
-                        return (string) $value;
+                        return (string)$value;
                     default:
                         return $matches[0];
                 }
@@ -107,30 +104,24 @@ class Debug
      */
     public static function getType($value): string
     {
-        if ($value === true) {
+        if ($value === true)
             return 'true';
-        }
 
-        if ($value === false) {
+        if ($value === false)
             return 'false';
-        }
 
-        if ($value === null) {
+        if ($value === null)
             return 'null';
-        }
 
-        if (is_object($value)) {
+        if (is_object($value))
             return 'object<' . get_class($value) . '>';
-        }
 
         if (is_float($value)) {
-            if (is_nan($value)) {
+            if (is_nan($value))
                 return 'NAN';
-            }
 
-            if (is_infinite($value)) {
+            if (is_infinite($value))
                 return $value > 0 ? 'INF' : '-INF';
-            }
 
             return 'float';
         }
@@ -186,7 +177,7 @@ class Debug
                     }
                 }
 
-                return "string<$encoding>({$length})$print";
+                return "string<$encoding>($length)$print";
             case 'array':
                 if (empty($value)) {
                     return 'array(0)';

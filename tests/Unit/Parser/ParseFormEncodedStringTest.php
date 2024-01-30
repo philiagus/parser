@@ -14,10 +14,10 @@ namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Parser\ParseFormEncodedString;
-use Philiagus\Parser\Test\ChainableParserTest;
-use Philiagus\Parser\Test\InvalidValueParserTest;
+use Philiagus\Parser\Test\ChainableParserTestTrait;
+use Philiagus\Parser\Test\InvalidValueParserTestTrait;
 use Philiagus\Parser\Test\TestBase;
-use Philiagus\Parser\Test\ValidValueParserTest;
+use Philiagus\Parser\Test\ValidValueParserTestTrait;
 
 /**
  * @covers \Philiagus\Parser\Parser\ParseFormEncodedString
@@ -25,7 +25,7 @@ use Philiagus\Parser\Test\ValidValueParserTest;
 class ParseFormEncodedStringTest extends TestBase
 {
 
-    use ChainableParserTest, InvalidValueParserTest, ValidValueParserTest;
+    use ChainableParserTestTrait, InvalidValueParserTestTrait, ValidValueParserTestTrait;
 
     public function provideInvalidValuesAndParsers(): array
     {

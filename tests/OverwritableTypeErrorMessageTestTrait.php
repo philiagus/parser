@@ -20,7 +20,7 @@ use Philiagus\Parser\Util\Debug;
 use ReflectionClass;
 use ReflectionObject;
 
-trait OverwritableTypeErrorMessageTest
+trait OverwritableTypeErrorMessageTestTrait
 {
     abstract public function provideInvalidTypesAndParser(): array;
 
@@ -55,15 +55,13 @@ trait OverwritableTypeErrorMessageTest
         } while ($class = $class->getParentClass());
 
         self::fail('Parser does not provide setTypeErrorMessage method');
-
-        return $reflection;
     }
 
     abstract public function expectException(string $exception): void;
 
     abstract public function expectExceptionMessage(string $exception): void;
 
-    abstract public static function fail(string $message): void;
+    abstract public static function fail(string $message): never;
 
     /**
      * @dataProvider provideInvalidTypesAndParser

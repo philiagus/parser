@@ -16,11 +16,11 @@ use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Parser\AssertStringMultibyte;
 use Philiagus\Parser\Subject\MetaInformation;
-use Philiagus\Parser\Test\ChainableParserTest;
-use Philiagus\Parser\Test\InvalidValueParserTest;
-use Philiagus\Parser\Test\OverwritableTypeErrorMessageTest;
+use Philiagus\Parser\Test\ChainableParserTestTrait;
+use Philiagus\Parser\Test\InvalidValueParserTestTrait;
+use Philiagus\Parser\Test\OverwritableTypeErrorMessageTestTrait;
 use Philiagus\Parser\Test\ParserTestBase;
-use Philiagus\Parser\Test\ValidValueParserTest;
+use Philiagus\Parser\Test\ValidValueParserTestTrait;
 
 /**
  * @covers \Philiagus\Parser\Parser\AssertStringMultibyte
@@ -37,7 +37,7 @@ class AssertStringMultibyteTest extends ParserTestBase
         self::ASCII => 'ASCII',
     ];
 
-    use ChainableParserTest, ValidValueParserTest, InvalidValueParserTest, OverwritableTypeErrorMessageTest;
+    use ChainableParserTestTrait, ValidValueParserTestTrait, InvalidValueParserTestTrait, OverwritableTypeErrorMessageTestTrait;
 
     public function provideValidValuesAndParsersAndResults(): array
     {

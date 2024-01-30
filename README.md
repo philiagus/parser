@@ -6,9 +6,9 @@ PHP classes to assert, convert and parse data.
 
 Tested on the following PHP Version:
 
-- PHP8.1
+- PHP8.3
 
-100% test covered. Test coverage generated on PHP8.1
+100% test covered. Test coverage generated on PHP8.3
 
 ## Why do I need it?
 
@@ -84,7 +84,7 @@ ParseArray::new()
 
 ```
 
-Lets say: You have an API which receives requests from a client in JSON format, and you need to find the relevant information.
+Let's say: You have an API which receives requests from a client in JSON format, and you need to find the relevant information.
 
 ```php
 <?php
@@ -149,11 +149,10 @@ Input.birthday: The provided birthday is not a valid date
 
 ## What if something is missing?
 
-Fear not! All parsers implement `Philiagus\Parser\Contract\Parser`, so you can easily write your own to fit your
-specific need. Check out `Philiagus\Parser\Base\Parser` for a base class you can easily extend.
+Fear not! All parsers implement `Philiagus\Parser\Contract\Parser`, so you can easily write your own to fit your specific need. Check out `Philiagus\Parser\Base\Parser` for a base class you can easily extend.
 
 Some hints:
-- If your parser validates a type (example: a parser the reads an XML, so non-strings are a no go), the `Philiagus\Parser\Base\OverwritableTypeErrorMessage`-Trait might help
+- If your parser validates a type (example: a parser the reads an XML, so non-strings are a no-go), the `Philiagus\Parser\Base\OverwritableTypeErrorMessage`-Trait might help
 - The `Philiagus\Parser\Base\Parser` already implements basic things such as chaining using `->then($parser)` among other things, so you don't have to worry about that
 - If you need more control over the behaviour of the parser or just don't like the `ResultBuilder`, you only need to implement the `Philiagus\Parser\Contract\Parser`-Interface to be interoperable with other parsers. Just be aware that you MUST
   - create a `ParserBegin` subject when you enter the parser, wrapping the provided subject into another subject to ensure that the value chain is upheld

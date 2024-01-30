@@ -1,8 +1,8 @@
 <?php
-/**
+/*
  * This file is part of philiagus/parser
  *
- * (c) Andreas Bittner <philiagus@philiagus.de>
+ * (c) Andreas Eicher <philiagus@philiagus.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -19,6 +19,11 @@ use Philiagus\Parser\ResultBuilder;
 class ConvertToArray extends Base\Parser
 {
 
+    /**
+     * null = using array cast
+     * string|int = create array with that key
+     * @var string|int|null
+     */
     private string|int|null $targetedArrayKey = null;
 
     private function __construct()
@@ -53,10 +58,8 @@ class ConvertToArray extends Base\Parser
         return $instance;
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function execute(ResultBuilder $builder): Contract\Result
+    /** @inheritDoc */
+    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         if (is_array($value)) {
@@ -67,13 +70,11 @@ class ConvertToArray extends Base\Parser
             return $builder->createResult([$this->targetedArrayKey => $value]);
         }
 
-        return $builder->createResult((array) $value);
+        return $builder->createResult((array)$value);
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function getDefaultParserDescription(Contract\Subject $subject): string
+    /** @inheritDoc */
+    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         if ($this->targetedArrayKey !== null) {
             return "treated as array, if needed with key '$this->targetedArrayKey'";

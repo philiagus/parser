@@ -18,11 +18,11 @@ use Philiagus\Parser\Parser\ParseArray;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Subject\ArrayKey;
 use Philiagus\Parser\Subject\ArrayValue;
-use Philiagus\Parser\Test\ChainableParserTest;
-use Philiagus\Parser\Test\InvalidValueParserTest;
+use Philiagus\Parser\Test\ChainableParserTestTrait;
+use Philiagus\Parser\Test\InvalidValueParserTestTrait;
 use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\Util;
-use Philiagus\Parser\Test\ValidValueParserTest;
+use Philiagus\Parser\Test\ValidValueParserTestTrait;
 
 /**
  * @covers \Philiagus\Parser\Parser\ParseArray
@@ -30,7 +30,7 @@ use Philiagus\Parser\Test\ValidValueParserTest;
 class ParseArrayTest extends ParserTestBase
 {
 
-    use ChainableParserTest, InvalidValueParserTest, ValidValueParserTest;
+    use ChainableParserTestTrait, InvalidValueParserTestTrait, ValidValueParserTestTrait;
 
     public function provideInvalidValuesAndParsers(): array
     {

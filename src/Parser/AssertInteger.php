@@ -1,8 +1,8 @@
 <?php
-/**
+/*
  * This file is part of philiagus/parser
  *
- * (c) Andreas Bittner <philiagus@philiagus.de>
+ * (c) Andreas Eicher <philiagus@philiagus.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -30,9 +30,6 @@ class AssertInteger extends Base\Parser
         $this->assertionList = new \SplDoublyLinkedList();
     }
 
-    /**
-     * @return static
-     */
     public static function new(): static
     {
         return new static();
@@ -126,10 +123,8 @@ class AssertInteger extends Base\Parser
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function execute(ResultBuilder $builder): Contract\Result
+    /** @inheritDoc */
+    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         if (!is_int($value)) {
@@ -143,12 +138,14 @@ class AssertInteger extends Base\Parser
         return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultTypeErrorMessage(): string
+    /** @inheritDoc */
+    #[\Override] protected function getDefaultTypeErrorMessage(): string
     {
         return 'Provided value is not of type integer';
     }
 
-    protected function getDefaultParserDescription(Contract\Subject $subject): string
+    /** @inheritDoc */
+    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'assert integer';
     }

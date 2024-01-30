@@ -30,9 +30,7 @@ class OneOfChainTest extends TestCase
         $result = OneOf::new()
             ->parser(
                 AssertArray::new()
-                    ->then(
-                        IgnoreInput::resultIn('is array')
-                    )
+                    ->then(IgnoreInput::resultIn('is array'))
             )
             ->parser(
                 AssertInteger::new()

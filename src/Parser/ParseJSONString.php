@@ -1,8 +1,8 @@
 <?php
-/**
+/*
  * This file is part of philiagus/parser
  *
- * (c) Andreas Bittner <philiagus@philiagus.de>
+ * (c) Andreas Eicher <philiagus@philiagus.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser;
 
+use JsonException;
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
 use Philiagus\Parser\Contract;
@@ -41,11 +42,6 @@ class ParseJSONString extends Base\Parser
     {
     }
 
-    /**
-     * Creates a new instance of the parser
-     *
-     * @return static
-     */
     public static function new(): static
     {
         return new static();
@@ -121,10 +117,8 @@ class ParseJSONString extends Base\Parser
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function execute(ResultBuilder $builder): Contract\Result
+    /** @inheritDoc */
+    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         if (!is_string($value)) {
@@ -133,21 +127,23 @@ class ParseJSONString extends Base\Parser
             return $builder->createResultUnchanged();
         }
 
-        $options = 0;
+        $options = JSON_THROW_ON_ERROR;
         if ($this->bigintAsString) {
             $options |= JSON_BIGINT_AS_STRING;
         }
 
-        $result = @json_decode(
-            $value,
-            $this->objectAsArrays ?? false,
-            $this->maxDepth ?? 512,
-            $options
-        );
-        if (json_last_error() !== JSON_ERROR_NONE) {
+        try {
+            $result = json_decode(
+                $value,
+                $this->objectAsArrays ?? false,
+                $this->maxDepth ?? 512,
+                $options
+            );
+        } catch (JsonException $jsonException) {
             $builder->logErrorUsingDebug(
                 $this->conversionExceptionMessage,
-                ['msg' => json_last_error_msg()]
+                ['msg' => json_last_error_msg()],
+                $jsonException
             );
 
             return $builder->createResultUnchanged();
@@ -156,12 +152,14 @@ class ParseJSONString extends Base\Parser
         return $builder->createResult($result);
     }
 
-    protected function getDefaultTypeErrorMessage(): string
+    /** @inheritDoc */
+    #[\Override] protected function getDefaultTypeErrorMessage(): string
     {
         return 'Provided value is not a string and thus not a valid JSON';
     }
 
-    protected function getDefaultParserDescription(Contract\Subject $subject): string
+    /** @inheritDoc */
+    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'parse as JSON';
     }

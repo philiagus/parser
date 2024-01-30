@@ -16,17 +16,17 @@ use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\ParseBase64String;
-use Philiagus\Parser\Test\ChainableParserTest;
-use Philiagus\Parser\Test\InvalidValueParserTest;
+use Philiagus\Parser\Test\ChainableParserTestTrait;
+use Philiagus\Parser\Test\InvalidValueParserTestTrait;
 use Philiagus\Parser\Test\TestBase;
-use Philiagus\Parser\Test\ValidValueParserTest;
+use Philiagus\Parser\Test\ValidValueParserTestTrait;
 
 /**
  * @covers \Philiagus\Parser\Parser\ParseBase64String
  */
 class ParseBase64StringTest extends TestBase
 {
-    use ChainableParserTest, InvalidValueParserTest, ValidValueParserTest;
+    use ChainableParserTestTrait, InvalidValueParserTestTrait, ValidValueParserTestTrait;
 
     public function provideInvalidValuesAndParsers(): array
     {

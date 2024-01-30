@@ -19,9 +19,9 @@ use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Exception\RuntimeParserConfigurationException;
 use Philiagus\Parser\Parser\Extraction\Append;
-use Philiagus\Parser\Test\ChainableParserTest;
+use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\TestBase;
-use Philiagus\Parser\Test\ValidValueParserTest;
+use Philiagus\Parser\Test\ValidValueParserTestTrait;
 use Prophecy\Argument;
 
 /**
@@ -29,7 +29,7 @@ use Prophecy\Argument;
  */
 class AppendTest extends TestBase
 {
-    use ValidValueParserTest, ChainableParserTest;
+    use ValidValueParserTestTrait, ChainableParserTestTrait;
 
     /**
      * @dataProvider provideAnything

@@ -2,7 +2,7 @@
 /*
  * This file is part of philiagus/parser
  *
- * (c) Andreas Bittner <philiagus@philiagus.de>
+ * (c) Andreas Eicher <philiagus@philiagus.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -27,7 +27,6 @@ class ConvertToEnum extends Base\Parser
 {
     use Base\OverwritableTypeErrorMessage;
 
-    private \UnitEnum $default;
     private string $notFoundMessage = "The value is outside the limits of the expected enum";
 
     /**
@@ -43,12 +42,12 @@ class ConvertToEnum extends Base\Parser
     {
         if (!enum_exists($this->className)) {
             throw new ParserConfigurationException(
-                "Trying to convert to not existing enum class {$this->className}"
+                "Trying to convert to not existing enum class $this->className"
             );
         }
         if ($this->valueFirst !== null && !is_a($this->className, \BackedEnum::class, true)) {
             throw new ParserConfigurationException(
-                "Trying to convert to enum class {$this->className} using value, but it's not a backed enum"
+                "Trying to convert to enum class $this->className using value, but it's not a backed enum"
             );
         }
     }
@@ -124,32 +123,8 @@ class ConvertToEnum extends Base\Parser
         return $this;
     }
 
-    /**
-     * Sets the default value to return if the provided value could not be matched
-     * This prevents an unmatched error and sets the parser to return this value by default
-     * The parser will still throw a type error if the received value is not a string for name matching or
-     * an integer|string for value matching.
-     *
-     * @param \UnitEnum $value
-     *
-     * @return $this
-     */
-    public function setDefault(\UnitEnum $value): self
-    {
-        if (!$value instanceof $this->className) {
-            throw new ParserConfigurationException(
-                "Trying to set default value to instance of " . $value::class . ", but targeting {$this->className}"
-            );
-        }
-        $this->default = $value;
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function execute(ResultBuilder $builder): Contract\Result
+    /** @inheritDoc */
+    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
 
@@ -172,10 +147,6 @@ class ConvertToEnum extends Base\Parser
 
         if ($result !== null) {
             return $builder->createResult($result);
-        }
-
-        if (isset($this->default)) {
-            return $builder->createResult($this->default);
         }
 
         $builder->logErrorUsingDebug($this->notFoundMessage);
@@ -202,29 +173,20 @@ class ConvertToEnum extends Base\Parser
         return null;
     }
 
-    /**
-     * @param $value
-     *
-     * @return \UnitEnum|null
-     */
-    private function executeByValue($value): ?\UnitEnum
+    private function executeByValue(mixed $value): ?\BackedEnum
     {
         /** @noinspection PhpUndefinedMethodInspection */
         return ($this->className)::tryFrom($value);
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function getDefaultParserDescription(Contract\Subject $subject): string
+    /** @inheritDoc */
+    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'ConvertToEnum';
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function getDefaultTypeErrorMessage(): string
+    /** @inheritDoc */
+    #[\Override] protected function getDefaultTypeErrorMessage(): string
     {
         if ($this->valueFirst !== null) {
             return "The provided value is not an integer or string, {subject.type} received";

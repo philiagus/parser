@@ -2,7 +2,7 @@
 /*
  * This file is part of philiagus/parser
  *
- * (c) Andreas Bittner <philiagus@philiagus.de>
+ * (c) Andreas Eicher <philiagus@philiagus.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -29,21 +29,13 @@ class ParseBase64String extends Base\Parser
 {
     use OverwritableTypeErrorMessage;
 
-    /** @var bool */
     private bool $strict = true;
-
-    /** @var string */
     private string $notBase64ExceptionMessage = 'The provided value is not a valid base64 sequence';
 
     private function __construct()
     {
     }
 
-    /**
-     * Returns a new instance of this parser
-     *
-     * @return static
-     */
     public static function new(): static
     {
         return new static();
@@ -83,10 +75,8 @@ class ParseBase64String extends Base\Parser
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function execute(ResultBuilder $builder): Contract\Result
+    /** @inheritDoc */
+    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         if (!is_string($value)) {
@@ -108,18 +98,14 @@ class ParseBase64String extends Base\Parser
         return $builder->createResult($result);
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function getDefaultTypeErrorMessage(): string
+    /** @inheritDoc */
+    #[\Override] protected function getDefaultTypeErrorMessage(): string
     {
         return 'Provided value is not of type string';
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function getDefaultParserDescription(Contract\Subject $subject): string
+    /** @inheritDoc */
+    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'parse as base64 string';
     }

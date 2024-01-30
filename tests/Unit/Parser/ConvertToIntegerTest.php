@@ -14,11 +14,11 @@ namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Parser\ConvertToInteger;
-use Philiagus\Parser\Test\ChainableParserTest;
-use Philiagus\Parser\Test\InvalidValueParserTest;
-use Philiagus\Parser\Test\OverwritableTypeErrorMessageTest;
+use Philiagus\Parser\Test\ChainableParserTestTrait;
+use Philiagus\Parser\Test\InvalidValueParserTestTrait;
+use Philiagus\Parser\Test\OverwritableTypeErrorMessageTestTrait;
 use Philiagus\Parser\Test\TestBase;
-use Philiagus\Parser\Test\ValidValueParserTest;
+use Philiagus\Parser\Test\ValidValueParserTestTrait;
 
 /**
  * @covers \Philiagus\Parser\Parser\ConvertToInteger
@@ -26,7 +26,7 @@ use Philiagus\Parser\Test\ValidValueParserTest;
 class ConvertToIntegerTest extends TestBase
 {
 
-    use ChainableParserTest, InvalidValueParserTest, ValidValueParserTest, OverwritableTypeErrorMessageTest;
+    use ChainableParserTestTrait, InvalidValueParserTestTrait, ValidValueParserTestTrait, OverwritableTypeErrorMessageTestTrait;
 
     public function provideInvalidTypesAndParser(): array
     {

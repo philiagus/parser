@@ -1,8 +1,8 @@
 <?php
-/**
+/*
  * This file is part of philiagus/parser
  *
- * (c) Andreas Bittner <philiagus@philiagus.de>
+ * (c) Andreas Eicher <philiagus@philiagus.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -44,11 +44,6 @@ class AssertStringMultibyte extends Base\Parser
         $this->assertionList = new \SplDoublyLinkedList();
     }
 
-    /**
-     * Creates a new instance of this parser
-     *
-     * @return static
-     */
     public static function new(): static
     {
         return new static();
@@ -287,10 +282,8 @@ class AssertStringMultibyte extends Base\Parser
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function execute(ResultBuilder $builder): Contract\Result
+    /** @inheritDoc */
+    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         if (!is_string($value)) {
@@ -327,18 +320,14 @@ class AssertStringMultibyte extends Base\Parser
         return $builder->createResultUnchanged();
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function getDefaultTypeErrorMessage(): string
+    /** @inheritDoc */
+    #[\Override] protected function getDefaultTypeErrorMessage(): string
     {
         return 'Provided value is not of type string';
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function getDefaultParserDescription(Contract\Subject $subject): string
+    /** @inheritDoc */
+    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         if ($this->encoding) {
             return "assert {$this->encoding[0]} string";

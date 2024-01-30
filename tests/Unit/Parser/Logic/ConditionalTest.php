@@ -18,7 +18,7 @@ use Philiagus\Parser\Parser\Logic\Conditional;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Subject\Utility\Forwarded;
 use Philiagus\Parser\Subject\Utility\Test;
-use Philiagus\Parser\Test\ChainableParserTest;
+use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\ParserTestBase;
 
 /**
@@ -27,7 +27,7 @@ use Philiagus\Parser\Test\ParserTestBase;
 class ConditionalTest extends ParserTestBase
 {
 
-    use ChainableParserTest;
+    use ChainableParserTestTrait;
 
     public function testSetNonOfExceptionMessage(): void
     {

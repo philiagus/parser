@@ -2,7 +2,7 @@
 /*
  * This file is part of philiagus/parser
  *
- * (c) Andreas Bittner <philiagus@philiagus.de>
+ * (c) Andreas Eicher <philiagus@philiagus.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Philiagus\Parser;
 
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Error;
 use Philiagus\Parser\Util\Debug;
 
@@ -41,26 +40,20 @@ class Result extends Subject implements Contract\Result
         }
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function isSuccess(): bool
+    /** @inheritDoc */
+    #[\Override] public function isSuccess(): bool
     {
         return empty($this->errors);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function hasErrors(): bool
+    /** @inheritDoc */
+    #[\Override] public function hasErrors(): bool
     {
-        return (bool) $this->errors;
+        return (bool)$this->errors;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getValue(): mixed
+    /** @inheritDoc */
+    #[\Override] public function getValue(): mixed
     {
         return empty($this->errors)
             ? parent::getValue()
@@ -69,18 +62,14 @@ class Result extends Subject implements Contract\Result
             );
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getErrors(): array
+    /** @inheritDoc */
+    #[\Override] public function getErrors(): array
     {
         return $this->errors;
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function getPathStringPart(bool $isLastInChain): string
+    /** @inheritDoc */
+    #[\Override] protected function getPathStringPart(bool $isLastInChain): string
     {
         return $isLastInChain ? '' : ' ↣';
     }

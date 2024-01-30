@@ -23,9 +23,9 @@ use Philiagus\Parser\Result;
 use Prophecy\Argument;
 use SplDoublyLinkedList;
 
-trait ChainableParserTest
+trait ChainableParserTestTrait
 {
-    use ValidValueParserTest;
+    use ValidValueParserTestTrait;
 
     abstract public static function assertTrue($condition, string $message = ''): void;
 

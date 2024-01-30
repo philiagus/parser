@@ -20,7 +20,7 @@ use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\Logic\Fork;
 use Philiagus\Parser\Result;
-use Philiagus\Parser\Test\ChainableParserTest;
+use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\TestBase;
 use Prophecy\Argument;
 
@@ -29,7 +29,7 @@ use Prophecy\Argument;
  */
 class ForkTest extends TestBase
 {
-    use ChainableParserTest;
+    use ChainableParserTestTrait;
 
     public function provideAnyValue(): array
     {

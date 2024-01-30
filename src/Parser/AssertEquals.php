@@ -1,8 +1,8 @@
 <?php
-/**
+/*
  * This file is part of philiagus/parser
  *
- * (c) Andreas Bittner <philiagus@philiagus.de>
+ * (c) Andreas Eicher <philiagus@philiagus.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -20,10 +20,7 @@ use Philiagus\Parser\Util\Debug;
 class AssertEquals extends Base\Parser
 {
 
-    private const DEFAULT_MESSAGE = 'The value is not equal to the expected value';
-
-    private string $exceptionMessage;
-    private mixed $targetValue;
+    private const string DEFAULT_MESSAGE = 'The value is not equal to the expected value';
 
     /**
      * AssertEquals constructor.
@@ -31,10 +28,11 @@ class AssertEquals extends Base\Parser
      * @param mixed $value
      * @param string $exceptionMessage
      */
-    private function __construct(mixed $value, string $exceptionMessage = self::DEFAULT_MESSAGE)
+    private function __construct(
+        private readonly mixed  $value,
+        private readonly string $exceptionMessage = self::DEFAULT_MESSAGE
+    )
     {
-        $this->targetValue = $value;
-        $this->exceptionMessage = $exceptionMessage;
     }
 
     /**
@@ -57,22 +55,21 @@ class AssertEquals extends Base\Parser
         return new static($value, $exceptionMessage);
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function execute(ResultBuilder $builder): Contract\Result
+    /** @inheritDoc */
+    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
     {
-        if ($builder->getValue() != $this->targetValue) {
+        if ($builder->getValue() != $this->value) {
             $builder->logErrorUsingDebug(
                 $this->exceptionMessage,
-                ['expected' => $this->targetValue,]
+                ['expected' => $this->value]
             );
         }
 
         return $builder->createResultUnchanged();
     }
 
-    protected function getDefaultParserDescription(Contract\Subject $subject): string
+    /** @inheritDoc */
+    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'assert equals';
     }

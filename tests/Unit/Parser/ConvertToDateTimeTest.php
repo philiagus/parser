@@ -19,8 +19,8 @@ use DateTimeZone;
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Parser\ConvertToDateTime;
-use Philiagus\Parser\Test\ChainableParserTest;
-use Philiagus\Parser\Test\InvalidValueParserTest;
+use Philiagus\Parser\Test\ChainableParserTestTrait;
+use Philiagus\Parser\Test\InvalidValueParserTestTrait;
 use Philiagus\Parser\Test\ParserTestBase;
 
 /**
@@ -29,7 +29,7 @@ use Philiagus\Parser\Test\ParserTestBase;
 class ConvertToDateTimeTest extends ParserTestBase
 {
 
-    use ChainableParserTest, InvalidValueParserTest;
+    use ChainableParserTestTrait, InvalidValueParserTestTrait;
 
 
     public function provideValidValuesAndParsersAndResults(): array

@@ -113,7 +113,7 @@ class OverwritableTypeErrorMessageTest extends TestCase
         /** @var Parser $parser */
         $parser = $builder();
         self::expectException(ParsingException::class);
-        self::expectErrorMessage($expectedMessage);
+        $this->expectExceptionMessage($expectedMessage);
         $parser->parse(Subject::default($value));
     }
 }

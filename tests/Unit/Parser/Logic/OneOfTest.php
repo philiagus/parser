@@ -16,7 +16,7 @@ use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Parser\Logic\OneOf;
-use Philiagus\Parser\Test\ChainableParserTest;
+use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\ParserTestBase;
 
 /**
@@ -24,7 +24,7 @@ use Philiagus\Parser\Test\ParserTestBase;
  */
 class OneOfTest extends ParserTestBase
 {
-    use ChainableParserTest;
+    use ChainableParserTestTrait;
 
     public function testNullOr(): void
     {

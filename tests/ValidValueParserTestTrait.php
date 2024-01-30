@@ -18,7 +18,7 @@ use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Util\Debug;
 
-trait ValidValueParserTest
+trait ValidValueParserTestTrait
 {
 
     abstract public function provideValidValuesAndParsersAndResults(): array;

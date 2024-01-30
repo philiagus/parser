@@ -14,22 +14,22 @@ namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Parser\ConvertToString;
-use Philiagus\Parser\Test\ChainableParserTest;
-use Philiagus\Parser\Test\InvalidValueParserTest;
+use Philiagus\Parser\Test\ChainableParserTestTrait;
+use Philiagus\Parser\Test\InvalidValueParserTestTrait;
 use Philiagus\Parser\Test\Mock\ParserMock;
-use Philiagus\Parser\Test\OverwritableTypeErrorMessageTest;
+use Philiagus\Parser\Test\OverwritableTypeErrorMessageTestTrait;
 use Philiagus\Parser\Test\TestBase;
-use Philiagus\Parser\Test\ValidValueParserTest;
+use Philiagus\Parser\Test\ValidValueParserTestTrait;
 
 /**
  * @covers \Philiagus\Parser\Parser\ConvertToString
  */
 class ConvertToStringTest extends TestBase
 {
-    use OverwritableTypeErrorMessageTest,
-        ValidValueParserTest,
-        InvalidValueParserTest,
-        ChainableParserTest;
+    use OverwritableTypeErrorMessageTestTrait,
+        ValidValueParserTestTrait,
+        InvalidValueParserTestTrait,
+        ChainableParserTestTrait;
 
     public function provideInvalidValuesAndParsers(): array
     {
@@ -85,6 +85,8 @@ class ConvertToStringTest extends TestBase
             )
             ->addCase('bool: true', [true, fn() => ConvertToString::new()->setBooleanValues('yes', 'no'), 'yes'])
             ->addCase('bool: false', [false, fn() => ConvertToString::new()->setBooleanValues('yes', 'no'), 'no'])
+            ->addCase('integer number format: 123-456', [123456, fn() => ConvertToString::new()->setNumberFormat(2, '_', '-'), '123-456_00'])
+            ->addCase('float number format: 123-456_789', [123456.789, fn() => ConvertToString::new()->setNumberFormat(3, '_', '-'), '123-456_789'])
             ->addCase('array: implode', [['a', 'b', 'c'], fn() => ConvertToString::new()->setImplodeOfArrays(':'), 'a:b:c'])
             ->addCase(
                 'array: implode with conversion',

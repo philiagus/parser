@@ -14,16 +14,16 @@ namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Parser\Any;
-use Philiagus\Parser\Test\ChainableParserTest;
+use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\TestBase;
-use Philiagus\Parser\Test\ValidValueParserTest;
+use Philiagus\Parser\Test\ValidValueParserTestTrait;
 
 /**
  * @covers \Philiagus\Parser\Parser\Any
  */
 class AnyTest extends TestBase
 {
-    use ChainableParserTest, ValidValueParserTest;
+    use ChainableParserTestTrait, ValidValueParserTestTrait;
 
     public function provideValidValuesAndParsersAndResults(): array
     {

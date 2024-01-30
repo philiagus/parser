@@ -1,8 +1,8 @@
 <?php
-/**
+/*
  * This file is part of philiagus/parser
  *
- * (c) Andreas Bittner <philiagus@philiagus.de>
+ * (c) Andreas Eicher <philiagus@philiagus.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -19,7 +19,7 @@ use Philiagus\Parser\Subject\Root;
 abstract class Subject implements Contract\Subject
 {
 
-    private readonly bool $throwOnError;
+    private bool $throwOnError;
 
     /**
      * Creates a new instance of the Subject
@@ -65,10 +65,8 @@ abstract class Subject implements Contract\Subject
         $this->throwOnError = $throwOnError ?? $this->sourceSubject?->throwOnError() ?? true;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function throwOnError(): bool
+    /** @inheritDoc */
+    #[\Override] public function throwOnError(): bool
     {
         return $this->throwOnError;
     }
@@ -88,10 +86,8 @@ abstract class Subject implements Contract\Subject
         return new Root($value, $description, $throwOnError);
     }
 
-    /**
-     * @inheritDoc
-     */
-    final public function getSubjectChain(bool $includeUtility = false): array
+    /** @inheritDoc */
+    #[\Override] final public function getSubjectChain(bool $includeUtility = false): array
     {
         $return = [];
         if ($this->sourceSubject) {
@@ -104,10 +100,8 @@ abstract class Subject implements Contract\Subject
         return $return;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getPathAsString(bool $includeUtility = false): string
+    /** @inheritDoc */
+    #[\Override] public function getPathAsString(bool $includeUtility = false): string
     {
         return ltrim($this->concatPathStringParts($includeUtility), ' ');
     }
@@ -146,42 +140,32 @@ abstract class Subject implements Contract\Subject
      */
     abstract protected function getPathStringPart(bool $isLastInChain): string;
 
-    /**
-     * @inheritDoc
-     */
-    public function getValue(): mixed
+    /** @inheritDoc */
+    #[\Override] public function getValue(): mixed
     {
         return $this->value;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getResultBuilder(string $description): ResultBuilder
+    /** @inheritDoc */
+    #[\Override] public function getResultBuilder(string $description): ResultBuilder
     {
         return new ResultBuilder($this, $description);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getSourceSubject(): ?Contract\Subject
+    /** @inheritDoc */
+    #[\Override] public function getSourceSubject(): ?Contract\Subject
     {
         return $this->sourceSubject;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getDescription(): string
+    /** @inheritDoc */
+    #[\Override] public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function isUtilitySubject(): bool
+    /** @inheritDoc */
+    #[\Override] public function isUtilitySubject(): bool
     {
         return $this->isUtilitySubject;
     }

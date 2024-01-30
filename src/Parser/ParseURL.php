@@ -2,7 +2,7 @@
 /*
  * This file is part of philiagus/parser
  *
- * (c) Andreas Bittner <philiagus@philiagus.de>
+ * (c) Andreas Eicher <philiagus@philiagus.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -30,7 +30,7 @@ class ParseURL extends Base\Parser
 {
     use OverwritableTypeErrorMessage;
 
-    private const TARGET_SCHEME = 'scheme',
+    private const string TARGET_SCHEME = 'scheme',
         TARGET_HOST = 'host',
         TARGET_PORT = 'port',
         TARGET_USER = 'user',
@@ -48,11 +48,6 @@ class ParseURL extends Base\Parser
     {
     }
 
-    /**
-     * Creates a new instance of this parser
-     *
-     * @return static
-     */
     public static function new(): static
     {
         return new static();
@@ -364,10 +359,8 @@ class ParseURL extends Base\Parser
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function execute(ResultBuilder $builder): Contract\Result
+    /** @inheritDoc */
+    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         if (!is_string($value)) {
@@ -405,12 +398,14 @@ class ParseURL extends Base\Parser
         return $builder->createResult($parsed);
     }
 
-    protected function getDefaultTypeErrorMessage(): string
+    /** @inheritDoc */
+    #[\Override] protected function getDefaultTypeErrorMessage(): string
     {
         return 'Provided value is not of type string';
     }
 
-    protected function getDefaultParserDescription(Contract\Subject $subject): string
+    /** @inheritDoc */
+    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'parse URL';
     }

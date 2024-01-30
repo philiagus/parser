@@ -1,8 +1,8 @@
 <?php
-/**
+/*
  * This file is part of philiagus/parser
  *
- * (c) Andreas Bittner <philiagus@philiagus.de>
+ * (c) Andreas Eicher <philiagus@philiagus.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -28,23 +28,15 @@ class ConvertToInteger extends Base\Parser
 
     private function __construct()
     {
-
     }
 
-    /**
-     * Create a new instance of this parser
-     *
-     * @return static
-     */
     public static function new(): static
     {
         return new static();
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function execute(ResultBuilder $builder): Contract\Result
+    /** @inheritDoc */
+    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
     {
         $value = $builder->getValue();
         if (is_int($value)) {
@@ -53,13 +45,17 @@ class ConvertToInteger extends Base\Parser
 
         if (is_float($value)) {
             // invalid float values
-            if (is_nan($value) || is_infinite($value) || $value !== (float) (int) $value) {
+            if (
+                is_nan($value)
+                || $value > PHP_INT_MAX || $value < PHP_INT_MIN
+                || $value !== (float)(int)$value
+            ) {
                 $this->logTypeError($builder);
 
                 return $builder->createResultUnchanged();
             }
 
-            return $builder->createResult((int) $value);
+            return $builder->createResult((int)$value);
         }
 
         if (is_string($value)) {
@@ -70,8 +66,8 @@ class ConvertToInteger extends Base\Parser
                 } else {
                     $compareString = $matches[1] . $matches[2];
                 }
-                $compareInteger = (int) $compareString;
-                if ((string) $compareInteger === $compareString) {
+                $compareInteger = (int)$compareString;
+                if ((string)$compareInteger === $compareString) {
                     return $builder->createResult($compareInteger);
                 }
             }
@@ -81,18 +77,14 @@ class ConvertToInteger extends Base\Parser
         return $builder->createResultUnchanged();
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function getDefaultTypeErrorMessage(): string
+    /** @inheritDoc */
+    #[\Override] protected function getDefaultTypeErrorMessage(): string
     {
         return 'Variable of type {subject.type} could not be converted to an integer';
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function getDefaultParserDescription(Contract\Subject $subject): string
+    /** @inheritDoc */
+    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
         return 'convert to integer';
     }

@@ -18,7 +18,7 @@ use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Debug;
 
-trait InvalidValueParserTest
+trait InvalidValueParserTestTrait
 {
 
     abstract public function provideInvalidValuesAndParsers(): array;
@@ -50,8 +50,6 @@ trait InvalidValueParserTest
         if (!isset($exception)) {
             $resultValue = $result->getValue();
             self::fail('No exception was thrown and parser for ' . Debug::stringify($value) . ' resulted in: ' . Debug::stringify($resultValue));
-
-            return;
         }
         if (is_string($expectedException)) {
             self::assertInstanceOf($expectedException, $exception, "Exception of type $expectedException not thrown");
