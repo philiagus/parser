@@ -71,7 +71,7 @@ class ResultBuilder
      * @return mixed
      * @throws ParsingException
      */
-    public function incorporateResult(Result $result, mixed $defaultValue = null): mixed
+    public function unwrapResult(Result $result, mixed $defaultValue = null): mixed
     {
         if ($result->isSuccess()) return $result->getValue();
 
@@ -244,7 +244,7 @@ class ResultBuilder
      *
      * @return bool
      * @see ResultBuilder::logErrorUsingDebug()
-     * @see ResultBuilder::incorporateResult()
+     * @see ResultBuilder::unwrapResult()
      *
      * @see ResultBuilder::logError()
      */

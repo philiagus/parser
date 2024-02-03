@@ -26,7 +26,7 @@ class AssertSameTest extends TestBase
 {
     use ChainableParserTestTrait, ValidValueParserTestTrait, InvalidValueParserTestTrait;
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider(DataProvider::TYPE_ALL))
             ->filter(fn($value) => $value === $value)
@@ -34,7 +34,7 @@ class AssertSameTest extends TestBase
             ->provide(false);
     }
 
-    public function provideInvalidValuesAndParsers(): array
+    public static function provideInvalidValuesAndParsers(): array
     {
         return (new DataProvider(DataProvider::TYPE_ALL))
             ->map(fn($value) => [$value, fn($value) => AssertSame::value([$value])])

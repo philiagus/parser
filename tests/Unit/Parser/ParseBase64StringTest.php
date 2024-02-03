@@ -28,7 +28,7 @@ class ParseBase64StringTest extends TestBase
 {
     use ChainableParserTestTrait, InvalidValueParserTestTrait, ValidValueParserTestTrait;
 
-    public function provideInvalidValuesAndParsers(): array
+    public static function provideInvalidValuesAndParsers(): array
     {
         return (new DataProvider(~DataProvider::TYPE_STRING))
             ->addCase('not base 64 string', '?=)(/&%')
@@ -36,7 +36,7 @@ class ParseBase64StringTest extends TestBase
             ->provide(false);
     }
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider(DataProvider::TYPE_STRING))
             ->map(fn($value) => [base64_encode($value), fn() => ParseBase64String::new(), $value])

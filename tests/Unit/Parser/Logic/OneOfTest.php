@@ -189,7 +189,7 @@ class OneOfTest extends ParserTestBase
         $builder->run();
     }
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider())
             ->filter(fn($value) => $value == $value)

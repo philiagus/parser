@@ -21,12 +21,12 @@ use Philiagus\Parser\Util\Debug;
  */
 class DebugTest extends TestBase
 {
-    public function provideAnything(): array
+    public static function provideAnything(): array
     {
         return (new DataProvider(DataProvider::TYPE_ALL))->provide();
     }
 
-    public function provideTypeDetection(): array
+    public static function provideTypeDetection(): array
     {
         $cases = [
             'true' => [true, 'true'],
@@ -75,7 +75,7 @@ class DebugTest extends TestBase
         self::assertIsString(Debug::getType($value));
     }
 
-    public function provideStringify(): array
+    public static function provideStringify(): array
     {
         $cases = [
             'integer ' . PHP_INT_MAX => [PHP_INT_MAX, 'integer ' . PHP_INT_MAX],
@@ -178,7 +178,7 @@ class DebugTest extends TestBase
         self::assertIsString(Debug::stringify($value));
     }
 
-    public function provideParseMessage(): array
+    public static function provideParseMessage(): array
     {
         return [
             'no replace' => [

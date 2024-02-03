@@ -28,12 +28,12 @@ class ConvertToIntegerTest extends TestBase
 
     use ChainableParserTestTrait, InvalidValueParserTestTrait, ValidValueParserTestTrait, OverwritableTypeErrorMessageTestTrait;
 
-    public function provideInvalidTypesAndParser(): array
+    public static function provideInvalidTypesAndParser(): array
     {
-        return $this->provideInvalidValuesAndParsers();
+        return self::provideInvalidValuesAndParsers();
     }
 
-    public function provideInvalidValuesAndParsers(): array
+    public static function provideInvalidValuesAndParsers(): array
     {
         return (new DataProvider(~DataProvider::TYPE_INTEGER & ~DataProvider::TYPE_FLOAT & ~DataProvider::TYPE_STRING))
             ->filter(
@@ -49,7 +49,7 @@ class ConvertToIntegerTest extends TestBase
             ->provide(false);
     }
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider(DataProvider::TYPE_INTEGER))
             ->addCase('string', '001')

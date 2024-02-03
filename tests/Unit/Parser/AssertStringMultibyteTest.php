@@ -39,21 +39,21 @@ class AssertStringMultibyteTest extends ParserTestBase
 
     use ChainableParserTestTrait, ValidValueParserTestTrait, InvalidValueParserTestTrait, OverwritableTypeErrorMessageTestTrait;
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider(DataProvider::TYPE_STRING))
             ->map(fn($value) => [$value, fn() => AssertStringMultibyte::new(), $value])
             ->provide(false);
     }
 
-    public function provideInvalidValuesAndParsers(): array
+    public static function provideInvalidValuesAndParsers(): array
     {
         return (new DataProvider(~DataProvider::TYPE_STRING))
             ->map(fn($value) => [$value, fn() => AssertStringMultibyte::new()])
             ->provide(false);
     }
 
-    public function provideInvalidTypesAndParser(): array
+    public static function provideInvalidTypesAndParser(): array
     {
         return (new DataProvider(~DataProvider::TYPE_STRING))
             ->map(fn($value) => [$value, fn() => AssertStringMultibyte::new()])
@@ -200,7 +200,7 @@ class AssertStringMultibyteTest extends ParserTestBase
         $builder->run();
     }
 
-    public function provideSetAvailableEncodingsInvalidEncodings(): array
+    public static function provideSetAvailableEncodingsInvalidEncodings(): array
     {
         return [
             'invalid encoding' => [['UTF-8', 'nope']],

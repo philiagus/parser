@@ -29,14 +29,14 @@ class AssertNumberTest extends ParserTestBase
 
     use ChainableParserTestTrait, ValidValueParserTestTrait, InvalidValueParserTestTrait, ChainableParserTestTrait;
 
-    public function provideInvalidValuesAndParsers(): array
+    public static function provideInvalidValuesAndParsers(): array
     {
         return (new DataProvider(~(DataProvider::TYPE_INTEGER | DataProvider::TYPE_FLOAT)))
             ->map(static fn($value) => [$value, static fn() => AssertNumber::new()])
             ->provide(false);
     }
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider(DataProvider::TYPE_INTEGER | DataProvider::TYPE_FLOAT))
             ->map(static fn($value) => [$value, static fn() => AssertNumber::new(), $value])
@@ -81,7 +81,7 @@ class AssertNumberTest extends ParserTestBase
         $builder->run();
     }
 
-    public function provideInvalidFloats(): array
+    public static function provideInvalidFloats(): array
     {
         return (new DataProvider(DataProvider::TYPE_NAN | DataProvider::TYPE_INFINITE))
             ->provide();

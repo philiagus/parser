@@ -27,14 +27,14 @@ class AssertBooleanTest extends TestBase
 {
     use ChainableParserTestTrait, ValidValueParserTestTrait, InvalidValueParserTestTrait, OverwritableTypeErrorMessageTestTrait;
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider(DataProvider::TYPE_BOOLEAN))
             ->map(static fn($value) => [$value, static fn() => AssertBoolean::new(), $value])
             ->provide(false);
     }
 
-    public function provideInvalidValuesAndParsers(): array
+    public static function provideInvalidValuesAndParsers(): array
     {
         return (new DataProvider(~DataProvider::TYPE_BOOLEAN))
             ->map(static fn($value) => [$value, static fn() => AssertBoolean::new()])
@@ -46,7 +46,7 @@ class AssertBooleanTest extends TestBase
         self::assertInstanceOf(AssertBoolean::class, AssertBoolean::new());
     }
 
-    public function provideInvalidTypesAndParser(): array
+    public static function provideInvalidTypesAndParser(): array
     {
         return (new DataProvider(~DataProvider::TYPE_BOOLEAN))
             ->map(static fn($value) => [$value, static fn() => AssertBoolean::new()])

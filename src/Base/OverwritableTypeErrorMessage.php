@@ -24,7 +24,7 @@ trait OverwritableTypeErrorMessage
     private ?string $typeExceptionMessage = null;
 
     /**
-     * Defines the exception message to use if the value is not a string
+     * Defines the exception message to use if the value is not of the expected type
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed

@@ -25,7 +25,7 @@ class AnyTest extends TestBase
 {
     use ChainableParserTestTrait, ValidValueParserTestTrait;
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider())
             ->map(static fn($value) => [$value, fn() => Any::new(), $value])

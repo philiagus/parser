@@ -211,7 +211,7 @@ class ResultBuilderTest extends TestBase
         $value = new \stdClass();
         $subject = new Root(null);
         $builder = $subject->getResultBuilder('');
-        self::assertSame($value, $builder->incorporateResult(
+        self::assertSame($value, $builder->unwrapResult(
             new Result($subject, $value, [])
         ));
         self::assertFalse($builder->hasErrors());
@@ -222,7 +222,7 @@ class ResultBuilderTest extends TestBase
         $value = new \stdClass();
         $subject = new Root(null, throwOnError: false);
         $builder = $subject->getResultBuilder('');
-        self::assertSame($value, $builder->incorporateResult(
+        self::assertSame($value, $builder->unwrapResult(
             new Result($subject, false, [
                 $error = new Error($subject, 'ERROR'),
             ]), $value
@@ -238,7 +238,7 @@ class ResultBuilderTest extends TestBase
         $builder = $subject->getResultBuilder('');
         self::expectException(ParsingException::class);
         self::expectExceptionMessage('ERROR1');
-        $builder->incorporateResult(
+        $builder->unwrapResult(
             new Result($subject, false, [
                 new Error($subject, 'ERROR1'),
                 new Error($subject, 'ERROR2'),

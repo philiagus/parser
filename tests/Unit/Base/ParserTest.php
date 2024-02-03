@@ -29,7 +29,7 @@ class ParserTest extends ParserTestBase
 {
     use ChainableParserTestTrait;
 
-    public function provideAnything(): array
+    public static function provideAnything(): array
     {
         return (new DataProvider())->provide();
     }
@@ -40,7 +40,7 @@ class ParserTest extends ParserTestBase
     public function testExecute(mixed $sourceValue): void
     {
         $expectedResult = new \stdClass();
-        $parser = $this->createParser($expectedResult);
+        $parser = self::createParser($expectedResult);
 
         self::assertSame(
             $expectedResult,
@@ -48,7 +48,7 @@ class ParserTest extends ParserTestBase
         );
     }
 
-    private function createParser(mixed $expectedResult): Contract\Parser&Chainable
+    private static function createParser(mixed $expectedResult): Contract\Parser&Chainable
     {
         return new class($expectedResult) extends Parser {
 
@@ -68,14 +68,14 @@ class ParserTest extends ParserTestBase
         };
     }
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider())
             ->map(
                 function ($value) {
                     $expected = new \stdClass();
 
-                    return [$value, fn() => $this->createParser($expected), $expected];
+                    return [$value, fn() => self::createParser($expected), $expected];
                 }
             )
             ->provide(false);
@@ -86,7 +86,7 @@ class ParserTest extends ParserTestBase
         $builder = $this->builder();
         $builder
             ->test(
-                fn() => $this->createParser(null),
+                fn() => self::createParser(null),
                 'setParserDescription'
             )
             ->arguments(

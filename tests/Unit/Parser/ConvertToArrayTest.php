@@ -23,13 +23,13 @@ use Philiagus\Parser\Test\TestBase;
 class ConvertToArrayTest extends TestBase
 {
 
-    public function provideUsingCast(): array
+    public static function provideUsingCast(): array
     {
         return (new DataProvider())
             ->provide();
     }
 
-    public function provideArrayWithKey(): array
+    public static function provideArrayWithKey(): array
     {
         $cases = [];
         foreach (

@@ -49,7 +49,7 @@ class Preserve extends Base\Parser
     /** @inheritDoc */
     #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
     {
-        $builder->incorporateResult(
+        $builder->unwrapResult(
             $this->around->parse(
                 new Forwarded($builder->getSubject(), 'preserved around')
             )

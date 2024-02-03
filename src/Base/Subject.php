@@ -21,6 +21,8 @@ abstract class Subject implements Contract\Subject
 
     private bool $throwOnError;
 
+    private string $rootId;
+
     /**
      * Creates a new instance of the Subject
      * Please make sure that this method is called from every extending class via
@@ -63,6 +65,7 @@ abstract class Subject implements Contract\Subject
     )
     {
         $this->throwOnError = $throwOnError ?? $this->sourceSubject?->throwOnError() ?? true;
+        $this->rootId = $this->sourceSubject?->getRootId() ?? uniqid(spl_object_hash($this));
     }
 
     /** @inheritDoc */
@@ -168,5 +171,11 @@ abstract class Subject implements Contract\Subject
     #[\Override] public function isUtilitySubject(): bool
     {
         return $this->isUtilitySubject;
+    }
+
+    /** @inheritDoc */
+    #[\Override] public function getRootId(): string
+    {
+        return $this->rootId;
     }
 }

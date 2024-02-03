@@ -32,21 +32,21 @@ class AssertStringRegexTest extends ParserTestBase
 
     use ChainableParserTestTrait, ValidValueParserTestTrait, InvalidValueParserTestTrait, OverwritableTypeErrorMessageTestTrait;
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider(DataProvider::TYPE_STRING))
             ->map(fn($value) => [$value, fn() => AssertStringRegex::pattern('/.?/'), $value])
             ->provide(false);
     }
 
-    public function provideInvalidValuesAndParsers(): array
+    public static function provideInvalidValuesAndParsers(): array
     {
         return (new DataProvider(~DataProvider::TYPE_STRING))
             ->map(fn($value) => [$value, fn() => AssertStringRegex::pattern('/.?/')])
             ->provide(false);
     }
 
-    public function provideInvalidTypesAndParser(): array
+    public static function provideInvalidTypesAndParser(): array
     {
         return (new DataProvider(~DataProvider::TYPE_STRING))
             ->map(fn($value) => [$value, fn() => AssertStringRegex::pattern('/.?/')])
@@ -59,7 +59,7 @@ class AssertStringRegexTest extends ParserTestBase
         AssertStringRegex::pattern('not a pattern');
     }
 
-    public function provideCaptureVariants(): array
+    public static function provideCaptureVariants(): array
     {
         $cases = [];
         foreach ([

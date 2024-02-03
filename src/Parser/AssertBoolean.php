@@ -20,8 +20,6 @@ use Philiagus\Parser\ResultBuilder;
 
 /**
  * Class BooleanPrimitive
- *
- * @package Philiagus\Parser
  */
 class AssertBoolean extends Base\Parser
 {

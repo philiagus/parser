@@ -166,7 +166,7 @@ class ConvertToString extends Base\Parser
                         if ($elementConverter) {
                             $conversionResult = $elementConverter->parse($newSubject);
                             if (!$conversionResult->isSuccess()) {
-                                $builder->incorporateResult($conversionResult);
+                                $builder->unwrapResult($conversionResult);
                                 continue;
                             }
                             $convertedElement = $conversionResult->getValue();

@@ -28,14 +28,14 @@ class AssertIntegerTest extends ParserTestBase
 
     use ChainableParserTestTrait, ValidValueParserTestTrait, InvalidValueParserTestTrait, ChainableParserTestTrait;
 
-    public function provideInvalidValuesAndParsers(): array
+    public static function provideInvalidValuesAndParsers(): array
     {
         return (new DataProvider(~DataProvider::TYPE_INTEGER))
             ->map(static fn($value) => [$value, static fn() => AssertInteger::new()])
             ->provide(false);
     }
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider(DataProvider::TYPE_INTEGER))
             ->map(static fn($value) => [$value, static fn() => AssertInteger::new(), $value])

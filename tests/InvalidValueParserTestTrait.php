@@ -21,7 +21,7 @@ use Philiagus\Parser\Util\Debug;
 trait InvalidValueParserTestTrait
 {
 
-    abstract public function provideInvalidValuesAndParsers(): array;
+    abstract public static function provideInvalidValuesAndParsers(): array;
 
     abstract public function expectException(string $exception): void;
 
@@ -52,7 +52,7 @@ trait InvalidValueParserTestTrait
             self::fail('No exception was thrown and parser for ' . Debug::stringify($value) . ' resulted in: ' . Debug::stringify($resultValue));
         }
         if (is_string($expectedException)) {
-            self::assertInstanceOf($expectedException, $exception, "Exception of type $expectedException not thrown");
+            self::assertInstanceOf($expectedException, $exception, "Exception of type $expectedException not thrown: " . (string)$exception);
         } elseif ($expectedException instanceof \Closure) {
             $expectedException($exception);
         } else {
@@ -63,14 +63,12 @@ trait InvalidValueParserTestTrait
     /**
      * @param $value
      * @param \Closure $parser
-     * @param string|\Closure $expectedException
      *
      * @dataProvider provideInvalidValuesAndParsers
      */
     public function testThatItBlocksInvalidValuesNotThrowing(
         $value,
-        \Closure $parser,
-        string|\Closure $expectedException = ParsingException::class
+        \Closure $parser
     ): void
     {
         /** @var Contract\Result $result */

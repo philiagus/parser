@@ -31,21 +31,21 @@ class ParseURLTest extends ParserTestBase
 
     use ChainableParserTestTrait, ValidValueParserTestTrait, InvalidValueParserTestTrait, OverwritableTypeErrorMessageTestTrait;
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider(DataProvider::TYPE_STRING))
             ->map(fn($value) => [$value, fn() => ParseURL::new(), parse_url($value)])
             ->provide(false);
     }
 
-    public function provideInvalidValuesAndParsers(): array
+    public static function provideInvalidValuesAndParsers(): array
     {
         return (new DataProvider(~DataProvider::TYPE_STRING))
             ->map(fn($value) => [$value, fn() => ParseURL::new()])
             ->provide(false);
     }
 
-    public function provideInvalidTypesAndParser(): array
+    public static function provideInvalidTypesAndParser(): array
     {
         return (new DataProvider(~DataProvider::TYPE_STRING))
             ->map(fn($value) => [$value, fn() => ParseURL::new()])
@@ -117,7 +117,7 @@ class ParseURLTest extends ParserTestBase
             ->parse(Subject::default($value));
     }
 
-    public function provideMissingElementCases(): array
+    public static function provideMissingElementCases(): array
     {
         return [
             'missing path' => ['https://example.org', 'Path'],

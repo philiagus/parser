@@ -64,7 +64,7 @@ class OverwriteErrorsTest extends ParserTestBase
         $builder->run();
     }
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider())
             ->map(static fn($value) => [

@@ -24,7 +24,7 @@ use Philiagus\Parser\Test\Util;
  */
 class MetaInformationTest extends SubjectTestBase
 {
-    public function provideConstructorArguments(): array
+    public static function provideConstructorArguments(): array
     {
         $cases = [];
         foreach ((new DataProvider())->provide(false) as $name => $value) {

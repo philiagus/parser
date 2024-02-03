@@ -27,7 +27,7 @@ class AssignTest extends TestBase
 {
     use ChainableParserTestTrait;
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider())
             ->map(

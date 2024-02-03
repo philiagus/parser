@@ -31,21 +31,21 @@ class AssertArrayTest extends ParserTestBase
 
     use ChainableParserTestTrait, InvalidValueParserTestTrait, ValidValueParserTestTrait, OverwritableTypeErrorMessageTestTrait;
 
-    public function provideInvalidValuesAndParsers(): array
+    public static function provideInvalidValuesAndParsers(): array
     {
         return (new DataProvider(~DataProvider::TYPE_ARRAY))
             ->map(static fn($value) => [$value, static fn() => AssertArray::new()])
             ->provide(false);
     }
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider(DataProvider::TYPE_ARRAY))
             ->map(static fn($value) => [$value, static fn() => AssertArray::new(), $value])
             ->provide(false);
     }
 
-    public function provideInvalidTypesAndParser(): array
+    public static function provideInvalidTypesAndParser(): array
     {
         return (new DataProvider(~DataProvider::TYPE_ARRAY))
             ->map(static fn($value) => [$value, static fn() => AssertArray::new(), $value])

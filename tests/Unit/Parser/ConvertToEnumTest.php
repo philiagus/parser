@@ -268,7 +268,7 @@ class ConvertToEnumTest extends ParserTestBase
         ConvertToEnum::$method(\stdClass::class);
     }
 
-    public function provideInvalidTypesAndParser(): array
+    public static function provideInvalidTypesAndParser(): array
     {
         $cases = [];
         foreach ((new DataProvider(~DataProvider::TYPE_STRING & ~DataProvider::TYPE_INTEGER))->provide(false) as $name => $value) {

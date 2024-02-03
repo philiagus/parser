@@ -38,7 +38,7 @@ class ParseArray extends AssertArray
         $this->assertionList[] = static function (ResultBuilder $builder) use ($parser): void {
             $array = $builder->getValue();
             foreach ($array as $key => &$value) {
-                $value = $builder->incorporateResult(
+                $value = $builder->unwrapResult(
                     $parser->parse(new ArrayValue($builder->getSubject(), $key, $value)),
                     $value
                 );
@@ -75,7 +75,7 @@ class ParseArray extends AssertArray
             foreach ($array as $key => $value) {
                 $newKeyResult = $parser->parse(new ArrayKey($builder->getSubject(), $key));
                 if (!$newKeyResult->isSuccess()) {
-                    $builder->incorporateResult($newKeyResult);
+                    $builder->unwrapResult($newKeyResult);
 
                     continue;
                 }
@@ -127,7 +127,7 @@ class ParseArray extends AssertArray
                 new ArrayValue($builder->getSubject(), $key, $value[$key])
             );
             if (!$result->isSuccess()) {
-                $builder->incorporateResult($result);
+                $builder->unwrapResult($result);
 
                 return;
             }
@@ -218,7 +218,7 @@ class ParseArray extends AssertArray
                 new ArrayValue($builder->getSubject(), $key, $value[$key])
             );
             if (!$result->isSuccess()) {
-                $builder->incorporateResult($result);
+                $builder->unwrapResult($result);
 
                 return;
             }
@@ -241,12 +241,11 @@ class ParseArray extends AssertArray
      * @return $this
      * @see assertKeysExist()
      */
-    public function removeSurplusElements(array $expectedKeys): static
+    public function removeSurplusElements(int|string ...$expectedKeys): static
     {
         $keys = [];
-        foreach ($expectedKeys as $key) {
+        foreach ($expectedKeys as $key)
             $keys[] = self::normalizeArrayKey($key);
-        }
         $this->assertionList[] = static function (ResultBuilder $builder) use ($keys): void {
             $newValue = array_intersect_key($builder->getValue(), array_flip($keys));
             $builder->setValue('remove surplus keys', $newValue);

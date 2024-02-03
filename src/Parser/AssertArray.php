@@ -52,7 +52,7 @@ class AssertArray extends Base\Parser
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($parser): void {
             foreach ($builder->getValue() as $key => $value) {
-                $builder->incorporateResult(
+                $builder->unwrapResult(
                     $parser->parse(
                         new ArrayValue($builder->getSubject(), $key, $value)
                     )
@@ -75,7 +75,7 @@ class AssertArray extends Base\Parser
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($parser): void {
             foreach ($builder->getValue() as $key => $_) {
-                $builder->incorporateResult(
+                $builder->unwrapResult(
                     $parser->parse(
                         new ArrayKey($builder->getSubject(), $key)
                     )
@@ -96,7 +96,7 @@ class AssertArray extends Base\Parser
     public function giveKeys(ParserContract $arrayParser): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($arrayParser): void {
-            $builder->incorporateResult(
+            $builder->unwrapResult(
                 $arrayParser->parse(
                     new MetaInformation($builder->getSubject(), 'keys', array_keys($builder->getValue()))
                 )
@@ -116,7 +116,7 @@ class AssertArray extends Base\Parser
     public function giveLength(ParserContract $integerParser): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($integerParser): void {
-            $builder->incorporateResult(
+            $builder->unwrapResult(
                 $integerParser->parse(
                     new MetaInformation($builder->getSubject(), 'length', count($builder->getValue()))
                 )
@@ -155,7 +155,7 @@ class AssertArray extends Base\Parser
 
                 return;
             }
-            $builder->incorporateResult(
+            $builder->unwrapResult(
                 $parser->parse(new ArrayValue($builder->getSubject(), $key, $value[$key]))
             );
         };
@@ -199,7 +199,7 @@ class AssertArray extends Base\Parser
         $key = self::normalizeArrayKey($key);
         $this->assertionList[] = static function (ResultBuilder $builder) use ($key, $default, $parser): void {
             $value = $builder->getValue();
-            $builder->incorporateResult(
+            $builder->unwrapResult(
                 $parser->parse(
                     new ArrayValue(
                         $builder->getSubject(),
@@ -251,7 +251,7 @@ class AssertArray extends Base\Parser
         $this->assertionList[] = static function (ResultBuilder $builder) use ($key, $parser): void {
             $value = $builder->getValue();
             if (array_key_exists($key, $value)) {
-                $builder->incorporateResult(
+                $builder->unwrapResult(
                     $parser->parse(
                         new ArrayValue($builder->getSubject(), $key, $value[$key])
                     )
@@ -264,6 +264,7 @@ class AssertArray extends Base\Parser
 
     /**
      * Asserts that the defined list of keys exist in the array. This method ignores surplus keys.
+     *
      * If you want to make sure that no surplus keys exist in the array, please use assertNoSurplusKeysExist()
      *
      * The message is processed using Debug::parseMessage and receives the following elements:

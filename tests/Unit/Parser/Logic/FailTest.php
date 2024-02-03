@@ -26,7 +26,7 @@ use Philiagus\Parser\Util\Debug;
 class FailTest extends ParserTestBase
 {
 
-    public function provideAnyValue(): array
+    public static function provideAnyValue(): array
     {
         return (new DataProvider())->provide();
     }

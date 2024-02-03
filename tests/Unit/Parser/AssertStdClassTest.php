@@ -30,7 +30,7 @@ class AssertStdClassTest extends ParserTestBase
 {
     use ChainableParserTestTrait, ValidValueParserTestTrait, InvalidValueParserTestTrait, OverwritableTypeErrorMessageTestTrait;
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         $value = new \stdClass();
 
@@ -39,7 +39,7 @@ class AssertStdClassTest extends ParserTestBase
         ];
     }
 
-    public function provideInvalidValuesAndParsers(): array
+    public static function provideInvalidValuesAndParsers(): array
     {
         return (new DataProvider())
             ->filter(fn($value) => !$value instanceof \stdClass)
@@ -47,7 +47,7 @@ class AssertStdClassTest extends ParserTestBase
             ->provide(false);
     }
 
-    public function provideInvalidTypesAndParser(): array
+    public static function provideInvalidTypesAndParser(): array
     {
         return (new DataProvider())
             ->filter(fn($value) => !$value instanceof \stdClass)

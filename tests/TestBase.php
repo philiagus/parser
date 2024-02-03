@@ -13,9 +13,11 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test;
 
 use Philiagus\DataProvider\DataProvider;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Result;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -24,13 +26,13 @@ class TestBase extends TestCase
 {
     use ProphecyTrait;
 
-    public function provideAnything(): array
+    public static function provideAnything(): array
     {
         return (new DataProvider(DataProvider::TYPE_ALL))
             ->provide();
     }
 
-    public function provideInvalidArrayKeys(): array
+    public static function provideInvalidArrayKeys(): array
     {
         return (new DataProvider(~DataProvider::TYPE_INTEGER & ~DataProvider::TYPE_STRING))
             ->provide();
@@ -45,10 +47,28 @@ class TestBase extends TestCase
         return $parser->reveal();
     }
 
-    protected function prophesizeParser(
-        array $inputResultPairs,
-              $expectedPath = null
-    ): Parser
+    protected static function prophesizeParserStatic(array $inputResultParis): Parser
+    {
+        return new class($inputResultParis) implements Parser {
+
+            public function __construct(
+                private readonly array $pairs
+            ) {}
+
+            #[\Override] public function parse(Subject $subject): \Philiagus\Parser\Contract\Result
+            {
+                foreach($this->pairs as [$from, $to]) {
+                    if($subject->getValue() === $from) {
+                        return new Result($subject, $to, []);
+                    }
+                }
+
+                Assert::fail("Unmatched value from prophesizeParserStatic");
+            }
+        };
+    }
+
+    protected function prophesizeParser(array $inputResultPairs): Parser
     {
         $parser = $this->prophesize(Parser::class);
         foreach ($inputResultPairs as $pair) {

@@ -29,21 +29,21 @@ class AssertFloatTest extends ParserTestBase
 
     use ChainableParserTestTrait, ValidValueParserTestTrait, InvalidValueParserTestTrait, ChainableParserTestTrait, OverwritableTypeErrorMessageTestTrait;
 
-    public function provideInvalidValuesAndParsers(): array
+    public static function provideInvalidValuesAndParsers(): array
     {
         return (new DataProvider(~DataProvider::TYPE_FLOAT))
             ->map(static fn($value) => [$value, static fn() => AssertFloat::new()])
             ->provide(false);
     }
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider(DataProvider::TYPE_FLOAT))
             ->map(static fn($value) => [$value, static fn() => AssertFloat::new(), $value])
             ->provide(false);
     }
 
-    public function provideInvalidTypesAndParser(): array
+    public static function provideInvalidTypesAndParser(): array
     {
         return (new DataProvider(~DataProvider::TYPE_FLOAT))
             ->map(static fn($value) => [$value, static fn() => AssertFloat::new()])
@@ -88,7 +88,7 @@ class AssertFloatTest extends ParserTestBase
         $builder->run();
     }
 
-    public function provideInvalidFloats(): array
+    public static function provideInvalidFloats(): array
     {
         return (new DataProvider(DataProvider::TYPE_NAN | DataProvider::TYPE_INFINITE))
             ->provide();

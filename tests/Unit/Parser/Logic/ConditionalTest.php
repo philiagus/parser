@@ -279,7 +279,7 @@ class ConditionalTest extends ParserTestBase
         $builder->run();
     }
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider())
             ->map(static fn($value) => [$value, fn() => Conditional::new()->setDefaultResult($value), $value])

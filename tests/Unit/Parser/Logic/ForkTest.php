@@ -31,7 +31,7 @@ class ForkTest extends TestBase
 {
     use ChainableParserTestTrait;
 
-    public function provideAnyValue(): array
+    public static function provideAnyValue(): array
     {
         return (new DataProvider())->provide();
     }
@@ -76,7 +76,7 @@ class ForkTest extends TestBase
         );
     }
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider())
             ->map(fn($value) => [$value, fn() => Fork::to(), $value])

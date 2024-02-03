@@ -29,7 +29,7 @@ class AssertStringMultibyte extends Base\Parser
 {
     use OverwritableTypeErrorMessage;
 
-    /** @var string[]|null */
+    /** @var array{"0":string, "1": string}|null */
     private ?array $encoding = null;
     /** @var \SplDoublyLinkedList<\Closure> */
     private \SplDoublyLinkedList $assertionList;
@@ -160,7 +160,7 @@ class AssertStringMultibyte extends Base\Parser
     public function giveLength(ParserContract $integerParser): static
     {
         $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($integerParser): void {
-            $builder->incorporateResult(
+            $builder->unwrapResult(
                 $integerParser->parse(
                     new MetaInformation($builder->getSubject(), 'length in ' . $encoding, mb_strlen($value, $encoding))
                 )
@@ -192,7 +192,7 @@ class AssertStringMultibyte extends Base\Parser
             } else {
                 $part = mb_substr($value, $start, $length, $encoding);
             }
-            $builder->incorporateResult(
+            $builder->unwrapResult(
                 $stringParser->parse(
                     new MetaInformation($builder->getSubject(), "$encoding substring from $start to " . ($length ?? 'end'), $part)
                 )
@@ -272,7 +272,7 @@ class AssertStringMultibyte extends Base\Parser
     public function giveEncoding(Parser $parser): static
     {
         $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($parser) {
-            $builder->incorporateResult(
+            $builder->unwrapResult(
                 $parser->parse(
                     new MetaInformation($builder->getSubject(), 'encoding', $encoding)
                 )

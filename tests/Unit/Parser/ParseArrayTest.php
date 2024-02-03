@@ -32,14 +32,14 @@ class ParseArrayTest extends ParserTestBase
 
     use ChainableParserTestTrait, InvalidValueParserTestTrait, ValidValueParserTestTrait;
 
-    public function provideInvalidValuesAndParsers(): array
+    public static function provideInvalidValuesAndParsers(): array
     {
         return (new DataProvider(~DataProvider::TYPE_ARRAY))
             ->map(fn($value) => [$value, fn() => ParseArray::new()])
             ->provide(false);
     }
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider(DataProvider::TYPE_ARRAY))
             ->map(fn($value) => [$value, fn() => ParseArray::new(), $value])
@@ -322,16 +322,39 @@ class ParseArrayTest extends ParserTestBase
             ->arguments(
                 $builder
                     ->evaluatedArgument()
-                    ->success(fn($value) => [array_key_first($value)], fn($value) => !empty($value))
-                    ->success(fn($value) => [implode('|', array_keys($value)) . '|'])
-                    ->success(fn() => [])
-                    ->configException(fn($value) => [INF])
-                    ->configException(fn($value) => [new \stdClass()])
+                    ->success(fn($value) => array_key_first($value), fn($value) => !empty($value))
+                    ->success(fn($value) => implode('|', array_keys($value)) . '|')
             )
             ->provider(
                 DataProvider::TYPE_ARRAY,
                 successValidator: function (Contract\Subject $subject, Contract\Result $result, array $methodArgs): array {
-                    $expectedResult = array_intersect_key($subject->getValue(), array_flip($methodArgs[0]));
+                    $expectedResult = array_intersect_key($subject->getValue(), array_flip($methodArgs));
+                    if (!Util::isSame($result->getValue(), $expectedResult)) {
+                        return [
+                            'Value was not altered as expected, from ' .
+                            '[' . implode(', ', array_keys($expectedResult)) . '] expected against ' .
+                            '[' . implode(', ', array_keys($result->getValue())) . ']',
+                        ];
+                    }
+
+                    return [];
+                }
+            );
+
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->success(fn($value) => array_key_first($value), fn($value) => !empty($value)),
+                $builder
+                    ->evaluatedArgument()
+                    ->success(fn($value) => array_key_last($value), fn($value) => !empty($value))
+            )
+            ->provider(
+                DataProvider::TYPE_ARRAY,
+                successValidator: function (Contract\Subject $subject, Contract\Result $result, array $methodArgs): array {
+                    $expectedResult = array_intersect_key($subject->getValue(), array_flip($methodArgs));
                     if (!Util::isSame($result->getValue(), $expectedResult)) {
                         return [
                             'Value was not altered as expected, from ' .

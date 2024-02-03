@@ -21,7 +21,7 @@ use Philiagus\Parser\Util\Debug;
 trait ValidValueParserTestTrait
 {
 
-    abstract public function provideValidValuesAndParsersAndResults(): array;
+    abstract public static function provideValidValuesAndParsersAndResults(): array;
 
     /**
      * @dataProvider provideValidValuesAndParsersAndResults

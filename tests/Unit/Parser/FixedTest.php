@@ -27,14 +27,14 @@ class FixedTest extends TestBase
 {
     use ChainableParserTestTrait;
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider())
             ->map(fn($value) => [$value, fn($value) => IgnoreInput::resultIn(!$value), !$value])
             ->provide(false);
     }
 
-    public function provideAnyValue(): array
+    public static function provideAnyValue(): array
     {
         return (new DataProvider())->provide();
     }

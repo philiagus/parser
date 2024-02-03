@@ -27,14 +27,14 @@ class ParseFormEncodedStringTest extends TestBase
 
     use ChainableParserTestTrait, InvalidValueParserTestTrait, ValidValueParserTestTrait;
 
-    public function provideInvalidValuesAndParsers(): array
+    public static function provideInvalidValuesAndParsers(): array
     {
         return (new DataProvider(~DataProvider::TYPE_STRING))
             ->map(fn($value) => [$value, fn() => ParseFormEncodedString::new()])
             ->provide(false);
     }
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return [
             ['a=1&b=2', fn() => ParseFormEncodedString::new(), ['a' => '1', 'b' => '2']],

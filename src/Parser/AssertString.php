@@ -54,7 +54,7 @@ class AssertString extends Base\Parser
     public function giveLength(ParserContract $integerParser): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder, string $value) use ($integerParser): void {
-            $builder->incorporateResult(
+            $builder->unwrapResult(
                 $integerParser->parse(
                     new MetaInformation($builder->getSubject(), 'length', strlen($value))
                 )
@@ -85,7 +85,7 @@ class AssertString extends Base\Parser
             } else {
                 $part = substr($value, $start, $length);
             }
-            $builder->incorporateResult(
+            $builder->unwrapResult(
                 $stringParser->parse(
                     new MetaInformation($builder->getSubject(), "excerpt from $start to " . ($length ?? 'end'), $part)
                 )

@@ -35,7 +35,7 @@ class ParseStdClassTest extends ParserTestBase
 {
     use ChainableParserTestTrait, ValidValueParserTestTrait, InvalidValueParserTestTrait, OverwritableTypeErrorMessageTestTrait;
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         $value = new \stdClass();
 
@@ -44,7 +44,7 @@ class ParseStdClassTest extends ParserTestBase
         ];
     }
 
-    public function provideInvalidValuesAndParsers(): array
+    public static function provideInvalidValuesAndParsers(): array
     {
         return (new DataProvider())
             ->filter(fn($value) => !$value instanceof \stdClass)
@@ -52,7 +52,7 @@ class ParseStdClassTest extends ParserTestBase
             ->provide(false);
     }
 
-    public function provideInvalidTypesAndParser(): array
+    public static function provideInvalidTypesAndParser(): array
     {
         return (new DataProvider())
             ->filter(fn($value) => !$value instanceof \stdClass)
@@ -110,7 +110,7 @@ class ParseStdClassTest extends ParserTestBase
         $parser->parse(Subject::default((object) ['a' => 1, 'c' => 3]));
     }
 
-    public function provideInvalidPropertyNames(): array
+    public static function provideInvalidPropertyNames(): array
     {
         return (new DataProvider(~DataProvider::TYPE_STRING))
             ->provide();

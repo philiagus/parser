@@ -75,7 +75,7 @@ class ChainTest extends ParserTestBase
         $builder->run();
     }
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider())
             ->map(static fn($value) => [$value, fn() => Chain::parsers(Any::new()), $value])

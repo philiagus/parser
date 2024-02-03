@@ -27,14 +27,14 @@ class AssertScalarTest extends TestBase
 {
     use ChainableParserTestTrait, ValidValueParserTestTrait, InvalidValueParserTestTrait, OverwritableTypeErrorMessageTestTrait;
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider(DataProvider::TYPE_SCALAR))
             ->map(fn($value) => [$value, fn() => AssertScalar::new(), $value])
             ->provide(false);
     }
 
-    public function provideInvalidValuesAndParsers(): array
+    public static function provideInvalidValuesAndParsers(): array
     {
         return (new DataProvider(~DataProvider::TYPE_SCALAR))
             ->map(fn($value) => [$value, fn() => AssertScalar::new()])
@@ -46,7 +46,7 @@ class AssertScalarTest extends TestBase
         self::assertInstanceOf(AssertScalar::class, AssertScalar::new());
     }
 
-    public function provideInvalidTypesAndParser(): array
+    public static function provideInvalidTypesAndParser(): array
     {
         return (new DataProvider(~DataProvider::TYPE_SCALAR))
             ->map(fn($value) => [$value, fn() => AssertScalar::new()])

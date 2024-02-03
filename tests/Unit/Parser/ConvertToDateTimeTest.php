@@ -32,7 +32,7 @@ class ConvertToDateTimeTest extends ParserTestBase
     use ChainableParserTestTrait, InvalidValueParserTestTrait;
 
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return [
             'unix timestamp conversion' => [
@@ -248,7 +248,7 @@ class ConvertToDateTimeTest extends ParserTestBase
         $builder->run();
     }
 
-    public function provideInvalidValuesAndParsers(): array
+    public static function provideInvalidValuesAndParsers(): array
     {
 
         return (new DataProvider())

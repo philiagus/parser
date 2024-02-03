@@ -27,6 +27,7 @@ class ResultTest extends TestBase
     public function testSuccess(): void
     {
         $subject = $this->prophesize(Subject::class);
+        $subject->getRootId()->willReturn($rootId = 'root_id');
         $subject->throwOnError()->willReturn(true);
         $subject = $subject->reveal();
         $value = new \stdClass();
@@ -36,6 +37,7 @@ class ResultTest extends TestBase
             []
         );
         self::assertTrue($result->isSuccess());
+        self::assertSame($rootId, $result->getRootId());
         self::assertFalse($result->hasErrors());
         self::assertEmpty($result->getErrors());
         self::assertSame($value, $result->getValue());
@@ -44,6 +46,7 @@ class ResultTest extends TestBase
     public function testError(): void
     {
         $subject = $this->prophesize(Subject::class);
+        $subject->getRootId()->willReturn($rootId = 'root_id');
         $subject->throwOnError()->willReturn(true);
         $subject->getPathAsString(true)->shouldBeCalledOnce()->willReturn('SUB');
         $subject = $subject->reveal();
@@ -56,6 +59,7 @@ class ResultTest extends TestBase
         self::assertFalse($result->isSuccess());
         self::assertTrue($result->hasErrors());
         self::assertSame($errors, $result->getErrors());
+        self::assertSame($rootId, $result->getRootId());
         self::expectException(\LogicException::class);
         $result->getValue();
     }
@@ -63,13 +67,14 @@ class ResultTest extends TestBase
     public function testExceptionOnNonError(): void
     {
         $subject = $this->prophesize(Subject::class);
+        $subject->getRootId()->willReturn('root_id');
         $subject->throwOnError()->willReturn(true);
         $subject = $subject->reveal();
         self::expectException(\LogicException::class);
         new Result($subject, null, ['invalid']);
     }
 
-    public function provideConstructorArguments(): array
+    public static function provideConstructorArguments(): array
     {
         $cases = [];
         foreach ((new DataProvider())->provide(false) as $name => $value) {

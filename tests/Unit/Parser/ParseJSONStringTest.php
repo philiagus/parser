@@ -30,7 +30,7 @@ class ParseJSONStringTest extends TestBase
 
     use ChainableParserTestTrait, InvalidValueParserTestTrait, ValidValueParserTestTrait;
 
-    public function provideInvalidValuesAndParsers(): array
+    public static function provideInvalidValuesAndParsers(): array
     {
         return (new DataProvider(~DataProvider::TYPE_STRING))
             ->addCase('not json string', '?=)(/&%')
@@ -38,7 +38,7 @@ class ParseJSONStringTest extends TestBase
             ->provide(false);
     }
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider(DataProvider::TYPE_STRING))
             ->filter(function ($value) {

@@ -74,7 +74,7 @@ ParseArray::new()
                     ->thenAppendTo($integers),
                 AssertFloat::new()
                     ->assertMinimum(0.0)
-                    ->thenAssignTo($floats)
+                    ->thenAppendTo($floats)
             )
     )
 ->parse(Subject::default($input));

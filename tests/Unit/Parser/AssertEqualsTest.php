@@ -26,7 +26,7 @@ class AssertEqualsTest extends TestBase
 {
     use ChainableParserTestTrait, ValidValueParserTestTrait, InvalidValueParserTestTrait;
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider(DataProvider::TYPE_ALL))
             ->filter(function ($value) {
@@ -41,7 +41,7 @@ class AssertEqualsTest extends TestBase
             ->provide(false);
     }
 
-    public function provideInvalidValuesAndParsers(): array
+    public static function provideInvalidValuesAndParsers(): array
     {
         return (new DataProvider(DataProvider::TYPE_ALL))
             ->map(

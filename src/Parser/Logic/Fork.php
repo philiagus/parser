@@ -69,7 +69,7 @@ class Fork extends Base\Parser
     #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
     {
         foreach ($this->parsers as $index => $parser) {
-            $builder->incorporateResult(
+            $builder->unwrapResult(
                 $parser->parse(new Forwarded($builder->getSubject(), "fork #$index"))
             );
         }

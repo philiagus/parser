@@ -64,7 +64,7 @@ class AssertStdClass extends Base\Parser
         $this->assertionList[] = static function (ResultBuilder $builder) use ($property, $parser, $missingPropertyExceptionMessage): void {
             $value = $builder->getValue();
             if (property_exists($value, $property)) {
-                $builder->incorporateResult(
+                $builder->unwrapResult(
                     $parser->parse(
                         new PropertyValue($builder->getSubject(), $property, $value->$property)
                     )
@@ -93,7 +93,7 @@ class AssertStdClass extends Base\Parser
         $this->assertionList[] = static function (ResultBuilder $builder) use ($property, $parser): void {
             $value = $builder->getValue();
             if (property_exists($value, $property)) {
-                $builder->incorporateResult(
+                $builder->unwrapResult(
                     $parser->parse(
                         new PropertyValue($builder->getSubject(), $property, $value->$property)
                     )
@@ -119,7 +119,7 @@ class AssertStdClass extends Base\Parser
         $this->assertionList[] = static function (ResultBuilder $builder) use ($property, $default, $parser): void {
             $value = $builder->getValue();
             $propertyValue = property_exists($value, $property) ? $value->$property : $default;
-            $builder->incorporateResult(
+            $builder->unwrapResult(
                 $parser->parse(
                     new PropertyValue($builder->getSubject(), $property, $propertyValue)
                 )
@@ -144,7 +144,7 @@ class AssertStdClass extends Base\Parser
             foreach ($builder->getValue() as $property => $_) {
                 $properties[] = $property;
             }
-            $builder->incorporateResult(
+            $builder->unwrapResult(
                 $arrayParser->parse(
                     new MetaInformation($builder->getSubject(), 'property names', $properties)
                 )
@@ -168,7 +168,7 @@ class AssertStdClass extends Base\Parser
             foreach ($builder->getValue() as $propertyValue) {
                 $propertyValues[] = $propertyValue;
             }
-            $builder->incorporateResult(
+            $builder->unwrapResult(
                 $arrayParser->parse(
                     new MetaInformation($builder->getSubject(), 'property values', $propertyValues)
                 )
@@ -189,7 +189,7 @@ class AssertStdClass extends Base\Parser
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($stringParser): void {
             foreach ($builder->getValue() as $property => $_) {
-                $builder->incorporateResult(
+                $builder->unwrapResult(
                     $stringParser->parse(
                         new PropertyName($builder->getSubject(), $property)
                     )
@@ -211,7 +211,7 @@ class AssertStdClass extends Base\Parser
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($parser): void {
             foreach ($builder->getValue() as $property => $value) {
-                $builder->incorporateResult(
+                $builder->unwrapResult(
                     $parser->parse(
                         new PropertyValue($builder->getSubject(), $property, $value)
                     )
@@ -236,7 +236,7 @@ class AssertStdClass extends Base\Parser
             foreach ($builder->getValue() as $_) {
                 $count++;
             }
-            $builder->incorporateResult(
+            $builder->unwrapResult(
                 $integerParser->parse(
                     new MetaInformation($builder->getSubject(), 'property count', $count)
                 )

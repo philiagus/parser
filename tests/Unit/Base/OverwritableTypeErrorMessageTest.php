@@ -29,35 +29,35 @@ use PHPUnit\Framework\TestCase;
  */
 class OverwritableTypeErrorMessageTest extends TestCase
 {
-    public function provideCases(): array
+    public static function provideCases(): array
     {
         $cases = [];
         foreach ((new DataProvider())->provide(false) as $name => $value) {
             $cases["Default Message No Builder -> $name"] = [
                 $value,
                 function () {
-                    return $this->createParserWithoutBuilder();
+                    return self::createParserWithoutBuilder();
                 },
                 Debug::parseMessage('DEFAULT {subject.debug}', ['subject' => $value]),
             ];
             $cases["Custom Message No Builder -> $name"] = [
                 $value,
                 function () {
-                    return $this->createParserWithoutBuilder()->setTypeErrorMessage('CUSTOM {subject.debug}');
+                    return self::createParserWithoutBuilder()->setTypeErrorMessage('CUSTOM {subject.debug}');
                 },
                 Debug::parseMessage('CUSTOM {subject.debug}', ['subject' => $value]),
             ];
             $cases["Default Message Builder -> $name"] = [
                 $value,
                 function () {
-                    return $this->createParserWithBuilder();
+                    return self::createParserWithBuilder();
                 },
                 Debug::parseMessage('DEFAULT {subject.debug}', ['subject' => $value]),
             ];
             $cases["Custom Message Builder -> $name"] = [
                 $value,
                 function () {
-                    return $this->createParserWithBuilder()->setTypeErrorMessage('CUSTOM {subject.debug}');
+                    return self::createParserWithBuilder()->setTypeErrorMessage('CUSTOM {subject.debug}');
                 },
                 Debug::parseMessage('CUSTOM {subject.debug}', ['subject' => $value]),
             ];
@@ -67,7 +67,7 @@ class OverwritableTypeErrorMessageTest extends TestCase
         return $cases;
     }
 
-    private function createParserWithoutBuilder(): Parser
+    private static function createParserWithoutBuilder(): Parser
     {
         return new class() implements Parser {
             use OverwritableTypeErrorMessage;
@@ -86,7 +86,7 @@ class OverwritableTypeErrorMessageTest extends TestCase
         };
     }
 
-    private function createParserWithBuilder(): Parser
+    private static function createParserWithBuilder(): Parser
     {
         return new class() implements Parser {
             use OverwritableTypeErrorMessage;

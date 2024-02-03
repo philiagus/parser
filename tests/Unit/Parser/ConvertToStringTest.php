@@ -14,6 +14,8 @@ namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Parser\ConvertToString;
+use Philiagus\Parser\Parser\IgnoreInput;
+use Philiagus\Parser\Parser\Logic\Conditional;
 use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\InvalidValueParserTestTrait;
 use Philiagus\Parser\Test\Mock\ParserMock;
@@ -31,7 +33,7 @@ class ConvertToStringTest extends TestBase
         InvalidValueParserTestTrait,
         ChainableParserTestTrait;
 
-    public function provideInvalidValuesAndParsers(): array
+    public static function provideInvalidValuesAndParsers(): array
     {
         return [
             'array' => [[1, 2, 3], fn() => ConvertToString::new()],
@@ -46,7 +48,7 @@ class ConvertToStringTest extends TestBase
             'array converter resulted in non string' => [
                 ['yes'],
                 fn() => ConvertToString::new()
-                    ->setImplodeOfArrays(',', $this->prophesizeParser([['yes', false]])),
+                    ->setImplodeOfArrays(',', self::prophesizeParserStatic([['yes', false]])),
             ],
             'array converter resulted in exception' => [
                 ['yes'],
@@ -56,14 +58,14 @@ class ConvertToStringTest extends TestBase
         ];
     }
 
-    public function provideInvalidTypesAndParser(): array
+    public static function provideInvalidTypesAndParser(): array
     {
         return [
             [INF, fn() => ConvertToString::new()],
         ];
     }
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider(DataProvider::TYPE_INTEGER | DataProvider::TYPE_FLOAT | DataProvider::TYPE_STRING))
             ->map(
@@ -96,12 +98,9 @@ class ConvertToStringTest extends TestBase
                         return ConvertToString::new()
                             ->setImplodeOfArrays(
                                 '_',
-                                $this->prophesizeParser(
-                                    [
-                                        [true, 'yep'],
-                                        [false, 'nope'],
-                                    ]
-                                )
+                                Conditional::new()
+                                    ->ifSameAs(true, IgnoreInput::resultIn('yep'))
+                                    ->ifSameAs(false, IgnoreInput::resultIn('nope'))
                             );
                     },
                     'yep_nope',

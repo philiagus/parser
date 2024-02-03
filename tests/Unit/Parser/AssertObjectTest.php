@@ -29,21 +29,21 @@ class AssertObjectTest extends ParserTestBase
     use ChainableParserTestTrait, ValidValueParserTestTrait, InvalidValueParserTestTrait, OverwritableTypeErrorMessageTestTrait;
 
 
-    public function provideInvalidValuesAndParsers(): array
+    public static function provideInvalidValuesAndParsers(): array
     {
         return (new DataProvider(~DataProvider::TYPE_OBJECT))
             ->map(fn($value) => [$value, fn() => AssertObject::new()])
             ->provide(false);
     }
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider(DataProvider::TYPE_OBJECT))
             ->map(fn($value) => [$value, fn() => AssertObject::new(), $value])
             ->provide(false);
     }
 
-    public function provideInvalidTypesAndParser(): array
+    public static function provideInvalidTypesAndParser(): array
     {
         return (new DataProvider(~DataProvider::TYPE_OBJECT))
             ->map(fn($value) => [$value, fn() => AssertObject::new()])

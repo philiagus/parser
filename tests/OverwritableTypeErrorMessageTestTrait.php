@@ -22,7 +22,7 @@ use ReflectionObject;
 
 trait OverwritableTypeErrorMessageTestTrait
 {
-    abstract public function provideInvalidTypesAndParser(): array;
+    abstract public static function provideInvalidTypesAndParser(): array;
 
     /**
      * @dataProvider provideInvalidTypesAndParser

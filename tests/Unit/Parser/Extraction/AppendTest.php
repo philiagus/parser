@@ -70,7 +70,7 @@ class AppendTest extends TestBase
         $parser->parse(Subject::default($value));
     }
 
-    public function provideValidValuesAndParsersAndResults(): array
+    public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider())
             ->map(

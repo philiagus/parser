@@ -24,7 +24,7 @@ use Philiagus\Parser\Test\Util;
  */
 class PropertyNameTest extends SubjectTestBase
 {
-    public function provideConstructorArguments(): array
+    public static function provideConstructorArguments(): array
     {
         $types = DataProvider::TYPE_STRING;
 

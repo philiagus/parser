@@ -24,7 +24,7 @@ use Philiagus\Parser\Test\Util;
  */
 class ArrayValueTest extends SubjectTestBase
 {
-    public function provideConstructorArguments(): array
+    public static function provideConstructorArguments(): array
     {
         $types = DataProvider::TYPE_INTEGER | DataProvider::TYPE_STRING;
 
