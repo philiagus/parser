@@ -56,8 +56,5 @@ class ParserBeginTest extends SubjectTestBase
         self::assertSame("ROOT", $subject->getPathAsString(false));
         self::assertSame([$root, $subject], $subject->getSubjectChain(true));
         self::assertSame([$root], $subject->getSubjectChain(false));
-        $builder = $subject->getResultBuilder('builder description');
-        Util::assertSame($value, $builder->getValue());
-        self::assertSame($builder->getSubject()->getDescription(), 'builder description');
     }
 }

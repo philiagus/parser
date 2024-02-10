@@ -58,8 +58,5 @@ class PropertyNameTest extends SubjectTestBase
         self::assertSame("ROOT$expectedPathPart", $subject->getPathAsString(false));
         self::assertSame([$root, $subject], $subject->getSubjectChain(true));
         self::assertSame([$root, $subject], $subject->getSubjectChain(false));
-        $builder = $subject->getResultBuilder('builder description');
-        Util::assertSame($propertyName, $builder->getValue());
-        self::assertSame($builder->getSubject()->getDescription(), 'builder description');
     }
 }

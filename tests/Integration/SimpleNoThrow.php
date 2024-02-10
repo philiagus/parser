@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Integration;
 
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Parser\AssertInteger;
-use Philiagus\Parser\Parser\AssertStringMultibyte;
-use Philiagus\Parser\Parser\ParseArray;
+use Philiagus\Parser\Parser\Assert\AssertInteger;
+use Philiagus\Parser\Parser\Assert\AssertStringMultibyte;
+use Philiagus\Parser\Parser\Parse\ParseArray;
 use Philiagus\Parser\Test\TestBase;
 
 class SimpleNoThrow extends TestBase

@@ -33,7 +33,6 @@ class ResultBuilderTest extends TestBase
         $value0 = new \stdClass();
         $subject0 = new Root($value0);
         $builder = new ResultBuilder($subject0, 'description');
-        self::assertEquals($builder, $subject0->getResultBuilder('description'));
         $subject1 = $builder->getSubject();
         self::assertInstanceOf(ParserBegin::class, $subject1);
         self::assertSame('description', $subject1->getDescription());
@@ -71,7 +70,7 @@ class ResultBuilderTest extends TestBase
     public function testLogErrorWithoutThrow(): void
     {
         $subject = new Root(null, throwOnError: false);
-        $builder = $subject->getResultBuilder('');
+        $builder = new ResultBuilder($subject, '');
 
         self::assertFalse($builder->hasErrors());
 
@@ -94,7 +93,7 @@ class ResultBuilderTest extends TestBase
     public function testLogErrorWithThrow(): void
     {
         $subject = new Root(null);
-        $builder = $subject->getResultBuilder('');
+        $builder = new ResultBuilder($subject, '');
 
         self::assertFalse($builder->hasErrors());
 
@@ -113,7 +112,7 @@ class ResultBuilderTest extends TestBase
     {
 
         $subject = new Root(null, throwOnError: false);
-        $builder = $subject->getResultBuilder('');
+        $builder = new ResultBuilder($subject, '');
         $object = new \stdClass();
 
         self::assertFalse($builder->hasErrors());
@@ -170,7 +169,7 @@ class ResultBuilderTest extends TestBase
     {
 
         $subject = new Root(null, throwOnError: true);
-        $builder = $subject->getResultBuilder('');
+        $builder = new ResultBuilder($subject, '');
         $object = new \stdClass();
 
         self::assertFalse($builder->hasErrors());
@@ -210,7 +209,7 @@ class ResultBuilderTest extends TestBase
     {
         $value = new \stdClass();
         $subject = new Root(null);
-        $builder = $subject->getResultBuilder('');
+        $builder = new ResultBuilder($subject, '');
         self::assertSame($value, $builder->unwrapResult(
             new Result($subject, $value, [])
         ));
@@ -221,7 +220,7 @@ class ResultBuilderTest extends TestBase
     {
         $value = new \stdClass();
         $subject = new Root(null, throwOnError: false);
-        $builder = $subject->getResultBuilder('');
+        $builder = new ResultBuilder($subject, '');
         self::assertSame($value, $builder->unwrapResult(
             new Result($subject, false, [
                 $error = new Error($subject, 'ERROR'),
@@ -235,7 +234,7 @@ class ResultBuilderTest extends TestBase
     public function testIncorporateResult_ErrorThrow(): void
     {
         $subject = new Root(null, throwOnError: true);
-        $builder = $subject->getResultBuilder('');
+        $builder = new ResultBuilder($subject, '');
         self::expectException(ParsingException::class);
         self::expectExceptionMessage('ERROR1');
         $builder->unwrapResult(
@@ -251,7 +250,7 @@ class ResultBuilderTest extends TestBase
     {
         $value = new \stdClass();
         $subject = new Root(null);
-        $builder = $subject->getResultBuilder('');
+        $builder = new ResultBuilder($subject, '');
         $result = $builder->createResultFromResult(
             new Result($subject, $value, [])
         );
@@ -264,7 +263,7 @@ class ResultBuilderTest extends TestBase
     {
         $value = new \stdClass();
         $subject = new Root(null, throwOnError: false);
-        $builder = $subject->getResultBuilder('');
+        $builder = new ResultBuilder($subject, '');
         $builder->logError(
             $error0 = new Error($subject, 'FIRST')
         );
@@ -280,7 +279,7 @@ class ResultBuilderTest extends TestBase
     public function testCreateResultFromResult_ErrorThrow(): void
     {
         $subject = new Root(null, throwOnError: true);
-        $builder = $subject->getResultBuilder('');
+        $builder = new ResultBuilder($subject, '');
         self::expectException(ParsingException::class);
         self::expectExceptionMessage('ERROR1');
         $builder->createResultFromResult(

@@ -55,9 +55,6 @@ class RootTest extends SubjectTestBase
         self::assertSame($expectedDescription, $root->getPathAsString(false));
         self::assertSame([$root], $root->getSubjectChain(true));
         self::assertSame([$root], $root->getSubjectChain(false));
-        $builder = $root->getResultBuilder('builder description');
-        Util::assertSame($value, $builder->getValue());
-        self::assertSame($builder->getSubject()->getDescription(), 'builder description');
 
 
         $root = Subject::default($value, $description, $throwOnError);
@@ -69,8 +66,5 @@ class RootTest extends SubjectTestBase
         self::assertSame($expectedDescription, $root->getPathAsString(false));
         self::assertSame([$root], $root->getSubjectChain(true));
         self::assertSame([$root], $root->getSubjectChain(false));
-        $builder = $root->getResultBuilder('builder description');
-        Util::assertSame($value, $builder->getValue());
-        self::assertSame($builder->getSubject()->getDescription(), 'builder description');
     }
 }

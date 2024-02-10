@@ -26,8 +26,6 @@ class PropertyName extends Subject
     /** @inheritDoc */
     #[\Override] protected function getPathStringPart(bool $isLastInChain): string
     {
-        return preg_match('/\s/', $this->getDescription())
-            ? " property name " . var_export($this->getDescription(), true)
-            : " property name {$this->getDescription()}";
+        return " property name " . (preg_match('/\s/', $this->description) ? var_export($this->description, true) : $this->description);
     }
 }

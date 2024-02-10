@@ -14,6 +14,7 @@ namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base\Chainable;
 use Philiagus\Parser\Contract;
+use Philiagus\Parser\Contract\Parser;
 
 
 /**
@@ -27,23 +28,22 @@ class Chain implements Contract\Parser, Contract\Chainable
     /** @var Contract\Parser[] */
     private array $parsers;
 
-    private function __construct(Contract\Parser $parser, Contract\Parser ...$parsers)
+    private function __construct(Contract\Parser ...$parsers)
     {
-        $this->parsers = [$parser, ...$parsers];
+        $this->parsers = $parsers;
     }
 
     /**
      * Chains the provided list of parsers after one another, feeding the result of the previous parser
      * to the next. The chain is broken when a parsers result has errors.
      *
-     * @param Contract\Parser $parser
-     * @param Contract\Parser ...$parsers
+     * @param Parser ...$parsers
      *
      * @return static
      */
-    public static function parsers(Contract\Parser $parser, Contract\Parser ...$parsers): static
+    public static function parsers(Contract\Parser ...$parsers): static
     {
-        return new static($parser, ...$parsers);
+        return new static(...$parsers);
     }
 
     /** @inheritDoc */

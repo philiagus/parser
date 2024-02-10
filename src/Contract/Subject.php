@@ -47,15 +47,6 @@ interface Subject
     public function getValue(): mixed;
 
     /**
-     * Creates a result builder for this subject
-     *
-     * @param string $description
-     *
-     * @return ResultBuilder
-     */
-    public function getResultBuilder(string $description): ResultBuilder;
-
-    /**
      * Returns true if the subject wants parsers to throw a ParsingException on Error instead of
      * adding the error to the result
      *

@@ -18,6 +18,7 @@ use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\Extraction\Append;
 use Philiagus\Parser\Parser\Extraction\Assign;
 use Philiagus\Parser\Parser\Logic\Chain;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\ResultBuilder;
 
 abstract class Parser implements Contract\Parser, Contract\Chainable
@@ -39,9 +40,7 @@ abstract class Parser implements Contract\Parser, Contract\Chainable
     #[\Override] public function parse(Contract\Subject $subject): Contract\Result
     {
         return $this->execute(
-            $subject->getResultBuilder(
-                $this->parserDescription ?? $this->getDefaultParserDescription($subject)
-            )
+            new ResultBuilder($subject, $this->parserDescription ?? $this->getDefaultParserDescription($subject)),
         );
     }
 

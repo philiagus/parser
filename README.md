@@ -25,9 +25,8 @@ A simple example:
 
 ```php
 <?php
-use Philiagus\Parser\Parser\AssertInteger;
-use Philiagus\Parser\Parser\Extraction\Assign;
 use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Parser\Assert\AssertInteger;
 
 $integer = 100;
 
@@ -50,12 +49,11 @@ The real fun begins, when you start stacking parsers into one another:
 
 ```php
 <?php
-use Philiagus\Parser\Parser\AssertFloat;
-use Philiagus\Parser\Parser\AssertInteger;
-use Philiagus\Parser\Parser\Logic\OneOf;
-use Philiagus\Parser\Parser\ParseArray;
-use Philiagus\Parser\Parser\Extraction\Append;
 use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Parser\Assert\AssertFloat;
+use Philiagus\Parser\Parser\Assert\AssertInteger;
+use Philiagus\Parser\Parser\Logic\OneOf;
+use Philiagus\Parser\Parser\Parse\ParseArray;
 
 $input = [
     1, 1.0, 2, 4, 4.20
@@ -89,11 +87,11 @@ Let's say: You have an API which receives requests from a client in JSON format,
 ```php
 <?php
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Parser\AssertInteger;
-use Philiagus\Parser\Parser\AssertStdClass;
-use Philiagus\Parser\Parser\AssertStringMultibyte;
-use Philiagus\Parser\Parser\ConvertToDateTime;
-use Philiagus\Parser\Parser\ParseJSONString;
+use Philiagus\Parser\Parser\Assert\AssertInteger;
+use Philiagus\Parser\Parser\Assert\AssertStdClass;
+use Philiagus\Parser\Parser\Assert\AssertStringMultibyte;
+use Philiagus\Parser\Parser\Convert\ConvertToDateTime;
+use Philiagus\Parser\Parser\Parse\ParseJSONString;
 
 $sourceValue = '{"name":"Frank Herbert","birthday":"1920-10-08"}';
 

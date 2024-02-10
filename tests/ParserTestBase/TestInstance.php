@@ -75,15 +75,24 @@ class TestInstance
         return $this;
     }
 
-    public function successProvider(int $flags): self
+    public function successProvider(
+        int $flags,
+        \Closure $resultAssertion = null
+    ): self
     {
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1)[0];
         $this->success[$trace['line']][] = [
             'source' => static fn() => (new DataProvider($flags))->provide(false),
             'success' => static fn() => true,
-            'result' => static function (Contract\Subject $start, Contract\Result $result): array {
-                if (!DataProvider::isSame($start->getValue(), $result->getValue())) {
-                    return ['Result has been altered from ' . Debug::stringify($start->getValue()) . ' to ' . Debug::stringify($result->getValue())];
+            'result' => static function (Contract\Subject $start, Contract\Result $result) use ($resultAssertion): array {
+            $startValue = $start->getValue();
+                $resultValue = $result->getValue();
+                if ($resultAssertion) {
+                    if (!$resultAssertion($startValue, $resultValue)) {
+                        return ['Result ' . Debug::stringify($resultValue) . ' (create from ' . Debug::stringify($startValue) . ') did not match expectation'];
+                    }
+                } elseif (!DataProvider::isSame($startValue, $resultValue)) {
+                    return ['Result has been altered from ' . Debug::stringify($startValue) . ' to ' . Debug::stringify($resultValue)];
                 }
 
                 return [];
@@ -139,7 +148,14 @@ class TestInstance
 
     public function expectError(\Closure $errorStringGenerator): self
     {
-        $this->expectError[] = $errorStringGenerator;
+        $this->expectError[] = ['=', $errorStringGenerator];
+
+        return $this;
+    }
+
+    public function expectErrorRegex(\Closure $regex): self
+    {
+        $this->expectError[] = ['regex', $regex];
 
         return $this;
     }
@@ -200,8 +216,8 @@ class TestInstance
                         foreach (['throw' => true, 'nothrow' => false] as $throwLabel => $throw) {
                             $errorCollection = new ErrorCollection();
                             if (!$success) {
-                                foreach ($this->expectError as $expectError) {
-                                    $errorCollection->add($expectError($value));
+                                foreach ($this->expectError as [$compareType, $expectError]) {
+                                    $errorCollection->add($compareType, $expectError($value));
                                 }
                             }
                             $caseName = $line . ' #' . $callIndex . ' [' . Debug::stringify($value) . '] ' .

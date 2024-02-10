@@ -17,6 +17,9 @@ use Philiagus\Parser\Parser\Extraction\Append;
 use Philiagus\Parser\Parser\Extraction\Assign;
 use Philiagus\Parser\Parser\Logic\Chain;
 
+/**
+ * Trait for ease of implementing the Chainable interface
+ */
 trait Chainable
 {
 

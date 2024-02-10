@@ -35,7 +35,7 @@ class ParserMock implements Parser
             static function (Contract\Subject $subject) use ($errorCollection) {
                 $message = uniqid(microtime());
                 $error = new Error($subject, $message);
-                $errorCollection?->add($error->getMessage());
+                $errorCollection?->add('=', $error->getMessage());
                 if ($subject->throwOnError()) {
                     throw new ParsingException($error);
                 }

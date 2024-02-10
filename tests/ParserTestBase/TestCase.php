@@ -18,6 +18,8 @@ use Philiagus\Parser\Exception\ParserConfigurationException;
 class TestCase
 {
 
+    public static int $totalRun = 0;
+
     public function __construct(
         private readonly bool             $success,
         private readonly bool             $throw,
@@ -46,6 +48,7 @@ class TestCase
      */
     private function runInternally(): array
     {
+        self::$totalRun++;
         $errors = [];
 
         try {

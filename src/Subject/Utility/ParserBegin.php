@@ -26,6 +26,6 @@ class ParserBegin extends Subject
     /** @inheritDoc */
     #[\Override] protected function getPathStringPart(bool $isLastInChain): string
     {
-        return $this->getDescription() === '' ? '' : " ▷{$this->getDescription()}";
+        return $this->description === '' ? '' : " ▷$this->description";
     }
 }

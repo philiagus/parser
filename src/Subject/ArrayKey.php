@@ -25,8 +25,8 @@ class ArrayKey extends Subject
     /** @inheritDoc */
     #[\Override] protected function getPathStringPart(bool $isLastInChain): string
     {
-        return preg_match('/\s/', $this->getDescription())
-            ? " key " . var_export($this->getDescription(), true)
-            : " key {$this->getDescription()}";
+        return preg_match('/\s/', $this->description)
+            ? " key " . var_export($this->description, true)
+            : " key {$this->description}";
     }
 }

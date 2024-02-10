@@ -60,7 +60,7 @@ class Message implements Argument
                         $count = count(($this->generatedElements)($subjectValue, $generatedArguments, $successStack));
                     }
                     for (; $count > 0; $count--) {
-                        $errorCollection?->add('MESSAGE WITHOUT REPLACERS');
+                        $errorCollection?->add('=', 'MESSAGE WITHOUT REPLACERS');
                     }
                 }
 
@@ -97,6 +97,7 @@ class Message implements Argument
                     }
                     if ($eligible) {
                         $errorCollection?->add(
+                            '=',
                             Debug::parseMessage($message, $replacers)
                         );
                     }

@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Integration;
 
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Parser\AssertArray;
-use Philiagus\Parser\Parser\AssertInteger;
-use Philiagus\Parser\Parser\AssertSame;
+use Philiagus\Parser\Parser\Assert\AssertArray;
+use Philiagus\Parser\Parser\Assert\AssertInteger;
+use Philiagus\Parser\Parser\Assert\AssertSame;
 use Philiagus\Parser\Parser\IgnoreInput;
 use Philiagus\Parser\Parser\Logic\OneOf;
 use PHPUnit\Framework\TestCase;

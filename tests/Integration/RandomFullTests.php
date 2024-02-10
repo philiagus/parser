@@ -14,19 +14,19 @@ namespace Philiagus\Parser\Test\Integration;
 
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Parser\AssertArray;
-use Philiagus\Parser\Parser\AssertFloat;
-use Philiagus\Parser\Parser\AssertInteger;
-use Philiagus\Parser\Parser\AssertNull;
-use Philiagus\Parser\Parser\AssertSame;
-use Philiagus\Parser\Parser\AssertStdClass;
-use Philiagus\Parser\Parser\AssertString;
+use Philiagus\Parser\Parser\Assert\AssertArray;
+use Philiagus\Parser\Parser\Assert\AssertFloat;
+use Philiagus\Parser\Parser\Assert\AssertInteger;
+use Philiagus\Parser\Parser\Assert\AssertNull;
+use Philiagus\Parser\Parser\Assert\AssertSame;
+use Philiagus\Parser\Parser\Assert\AssertStdClass;
+use Philiagus\Parser\Parser\Assert\AssertString;
 use Philiagus\Parser\Parser\Extraction\Append;
 use Philiagus\Parser\Parser\Extraction\Assign;
 use Philiagus\Parser\Parser\IgnoreInput;
 use Philiagus\Parser\Parser\Logic\Preserve;
-use Philiagus\Parser\Parser\ParseJSONString;
-use Philiagus\Parser\Parser\ParseStdClass;
+use Philiagus\Parser\Parser\Parse\ParseJSONString;
+use Philiagus\Parser\Parser\Parse\ParseStdClass;
 use PHPUnit\Framework\TestCase;
 
 /**

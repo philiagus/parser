@@ -18,6 +18,9 @@ use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
 
+/**
+ * Trait to easily implement type errors in parsers with overwritable exception messages
+ */
 trait OverwritableTypeErrorMessage
 {
 

@@ -85,12 +85,12 @@ class CaseBuilder
         }
 
         if ($hasErrors) {
-            $string = PHP_EOL . implode(PHP_EOL, $this->genereateLines($results));
+            $string = PHP_EOL . implode(PHP_EOL, $this->generateLines($results));
             Assert::fail($string);
         }
     }
 
-    private function genereateLines(array $results, int $indent = 0): array
+    private function generateLines(array $results, int $indent = 0): array
     {
         $indentChar = str_repeat("\t", $indent);
         $indentedChar = str_repeat("\t", $indent + 1);
@@ -112,9 +112,13 @@ class CaseBuilder
         return [...$errorLines, ...$successLines];
     }
 
-    public function fixedArgument(): Argument\Fixed
+    public function fixedArgument(mixed ...$arguments): Argument\Fixed
     {
-        return new Argument\Fixed();
+        $result = new Argument\Fixed();
+        foreach($arguments as $arg) {
+            $result->success($arg);
+        }
+        return $result;
     }
 
     public function dataProviderArgument(int $flags = DataProvider::TYPE_ALL): Argument\Generated

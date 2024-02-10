@@ -19,9 +19,9 @@ use Philiagus\Parser\Subject\Root;
 abstract class Subject implements Contract\Subject
 {
 
-    private bool $throwOnError;
+    protected bool $throwOnError;
 
-    private string $rootId;
+    protected string $rootId;
 
     /**
      * Creates a new instance of the Subject
@@ -57,10 +57,10 @@ abstract class Subject implements Contract\Subject
      *                                $throwOnError is set to TRUE by default.
      */
     protected function __construct(
-        private readonly ?Contract\Subject $sourceSubject,
-        private readonly string            $description,
-        private readonly mixed             $value,
-        private readonly bool              $isUtilitySubject,
+        protected readonly ?Contract\Subject $sourceSubject,
+        protected readonly string            $description,
+        protected readonly mixed             $value,
+        protected readonly bool              $isUtilitySubject,
         ?bool                              $throwOnError
     )
     {
@@ -147,12 +147,6 @@ abstract class Subject implements Contract\Subject
     #[\Override] public function getValue(): mixed
     {
         return $this->value;
-    }
-
-    /** @inheritDoc */
-    #[\Override] public function getResultBuilder(string $description): ResultBuilder
-    {
-        return new ResultBuilder($this, $description);
     }
 
     /** @inheritDoc */

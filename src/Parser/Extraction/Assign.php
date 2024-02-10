@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Extraction;
 
 use Philiagus\Parser\Base;
-use Philiagus\Parser\Base\OverwritableParserDescription;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\ResultBuilder;
 
@@ -24,7 +23,6 @@ use Philiagus\Parser\ResultBuilder;
  */
 class Assign extends Base\Parser
 {
-    use OverwritableParserDescription;
 
     /** @var mixed */
     private mixed $target;

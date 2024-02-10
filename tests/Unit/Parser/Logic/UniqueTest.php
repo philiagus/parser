@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser\Logic;
 
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Parser\AssertArray;
+use Philiagus\Parser\Parser\Assert\AssertArray;
 use Philiagus\Parser\Parser\Extraction\Append;
 use Philiagus\Parser\Parser\Logic\Unique;
 use Philiagus\Parser\Test\TestBase;

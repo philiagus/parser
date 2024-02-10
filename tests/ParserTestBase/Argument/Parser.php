@@ -143,7 +143,7 @@ class Parser implements Argument
                 $parser = new ParserMock();
 
                 if (isset($this->errorMessageOnError)) {
-                    $errorCollection?->add($this->errorMessageOnError);
+                    $errorCollection?->add('=', $this->errorMessageOnError);
                 }
 
                 $parser->expect(
@@ -153,7 +153,7 @@ class Parser implements Argument
                         $message = uniqid(microtime());
                         $error = new Error($subject, $message);
                         if (!$this->errorWillBeHidden) {
-                            $errorCollection->add($error->getMessage());
+                            $errorCollection->add('=', $error->getMessage());
                         }
                         if ($subject->throwOnError()) {
                             throw new ParsingException($error);

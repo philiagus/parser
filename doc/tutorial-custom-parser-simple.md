@@ -59,8 +59,8 @@ While it is not mandatory, it is considered good form to implement static constr
 
 ```php
 
-use Philiagus\Parser\Parser\ConvertToInteger;
-use Philiagus\Parser\Parser\AssertInteger;
+use Philiagus\Parser\Parser\Assert\AssertInteger;
+use Philiagus\Parser\Parser\Convert\ConvertToInteger;
 
 ConvertToInteger::new()
 ->then(AssertInteger::new()->assertMinimum(1))
@@ -69,8 +69,8 @@ ConvertToInteger::new()
 compared to
 
 ```php
-use Philiagus\Parser\Parser\ConvertToInteger;
-use Philiagus\Parser\Parser\AssertInteger;
+use Philiagus\Parser\Parser\Assert\AssertInteger;
+use Philiagus\Parser\Parser\Convert\ConvertToInteger;
 
 (new ConvertToInteger())
 ->then((new AssertInteger())->assertMinimum(1))

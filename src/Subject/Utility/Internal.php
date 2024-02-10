@@ -26,6 +26,6 @@ class Internal extends Subject
     /** @inheritDoc */
     #[\Override] protected function getPathStringPart(bool $isLastInChain): string
     {
-        return " {$this->getDescription()}↩";
+        return " {$this->description}↩";
     }
 }

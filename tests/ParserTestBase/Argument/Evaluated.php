@@ -70,7 +70,7 @@ class Evaluated implements Argument
                     $type === self::TYPE_SUCCESS,
                     function (array $generatedArguments, array $successStack, ErrorCollection $errorCollection = null) use ($value, $type) {
                         if ($type === self::TYPE_ERROR && isset($this->expectErrorMessage)) {
-                            $errorCollection?->add($this->expectErrorMessage);
+                            $errorCollection?->add('=', $this->expectErrorMessage);
                         } elseif($type === self::TYPE_EXCEPTION) {
                             $errorCollection?->expectConfigException();
                         }
