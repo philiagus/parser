@@ -62,7 +62,7 @@ class ParseURL extends Base\Parser
      *
      * @return $this
      */
-    public function setInvalidStringExceptionMessage(string $message): static
+    public function setInvalidStringErrorMessage(string $message): static
     {
         $this->invalidStringExceptionMessage = $message;
 

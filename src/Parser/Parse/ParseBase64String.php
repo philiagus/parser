@@ -53,7 +53,7 @@ class ParseBase64String extends Base\Parser
      * @see Debug::parseMessage()
      *
      */
-    public function setNotBase64ExceptionMessage(string $message): static
+    public function setNotBase64ErrorMessage(string $message): static
     {
         $this->notBase64ExceptionMessage = $message;
 

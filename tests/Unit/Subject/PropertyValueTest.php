@@ -46,7 +46,7 @@ class PropertyValueTest extends SubjectTestBase
     public function testCreation(mixed $keyValue, mixed $valueValue, bool $throwOnError): void
     {
         $root = Subject::default(null, 'ROOT', $throwOnError);
-        $expectedPathPart = preg_match('/\s/', $keyValue)
+        $expectedPathPart = is_string($keyValue) && preg_match('/\W/', $keyValue)
             ? "[$keyValue]"
             : ".$keyValue";
 

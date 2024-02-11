@@ -148,7 +148,7 @@ class OneOfTest extends ParserTestBase
         $builder->run();
     }
 
-    public function testSetNonOfExceptionMessage(): void
+    public function testSetNonOfErrorMessage(): void
     {
         $builder = $this->builder();
         $builder

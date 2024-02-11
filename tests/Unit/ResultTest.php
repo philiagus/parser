@@ -103,4 +103,14 @@ class ResultTest extends TestBase
         self::assertSame([$root, $subject], $subject->getSubjectChain(true));
         self::assertSame([$root], $subject->getSubjectChain(false));
     }
+
+    public function testPathString(): void
+    {
+        $root = Subject::default(null, 'ROOT');
+        $resultNoDescription = new Result($root, null, [], '');
+        $resultDescription = new Result($resultNoDescription, null, [], 'description');
+        $resultLast = new Result($resultDescription, null, [], '');
+
+        self::assertSame('ROOT ↣ ↣description↣', $resultLast->getPathAsString(true));
+    }
 }

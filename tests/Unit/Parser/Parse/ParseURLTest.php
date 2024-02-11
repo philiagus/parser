@@ -89,7 +89,7 @@ class ParseURLTest extends ParserTestBase
             ->parse(Subject::default('https://user:password@example.org:1234/path?query#fragment'));
     }
 
-    public function testSetInvalidStringExceptionMessage(): void
+    public function testSetInvalidStringErrorMessage(): void
     {
         $builder = $this->builder();
         $builder
@@ -113,7 +113,7 @@ class ParseURLTest extends ParserTestBase
         self::expectException(ParsingException::class);
         self::expectExceptionMessage(Debug::parseMessage($msg, ['subject' => $value]));
         ParseURL::new()
-            ->setInvalidStringExceptionMessage($msg)
+            ->setInvalidStringErrorMessage($msg)
             ->parse(Subject::default($value));
     }
 

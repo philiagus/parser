@@ -66,23 +66,23 @@ class AssertStringMultibyte extends Base\Parser
      * Defines the encoding of the string. The code is checked to have this encoding
      * and every other method uses this encoding.
      *
-     * The exception message is processed using Debug::parseMessage and receives the following elements:
+     * The error message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - encoding: The specified encoding
      *
      * @param string $encoding
-     * @param string $exception
+     * @param string $errorMessage
      *
      * @return $this
      * @throws ParserConfigurationException
      * @see Debug::parseMessage()
      *
      */
-    public function setEncoding(string $encoding, string $exception = 'Multibyte string does not appear to be encoded in the requested encoding'): static
+    public function setEncoding(string $encoding, string $errorMessage = 'Multibyte string does not appear to be encoded in the requested encoding'): static
     {
         $this->assertEncodings([$encoding]);
 
-        $this->encoding = [$encoding, $exception];
+        $this->encoding = [$encoding, $errorMessage];
 
         return $this;
     }

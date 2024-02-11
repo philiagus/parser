@@ -1,6 +1,11 @@
 # Parser
 
-## Using Parsers
+## What are Parsers?
+
+Parsers are an extendable suite of classes meant to assert, convert, sanitize and extract data from a provided dataset.
+
+
+
 
 
 

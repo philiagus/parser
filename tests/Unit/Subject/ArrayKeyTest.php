@@ -44,9 +44,7 @@ class ArrayKeyTest extends SubjectTestBase
     public function testCreation(mixed $value, bool $throwOnError): void
     {
         $root = Subject::default(null, 'ROOT', $throwOnError);
-        $expectedPathPart = preg_match('/\s/', (string) $value)
-            ? " key " . var_export($value, true)
-            : " key {$value}";
+        $expectedPathPart = " key " . var_export($value, true);
 
         $subject = new ArrayKey($root, $value);
         Util::assertSame($value, $subject->getValue());

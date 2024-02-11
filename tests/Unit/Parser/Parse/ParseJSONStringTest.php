@@ -53,11 +53,11 @@ class ParseJSONStringTest extends TestBase
     public function test_setConversionExceptionMessage(): void
     {
         $value = 'nope';
-        $message = 'MESSAGE {subject.raw}';
+        $message = 'MESSAGE {subject.raw} | {message} | {code}';
         $parser = ParseJSONString::new()
-            ->setConversionExceptionMessage($message);
+            ->setConversionErrorMessage($message);
         self::expectException(ParsingException::class);
-        self::expectExceptionMessage('MESSAGE nope');
+        $this->expectExceptionMessage('MESSAGE nope | Syntax error | 4');
         $parser->parse(Subject::default($value));
     }
 

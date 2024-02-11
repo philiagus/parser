@@ -25,6 +25,6 @@ class PropertyNameValuePair extends Subject
     /** @inheritDoc */
     #[\Override] protected function getPathStringPart(bool $isLastInChain): string
     {
-        return " entry $this->description";
+        return ' entry ' . var_export($this->description, true);
     }
 }

@@ -21,7 +21,7 @@ against it. The parsers make sure, that the data is following the rules of defin
 
 ## How does it work?
 
-A simple example:
+A simple example to assert that a provided value lies within defined boundaries:
 
 ```php
 <?php

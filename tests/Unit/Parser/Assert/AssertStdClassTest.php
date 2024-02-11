@@ -16,6 +16,7 @@ use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Parser\Assert\AssertStdClass;
 use Philiagus\Parser\Subject\MetaInformation;
 use Philiagus\Parser\Subject\PropertyName;
+use Philiagus\Parser\Subject\PropertyNameValuePair;
 use Philiagus\Parser\Subject\PropertyValue;
 use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\InvalidValueParserTestTrait;
@@ -234,6 +235,29 @@ class AssertStdClassTest extends ParserTestBase
                 ->expectMultipleCalls(
                     static fn($value) => array_values((array) $value),
                     PropertyValue::class
+                )
+                ->willBeCalledIf(static fn($value) => !empty((array) $value))
+        )
+            ->values([
+                (object) ['a' => 1, 'b' => 2],
+                (object) [],
+            ]);
+        $builder->run();
+    }
+
+    public function testGiveEachEntry(): void
+    {
+        $builder = $this->builder();
+        $builder->test()->arguments(
+            $builder
+                ->parserArgument()
+                ->expectMultipleCalls(
+                    static fn($value) => array_map(
+                        fn($p, $v) => [$p, $v],
+                        array_map(strval(...), array_keys((array)$value)),
+                        array_values((array) $value)
+                    ),
+                    PropertyNameValuePair::class
                 )
                 ->willBeCalledIf(static fn($value) => !empty((array) $value))
         )

@@ -20,10 +20,6 @@ abstract class ParserTestBase extends TestBase
 
     public function builder(): CaseBuilder
     {
-        return new CaseBuilder(
-            fn(string $class) => $this->prophesize($class)
-        );
+        return new CaseBuilder();
     }
-
-
 }

@@ -46,7 +46,7 @@ class ArrayValueTest extends SubjectTestBase
     public function testCreation(mixed $keyValue, mixed $valueValue, bool $throwOnError): void
     {
         $root = Subject::default(null, 'ROOT', $throwOnError);
-        $expectedPathPart = "[$keyValue]";
+        $expectedPathPart = "[" . var_export($keyValue, true) . "]";
 
         $subject = new ArrayValue($root, $keyValue, $valueValue);
         Util::assertSame($valueValue, $subject->getValue());

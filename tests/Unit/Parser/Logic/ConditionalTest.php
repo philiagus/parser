@@ -29,7 +29,7 @@ class ConditionalTest extends ParserTestBase
 
     use ChainableParserTestTrait;
 
-    public function testSetNonOfExceptionMessage(): void
+    public function testSetNonOfErrorMessage(): void
     {
         $builder = $this->builder();
 

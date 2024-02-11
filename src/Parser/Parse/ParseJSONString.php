@@ -29,13 +29,9 @@ class ParseJSONString extends Base\Parser
 {
     use OverwritableTypeErrorMessage;
 
-    /** @var string */
-    private string $conversionExceptionMessage = 'Provided string is not a valid JSON: {msg}';
-    /** @var bool|null */
+    private string $conversionExceptionMessage = 'Provided string is not a valid JSON: {message}';
     private ?bool $objectAsArrays = null;
-    /** @var int|null */
     private ?int $maxDepth = null;
-    /** @var bool|null */
     private ?bool $bigintAsString = null;
 
     private function __construct()
@@ -52,15 +48,17 @@ class ParseJSONString extends Base\Parser
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
-     * - msg: The json parser error message
+     * - message: The json parser error message as provided by json_last_error_msg
+     * - code: The error code as provided by json_last_error
      *
      * @param string $message
      *
      * @return $this
      * @see Debug::parseMessage()
-     *
+     * @see json_last_error()
+     * @see json_last_error_msg()
      */
-    public function setConversionExceptionMessage(string $message): static
+    public function setConversionErrorMessage(string $message): static
     {
         $this->conversionExceptionMessage = $message;
 
@@ -142,7 +140,7 @@ class ParseJSONString extends Base\Parser
         } catch (JsonException $jsonException) {
             $builder->logErrorUsingDebug(
                 $this->conversionExceptionMessage,
-                ['msg' => json_last_error_msg()],
+                ['message' => json_last_error_msg(), 'code' => json_last_error()],
                 $jsonException
             );
 

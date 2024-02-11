@@ -17,7 +17,7 @@ use Philiagus\Parser\Contract;
 
 class ArrayKeyValuePair extends Subject
 {
-    public function __construct(Contract\Subject $sourceSubject, int|string $arrayKey, mixed $arrayValue)
+    public function __construct(Contract\Subject $sourceSubject, private readonly int|string $arrayKey, mixed $arrayValue)
     {
         parent::__construct($sourceSubject, (string)$arrayKey, [$arrayKey, $arrayValue], false, null);
     }
@@ -25,8 +25,6 @@ class ArrayKeyValuePair extends Subject
     /** @inheritDoc */
     #[\Override] protected function getPathStringPart(bool $isLastInChain): string
     {
-        return preg_match('/\s/', $this->description)
-            ? " entry " . var_export($this->description, true)
-            : " entry {$this->description}";
+        return " entry " . var_export($this->arrayKey, true);
     }
 }

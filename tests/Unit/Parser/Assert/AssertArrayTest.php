@@ -15,6 +15,7 @@ namespace Philiagus\Parser\Test\Unit\Parser\Assert;
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Parser\Assert\AssertArray;
 use Philiagus\Parser\Subject\ArrayKey;
+use Philiagus\Parser\Subject\ArrayKeyValuePair;
 use Philiagus\Parser\Subject\ArrayValue;
 use Philiagus\Parser\Subject\MetaInformation;
 use Philiagus\Parser\Test\ChainableParserTestTrait;
@@ -61,6 +62,22 @@ class AssertArrayTest extends ParserTestBase
                 ->expectMultipleCalls(
                     static fn($value) => array_values($value),
                     ArrayValue::class
+                )
+                ->willBeCalledIf(static fn($value) => !empty($value))
+        )
+            ->successProvider(DataProvider::TYPE_ARRAY);
+        $builder->run();
+    }
+
+    public function testGiveEachEntry(): void
+    {
+        $builder = $this->builder();
+        $builder->test()->arguments(
+            $builder
+                ->parserArgument()
+                ->expectMultipleCalls(
+                    static fn($value) => array_map(fn($k, $v) => [$k, $v], array_keys($value), array_values($value)),
+                    ArrayKeyValuePair::class
                 )
                 ->willBeCalledIf(static fn($value) => !empty($value))
         )

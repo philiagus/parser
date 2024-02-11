@@ -14,24 +14,27 @@ namespace Philiagus\Parser\Test\Unit\Subject;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Subject\PropertyName;
+use Philiagus\Parser\Subject\ArrayKey;
+use Philiagus\Parser\Subject\ArrayKeyValuePair;
 use Philiagus\Parser\Test\SubjectTestBase;
 use Philiagus\Parser\Test\Util;
 
 /**
- * @covers \Philiagus\Parser\Subject\PropertyName
+ * @covers \Philiagus\Parser\Subject\ArrayKeyValuePair
  * @covers \Philiagus\Parser\Base\Subject
  */
-class PropertyNameTest extends SubjectTestBase
+class ArrayKeyValuePairTest extends SubjectTestBase
 {
     public static function provideConstructorArguments(): array
     {
-        $types = DataProvider::TYPE_STRING;
+        $types = DataProvider::TYPE_INTEGER | DataProvider::TYPE_STRING;
 
         $cases = [];
-        foreach ((new DataProvider($types))->provide(false) as $name => $value) {
-            foreach (['nothrow' => false, 'throw' => true] as $throwName => $throwValue) {
-                $cases["$throwName $name"] = [$value, $throwValue];
+        foreach ((new DataProvider($types))->provide(false) as $keyName => $keyValue) {
+            foreach ((new DataProvider())->provide(false) as $valueName => $valueValue) {
+                foreach (['nothrow' => false, 'throw' => true] as $throwName => $throwValue) {
+                    $cases["$throwName $keyName $valueName"] = [$keyValue, $valueValue, $throwValue];
+                }
             }
         }
 
@@ -41,16 +44,16 @@ class PropertyNameTest extends SubjectTestBase
     /**
      * @dataProvider provideConstructorArguments
      */
-    public function testCreation(string $propertyName, bool $throwOnError): void
+    public function testCreation(mixed $keyValue, mixed $valueValue, bool $throwOnError): void
     {
         $root = Subject::default(null, 'ROOT', $throwOnError);
-        $expectedPathPart = " property name " . var_export($propertyName, true);
+        $expectedPathPart = " entry " . var_export($keyValue, true);
 
-        $subject = new PropertyName($root, $propertyName);
-        Util::assertSame($propertyName, $subject->getValue());
+        $subject = new ArrayKeyValuePair($root, $keyValue, $valueValue);
+        Util::assertSame([$keyValue, $valueValue], $subject->getValue());
         self::assertFalse($subject->isUtilitySubject());
         self::assertSame($root, $subject->getSourceSubject());
-        self::assertSame((string) $propertyName, $subject->getDescription());
+        self::assertSame((string) $keyValue, $subject->getDescription());
         self::assertSame($throwOnError, $subject->throwOnError());
         self::assertSame("ROOT$expectedPathPart", $subject->getPathAsString(true));
         self::assertSame("ROOT$expectedPathPart", $subject->getPathAsString(false));

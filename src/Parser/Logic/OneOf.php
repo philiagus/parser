@@ -119,7 +119,7 @@ class OneOf extends Base\Parser
      * @see Debug::parseMessage()
      *
      */
-    public function setNonOfExceptionMessage(string $message): static
+    public function setNonOfErrorMessage(string $message): static
     {
         $this->exceptionMessage = $message;
 

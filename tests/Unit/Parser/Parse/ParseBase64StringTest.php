@@ -47,7 +47,7 @@ class ParseBase64StringTest extends TestBase
     {
         $value = '$$$';
         $parser = ParseBase64String::new()
-            ->setNotBase64ExceptionMessage('MESSAGE {subject.raw}');
+            ->setNotBase64ErrorMessage('MESSAGE {subject.raw}');
         self::expectException(ParsingException::class);
         self::expectExceptionMessage('MESSAGE $$$');
         $parser->parse(Subject::default($value));

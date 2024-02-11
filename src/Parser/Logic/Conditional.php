@@ -58,15 +58,15 @@ class Conditional extends Base\Parser
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
-     * @param string $message
+     * @param string $error
      *
      * @return $this
      * @see Debug::parseMessage()
      *
      */
-    public function setNonOfExceptionMessage(string $message): static
+    public function setNonOfErrorMessage(string $error): static
     {
-        $this->exceptionMessage = $message;
+        $this->exceptionMessage = $error;
 
         return $this;
     }
