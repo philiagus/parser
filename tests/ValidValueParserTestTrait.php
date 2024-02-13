@@ -28,24 +28,27 @@ trait ValidValueParserTestTrait
      */
     public function testThatItAcceptsValidValuesThrowing($value, \Closure $parser, $expected): void
     {
-        $subject = Subject::default($value);
-        /** @var Contract\Result $result */
-        $result = $parser($value)->parse($subject);
-        self::assertTrue($result->isSuccess());
-        $expectedSubject = $result->getSourceSubject()->getSourceSubject();
-        self::assertSame(
-            $subject,
-            $expectedSubject,
-            'Subjects do not match, got ' . $subject::class . ' but expected ' . $expectedSubject::class
-        );
-        self::assertSame([], $result->getErrors());
-        $resultValue = $result->getValue();
-        self::assertTrue(
-            $resultValue instanceof DateTimeInterface && $expected instanceof DateTimeInterface ?
-                $resultValue::class === $expected::class && $resultValue->format('Y-m-d H:i:s.u') == $expected->format('Y-m-d H:i:s.u') :
-                DataProvider::isSame($expected, $resultValue),
-            Debug::stringify($expected) . ' is not equal to ' . Debug::stringify($resultValue)
-        );
+        $parserInstance = $parser($value);
+        for($repeat=2;$repeat>0;$repeat--) {
+            $subject = Subject::default($value);
+            /** @var Contract\Result $result */
+            $result = $parserInstance->parse($subject);
+            self::assertTrue($result->isSuccess());
+            $expectedSubject = $result->getSourceSubject()->getSourceSubject();
+            self::assertSame(
+                $subject,
+                $expectedSubject,
+                'Subjects do not match, got ' . $subject::class . ' but expected ' . $expectedSubject::class
+            );
+            self::assertSame([], $result->getErrors());
+            $resultValue = $result->getValue();
+            self::assertTrue(
+                $resultValue instanceof DateTimeInterface && $expected instanceof DateTimeInterface ?
+                    $resultValue::class === $expected::class && $resultValue->format('Y-m-d H:i:s.u') == $expected->format('Y-m-d H:i:s.u') :
+                    DataProvider::isSame($expected, $resultValue),
+                Debug::stringify($expected) . ' is not equal to ' . Debug::stringify($resultValue)
+            );
+        }
     }
 
     abstract public static function assertTrue($condition, string $message = ''): void;
@@ -55,19 +58,22 @@ trait ValidValueParserTestTrait
      */
     public function testThatItAcceptsValidValuesNotThrowing($value, \Closure $parser, $expected, bool $resultWillBeWrapped = true): void
     {
-        $subject = Subject::default($value, throwOnError: false);
-        /** @var Contract\Result $result */
-        $result = $parser($value)->parse($subject);
-        self::assertTrue($result->isSuccess());
-        self::assertSame($subject, $resultWillBeWrapped ? $result->getSourceSubject()->getSourceSubject() : $result->getSourceSubject());
-        self::assertSame([], $result->getErrors());
-        $resultValue = $result->getValue();
-        self::assertTrue(
-            $resultValue instanceof DateTimeInterface && $expected instanceof DateTimeInterface ?
-                $resultValue::class === $expected::class && $resultValue->format('Y-m-d H:i:s.u') == $expected->format('Y-m-d H:i:s.u') :
-                DataProvider::isSame($expected, $resultValue),
-            Debug::stringify($expected) . ' is not equal to ' . Debug::stringify($resultValue)
-        );
+        $parserInstance = $parser($value);
+        for($repeat=2;$repeat>0;$repeat--) {
+            $subject = Subject::default($value, throwOnError: false);
+            /** @var Contract\Result $result */
+            $result = $parserInstance->parse($subject);
+            self::assertTrue($result->isSuccess());
+            self::assertSame($subject, $resultWillBeWrapped ? $result->getSourceSubject()->getSourceSubject() : $result->getSourceSubject());
+            self::assertSame([], $result->getErrors());
+            $resultValue = $result->getValue();
+            self::assertTrue(
+                $resultValue instanceof DateTimeInterface && $expected instanceof DateTimeInterface ?
+                    $resultValue::class === $expected::class && $resultValue->format('Y-m-d H:i:s.u') == $expected->format('Y-m-d H:i:s.u') :
+                    DataProvider::isSame($expected, $resultValue),
+                Debug::stringify($expected) . ' is not equal to ' . Debug::stringify($resultValue)
+            );
+        }
     }
 
 }

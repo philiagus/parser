@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test;
 
+use Closure;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Error;
@@ -29,9 +30,9 @@ trait InvalidValueParserTestTrait
 
     /**
      * @param $value
-     * @param \Closure $parser
-     * @param string|\Closure $expectedException
-     *
+     * @param Closure $parser
+     * @param string|Closure $expectedException
+     * @param bool $throw
      * @dataProvider provideInvalidValuesAndParsers
      */
     public function testThatItBlocksInvalidValues(
@@ -41,22 +42,25 @@ trait InvalidValueParserTestTrait
         bool $throw = true
     ): void
     {
-        try {
-            /** @var Contract\Result $result */
-            $result = $parser($value)->parse(Subject::default($value, throwOnError: $throw));
-        } catch (\Throwable $exception) {
+        $parserInstance = $parser($value);
+        for($repeat = 2;$repeat > 0;$repeat--) {
+            try {
+                /** @var Contract\Result $result */
+                $result = $parserInstance->parse(Subject::default($value, throwOnError: $throw));
+            } catch (\Throwable $exception) {
 
-        }
-        if (!isset($exception)) {
-            $resultValue = $result->getValue();
-            self::fail('No exception was thrown and parser for ' . Debug::stringify($value) . ' resulted in: ' . Debug::stringify($resultValue));
-        }
-        if (is_string($expectedException)) {
-            self::assertInstanceOf($expectedException, $exception, "Exception of type $expectedException not thrown: " . (string)$exception);
-        } elseif ($expectedException instanceof \Closure) {
-            $expectedException($exception);
-        } else {
-            self::fail('$expectedException must be string|\Closure, ' . Debug::stringify($expectedException) . ' provided');
+            }
+            if (!isset($exception)) {
+                $resultValue = $result->getValue();
+                self::fail('No exception was thrown and parser for ' . Debug::stringify($value) . ' resulted in: ' . Debug::stringify($resultValue));
+            }
+            if (is_string($expectedException)) {
+                self::assertInstanceOf($expectedException, $exception, "Exception of type $expectedException not thrown: " . (string)$exception);
+            } elseif ($expectedException instanceof \Closure) {
+                $expectedException($exception);
+            } else {
+                self::fail('$expectedException must be string|\Closure, ' . Debug::stringify($expectedException) . ' provided');
+            }
         }
     }
 
@@ -71,12 +75,15 @@ trait InvalidValueParserTestTrait
         \Closure $parser
     ): void
     {
-        /** @var Contract\Result $result */
-        $result = $parser($value)->parse(Subject::default($value, throwOnError: false));
-        self::assertFalse($result->isSuccess());
-        self::assertNotEmpty($result->getErrors());
-        foreach ($result->getErrors() as $error) {
-            self::assertInstanceOf(Error::class, $error);
+        $parserInstance = $parser($value);
+        for($repeat = 2;$repeat > 0;$repeat--) {
+            /** @var Contract\Result $result */
+            $result = $parserInstance->parse(Subject::default($value, throwOnError: false));
+            self::assertFalse($result->isSuccess());
+            self::assertNotEmpty($result->getErrors());
+            foreach ($result->getErrors() as $error) {
+                self::assertInstanceOf(Error::class, $error);
+            }
         }
     }
 

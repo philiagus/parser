@@ -21,11 +21,11 @@ class AssertNan extends Base\Parser
 {
 
     /** @var string */
-    private string $exceptionMessage;
+    private string $errorMessage;
 
     private function __construct(string $message)
     {
-        $this->exceptionMessage = $message;
+        $this->errorMessage = $message;
     }
 
     /**
@@ -49,7 +49,7 @@ class AssertNan extends Base\Parser
     {
         $value = $builder->getValue();
         if (!is_float($value) || !is_nan($value)) {
-            $builder->logErrorUsingDebug($this->exceptionMessage);
+            $builder->logErrorUsingDebug($this->errorMessage);
         }
 
         return $builder->createResultUnchanged();

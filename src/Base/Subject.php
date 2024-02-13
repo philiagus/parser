@@ -21,7 +21,7 @@ abstract class Subject implements Contract\Subject
 
     protected bool $throwOnError;
 
-    protected string $rootId;
+    protected Contract\Subject $root;
 
     /**
      * Creates a new instance of the Subject
@@ -65,7 +65,7 @@ abstract class Subject implements Contract\Subject
     )
     {
         $this->throwOnError = $throwOnError ?? $this->sourceSubject?->throwOnError() ?? true;
-        $this->rootId = $this->sourceSubject?->getRootId() ?? uniqid(spl_object_hash($this));
+        $this->root = $this->sourceSubject?->getRoot() ?? $this;
     }
 
     /** @inheritDoc */
@@ -168,8 +168,8 @@ abstract class Subject implements Contract\Subject
     }
 
     /** @inheritDoc */
-    #[\Override] public function getRootId(): string
+    #[\Override] public function getRoot(): Contract\Subject
     {
-        return $this->rootId;
+        return $this->root;
     }
 }

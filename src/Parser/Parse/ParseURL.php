@@ -53,37 +53,37 @@ class ParseURL extends Base\Parser
     }
 
     /**
-     * Overwrites the exception thrown in case the provided string cannot be parsed as an url
+     * Overwrites the error message in case the provided string cannot be parsed as an url
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
-     * @param string $message
+     * @param string $errorMessage
      *
      * @return $this
      */
-    public function setInvalidStringErrorMessage(string $message): static
+    public function setInvalidStringErrorMessage(string $errorMessage): static
     {
-        $this->invalidStringExceptionMessage = $message;
+        $this->invalidStringExceptionMessage = $errorMessage;
 
         return $this;
     }
 
     /**
      * If the parsed URL contains a scheme, it will be forwarded to the provided parser
-     * If the url does not contain a scheme, an exception with the specified message is thrown.
+     * If the url does not contain a scheme, an error with the specified message is thrown.
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param Parser $parser
-     * @param string $missingExceptionMessage
+     * @param string $missingErrorMessage
      *
      * @return $this
      */
-    public function giveScheme(Parser $parser, string $missingExceptionMessage = 'The provided URL does not specify a scheme'): static
+    public function giveScheme(Parser $parser, string $missingErrorMessage = 'The provided URL does not specify a scheme'): static
     {
-        $this->giveElements[] = [self::TARGET_SCHEME, null, $parser, $missingExceptionMessage];
+        $this->giveElements[] = [self::TARGET_SCHEME, null, $parser, $missingErrorMessage];
 
         return $this;
     }
@@ -107,19 +107,19 @@ class ParseURL extends Base\Parser
 
     /**
      * If the parsed URL contains a host, it will be forwarded to the provided parser
-     * If the url does not contain a host, an exception with the specified message is thrown.
+     * If the url does not contain a host, an error with the specified message is generated.
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param Parser $parser
-     * @param string $missingExceptionMessage
+     * @param string $missingErrorMessage
      *
      * @return $this
      */
-    public function giveHost(Parser $parser, string $missingExceptionMessage = 'The provided URL does not specify a host'): static
+    public function giveHost(Parser $parser, string $missingErrorMessage = 'The provided URL does not specify a host'): static
     {
-        $this->giveElements[] = [self::TARGET_HOST, null, $parser, $missingExceptionMessage];
+        $this->giveElements[] = [self::TARGET_HOST, null, $parser, $missingErrorMessage];
 
         return $this;
     }
@@ -143,19 +143,19 @@ class ParseURL extends Base\Parser
 
     /**
      * If the parsed URL contains a port, it will be forwarded to the provided parser
-     * If the url does not contain a port, an exception with the specified message is thrown.
+     * If the url does not contain a port, an error with the specified message is generated.
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param Parser $parser
-     * @param string $missingExceptionMessage
+     * @param string $missingErrorMessage
      *
      * @return $this
      */
-    public function givePort(Parser $parser, string $missingExceptionMessage = 'The provided URL does not specify a port'): static
+    public function givePort(Parser $parser, string $missingErrorMessage = 'The provided URL does not specify a port'): static
     {
-        $this->giveElements[] = [self::TARGET_PORT, null, $parser, $missingExceptionMessage];
+        $this->giveElements[] = [self::TARGET_PORT, null, $parser, $missingErrorMessage];
 
         return $this;
     }
@@ -180,19 +180,19 @@ class ParseURL extends Base\Parser
 
     /**
      * If the parsed URL contains a user, it will be forwarded to the provided parser
-     * If the url does not contain a user, an exception with the specified message is thrown.
+     * If the url does not contain a user, an error with the specified message is generated.
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param Parser $parser
-     * @param string $missingExceptionMessage
+     * @param string $missingErrorMessage
      *
      * @return $this
      */
-    public function giveUser(Parser $parser, string $missingExceptionMessage = 'The provided URL does not specify a user'): static
+    public function giveUser(Parser $parser, string $missingErrorMessage = 'The provided URL does not specify a user'): static
     {
-        $this->giveElements[] = [self::TARGET_USER, null, $parser, $missingExceptionMessage];
+        $this->giveElements[] = [self::TARGET_USER, null, $parser, $missingErrorMessage];
 
         return $this;
     }
@@ -216,19 +216,19 @@ class ParseURL extends Base\Parser
 
     /**
      * If the parsed URL contains a password, it will be forwarded to the provided parser
-     * If the url does not contain a password, an exception with the specified message is thrown.
+     * If the url does not contain a password, an error with the specified message is generated.
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param Parser $parser
-     * @param string $missingExceptionMessage
+     * @param string $missingErrorMessage
      *
      * @return $this
      */
-    public function givePassword(Parser $parser, string $missingExceptionMessage = 'The provided URL does not specify a password'): static
+    public function givePassword(Parser $parser, string $missingErrorMessage = 'The provided URL does not specify a password'): static
     {
-        $this->giveElements[] = [self::TARGET_PASS, null, $parser, $missingExceptionMessage];
+        $this->giveElements[] = [self::TARGET_PASS, null, $parser, $missingErrorMessage];
 
         return $this;
     }
@@ -252,19 +252,19 @@ class ParseURL extends Base\Parser
 
     /**
      * If the parsed URL contains a path, it will be forwarded to the provided parser
-     * If the url does not contain a path, an exception with the specified message is thrown.
+     * If the url does not contain a path, an error with the specified message is generated.
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param Parser $parser
-     * @param string $missingExceptionMessage
+     * @param string $missingErrorMessage
      *
      * @return $this
      */
-    public function givePath(Parser $parser, string $missingExceptionMessage = 'The provided URL does not specify a path'): static
+    public function givePath(Parser $parser, string $missingErrorMessage = 'The provided URL does not specify a path'): static
     {
-        $this->giveElements[] = [self::TARGET_PATH, null, $parser, $missingExceptionMessage];
+        $this->giveElements[] = [self::TARGET_PATH, null, $parser, $missingErrorMessage];
 
         return $this;
     }
@@ -288,19 +288,19 @@ class ParseURL extends Base\Parser
 
     /**
      * If the parsed URL contains a query, it will be forwarded to the provided parser
-     * If the url does not contain a query, an exception with the specified message is thrown.
+     * If the url does not contain a query, an error with the specified message is generated.
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param Parser $parser
-     * @param string $missingExceptionMessage
+     * @param string $missingErrorMessage
      *
      * @return $this
      */
-    public function giveQuery(Parser $parser, string $missingExceptionMessage = 'The provided URL does not specify a query'): static
+    public function giveQuery(Parser $parser, string $missingErrorMessage = 'The provided URL does not specify a query'): static
     {
-        $this->giveElements[] = [self::TARGET_QUERY, null, $parser, $missingExceptionMessage];
+        $this->giveElements[] = [self::TARGET_QUERY, null, $parser, $missingErrorMessage];
 
         return $this;
     }
@@ -324,19 +324,19 @@ class ParseURL extends Base\Parser
 
     /**
      * If the parsed URL contains a fragment, it will be forwarded to the provided parser
-     * If the url does not contain a fragment, an exception with the specified message is thrown.
+     * If the url does not contain a fragment, an error with the specified message is generated.
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param Parser $parser
-     * @param string $missingExceptionMessage
+     * @param string $missingErrorMessage
      *
      * @return $this
      */
-    public function giveFragment(Parser $parser, string $missingExceptionMessage = 'The provided URL does not specify a fragment'): static
+    public function giveFragment(Parser $parser, string $missingErrorMessage = 'The provided URL does not specify a fragment'): static
     {
-        $this->giveElements[] = [self::TARGET_FRAGMENT, null, $parser, $missingExceptionMessage];
+        $this->giveElements[] = [self::TARGET_FRAGMENT, null, $parser, $missingErrorMessage];
 
         return $this;
     }

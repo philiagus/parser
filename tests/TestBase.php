@@ -55,7 +55,7 @@ class TestBase extends TestCase
                 private readonly array $pairs
             ) {}
 
-            #[\Override] public function parse(Subject $subject): \Philiagus\Parser\Contract\Result
+            #[\Override] public function parse(Contract\Subject $subject): Contract\Result
             {
                 foreach($this->pairs as [$from, $to]) {
                     if($subject->getValue() === $from) {

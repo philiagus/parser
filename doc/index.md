@@ -4,20 +4,14 @@
 
 Parsers are an extendable suite of classes meant to assert, convert, sanitize and extract data from a provided dataset.
 
-
-
-
-
-
 ## Writing Parsers
 
 - [Tutorial: Writing parsers using Base\Parser as basis](./tutorial-custom-parser-simple.md)
-- [Tutorial: Testing parsers](./tutorial-testing-parsers.md)
 - [What the ResultBuilder does](./result-builder.md)
 - [What is a Subject](./subject.md)
 
 There are also a few fundamental design rules:
-- The action of executing a parser _should not_ alter the internal state of the parser. The behaviour of a parser instance _should not_ change, no matter how often that parser is executed.
+- The action of executing a parser _should not_ alter the internal state of the parser. The behaviour of a parser instance _should not_ change, no matter how often that parser is executed. If an internal state is needed, please tie it to the `$subject->getRoot()`.
 - Parsers are configured using fluent methods, whose naming follows this pattern:
   - **Sequence control methods** are methods that define the order in which to do things in the parser. Any call to these methods must add another thing to do in the parsers internal list of commands. This can be achieved by adding the "things to do" to an array and looping through that array when executing the parser
     - `assert*`: Configures a rule that is asserted

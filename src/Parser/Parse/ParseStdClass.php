@@ -87,7 +87,7 @@ class ParseStdClass extends AssertStdClass
 
     /**
      * Tests that the key exists and performs the parser on the value if present
-     * In case the key does not exist an exception with the specified message is thrown.
+     * In case the key does not exist an error with the specified message is generated.
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
@@ -95,7 +95,7 @@ class ParseStdClass extends AssertStdClass
      *
      * @param string $property
      * @param ParserContract $parser
-     * @param string $missingKeyExceptionMessage
+     * @param string $missingKeyErrorMessage
      *
      * @return $this
      * @see Debug::parseMessage()
@@ -103,15 +103,15 @@ class ParseStdClass extends AssertStdClass
      */
     public function modifyPropertyValue(
         string $property, ParserContract $parser,
-        string $missingKeyExceptionMessage = 'The object does not contain the requested property {property}'
+        string $missingKeyErrorMessage = 'The object does not contain the requested property {property}'
     ): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder, array &$targetedProperties)
-        use ($property, $parser, $missingKeyExceptionMessage): void {
+        use ($property, $parser, $missingKeyErrorMessage): void {
             $value = $builder->getValue();
             if (!property_exists($value, $property)) {
                 $builder->logErrorUsingDebug(
-                    $missingKeyExceptionMessage,
+                    $missingKeyErrorMessage,
                     ['property' => $property]
                 );
 

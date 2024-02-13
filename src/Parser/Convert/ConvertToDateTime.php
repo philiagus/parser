@@ -38,7 +38,7 @@ class ConvertToDateTime extends Base\Parser
      *
      * @param string $format
      * @param DateTimeZone|null $timeZone
-     * @param string $exceptionMessage
+     * @param string $errorMessage
      *
      * @return static
      * @see ConvertToDateTime::setStringSourceFormat()
@@ -47,37 +47,37 @@ class ConvertToDateTime extends Base\Parser
     public static function fromSourceFormat(
         string       $format,
         DateTimeZone $timeZone = null,
-        string       $exceptionMessage = 'The provided string is not in the format {format.raw}'
+        string $errorMessage = 'The provided string is not in the format {format.raw}'
     ): static
     {
-        return static::new()->setStringSourceFormat($format, $timeZone, $exceptionMessage);
+        return static::new()->setStringSourceFormat($format, $timeZone, $errorMessage);
     }
 
     /**
      * Specifies the source format when receiving a string and trying to convert it to a DateTime/DateTimeImmutable
      * object.
      *
-     * The exception message is thrown when the string value does not match the expected format.
+     * The error message is used when the string value does not match the expected format.
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The error message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - format: The format provided to this function
      *
      * @param string $format
      * @param DateTimeZone|null $timeZone
-     * @param string $exceptionMessage
+     * @param string $errorMessage
      *
      * @return $this
      */
     public function setStringSourceFormat(
         string       $format,
         DateTimeZone $timeZone = null,
-        string       $exceptionMessage = 'The provided string is not in the format {format.raw}'
+        string $errorMessage = 'The provided string is not in the format {format.raw}'
     ): static
     {
         $this->sourceFormat = $format;
         $this->sourceTimezone = $timeZone;
-        $this->sourceFormatException = $exceptionMessage;
+        $this->sourceFormatException = $errorMessage;
 
         return $this;
     }

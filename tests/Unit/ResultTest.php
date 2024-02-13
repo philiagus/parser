@@ -13,11 +13,12 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit;
 
 use Philiagus\DataProvider\DataProvider;
-use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract\Subject;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\Util;
+use Philiagus\Parser\Base;
 
 /**
  * @covers \Philiagus\Parser\Result
@@ -27,7 +28,7 @@ class ResultTest extends TestBase
     public function testSuccess(): void
     {
         $subject = $this->prophesize(Subject::class);
-        $subject->getRootId()->willReturn($rootId = 'root_id');
+        $subject->getRoot()->willReturn($root = $this->prophesize(Subject::class)->reveal());
         $subject->throwOnError()->willReturn(true);
         $subject = $subject->reveal();
         $value = new \stdClass();
@@ -37,7 +38,7 @@ class ResultTest extends TestBase
             []
         );
         self::assertTrue($result->isSuccess());
-        self::assertSame($rootId, $result->getRootId());
+        self::assertSame($root, $result->getRoot());
         self::assertFalse($result->hasErrors());
         self::assertEmpty($result->getErrors());
         self::assertSame($value, $result->getValue());
@@ -46,7 +47,7 @@ class ResultTest extends TestBase
     public function testError(): void
     {
         $subject = $this->prophesize(Subject::class);
-        $subject->getRootId()->willReturn($rootId = 'root_id');
+        $subject->getRoot()->willReturn($root = $this->prophesize(Subject::class)->reveal());
         $subject->throwOnError()->willReturn(true);
         $subject->getPathAsString(true)->shouldBeCalledOnce()->willReturn('SUB');
         $subject = $subject->reveal();
@@ -59,7 +60,7 @@ class ResultTest extends TestBase
         self::assertFalse($result->isSuccess());
         self::assertTrue($result->hasErrors());
         self::assertSame($errors, $result->getErrors());
-        self::assertSame($rootId, $result->getRootId());
+        self::assertSame($root, $result->getRoot());
         self::expectException(\LogicException::class);
         $result->getValue();
     }
@@ -67,7 +68,7 @@ class ResultTest extends TestBase
     public function testExceptionOnNonError(): void
     {
         $subject = $this->prophesize(Subject::class);
-        $subject->getRootId()->willReturn('root_id');
+        $subject->getRoot()->willReturn($this->prophesize(Subject::class)->reveal());
         $subject->throwOnError()->willReturn(true);
         $subject = $subject->reveal();
         self::expectException(\LogicException::class);
@@ -92,7 +93,7 @@ class ResultTest extends TestBase
      */
     public function testCreation(mixed $value, bool $throwOnError): void
     {
-        $root = Subject::default(null, 'ROOT', $throwOnError);
+        $root = Base\Subject::default(null, 'ROOT', $throwOnError);
 
         $subject = new Result($root, $value, []);
         Util::assertSame($value, $subject->getValue());
@@ -106,11 +107,10 @@ class ResultTest extends TestBase
 
     public function testPathString(): void
     {
-        $root = Subject::default(null, 'ROOT');
-        $resultNoDescription = new Result($root, null, [], '');
-        $resultDescription = new Result($resultNoDescription, null, [], 'description');
-        $resultLast = new Result($resultDescription, null, [], '');
+        $root = Base\Subject::default(null, 'ROOT');
+        $result1 = new Result($root, null, [], '');
+        $resultLast = new Result($result1, null, [], '');
 
-        self::assertSame('ROOT ↣ ↣description↣', $resultLast->getPathAsString(true));
+        self::assertSame('ROOT ↣', $resultLast->getPathAsString(true));
     }
 }

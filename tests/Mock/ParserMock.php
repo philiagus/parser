@@ -26,6 +26,8 @@ class ParserMock implements Parser
 {
 
     private array $expectedCalls = [];
+    private array $currentExpectedCalls = [];
+    private ?Contract\Subject $currentRoot = null;
 
     public function error(?ErrorCollection $errorCollection = null): self
     {
@@ -75,7 +77,11 @@ class ParserMock implements Parser
 
     public function parse(Contract\Subject $subject): Contract\Result
     {
-        $next = array_shift($this->expectedCalls);
+        if($subject->getRoot() !== $this->currentRoot) {
+            $this->currentRoot = $subject->getRoot();
+            $this->currentExpectedCalls = $this->expectedCalls;
+        }
+        $next = array_shift($this->currentExpectedCalls);
         if (!$next) {
             throw new \LogicException("No further call to parser expected");
         }
@@ -84,7 +90,7 @@ class ParserMock implements Parser
         $next['path']($subject);
         $next['count']--;
         if ($next['count'] > 0) {
-            array_unshift($this->expectedCalls, $next);
+            array_unshift($this->currentExpectedCalls, $next);
         }
 
         return $next['result']($subject);

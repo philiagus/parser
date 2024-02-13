@@ -79,7 +79,7 @@ class ConvertToString extends Base\Parser
 
     /**
      * Specifies a value to implode the array with. Before performing this implodes every element inside the array
-     * is checked to be a string. If violating elements are found, an exception is thrown
+     * is checked to be a string. If violating elements are found, an error is generated
      * The element converter parser can be used to convert elements of the array before type checking them to be string
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
@@ -90,7 +90,7 @@ class ConvertToString extends Base\Parser
      *
      * @param string $delimiter
      * @param Parser|null $elementConverter
-     * @param string $exceptionMessage
+     * @param string $errorMessage
      *
      * @return $this
      * @see Debug::parseMessage()
@@ -98,10 +98,10 @@ class ConvertToString extends Base\Parser
     public function setImplodeOfArrays(
         string  $delimiter,
         ?Parser $elementConverter = null,
-        string  $exceptionMessage = 'A value at index {key} was not of type string but of type {culprit.type}'
+        string $errorMessage = 'A value at index {key} was not of type string but of type {culprit.type}'
     ): static
     {
-        $this->implode = [$delimiter, $exceptionMessage, $elementConverter];
+        $this->implode = [$delimiter, $errorMessage, $elementConverter];
 
         return $this;
     }

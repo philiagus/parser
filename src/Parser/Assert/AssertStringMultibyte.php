@@ -53,13 +53,13 @@ class AssertStringMultibyte extends Base\Parser
      * being a value of the defined encoding
      *
      * @param string $encoding
-     * @param string $exception
+     * @param string $errorMessage
      *
      * @return static
      */
-    public static function ofEncoding(string $encoding, string $exception = 'Multibyte string does not appear to be encoded in the requested encoding'): static
+    public static function ofEncoding(string $encoding, string $errorMessage = 'Multibyte string does not appear to be encoded in the requested encoding'): static
     {
-        return (new static())->setEncoding($encoding, $exception);
+        return (new static())->setEncoding($encoding, $errorMessage);
     }
 
     /**
@@ -88,7 +88,7 @@ class AssertStringMultibyte extends Base\Parser
     }
 
     /**
-     * Asserts a list of encodings and throws an exception if one isn't supported
+     * Asserts a list of encodings and generates an error if one isn't supported
      *
      * @param string[] $encodings
      *
@@ -117,33 +117,33 @@ class AssertStringMultibyte extends Base\Parser
     /**
      * Creates a new instance of this parser, setting the expected and used encoding to UTF-8
      *
-     * @param string $exception
+     * @param string $errorMessage
      *
      * @return static
      */
-    public static function UTF8(string $exception = 'Multibyte string does not appear to be encoded in UTF-8'): static
+    public static function UTF8(string $errorMessage = 'Multibyte string does not appear to be encoded in UTF-8'): static
     {
-        return (new static())->setEncoding('UTF-8', $exception);
+        return (new static())->setEncoding('UTF-8', $errorMessage);
     }
 
     /**
      * If no encoding is set we try to detect the encoding using mb_detect_encoding($value, "auto", true)
-     * The method defines the exception message thrown if the encoding could not be detected that way
+     * The method defines the error message used if the encoding could not be detected that way
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param string[] $encodings
-     * @param string $message
+     * @param string $errorMessage
      *
      * @return $this
      * @throws ParserConfigurationException
      */
-    public function setAvailableEncodings(array $encodings, string $message = 'The provided string does not match any expected encoding'): static
+    public function setAvailableEncodings(array $encodings, string $errorMessage = 'The provided string does not match any expected encoding'): static
     {
         $this->assertEncodings($encodings);
         $this->availableEncodings = $encodings;
-        $this->encodingDetectionExceptionMessage = $message;
+        $this->encodingDetectionExceptionMessage = $errorMessage;
 
         return $this;
     }
@@ -205,24 +205,24 @@ class AssertStringMultibyte extends Base\Parser
      * Checks that the string starts with the provided string and fails if it doesn't.
      * Compares the binary of the strings, so the encoding is not relevant
      *
-     * The exception message is processed using Debug::parseMessage and receives the following elements:
+     * The error message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - expected: The expected string
      *
      * @param string $string
-     * @param string $message
+     * @param string $errorMessage
      *
      * @return $this
      */
     public function assertStartsWith(
         string $string,
-        string $message = 'The string does not start with {expected.debug}'
+        string $errorMessage = 'The string does not start with {expected.debug}'
     ): static
     {
-        $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($string, $message): void {
+        $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($string, $errorMessage): void {
             if (!str_starts_with($value, $string)) {
                 $builder->logErrorUsingDebug(
-                    $message,
+                    $errorMessage,
                     ['expected' => $string]
                 );
             }
@@ -235,24 +235,24 @@ class AssertStringMultibyte extends Base\Parser
      * Checks that the string ends with the provided string and fails if it doesn't.
      * Compares the binary of the strings, so the encoding is not relevant
      *
-     * The exception message is processed using Debug::parseMessage and receives the following elements:
+     * The error message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - expected: The expected string
      *
      * @param string $string
-     * @param string $message
+     * @param string $errorMessage
      *
      * @return $this
      */
     public function assertEndsWith(
         string $string,
-        string $message = 'The string does not end with {expected.debug}'
+        string $errorMessage = 'The string does not end with {expected.debug}'
     ): static
     {
-        $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($string, $message): void {
+        $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($string, $errorMessage): void {
             if (!str_ends_with($value, $string)) {
                 $builder->logErrorUsingDebug(
-                    $message,
+                    $errorMessage,
                     ['expected' => $string]
                 );
             }
@@ -292,10 +292,10 @@ class AssertStringMultibyte extends Base\Parser
         }
 
         if ($this->encoding) {
-            [$encoding, $exception] = $this->encoding;
+            [$encoding, $errorMessage] = $this->encoding;
             if (!mb_check_encoding($value, $encoding)) {
                 $builder->logErrorUsingDebug(
-                    $exception,
+                    $errorMessage,
                     ['encoding' => $encoding]
                 );
 

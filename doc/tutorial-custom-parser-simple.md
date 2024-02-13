@@ -417,9 +417,13 @@ On `throw mode` that line simply throws the error, but in `gather mode` we still
 
 The rest of the code is actually the same.
 
-### Testing
+### Exceptions
 
-Parsers need good testing! But as this chapter is already long enough I suggest we move that to a [separate tutorial](./tutorial-testing-parsers.md)!
+There are three kinds of exceptions that the parsers use:
+
+- `ParsingException`: This exception represent the parser failing in throw mode. You don't need to do anything as this is handled for you by the [ResultBuilder](./result-builder.md)
+- `ParserConfigurationException`: An exception you can throw when an error occurs while configuring a parser - so inside one of the configuring methods (such as calling `setEncoding` with an encoding that isn't supported).
+- `RuntimeParserConfigurationException`: Throw this exception when the configuration caused the Parsers to fail during execution. (Example: `ParseArray` allows changing keys of the array by calling another parser that provides the new key - but if this parser returns an Object instead of `int|string` that parser should not have been used in this context, so it's a `ParserConfigurationException` which can only be identified at `Runtime`, thus `RuntimeParserConfigurationException`)
 
 ### Summary
 
@@ -428,4 +432,3 @@ Congratulations! You have implemented your first parser! Now go out there and en
 Your next reads for more information might include:
 - more about the [ResultBuilder](./result-builder.md)
 - more about the [Subject](./subject.md)
-- how to write [Tests](./tutorial-testing-parsers.md)

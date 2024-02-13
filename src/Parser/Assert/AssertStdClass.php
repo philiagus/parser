@@ -43,7 +43,7 @@ class AssertStdClass extends Base\Parser
 
     /**
      * Tests that the property exists and performs the parser on the value if present
-     * In case the property does not exist an exception with the specified message is thrown.
+     * In case the property does not exist an error with the specified message is generated
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed

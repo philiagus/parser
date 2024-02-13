@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test;
 
+use Philiagus\Parser\Test\ParserTestBase\CaseBuilder;
 use Philiagus\Parser\Test\ParserTestBase\TestCase;
 use PHPUnit\Event\TestRunner\ExecutionFinished;
 use PHPUnit\Event\TestRunner\ExecutionFinishedSubscriber;
@@ -24,6 +25,7 @@ class PrintTotalCountOfTests implements ExecutionFinishedSubscriber, Extension {
 
     #[\Override] public function notify(ExecutionFinished $event): void
     {
+        print "Total number of test builders created:  " . number_format(CaseBuilder::$totalNumberCreated) . PHP_EOL;
         print "Total generated sub-testcases executed: " . number_format(TestCase::$totalRun) . PHP_EOL;
     }
 

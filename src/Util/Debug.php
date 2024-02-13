@@ -78,9 +78,9 @@ class Debug
                     case 'raw':
                         if (is_array($value))
                             return 'Array';
-                        if (is_object($value))
+                        elseif (is_object($value) && !$value instanceof \Stringable)
                             return 'Object';
-                        if (is_resource($value))
+                        elseif (is_resource($value))
                             return static::stringify($value);
 
                         return (string)$value;

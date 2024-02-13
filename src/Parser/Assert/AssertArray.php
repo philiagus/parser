@@ -151,7 +151,7 @@ class AssertArray extends Base\Parser
 
     /**
      * Tests that the key exists and performs the parser on the value if present
-     * In case the key does not exist an exception with the specified message is thrown
+     * In case the key does not exist an error with the specified message is generated
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - key: The missing key
@@ -251,16 +251,16 @@ class AssertArray extends Base\Parser
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
-     * @param string $exceptionMessage
+     * @param string $errorMessage
      *
      * @return $this
      * @see Debug::parseMessage()
      */
-    public function assertSequentialKeys(string $exceptionMessage = 'The array is not a sequential numerical array starting at 0'): static
+    public function assertSequentialKeys(string $errorMessage = 'The array is not a sequential numerical array starting at 0'): static
     {
-        $this->assertionList[] = static function (ResultBuilder $builder) use ($exceptionMessage): void {
+        $this->assertionList[] = static function (ResultBuilder $builder) use ($errorMessage): void {
             if (!array_is_list($builder->getValue())) {
-                $builder->logErrorUsingDebug($exceptionMessage);
+                $builder->logErrorUsingDebug($errorMessage);
             }
         };
 

@@ -41,7 +41,7 @@ class Conditional extends Base\Parser
     private array $elements = [];
     private bool $defaultSet = false;
     private mixed $default = null;
-    private string $exceptionMessage = 'Provided value does not match any of the expected formats or values';
+    private string $errorMessage = 'Provided value does not match any of the expected formats or values';
 
     private function __construct()
     {
@@ -53,9 +53,9 @@ class Conditional extends Base\Parser
     }
 
     /**
-     * Defines the exception message to use if none of the provided values matches
+     * Defines the error message to use if none of the provided values matches
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The error message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param string $error
@@ -66,7 +66,7 @@ class Conditional extends Base\Parser
      */
     public function setNonOfErrorMessage(string $error): static
     {
-        $this->exceptionMessage = $error;
+        $this->errorMessage = $error;
 
         return $this;
     }
@@ -285,7 +285,7 @@ class Conditional extends Base\Parser
             return $builder->createResult($this->default);
         }
 
-        $builder->logErrorUsingDebug($this->exceptionMessage, sourceErrors: $errors);
+        $builder->logErrorUsingDebug($this->errorMessage, sourceErrors: $errors);
 
         return $builder->createResultUnchanged();
     }

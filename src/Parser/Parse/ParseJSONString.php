@@ -44,23 +44,23 @@ class ParseJSONString extends Base\Parser
     }
 
     /**
-     * Sets the exception message if the json is invalid or parsing failed
+     * Sets the error message if the json is invalid or parsing failed
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - message: The json parser error message as provided by json_last_error_msg
      * - code: The error code as provided by json_last_error
      *
-     * @param string $message
+     * @param string $errorMessage
      *
      * @return $this
      * @see Debug::parseMessage()
      * @see json_last_error()
      * @see json_last_error_msg()
      */
-    public function setConversionErrorMessage(string $message): static
+    public function setConversionErrorMessage(string $errorMessage): static
     {
-        $this->conversionExceptionMessage = $message;
+        $this->conversionExceptionMessage = $errorMessage;
 
         return $this;
     }

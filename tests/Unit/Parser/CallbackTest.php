@@ -13,6 +13,9 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser;
 
 use Philiagus\DataProvider\DataProvider;
+use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Parser\Callback;
 use Philiagus\Parser\Test\ParserTestBase;
 
 /**
@@ -63,9 +66,20 @@ class CallbackTest extends ParserTestBase
                     ->error(fn(string $a) => null)
             )
             ->provider(~DataProvider::TYPE_STRING)
-            ->expectErrorRegex(fn() => '~must be of type string,.*on line 58~');
+            ->expectErrorRegex(fn() => '~must be of type string,.*on line \d+~');
 
         $builder->run();
+    }
+
+    public function test_setErrorMessage(): void
+    {
+        $throwable = new \LogicException('EXCEPTION_MESSAGE', 123);
+        $parser = Callback::new(fn() => throw $throwable)
+            ->setErrorMessage('| {subject} | {throwable.raw} | {throwableMessage} | {throwableCode} | {throwableFile} | {throwableLine} |');
+
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage("| SUBJECT | $throwable | {$throwable->getMessage()} | {$throwable->getCode()} | {$throwable->getFile()} | {$throwable->getLine()} |");
+        $parser->parse(Subject::default('SUBJECT'));
     }
 
 }

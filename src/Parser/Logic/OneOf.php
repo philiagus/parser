@@ -28,9 +28,7 @@ use Philiagus\Parser\Util\Debug;
  */
 class OneOf extends Base\Parser
 {
-
-    /** @var string */
-    private string $exceptionMessage = 'Provided value does not match any of the expected formats or values';
+    private string $errorMessage = 'Provided value does not match any of the expected formats or values';
 
     /** @var Parser[] */
     private array $options = [];
@@ -108,9 +106,9 @@ class OneOf extends Base\Parser
     }
 
     /**
-     * Defines the exception message to use if none of the provided parsers matches
+     * Defines the error message to use if none of the provided parsers matches
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The error message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param string $message
@@ -121,7 +119,7 @@ class OneOf extends Base\Parser
      */
     public function setNonOfErrorMessage(string $message): static
     {
-        $this->exceptionMessage = $message;
+        $this->errorMessage = $message;
 
         return $this;
     }
@@ -184,7 +182,7 @@ class OneOf extends Base\Parser
             return $builder->createResult($this->default);
         }
 
-        $builder->logErrorUsingDebug($this->exceptionMessage, [], null, $errors);
+        $builder->logErrorUsingDebug($this->errorMessage, [], null, $errors);
 
         return $builder->createResultUnchanged();
     }

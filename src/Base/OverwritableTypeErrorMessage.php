@@ -19,15 +19,15 @@ use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Util\Debug;
 
 /**
- * Trait to easily implement type errors in parsers with overwritable exception messages
+ * Trait to easily implement type errors in parsers with overwritable error messages
  */
 trait OverwritableTypeErrorMessage
 {
 
-    private ?string $typeExceptionMessage = null;
+    private ?string $typeErrorMessage = null;
 
     /**
-     * Defines the exception message to use if the value is not of the expected type
+     * Defines the error message to use if the value is not of the expected type
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
@@ -40,7 +40,7 @@ trait OverwritableTypeErrorMessage
      */
     public function setTypeErrorMessage(string $message): static
     {
-        $this->typeExceptionMessage = $message;
+        $this->typeErrorMessage = $message;
 
         return $this;
     }
@@ -73,7 +73,7 @@ trait OverwritableTypeErrorMessage
         return new Error(
             $subject,
             Debug::parseMessage(
-                $this->typeExceptionMessage ?? $this->getDefaultTypeErrorMessage(),
+                $this->typeErrorMessage ?? $this->getDefaultTypeErrorMessage(),
                 ['subject' => $subject->getValue()]
             )
         );

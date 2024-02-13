@@ -18,12 +18,14 @@ use PHPUnit\Framework\Assert;
 class CaseBuilder
 {
 
+    public static int $totalNumberCreated = 0;
+
     /** @var TestInstance[] */
     private array $tests = [];
 
     public function __construct()
     {
-
+        self::$totalNumberCreated++;
     }
 
     public function test(?\Closure $parserCreation = null, ?string $methodName = null): TestInstance

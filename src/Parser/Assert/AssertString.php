@@ -98,24 +98,24 @@ class AssertString extends Base\Parser
     /**
      * Checks that the string starts with the provided string and fails if it doesn't
      *
-     * The exception message is processed using Debug::parseMessage and receives the following elements:
+     * The error message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - expected: The expected string
      *
      * @param string $string
-     * @param string $message
+     * @param string $errorMessage
      *
      * @return $this
      */
     public function assertStartsWith(
         string $string,
-        string $message = 'The string does not start with {expected.debug}'
+        string $errorMessage = 'The string does not start with {expected.debug}'
     ): static
     {
-        $this->assertionList[] = static function (ResultBuilder $builder, string $value) use ($string, $message): void {
+        $this->assertionList[] = static function (ResultBuilder $builder, string $value) use ($string, $errorMessage): void {
             if (!str_starts_with($value, $string)) {
                 $builder->logErrorUsingDebug(
-                    $message,
+                    $errorMessage,
                     ['expected' => $string]
                 );
             }
@@ -127,24 +127,24 @@ class AssertString extends Base\Parser
     /**
      * Checks that the string ends with the provided string and fails if it doesn't
      *
-     * The exception message is processed using Debug::parseMessage and receives the following elements:
+     * The error message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - expected: The expected string
      *
      * @param string $string
-     * @param string $message
+     * @param string $errorMessage
      *
      * @return $this
      */
     public function assertEndsWith(
         string $string,
-        string $message = 'The string does not end with {expected.debug}'
+        string $errorMessage = 'The string does not end with {expected.debug}'
     ): static
     {
-        $this->assertionList[] = static function (ResultBuilder $builder, string $value) use ($string, $message): void {
+        $this->assertionList[] = static function (ResultBuilder $builder, string $value) use ($string, $errorMessage): void {
             if (!str_ends_with($value, $string)) {
                 $builder->logErrorUsingDebug(
-                    $message,
+                    $errorMessage,
                     ['expected' => $string]
                 );
             }

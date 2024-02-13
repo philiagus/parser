@@ -138,14 +138,13 @@ class ResultBuilder
      * Creates a result with the provided value, adding all the accumulated errors to the result (if any)
      *
      * @param mixed $resultValue The result of the parser
-     * @param string $description A description of the result - only used for utility paths
      * @return Result
      * @see ResultBuilder::logError()
      * @see ResultBuilder::logErrorUsingDebug()
      */
-    public function createResult(mixed $resultValue, string $description = ''): Result
+    public function createResult(mixed $resultValue): Result
     {
-        return new Result($this->currentSubject, $resultValue, $this->errors, $description);
+        return new Result($this->currentSubject, $resultValue, $this->errors);
     }
 
     /**

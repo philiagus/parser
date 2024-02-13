@@ -44,36 +44,28 @@ class AssertStringRegex extends Base\Parser
     /** @var Parser[] */
     private array $numberMatchesParsers = [];
 
-    /**
-     * AssertStringRegex constructor.
-     *
-     * @param string $pattern
-     * @param string $exceptionMessage
-     *
-     * @throws ParserConfigurationException
-     */
-    private function __construct(string $pattern, string $exceptionMessage)
+    private function __construct(string $pattern, string $errorMessage)
     {
-        $this->setPattern($pattern, $exceptionMessage);
+        $this->setPattern($pattern, $errorMessage);
     }
 
     /**
      * Overwrites the pattern to be matched against with this regular expression.
      *
      *
-     * The exception message is processed using Debug::parseMessage and receives the following elements:
+     * The error message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - pattern: The provided regular expression
      *
      * @param string $pattern
-     * @param string $exceptionMessage
+     * @param string $errorMessage
      *
      * @return $this
      * @throws ParserConfigurationException
      */
     public function setPattern(
         string $pattern,
-        string $exceptionMessage = self::DEFAULT_PATTERN_EXCEPTION_MESSAGE
+        string $errorMessage = self::DEFAULT_PATTERN_EXCEPTION_MESSAGE
     ): static
     {
         if (@preg_match($pattern, '') === false) {
@@ -82,7 +74,7 @@ class AssertStringRegex extends Base\Parser
             );
         }
         $this->pattern = $pattern;
-        $this->patternExceptionMessage = $exceptionMessage;
+        $this->patternExceptionMessage = $errorMessage;
 
         return $this;
     }
@@ -91,19 +83,19 @@ class AssertStringRegex extends Base\Parser
      * Shorthand for creation of the parser and defining a regular expression for it
      *
      *
-     * The exception message is processed using Debug::parseMessage and receives the following elements:
+     * The error message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - pattern: The provided regular expression
      *
      * @param string $pattern
-     * @param string $exceptionMessage
+     * @param string $errorMessage
      *
      * @return static
      * @throws ParserConfigurationException
      */
-    public static function pattern(string $pattern, string $exceptionMessage = self::DEFAULT_PATTERN_EXCEPTION_MESSAGE): static
+    public static function pattern(string $pattern, string $errorMessage = self::DEFAULT_PATTERN_EXCEPTION_MESSAGE): static
     {
-        return new static($pattern, $exceptionMessage);
+        return new static($pattern, $errorMessage);
     }
 
     /**

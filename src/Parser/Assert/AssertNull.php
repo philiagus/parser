@@ -22,11 +22,11 @@ class AssertNull extends Base\Parser
 {
 
     /** @var string */
-    private string $exceptionMessage;
+    private string $errorMessage;
 
     private function __construct(string $message)
     {
-        $this->exceptionMessage = $message;
+        $this->errorMessage = $message;
     }
 
     /**
@@ -50,7 +50,7 @@ class AssertNull extends Base\Parser
     #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
     {
         if ($builder->getValue() !== null) {
-            $builder->logErrorUsingDebug($this->exceptionMessage);
+            $builder->logErrorUsingDebug($this->errorMessage);
         }
 
         return $builder->createResultUnchanged();

@@ -13,7 +13,11 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser\Assert;
 
 use Philiagus\DataProvider\DataProvider;
+use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Parser\Assert\AssertArray;
 use Philiagus\Parser\Parser\Assert\AssertSame;
+use Philiagus\Parser\Subject\ArrayValue;
 use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\InvalidValueParserTestTrait;
 use Philiagus\Parser\Test\TestBase;
@@ -39,5 +43,37 @@ class AssertSameTest extends TestBase
         return (new DataProvider(DataProvider::TYPE_ALL))
             ->map(fn($value) => [$value, fn($value) => AssertSame::value([$value])])
             ->provide(false);
+    }
+
+    public static function provideAsFristValueCases(): \Generator
+    {
+        yield 'same' => [1, 1];
+        yield 'same object' => [$o = new \stdClass(), $o];
+    }
+
+    /**
+     * @param mixed $value1
+     * @param mixed $value2
+     * @return void
+     * @dataProvider provideAsFristValueCases()
+     */
+    public function test_asFirstValue(mixed $value1, mixed $value2): void
+    {
+        $parser = AssertSame::asFirstValue();
+        // just run NAN to test reset
+        $parser->parse(Subject::default(NAN));
+        try {
+            AssertArray::new()
+                ->giveEachValue($parser)
+                ->parse(
+                    Subject::default([$value1, $value2, NAN])
+                );
+        } catch (ParsingException $e) {
+            $arrayKeySubject = $e->getError()->getSubject()->getSubjectChain()[1];
+            self::assertInstanceOf(ArrayValue::class, $arrayKeySubject);
+            self::assertSame('2', $arrayKeySubject->getDescription());
+            return;
+        }
+        self::fail('No exception thrown');
     }
 }

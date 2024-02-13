@@ -43,23 +43,23 @@ class AssertNumber extends Base\Parser
      * - min: The set minimum value
      *
      * @param float|int $minimum
-     * @param string $exceptionMessage
+     * @param string $errorMessage
      *
      * @return $this
      * @throws Exception\ParserConfigurationException
      * @see Debug::parseMessage()
      *
      */
-    public function assertMinimum(float|int $minimum, string $exceptionMessage = 'Provided value of {value} is lower than the defined minimum of {min}'): static
+    public function assertMinimum(float|int $minimum, string $errorMessage = 'Provided value of {value} is lower than the defined minimum of {min}'): static
     {
         if (is_float($minimum) && (is_nan($minimum) || is_infinite($minimum))) {
             throw new Exception\ParserConfigurationException('The minimum for a numeric value must be provided as integer or float');
         }
 
-        $this->assertionList[] = static function (ResultBuilder $builder, int|float $value) use ($minimum, $exceptionMessage): void {
+        $this->assertionList[] = static function (ResultBuilder $builder, int|float $value) use ($minimum, $errorMessage): void {
             if ($minimum > $value) {
                 $builder->logErrorUsingDebug(
-                    $exceptionMessage,
+                    $errorMessage,
                     ['min' => $minimum]
                 );
             }
@@ -76,23 +76,23 @@ class AssertNumber extends Base\Parser
      * - max: The currently set maximum
      *
      * @param float|int $maximum
-     * @param string $exceptionMessage
+     * @param string $errorMessage
      *
      * @return $this
      * @throws Exception\ParserConfigurationException
      * @see Debug::parseMessage()
      *
      */
-    public function assertMaximum(float|int $maximum, string $exceptionMessage = 'Provided value of {value} is greater than the defined maximum of {max}}'): static
+    public function assertMaximum(float|int $maximum, string $errorMessage = 'Provided value of {value} is greater than the defined maximum of {max}}'): static
     {
         if (is_float($maximum) && (is_nan($maximum) || is_infinite($maximum))) {
             throw new Exception\ParserConfigurationException('The maximum for a numeric value must be provided as integer or float');
         }
 
-        $this->assertionList[] = static function (ResultBuilder $builder, int|float $value) use ($maximum, $exceptionMessage): void {
+        $this->assertionList[] = static function (ResultBuilder $builder, int|float $value) use ($maximum, $errorMessage): void {
             if ($maximum < $value) {
                 $builder->logErrorUsingDebug(
-                    $exceptionMessage,
+                    $errorMessage,
                     ['max' => $maximum]
                 );
             }

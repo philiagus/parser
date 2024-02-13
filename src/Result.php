@@ -25,16 +25,14 @@ class Result extends Subject implements Contract\Result
      * @param Error[] $errors A list of errors that has occurred during parsing of the subject
      *                        if any. If errors occurred the Result object will prevent access to the
      *                        result value, given that its content is not to be used
-     * @param string $description A description of the result - only used for utility paths
      */
     public function __construct(
         Contract\Subject       $subject,
         mixed                  $resultValue,
-        private readonly array $errors,
-        string                 $description = ''
+        private readonly array $errors
     )
     {
-        parent::__construct($subject, $description, $resultValue, true, null);
+        parent::__construct($subject, '', $resultValue, true, null);
         foreach ($this->errors as $error) {
             if (!$error instanceof Error) {
                 throw new \LogicException(
@@ -75,12 +73,7 @@ class Result extends Subject implements Contract\Result
     /** @inheritDoc */
     #[\Override] protected function getPathStringPart(bool $isLastInChain): string
     {
-        if ($isLastInChain)
-            return '';
-        if ($this->description === '')
-            return ' ↣';
-
-        return " ↣{$this->description}↣";
+        return $isLastInChain ? '' : ' ↣';
     }
 }
 

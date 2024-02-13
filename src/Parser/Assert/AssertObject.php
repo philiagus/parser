@@ -34,17 +34,17 @@ class AssertObject extends Base\Parser
      * Shortcut for creating an instance and calling withInstanceOf
      *
      * @param class-string $class
-     * @param string $exceptionMessage
+     * @param string $errorMessage
      *
      * @return static
      * @see AssertObject::withInstanceOf()
      */
     public static function instanceOf(
         string $class,
-        string $exceptionMessage = self::DEFAULT_INSTANCEOF_MESSAGE
+        string $errorMessage = self::DEFAULT_INSTANCEOF_MESSAGE
     ): static
     {
-        return static::new()->assertInstanceOf($class, $exceptionMessage);
+        return static::new()->assertInstanceOf($class, $errorMessage);
     }
 
     /**
@@ -57,18 +57,18 @@ class AssertObject extends Base\Parser
      * - class: The class the object is not an instance of
      *
      * @param string $class
-     * @param string $exceptionMessage
+     * @param string $errorMessage
      *
      * @return $this
      */
     public function assertInstanceOf(
         string $class,
-        string $exceptionMessage = self::DEFAULT_INSTANCEOF_MESSAGE
+        string $errorMessage = self::DEFAULT_INSTANCEOF_MESSAGE
     ): static
     {
-        $this->checks[] = static function (ResultBuilder $builder, object $value) use ($class, $exceptionMessage): void {
+        $this->checks[] = static function (ResultBuilder $builder, object $value) use ($class, $errorMessage): void {
             if (!$value instanceof $class) {
-                $builder->logErrorUsingDebug($exceptionMessage, ['class' => $class]);
+                $builder->logErrorUsingDebug($errorMessage, ['class' => $class]);
             }
         };
 
@@ -90,18 +90,18 @@ class AssertObject extends Base\Parser
      * - class: The class the object is not an instance of
      *
      * @param string $class
-     * @param string $exceptionMessage
+     * @param string $errorMessage
      *
      * @return $this
      */
     public function assertNotInstanceOf(
         string $class,
-        string $exceptionMessage = 'The provided object is an instance of {class.raw}'
+        string $errorMessage = 'The provided object is an instance of {class.raw}'
     ): static
     {
-        $this->checks[] = static function (ResultBuilder $builder, object $value) use ($class, $exceptionMessage): void {
+        $this->checks[] = static function (ResultBuilder $builder, object $value) use ($class, $errorMessage): void {
             if ($value instanceof $class) {
-                $builder->logErrorUsingDebug($exceptionMessage, ['class' => $class]);
+                $builder->logErrorUsingDebug($errorMessage, ['class' => $class]);
             }
         };
 

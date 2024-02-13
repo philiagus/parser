@@ -83,9 +83,9 @@ interface Subject
     public function isUtilitySubject(): bool;
 
     /**
-     * Returns a unique ID of the root subject, suggesting that a new parser chain
-     * has started
-     * @return string
+     * Returns the root subject object and thus can be used to differentiate between
+     * parser runs as every new run should be started with a new subject.
+     * @return self
      */
-    public function getRootId(): string;
+    public function getRoot(): self;
 }

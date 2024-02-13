@@ -20,17 +20,18 @@ use Philiagus\Parser\Util\Debug;
 class AssertInfinite extends Base\Parser
 {
 
-    private string $exceptionMessage;
+    private string $errorMessage;
     private ?bool $assertPositive = null;
     private ?string $assertSignMessage = null;
 
     private function __construct(string $exceptionMessage)
     {
-        $this->exceptionMessage = $exceptionMessage;
+        $this->errorMessage = $exceptionMessage;
     }
 
     /**
-     * Sets the exception message sent when the input value is not an infinite value
+     * Creates a parser that asserts that the value is INF or -INF (which can be refined using methods)
+     *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
@@ -88,7 +89,7 @@ class AssertInfinite extends Base\Parser
     {
         $value = $builder->getValue();
         if (!is_float($value) || !is_infinite($value)) {
-            $builder->logErrorUsingDebug($this->exceptionMessage);
+            $builder->logErrorUsingDebug($this->errorMessage);
         }
         if ($this->assertPositive !== null) {
             if (($value > 0) !== $this->assertPositive) {

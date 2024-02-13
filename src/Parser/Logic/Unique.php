@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser\Logic;
 
-use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Contract\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Result;
 
@@ -20,7 +20,7 @@ final class Unique implements Parser
 {
 
     private array $encounteredValues = [];
-    private string $lastRootId = '';
+    private ?Subject $currentRoot = null;
 
     private function __construct(
         private readonly Parser $parser,
@@ -41,9 +41,9 @@ final class Unique implements Parser
 
     #[\Override] public function parse(Subject $subject): Result
     {
-        $rootId = $subject->getRootId();
-        if ($this->lastRootId !== $rootId) {
-            $this->lastRootId = $rootId;
+        $root = $subject->getRoot();
+        if ($this->currentRoot !== $root) {
+            $this->currentRoot = $root;
             $this->encounteredValues = [];
         }
 

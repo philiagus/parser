@@ -101,7 +101,7 @@ class ParseArray extends AssertArray
 
     /**
      * Tests that the key exists and performs the parser on the value if present
-     * In case the key does not exist an exception with the specified message is thrown
+     * In case the key does not exist an error with the specified message is generated
      *
      * The message is processed using Debug::parseMessage and receives the following elements:
      * - key: The missing key
@@ -110,18 +110,18 @@ class ParseArray extends AssertArray
      *
      * @param string|int $key
      * @param ParserContract $parser
-     * @param string $missingKeyExceptionMessage
+     * @param string $missingKeyErrorMessage
      *
      * @return $this
      * @see Debug::parseMessage()
      */
-    public function modifyValue(string|int $key, ParserContract $parser, string $missingKeyExceptionMessage = 'Array does not contain the requested key {key}'): static
+    public function modifyValue(string|int $key, ParserContract $parser, string $missingKeyErrorMessage = 'Array does not contain the requested key {key}'): static
     {
         $key = self::normalizeArrayKey($key);
-        $this->assertionList[] = static function (ResultBuilder $builder, array &$targetedKeys) use ($key, $parser, $missingKeyExceptionMessage): void {
+        $this->assertionList[] = static function (ResultBuilder $builder, array &$targetedKeys) use ($key, $parser, $missingKeyErrorMessage): void {
             $value = $builder->getValue();
             if (!array_key_exists($key, $value)) {
-                $builder->logErrorUsingDebug($missingKeyExceptionMessage, ['key' => $key]);
+                $builder->logErrorUsingDebug($missingKeyErrorMessage, ['key' => $key]);
 
                 return;
             }
