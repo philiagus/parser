@@ -1,0 +1,85 @@
+<?php
+/*
+ * This file is part of philiagus/parser
+ *
+ * (c) Andreas Bittner <philiagus@philiagus.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+declare(strict_types=1);
+
+namespace Philiagus\Parser\Test\Unit\Parser\Logic;
+
+use Philiagus\DataProvider\DataProvider;
+use Philiagus\Parser\Contract;
+use Philiagus\Parser\Parser\Logic\OverwriteErrors;
+use Philiagus\Parser\Result;
+use Philiagus\Parser\Test\ChainableParserTestTrait;
+use Philiagus\Parser\Test\Mock\ParserMock;
+use Philiagus\Parser\Test\ParserTestBase;
+
+/**
+ * @covers \Philiagus\Parser\Parser\Logic\OverwriteErrors
+ */
+class OverwriteErrorsTest extends ParserTestBase
+{
+
+    use ChainableParserTestTrait;
+
+    public function testWithMessage(): void
+    {
+        $alteredResult = new \stdClass();
+        $builder = $this->builder();
+
+        $builder
+            ->testStaticConstructor()
+            ->arguments(
+                $builder
+                    ->messageArgument()
+                    ->expectedWhen(
+                        fn($_1, $_2, array $successes) => !$successes[1]
+                    ),
+                $builder
+                    ->parserArgument()
+                    ->expectSingleCall(
+                        fn() => fn() => true,
+                        fn() => fn() => true,
+                        result: fn(Contract\Subject $subject) => new Result($subject, $alteredResult, [])
+                    )
+                    ->errorWillBeHidden()
+            )
+            ->provider(
+                DataProvider::TYPE_ALL,
+                successValidator: function (Contract\Subject $subject, Contract\Result $result) use ($alteredResult) {
+                    if ($result->getValue() !== $alteredResult) {
+                        return ['Result does not match expected format'];
+                    }
+
+                    return [];
+                }
+            );
+
+        $builder->run();
+    }
+
+    public static function provideValidValuesAndParsersAndResults(): array
+    {
+        return (new DataProvider())
+            ->map(static fn($value) => [
+                $value,
+                fn() => OverwriteErrors::withMessage(
+                    'message',
+                    (new ParserMock())
+                        ->expect(
+                            static fn() => true,
+                            static fn() => true,
+                            fn(Contract\Subject $subject) => new Result($subject, $subject->getValue(), [])
+                        )
+                ),
+                $value,
+            ])
+            ->provide(false);
+    }
+}

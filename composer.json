@@ -10,13 +10,13 @@
     ],
     "authors": [
         {
-            "name": "Andreas Bittner",
+            "name": "Andreas Eicher",
             "email": "philiagus@philiagus.de",
             "role": "lead"
         }
     ],
     "require": {
-        "php": ">=7.2",
+        "php": ">=8.3",
         "ext-json": "*",
         "ext-mbstring": "*"
     },
@@ -25,17 +25,20 @@
     },
     "require-dev": {
         "phpunit/phpunit": "*",
+        "phpspec/prophecy-phpunit": "*",
         "ext-xdebug": "*",
         "philiagus/dataprovider": "*"
     },
     "autoload": {
         "psr-4": {
-            "Philiagus\\Parser\\": "src/Philiagus/Parser"
+            "Philiagus\\Parser\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Philiagus\\Parser\\Test\\": "tests/Philiagus/Parser/Test"
+            "Philiagus\\Parser\\Test\\Unit\\": "tests/Unit",
+            "Philiagus\\Parser\\Test\\Integration\\": "tests/Integration",
+            "Philiagus\\Parser\\Test\\" : "tests/"
         }
     }
 }
