@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test;
 
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 use PHPUnit\Framework\Assert;
 
 class Util
@@ -48,7 +48,7 @@ class Util
         }
 
         Assert::fail(
-            Debug::parseMessage(
+            Stringify::parseMessage(
                 'The two values do not match: {a.debug} <=> {b.debug}',
                 [
                     'a' => $a,

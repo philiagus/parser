@@ -13,12 +13,12 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
+use Philiagus\Parser\Contract\Error;
 use Philiagus\Parser\Contract\Parser;
-use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\ResultBuilder;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
 /**
  * This parser catches the parsing errors generate by the child parser and overwrite the
@@ -27,6 +27,8 @@ use Philiagus\Parser\Util\Debug;
  * This also means, that the subject of the resulting error is the subject provided
  * to this OverwriteErrors parser rather than the subject that any caught error might
  * originate from.
+ *
+ * @package Parser\Logic
  */
 class OverwriteErrors extends Base\Parser
 {
@@ -45,14 +47,14 @@ class OverwriteErrors extends Base\Parser
      * If the parser results in or throws an error, the error is caught and
      * a new error is created, receiving the errors of the parser as sourceErrors
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param string $message
      * @param Parser $around
      *
      * @return static
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      * @see Error::getSourceErrors()
      */
     public static function withMessage(string $message, Parser $around): static
@@ -75,7 +77,7 @@ class OverwriteErrors extends Base\Parser
             $errors[] = $exception->getError();
         }
 
-        $builder->logErrorUsingDebug($this->message, [], null, $errors);
+        $builder->logErrorStringify($this->message, [], null, $errors);
 
         return $builder->createResultUnchanged();
     }

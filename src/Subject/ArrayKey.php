@@ -15,6 +15,11 @@ namespace Philiagus\Parser\Subject;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
 
+/**
+ * A subject representing an array key
+ *
+ * @package Subject
+ */
 class ArrayKey extends Subject
 {
     public function __construct(Contract\Subject $sourceSubject, private readonly int|string $arrayKey)

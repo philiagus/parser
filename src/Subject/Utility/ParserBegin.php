@@ -15,6 +15,11 @@ namespace Philiagus\Parser\Subject\Utility;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
 
+/**
+ * A utility subject to represent that start of a parser
+ *
+ * @package Subject\Utility
+ */
 class ParserBegin extends Subject
 {
 

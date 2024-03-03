@@ -14,16 +14,23 @@ namespace Philiagus\Parser\Parser\Assert;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
-use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\ArrayKey;
 use Philiagus\Parser\Subject\ArrayKeyValuePair;
 use Philiagus\Parser\Subject\ArrayValue;
 use Philiagus\Parser\Subject\MetaInformation;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
+/**
+ * Asserts that the provided value is an array and offers further methods to
+ * better assert the contents of the array
+ *
+ * @package Parser\Assert
+ * @target-type array
+ */
 class AssertArray extends Base\Parser
 {
     use OverwritableTypeErrorMessage;
@@ -153,7 +160,7 @@ class AssertArray extends Base\Parser
      * Tests that the key exists and performs the parser on the value if present
      * In case the key does not exist an error with the specified message is generated
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - key: The missing key
      * - subject: The value currently being parsed
      *
@@ -163,7 +170,7 @@ class AssertArray extends Base\Parser
      * @param string $missingKeyExceptionMessage
      *
      * @return $this
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      */
     public function giveValue(
         int|string $key, ParserContract $parser,
@@ -174,7 +181,7 @@ class AssertArray extends Base\Parser
         $this->assertionList[] = static function (ResultBuilder $builder, array &$targetedKeys) use ($key, $parser, $missingKeyExceptionMessage): void {
             $value = $builder->getValue();
             if (!array_key_exists($key, $value)) {
-                $builder->logErrorUsingDebug($missingKeyExceptionMessage, ['key' => $key]);
+                $builder->logErrorStringify($missingKeyExceptionMessage, ['key' => $key]);
 
                 return;
             }
@@ -248,19 +255,19 @@ class AssertArray extends Base\Parser
     /**
      * Specifies that this array is expected to have numeric keys starting at 0, incrementing by 1
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param string $errorMessage
      *
      * @return $this
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      */
     public function assertSequentialKeys(string $errorMessage = 'The array is not a sequential numerical array starting at 0'): static
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($errorMessage): void {
             if (!array_is_list($builder->getValue())) {
-                $builder->logErrorUsingDebug($errorMessage);
+                $builder->logErrorStringify($errorMessage);
             }
         };
 
@@ -298,7 +305,7 @@ class AssertArray extends Base\Parser
      *
      * If you want to make sure that no surplus keys exist in the array, please use assertNoSurplusKeysExist()
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - key: The key that was found missing
      *
@@ -307,7 +314,7 @@ class AssertArray extends Base\Parser
      *
      * @return $this
      * @see assertNoSurplusKeysExist()
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      */
     public function assertKeysExist(
         array  $expectedKeys,
@@ -323,7 +330,7 @@ class AssertArray extends Base\Parser
 
             foreach ($normalizedKeys as $key) {
                 if (!array_key_exists($key, $value)) {
-                    $builder->logErrorUsingDebug($missingKeyMassage, ['key' => $key]);
+                    $builder->logErrorStringify($missingKeyMassage, ['key' => $key]);
                 } else {
                     $targetedKeys[] = $key;
                 }
@@ -339,7 +346,7 @@ class AssertArray extends Base\Parser
      * list of keys exists. In order to check that all required keys exist, please use the
      * assertKeysExists() method
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - key: The key that was found missing
      *
@@ -350,7 +357,7 @@ class AssertArray extends Base\Parser
      *
      * @return $this
      * @see assertKeysExist()
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      */
     public function assertNoSurplusKeysExist(
         array  $expectedKeys = [],
@@ -372,7 +379,7 @@ class AssertArray extends Base\Parser
 
             foreach (array_keys($value) as $key) {
                 if (!in_array($key, $normalizedKeys)) {
-                    $builder->logErrorUsingDebug($surplusKeyMessage, ['key' => $key]);
+                    $builder->logErrorStringify($surplusKeyMessage, ['key' => $key]);
                 }
             }
         };

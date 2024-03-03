@@ -15,6 +15,11 @@ namespace Philiagus\Parser\Subject;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
 
+/**
+ * A subject representing the value assigned to an array key
+ *
+ * @package Subject
+ */
 class ArrayValue extends Subject
 {
     public function __construct(

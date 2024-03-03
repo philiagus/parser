@@ -17,7 +17,7 @@ use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Subject\Root;
 use Philiagus\Parser\Test\SubjectTestBase;
 use Philiagus\Parser\Test\Util;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
 /**
  * @covers \Philiagus\Parser\Subject\Root
@@ -44,7 +44,7 @@ class RootTest extends SubjectTestBase
      */
     public function testCreation(mixed $value, ?string $description, bool $throwOnError): void
     {
-        $expectedDescription = $description ?? Debug::getType($value);
+        $expectedDescription = $description ?? Stringify::getType($value);
 
         $root = new Root($value, $description, $throwOnError);
         Util::assertSame($value, $root->getValue());

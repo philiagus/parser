@@ -15,7 +15,7 @@ namespace Philiagus\Parser\Test\ParserTestBase\Argument;
 use Generator;
 use Philiagus\Parser\Test\ParserTestBase\Argument;
 use Philiagus\Parser\Test\ParserTestBase\ErrorCollection;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
 class Fixed implements Argument
 {
@@ -29,7 +29,7 @@ class Fixed implements Argument
 
     public function success(mixed $value, ?string $description = null): self
     {
-        $description ??= count($this->cases) . ' ' . Debug::stringify($value);
+        $description ??= count($this->cases) . ' ' . Stringify::stringify($value);
         $this->cases[$description] = [self::SUCCESS, $value];
 
         return $this;

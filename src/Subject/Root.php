@@ -13,8 +13,13 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Subject;
 
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
+/**
+ * The root subject normally used to start a parsing process
+ *
+ * @package Subject
+ */
 class Root extends Subject
 {
 
@@ -22,7 +27,7 @@ class Root extends Subject
     {
         parent::__construct(
             null,
-            $description ?? Debug::getType($value),
+            $description ?? Stringify::getType($value),
             $value,
             false,
             $throwOnError

@@ -14,12 +14,15 @@ namespace Philiagus\Parser\Parser\Assert;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
-use Philiagus\Parser\ResultBuilder;
 
 
 /**
- * Class BooleanPrimitive
+ * Asserts that the provided value is a boolean value, so `true` or `false`
+ *
+ * @package Parser\Assert
+ * @target-type bool
  */
 class AssertBoolean extends Base\Parser
 {

@@ -13,18 +13,20 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception;
-use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\Utility\Forwarded;
 use Philiagus\Parser\Subject\Utility\Test;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
 /**
  * This parser allows to set match the provided value against configured values and - on match - call a
  * corresponding followup parser. Think of it as the PHP switch construct in parser form.
+ *
+ * @package Parser\Logic
  */
 class Conditional extends Base\Parser
 {
@@ -55,13 +57,13 @@ class Conditional extends Base\Parser
     /**
      * Defines the error message to use if none of the provided values matches
      *
-     * The error message is processed using Debug::parseMessage and receives the following elements:
+     * The error message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param string $error
      *
      * @return $this
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      *
      */
     public function setNonOfErrorMessage(string $error): static
@@ -202,7 +204,7 @@ class Conditional extends Base\Parser
                     }
                     $errors[] = new Error(
                         $builder->getSubject(),
-                        'Value is not same as ' . Debug::stringify($from)
+                        'Value is not same as ' . Stringify::stringify($from)
                     );
                     break;
                 case self::TYPE_SAME_LIST:
@@ -211,7 +213,7 @@ class Conditional extends Base\Parser
                     }
                     $errors[] = new Error(
                         $builder->getSubject(),
-                        'Value is not same as ' . implode(', ', array_map(fn($value) => Debug::stringify($value), $from))
+                        'Value is not same as ' . implode(', ', array_map(fn($value) => Stringify::stringify($value), $from))
                     );
                     break;
                 case self::TYPE_EQUALS:
@@ -220,7 +222,7 @@ class Conditional extends Base\Parser
                     }
                     $errors[] = new Error(
                         $builder->getSubject(),
-                        'Value is not equal to ' . Debug::stringify($from)
+                        'Value is not equal to ' . Stringify::stringify($from)
                     );
                     break;
                 case self::TYPE_EQUALS_LIST:
@@ -232,7 +234,7 @@ class Conditional extends Base\Parser
                     }
                     $errors[] = new Error(
                         $builder->getSubject(),
-                        'Value is not equal to ' . implode(', ', array_map(fn($value) => Debug::stringify($value), $from))
+                        'Value is not equal to ' . implode(', ', array_map(fn($value) => Stringify::stringify($value), $from))
                     );
                     break;
                 case self::TYPE_PARSER:
@@ -285,7 +287,7 @@ class Conditional extends Base\Parser
             return $builder->createResult($this->default);
         }
 
-        $builder->logErrorUsingDebug($this->errorMessage, sourceErrors: $errors);
+        $builder->logErrorStringify($this->errorMessage, sourceErrors: $errors);
 
         return $builder->createResultUnchanged();
     }

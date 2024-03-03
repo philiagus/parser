@@ -14,9 +14,15 @@ namespace Philiagus\Parser\Parser\Assert;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
-use Philiagus\Parser\ResultBuilder;
 
+/**
+ * Asserts the value to be an object
+ *
+ * @package Parser\Assert
+ * @target-type object
+ */
 class AssertObject extends Base\Parser
 {
     use OverwritableTypeErrorMessage;
@@ -51,7 +57,7 @@ class AssertObject extends Base\Parser
      * Checks that the object is an instance of the specified class
      *
      *
-     * The message of the exception is processed using Debug::parseMessage
+     * The message of the exception is processed using Stringify::parseMessage
      * and receives the following elements:
      * - subject: The object currently being parsed
      * - class: The class the object is not an instance of
@@ -68,7 +74,7 @@ class AssertObject extends Base\Parser
     {
         $this->checks[] = static function (ResultBuilder $builder, object $value) use ($class, $errorMessage): void {
             if (!$value instanceof $class) {
-                $builder->logErrorUsingDebug($errorMessage, ['class' => $class]);
+                $builder->logErrorStringify($errorMessage, ['class' => $class]);
             }
         };
 
@@ -84,7 +90,7 @@ class AssertObject extends Base\Parser
      * Checks that the object is not an instance of the specified class
      *
      *
-     * The message of the exception is processed using Debug::parseMessage
+     * The message of the exception is processed using Stringify::parseMessage
      * and receives the following elements:
      * - subject: The object currently being parsed
      * - class: The class the object is not an instance of
@@ -101,7 +107,7 @@ class AssertObject extends Base\Parser
     {
         $this->checks[] = static function (ResultBuilder $builder, object $value) use ($class, $errorMessage): void {
             if ($value instanceof $class) {
-                $builder->logErrorUsingDebug($errorMessage, ['class' => $class]);
+                $builder->logErrorStringify($errorMessage, ['class' => $class]);
             }
         };
 

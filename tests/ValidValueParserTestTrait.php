@@ -16,7 +16,7 @@ use DateTimeInterface;
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
 trait ValidValueParserTestTrait
 {
@@ -46,7 +46,7 @@ trait ValidValueParserTestTrait
                 $resultValue instanceof DateTimeInterface && $expected instanceof DateTimeInterface ?
                     $resultValue::class === $expected::class && $resultValue->format('Y-m-d H:i:s.u') == $expected->format('Y-m-d H:i:s.u') :
                     DataProvider::isSame($expected, $resultValue),
-                Debug::stringify($expected) . ' is not equal to ' . Debug::stringify($resultValue)
+                Stringify::stringify($expected) . ' is not equal to ' . Stringify::stringify($resultValue)
             );
         }
     }
@@ -71,7 +71,7 @@ trait ValidValueParserTestTrait
                 $resultValue instanceof DateTimeInterface && $expected instanceof DateTimeInterface ?
                     $resultValue::class === $expected::class && $resultValue->format('Y-m-d H:i:s.u') == $expected->format('Y-m-d H:i:s.u') :
                     DataProvider::isSame($expected, $resultValue),
-                Debug::stringify($expected) . ' is not equal to ' . Debug::stringify($resultValue)
+                Stringify::stringify($expected) . ' is not equal to ' . Stringify::stringify($resultValue)
             );
         }
     }

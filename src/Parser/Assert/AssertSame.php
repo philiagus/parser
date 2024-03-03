@@ -13,9 +13,15 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Assert;
 
 use Philiagus\Parser\Base;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
-use Philiagus\Parser\ResultBuilder;
 
+/**
+ * Can be used to assert that the value is the same (===) as a provided value or is always the same value
+ * throughout runs
+ *
+ * @package Parser\Assert
+ */
 class AssertSame extends Base\Parser
 {
     private ?Contract\Subject $lastRoot = null;
@@ -32,7 +38,7 @@ class AssertSame extends Base\Parser
     /**
      * Assert provided value is same (===) to a defined value
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - expected: The value the received value is compared against
      *
@@ -41,7 +47,7 @@ class AssertSame extends Base\Parser
      *
      * @return static
      *
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      *
      */
     public static function value(mixed $value, string $errorMessage = 'The value is not the same as the expected value'): static
@@ -53,7 +59,7 @@ class AssertSame extends Base\Parser
      * Assert provided value is same (===) every time, using the first provided value
      * as defined target
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - expected: The value the received value is compared against
      *
@@ -61,7 +67,7 @@ class AssertSame extends Base\Parser
      *
      * @return static
      *
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      *
      */
     public static function asFirstValue(string $errorMessage = 'The value is not the same everytime'): static
@@ -84,7 +90,7 @@ class AssertSame extends Base\Parser
             $this->value = $builder->getValue();
             $this->valueSet = true;
         } else if ($builder->getValue() !== $this->value) {
-            $builder->logErrorUsingDebug(
+            $builder->logErrorStringify(
                 $this->errorMessage,
                 ['expected' => $this->value]
             );

@@ -15,17 +15,22 @@ namespace Philiagus\Parser\Parser\Logic;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Error;
+use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Result;
-use Philiagus\Parser\Subject\Utility\ParserBegin;
 
 /**
  * Parser that always fails, generating an error with a defined message
+ *
+ * This parser is most times used in conjunction with other Logic parsers, such as Map
+ * a certain value to an automatic fail
+ *
+ * @package Parser\Logic
  */
 final readonly class Fail implements Parser
 {
 
     /**
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param string $message
@@ -37,7 +42,7 @@ final readonly class Fail implements Parser
     /**
      * Static constructor to shorthand setting a specific message
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param string $message
@@ -52,11 +57,9 @@ final readonly class Fail implements Parser
     /** @inheritDoc */
     #[\Override] public function parse(Contract\Subject $subject): Contract\Result
     {
-        $subject = new ParserBegin($subject, 'FAIL');
-
-        $error = Error::createUsingDebugString($subject, $this->message);
+        $error = Error::createUsingStringify($subject, $this->message);
         if ($subject->throwOnError()) {
-            $error->throw();
+            throw new ParsingException($error);
         }
 
         return new Result($subject, null, [$error]);

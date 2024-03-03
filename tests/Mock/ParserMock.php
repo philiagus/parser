@@ -20,7 +20,7 @@ use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\ParserTestBase\ErrorCollection;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
 class ParserMock implements Parser
 {
@@ -60,7 +60,7 @@ class ParserMock implements Parser
         $this->expectedCalls[] = [
             'value' => $value instanceof \Closure ? $value : static function (Contract\Subject $subject) use ($value): void {
                 if (!DataProvider::isSame($subject->getValue(), $value)) {
-                    throw new \RuntimeException("Value does not match " . Debug::stringify($subject->getValue()) . " <-> " . Debug::stringify($value));
+                    throw new \RuntimeException("Value does not match " . Stringify::stringify($subject->getValue()) . " <-> " . Stringify::stringify($value));
                 }
             },
             'path' => $pathType instanceof \Closure ? $pathType : static function (Contract\Subject $subject) use ($pathType) {

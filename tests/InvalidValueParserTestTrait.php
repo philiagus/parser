@@ -17,7 +17,7 @@ use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
 trait InvalidValueParserTestTrait
 {
@@ -52,14 +52,14 @@ trait InvalidValueParserTestTrait
             }
             if (!isset($exception)) {
                 $resultValue = $result->getValue();
-                self::fail('No exception was thrown and parser for ' . Debug::stringify($value) . ' resulted in: ' . Debug::stringify($resultValue));
+                self::fail('No exception was thrown and parser for ' . Stringify::stringify($value) . ' resulted in: ' . Stringify::stringify($resultValue));
             }
             if (is_string($expectedException)) {
                 self::assertInstanceOf($expectedException, $exception, "Exception of type $expectedException not thrown: " . (string)$exception);
             } elseif ($expectedException instanceof \Closure) {
                 $expectedException($exception);
             } else {
-                self::fail('$expectedException must be string|\Closure, ' . Debug::stringify($expectedException) . ' provided');
+                self::fail('$expectedException must be string|\Closure, ' . Stringify::stringify($expectedException) . ' provided');
             }
         }
     }

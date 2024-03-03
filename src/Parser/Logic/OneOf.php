@@ -13,18 +13,21 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\Utility\Forwarded;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
 /**
  * Checks that the value provided matches one of the provided values or parsers
+ *
  * Please be aware that these values are not evaluated in order. For performance reasons the same and equal
- * values are accumulated and performed before the list of parsers are checked.
+ * values are accumulated and compared before the list of parsers are checked.
+ *
+ * @package Parser\Logic
  */
 class OneOf extends Base\Parser
 {
@@ -108,13 +111,13 @@ class OneOf extends Base\Parser
     /**
      * Defines the error message to use if none of the provided parsers matches
      *
-     * The error message is processed using Debug::parseMessage and receives the following elements:
+     * The error message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param string $message
      *
      * @return $this
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      *
      */
     public function setNonOfErrorMessage(string $message): static
@@ -182,7 +185,7 @@ class OneOf extends Base\Parser
             return $builder->createResult($this->default);
         }
 
-        $builder->logErrorUsingDebug($this->errorMessage, [], null, $errors);
+        $builder->logErrorStringify($this->errorMessage, [], null, $errors);
 
         return $builder->createResultUnchanged();
     }

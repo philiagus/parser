@@ -14,8 +14,20 @@ namespace Philiagus\Parser;
 
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Error;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
+/**
+ * Represents the result of a parsing process. Instances might contain errors _or_ the result value, never both.
+ *
+ * Most important methods of this object are `isSuccess` and `getValue`.
+ * If you are using the parsers in `throw mode` the result object can never contain an error.
+ *
+ * Technically any result object is also a subject that can be used against another parser.
+ *
+ * @package Subject
+ * @see self::getValue()
+ * @see self::isSuccess()
+ */
 class Result extends Subject implements Contract\Result
 {
 
@@ -36,7 +48,7 @@ class Result extends Subject implements Contract\Result
         foreach ($this->errors as $error) {
             if (!$error instanceof Error) {
                 throw new \LogicException(
-                    "Trying to create error result with a non ResultError instance: " . Debug::getType($error)
+                    "Trying to create error result with a non ResultError instance: " . Stringify::getType($error)
                 );
             }
         }

@@ -14,16 +14,19 @@ namespace Philiagus\Parser\Parser\Parse;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
-use Philiagus\Parser\ResultBuilder;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
 /**
  * Parser used to base64 decode a string
+ *
  * This parser uses strict decoding by default, but can be set to be non-strict using
  * the setStrict method
  *
  * @see base64_decode()
+ * @package Parser\Parse
+ * @target-type string
  */
 class ParseBase64String extends Base\Parser
 {
@@ -44,13 +47,13 @@ class ParseBase64String extends Base\Parser
     /**
      * Defines the exception message to use if the value is not a valid base64 string
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param string $message
      *
      * @return $this
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      *
      */
     public function setNotBase64ErrorMessage(string $message): static
@@ -88,7 +91,7 @@ class ParseBase64String extends Base\Parser
         $result = base64_decode($value, $this->strict);
 
         if ($result === false) {
-            $builder->logErrorUsingDebug(
+            $builder->logErrorStringify(
                 $this->notBase64ExceptionMessage
             );
 

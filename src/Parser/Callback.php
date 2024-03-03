@@ -13,20 +13,25 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Error;
-use Philiagus\Parser\ResultBuilder;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
 /**
+ * **Target Type**: mixed
+ *
  * A parser that simplifies single-use cases where normally an entire parser would have been written
- * This parser takes a closure with signature \Closure(mixed, Subject): mixed
+ *
+ * This parser takes a closure with signature `\Closure(mixed, Subject): mixed`
  *
  * If this closure throws an error the parser will convert that exception to an Error and log
  * it correspondingly, honoring the current parser mode (throw mode or gather mode)
  *
  * On no error the result of this parser is the result of the closure
+ *
  * @see Callback::new()
+ * @package Parser\Generic
  */
 class Callback extends Parser
 {
@@ -62,7 +67,7 @@ class Callback extends Parser
     /**
      * Overwrites the error message used when the callback results in an error
      *
-     * The error message is processed using Debug::parseMessage and receives the following replacers:
+     * The error message is processed using Stringify::parseMessage and receives the following replacers:
      * - subject: The value provided to the closure
      * - throwable: The \Throwable object thrown by the closure
      * - throwableMessage: The \Throwable message thrown by the closure
@@ -72,7 +77,7 @@ class Callback extends Parser
      *
      * @param string $message
      * @return $this
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      * @see \Throwable
      */
     public function setErrorMessage(string $message): static
@@ -92,7 +97,7 @@ class Callback extends Parser
         } catch (\Throwable $e) {
             $builder->logError(
                 isset($this->errorMessage) ?
-                    Error::createUsingDebugString(
+                    Error::createUsingStringify(
                         $subject,
                         $this->errorMessage,
                         [

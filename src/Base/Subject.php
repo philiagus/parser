@@ -13,9 +13,18 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Base;
 
 use Philiagus\Parser\Contract;
-use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\Root;
 
+/**
+ * Base class used by all subjects
+ *
+ * If you need to implement your own subject class for some reason, you can use this.
+ *
+ * But before you do this: Please check if there isn't a subject already present in the
+ * default list of subjects that might fit your use case.
+ *
+ * @package Base
+ */
 abstract class Subject implements Contract\Subject
 {
 

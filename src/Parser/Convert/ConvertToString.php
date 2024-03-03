@@ -14,14 +14,22 @@ namespace Philiagus\Parser\Parser\Convert;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Error;
-use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\ArrayValue;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 use Stringable;
 
+/**
+ * Tries to convert the provided value to a string. Please be aware that you
+ * must define the specific way of conversion for certain types (like how arrays are imploded or
+ * what true/false are supposed to become)
+ *
+ * @package Parser\Convert
+ * @target-type mixed -> string
+ */
 class ConvertToString extends Base\Parser
 {
     use OverwritableTypeErrorMessage;
@@ -82,7 +90,7 @@ class ConvertToString extends Base\Parser
      * is checked to be a string. If violating elements are found, an error is generated
      * The element converter parser can be used to convert elements of the array before type checking them to be string
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - key: The key of the value that was not a string
      * - culprit: The value of the array that wasn't a string (after potential conversion)
@@ -93,7 +101,7 @@ class ConvertToString extends Base\Parser
      * @param string $errorMessage
      *
      * @return $this
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      */
     public function setImplodeOfArrays(
         string  $delimiter,
@@ -176,7 +184,7 @@ class ConvertToString extends Base\Parser
 
                         if (!is_string($convertedElement)) {
                             $builder->logError(
-                                Error::createUsingDebugString(
+                                Error::createUsingStringify(
                                     $newSubject,
                                     $this->implode[1],
                                     [

@@ -1,8 +1,10 @@
-# Parser
+# Introduction
 
 ## What are Parsers?
 
 Parsers are an extendable suite of classes meant to assert, convert, sanitize and extract data from a provided dataset.
+
+You can see a list of all parsers in the system here: [List of Parsers](./list-of-parsers.md)
 
 ## Writing Parsers
 

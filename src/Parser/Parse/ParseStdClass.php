@@ -12,15 +12,26 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser\Parse;
 
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception;
 use Philiagus\Parser\Parser\Assert\AssertStdClass;
-use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\PropertyName;
 use Philiagus\Parser\Subject\PropertyValue;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
+/**
+ * Used to alter an \stdClass object. This parser will _never_ alter the object that it
+ * received but instead opt to _clone_ the object and apply its alterations ot the clone.
+ *
+ * This parser also extends AssertStdClass, so that you can do both assertion and alteration at the
+ * same time.
+ *
+ * @see AssertStdClass
+ * @package Parser\Parse
+ * @target-type \stdClass
+ */
 class ParseStdClass extends AssertStdClass
 {
 
@@ -89,7 +100,7 @@ class ParseStdClass extends AssertStdClass
      * Tests that the key exists and performs the parser on the value if present
      * In case the key does not exist an error with the specified message is generated.
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - property: The missing property as defined here
      *
@@ -98,7 +109,7 @@ class ParseStdClass extends AssertStdClass
      * @param string $missingKeyErrorMessage
      *
      * @return $this
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      *
      */
     public function modifyPropertyValue(
@@ -110,7 +121,7 @@ class ParseStdClass extends AssertStdClass
         use ($property, $parser, $missingKeyErrorMessage): void {
             $value = $builder->getValue();
             if (!property_exists($value, $property)) {
-                $builder->logErrorUsingDebug(
+                $builder->logErrorStringify(
                     $missingKeyErrorMessage,
                     ['property' => $property]
                 );
@@ -197,7 +208,7 @@ class ParseStdClass extends AssertStdClass
                     $newName = $newNameResult->getValue();
                     if (!is_string($newName)) {
                         throw new Exception\RuntimeParserConfigurationException(
-                            Debug::parseMessage(
+                            Stringify::parseMessage(
                                 $newPropertyNameIsNotUsableMessage,
                                 ['old' => $oldName, 'new' => $newName]
                             )

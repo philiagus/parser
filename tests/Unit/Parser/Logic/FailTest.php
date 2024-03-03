@@ -18,7 +18,7 @@ use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\Logic\Fail;
 use Philiagus\Parser\Test\ParserTestBase;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
 /**
  * @covers \Philiagus\Parser\Parser\Logic\Fail
@@ -42,7 +42,7 @@ class FailTest extends ParserTestBase
     public function testFull($value): void
     {
         $parser = Fail::message('message {subject.debug}');
-        $expectedMessage = Debug::parseMessage('message {subject.debug}', ['subject' => $value]);
+        $expectedMessage = Stringify::parseMessage('message {subject.debug}', ['subject' => $value]);
         $result = $parser->parse(Subject::default($value, throwOnError: false));
         self::assertFalse($result->isSuccess());
         self::assertCount(1, $result->getErrors());

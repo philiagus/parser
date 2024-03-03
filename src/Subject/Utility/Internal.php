@@ -15,6 +15,13 @@ namespace Philiagus\Parser\Subject\Utility;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
 
+/**
+ * A utility subject used when a value is internally changed by a parser to represent that
+ * value change (such as when the ParseArray parser changes the array it internally creates an
+ * instance of this subject)
+ *
+ * @package Subject\Utility
+ */
 class Internal extends Subject
 {
 

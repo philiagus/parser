@@ -13,9 +13,17 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Convert;
 
 use Philiagus\Parser\Base;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
-use Philiagus\Parser\ResultBuilder;
 
+/**
+ * Tries to convert the received value to an array if it is not already.
+ *
+ * You can define the type of conversion by using the different static constructors.
+ *
+ * @package Parser\Convert
+ * @target-type mixed -> array
+ */
 class ConvertToArray extends Base\Parser
 {
 

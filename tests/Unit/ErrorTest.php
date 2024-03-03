@@ -16,7 +16,7 @@ use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Test\TestBase;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
 class ErrorTest extends TestBase
 {
@@ -49,14 +49,14 @@ class ErrorTest extends TestBase
         $subject = $subject->reveal();
         $error1 = new Error(
             $subject,
-            $message = Debug::parseMessage(
+            $message = Stringify::parseMessage(
                 'REP {subject.debug} {further.debug}',
                 ['subject' => $subject->getValue(), 'further' => 'OII']
             ),
             $source,
             $prevErrors
         );
-        $error2 = Error::createUsingDebugString(
+        $error2 = Error::createUsingStringify(
             $subject,
             'REP {subject.debug} {further.debug}',
             ['further' => 'OII'],

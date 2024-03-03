@@ -10,10 +10,21 @@
 
 declare(strict_types=1);
 
-namespace Philiagus\Parser;
+namespace Philiagus\Parser\Base\Parser;
 
+use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Contract;
+use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Result;
+use Philiagus\Parser\Subject;
 
+/**
+ * Class used by the base parser to ease handling of errors and changes of values.
+ *
+ * @see Parser
+ * @package Util
+ */
 class ResultBuilder
 {
 
@@ -86,7 +97,7 @@ class ResultBuilder
 
     /**
      * Adds an error to the builder that will be forwarded to the created result
-     * This method is a shortcut to manually creating an error using Error::createUsingDebugString and then
+     * This method is a shortcut to manually creating an error using Error::createUsingStringify and then
      * calling logError
      *
      * @param string $message
@@ -97,10 +108,10 @@ class ResultBuilder
      * @return static
      * @throws ParsingException
      * @see ResultBuilder::logError()
-     * @see Error::createUsingDebugString()
+     * @see Error::createUsingStringify()
      *
      */
-    public function logErrorUsingDebug(
+    public function logErrorStringify(
         string      $message,
         array       $replacers = [],
         ?\Throwable $sourceThrowable = null,
@@ -108,7 +119,7 @@ class ResultBuilder
     ): static
     {
         return $this->logError(
-            Error::createUsingDebugString($this->currentSubject, $message, $replacers, $sourceThrowable, $sourceErrors)
+            Error::createUsingStringify($this->currentSubject, $message, $replacers, $sourceThrowable, $sourceErrors)
         );
     }
 
@@ -140,7 +151,7 @@ class ResultBuilder
      * @param mixed $resultValue The result of the parser
      * @return Result
      * @see ResultBuilder::logError()
-     * @see ResultBuilder::logErrorUsingDebug()
+     * @see ResultBuilder::logErrorStringify()
      */
     public function createResult(mixed $resultValue): Result
     {
@@ -153,7 +164,7 @@ class ResultBuilder
      *
      * @return Result
      * @see ResultBuilder::logError()
-     * @see ResultBuilder::logErrorUsingDebug()
+     * @see ResultBuilder::logErrorStringify()
      *
      */
     public function createResultUnchanged(): Result
@@ -170,7 +181,7 @@ class ResultBuilder
      *
      * @return Result
      * @throws ParsingException
-     * @see ResultBuilder::logErrorUsingDebug()
+     * @see ResultBuilder::logErrorStringify()
      * @see ResultBuilder::logError()
      */
     public function createResultFromResult(Result $result): Result
@@ -193,7 +204,7 @@ class ResultBuilder
      *
      * @return Result
      * @see ResultBuilder::logError()
-     * @see ResultBuilder::logErrorUsingDebug()
+     * @see ResultBuilder::logErrorStringify()
      * @see ResultBuilder::setValue()
      */
     public function createResultWithCurrentValue(): Result
@@ -241,7 +252,7 @@ class ResultBuilder
      * those errors from child results
      *
      * @return bool
-     * @see ResultBuilder::logErrorUsingDebug()
+     * @see ResultBuilder::logErrorStringify()
      * @see ResultBuilder::unwrapResult()
      *
      * @see ResultBuilder::logError()

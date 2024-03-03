@@ -15,6 +15,11 @@ namespace Philiagus\Parser\Subject;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
 
+/**
+ * A subject representing the pair of a properties name and its value, represented as an array `[name, value]`
+ *
+ * @package Subject
+ */
 class PropertyNameValuePair extends Subject
 {
     public function __construct(Contract\Subject $sourceSubject, string $propertyName, mixed $propertyValue)

@@ -14,13 +14,16 @@ namespace Philiagus\Parser\Parser\Convert;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
-use Philiagus\Parser\ResultBuilder;
 
 /**
  * Takes any input and attempts a loss free conversion of the provided value into a valid integer value
+ *
  * Conversion is attempted for floats and strings
- * Please use other parsers in order to convert input values to strings/floats
+ *
+ * @package Parser\Convert
+ * @target-type mixed -> integer
  */
 class ConvertToInteger extends Base\Parser
 {

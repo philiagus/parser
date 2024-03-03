@@ -14,9 +14,9 @@ namespace Philiagus\Parser\Parser\Assert;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser as ParserContract;
-use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\MetaInformation;
 
 /**
@@ -25,7 +25,9 @@ use Philiagus\Parser\Subject\MetaInformation;
  * If you need to respect the encoding of the string (such as when dealing with multibyte character sequences
  * as used in for example UTF-8), please use the AssertStringMultibyte parser
  *
+ * @package Parser\Assert
  * @see AssertStringMultibyte
+ * @target-type string
  */
 class AssertString extends Base\Parser
 {
@@ -98,7 +100,7 @@ class AssertString extends Base\Parser
     /**
      * Checks that the string starts with the provided string and fails if it doesn't
      *
-     * The error message is processed using Debug::parseMessage and receives the following elements:
+     * The error message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - expected: The expected string
      *
@@ -114,7 +116,7 @@ class AssertString extends Base\Parser
     {
         $this->assertionList[] = static function (ResultBuilder $builder, string $value) use ($string, $errorMessage): void {
             if (!str_starts_with($value, $string)) {
-                $builder->logErrorUsingDebug(
+                $builder->logErrorStringify(
                     $errorMessage,
                     ['expected' => $string]
                 );
@@ -127,7 +129,7 @@ class AssertString extends Base\Parser
     /**
      * Checks that the string ends with the provided string and fails if it doesn't
      *
-     * The error message is processed using Debug::parseMessage and receives the following elements:
+     * The error message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - expected: The expected string
      *
@@ -143,7 +145,7 @@ class AssertString extends Base\Parser
     {
         $this->assertionList[] = static function (ResultBuilder $builder, string $value) use ($string, $errorMessage): void {
             if (!str_ends_with($value, $string)) {
-                $builder->logErrorUsingDebug(
+                $builder->logErrorStringify(
                     $errorMessage,
                     ['expected' => $string]
                 );

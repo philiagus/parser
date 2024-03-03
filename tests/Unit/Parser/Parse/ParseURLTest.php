@@ -21,7 +21,7 @@ use Philiagus\Parser\Test\InvalidValueParserTestTrait;
 use Philiagus\Parser\Test\OverwritableTypeErrorMessageTestTrait;
 use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\ValidValueParserTestTrait;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
 /**
  * @covers \Philiagus\Parser\Parser\Parse\ParseURL
@@ -111,7 +111,7 @@ class ParseURLTest extends ParserTestBase
         $msg = 'MSG {subject.raw}';
         $value = 'https://';
         self::expectException(ParsingException::class);
-        self::expectExceptionMessage(Debug::parseMessage($msg, ['subject' => $value]));
+        self::expectExceptionMessage(Stringify::parseMessage($msg, ['subject' => $value]));
         ParseURL::new()
             ->setInvalidStringErrorMessage($msg)
             ->parse(Subject::default($value));

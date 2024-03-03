@@ -14,10 +14,16 @@ namespace Philiagus\Parser\Parser\Assert;
 
 
 use Philiagus\Parser\Base;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
-use Philiagus\Parser\ResultBuilder;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
+/**
+ * Asserts the value to be `null`
+ *
+ * @package Parser\Assert
+ * @target-type null
+ */
 class AssertNull extends Base\Parser
 {
 
@@ -32,13 +38,13 @@ class AssertNull extends Base\Parser
     /**
      * Creates a parser with a defined message if the provided value is not NULL
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param string $notNullExceptionMessage
      *
      * @return static
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      *
      */
     public static function new(string $notNullExceptionMessage = 'Provided value is not NULL'): static
@@ -50,7 +56,7 @@ class AssertNull extends Base\Parser
     #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
     {
         if ($builder->getValue() !== null) {
-            $builder->logErrorUsingDebug($this->errorMessage);
+            $builder->logErrorStringify($this->errorMessage);
         }
 
         return $builder->createResultUnchanged();

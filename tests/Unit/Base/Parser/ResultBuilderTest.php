@@ -2,7 +2,7 @@
 /*
  * This file is part of philiagus/parser
  *
- * (c) Andreas Bittner <philiagus@philiagus.de>
+ * (c) Andreas Eicher <philiagus@philiagus.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -10,20 +10,20 @@
 
 declare(strict_types=1);
 
-namespace Philiagus\Parser\Test\Unit;
+namespace Philiagus\Parser\Test\Unit\Base\Parser;
 
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Result;
-use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\Root;
 use Philiagus\Parser\Subject\Utility\Internal;
 use Philiagus\Parser\Subject\Utility\ParserBegin;
 use Philiagus\Parser\Test\TestBase;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
 /**
- * @covers \Philiagus\Parser\ResultBuilder
+ * @covers \Philiagus\Parser\Base\Parser\ResultBuilder
  */
 class ResultBuilderTest extends TestBase
 {
@@ -108,7 +108,7 @@ class ResultBuilderTest extends TestBase
         }
     }
 
-    public function testLogErrorUsingDebugWithoutThrow()
+    public function testLogErrorStringifyWithoutThrow()
     {
 
         $subject = new Root(null, throwOnError: false);
@@ -122,7 +122,7 @@ class ResultBuilderTest extends TestBase
             new Error($subject, ''),
         ];
 
-        $builder->logErrorUsingDebug(
+        $builder->logErrorStringify(
             'message1 {subject.debug} {a.debug}',
             ['a' => $object],
             $sourceThrowable,
@@ -131,7 +131,7 @@ class ResultBuilderTest extends TestBase
 
         self::assertTrue($builder->hasErrors());
 
-        $builder->logErrorUsingDebug(
+        $builder->logErrorStringify(
             'message2 {subject.debug} {a.debug}',
             ['a' => $object],
             $sourceThrowable,
@@ -144,7 +144,7 @@ class ResultBuilderTest extends TestBase
         self::assertCount(2, $result->getErrors());
         [$error1, $error2] = $result->getErrors();
         self::assertSame(
-            Debug::parseMessage(
+            Stringify::parseMessage(
                 'message1 {subject.debug} {a.debug}',
                 [
                     'subject' => $subject->getValue(),
@@ -154,7 +154,7 @@ class ResultBuilderTest extends TestBase
             $error1->getMessage()
         );
         self::assertSame(
-            Debug::parseMessage(
+            Stringify::parseMessage(
                 'message2 {subject.debug} {a.debug}',
                 [
                     'subject' => $subject->getValue(),
@@ -165,7 +165,7 @@ class ResultBuilderTest extends TestBase
         );
     }
 
-    public function testLogErrorUsingDebugWithThrow()
+    public function testLogErrorStringifyWithThrow()
     {
 
         $subject = new Root(null, throwOnError: true);
@@ -178,7 +178,7 @@ class ResultBuilderTest extends TestBase
         $sourceErrors = [
             new Error($subject, ''),
         ];
-        $expectedMessage = Debug::parseMessage(
+        $expectedMessage = Stringify::parseMessage(
             'message1 {subject.debug} {a.debug}',
             [
                 'subject' => $subject->getValue(),
@@ -188,7 +188,7 @@ class ResultBuilderTest extends TestBase
         self::expectException(ParsingException::class);
         self::expectExceptionMessage($expectedMessage);
         try {
-            $builder->logErrorUsingDebug(
+            $builder->logErrorStringify(
                 'message1 {subject.debug} {a.debug}',
                 ['a' => $object],
                 $sourceThrowable,

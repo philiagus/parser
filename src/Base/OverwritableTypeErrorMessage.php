@@ -12,14 +12,25 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Base;
 
+use Philiagus\Parser\Base\Parser\ResultBuilder;
+use Philiagus\Parser\Contract\Error;
 use Philiagus\Parser\Contract\Subject;
-use Philiagus\Parser\Error;
+use Philiagus\Parser\Error as ErrorImplementation;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\ResultBuilder;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
 /**
- * Trait to easily implement type errors in parsers with overwritable error messages
+ * Trait to easily implement overwritable error messages type error messages in parsers
+ *
+ * For example when writing a parser that only allows integers, your code could look like this:
+ * ```php
+ * if (!is_int($builder->getValue())) {
+ *     $this->logTypeError($builder);
+ *     return $builder->createResultUnchanged();
+ * }
+ * ```
+ *
+ * @package Base
  */
 trait OverwritableTypeErrorMessage
 {
@@ -29,13 +40,13 @@ trait OverwritableTypeErrorMessage
     /**
      * Defines the error message to use if the value is not of the expected type
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param string $message
      *
      * @return $this
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      *
      */
     public function setTypeErrorMessage(string $message): static
@@ -70,9 +81,9 @@ trait OverwritableTypeErrorMessage
      */
     protected function getTypeError(Subject $subject): Error
     {
-        return new Error(
+        return new ErrorImplementation(
             $subject,
-            Debug::parseMessage(
+            Stringify::parseMessage(
                 $this->typeErrorMessage ?? $this->getDefaultTypeErrorMessage(),
                 ['subject' => $subject->getValue()]
             )

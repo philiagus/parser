@@ -14,9 +14,9 @@ namespace Philiagus\Parser\Test\Unit\Base;
 
 use Philiagus\Parser\Base\Chainable;
 use Philiagus\Parser\Contract;
-use Philiagus\Parser\Parser\Any;
-use Philiagus\Parser\Parser\Extraction\Append;
-use Philiagus\Parser\Parser\Extraction\Assign;
+use Philiagus\Parser\Parser\Extract\Append;
+use Philiagus\Parser\Parser\Extract\Assign;
+use Philiagus\Parser\Parser\Logic\Any;
 use Philiagus\Parser\Parser\Logic\Chain;
 use Philiagus\Parser\Result;
 use PHPUnit\Framework\TestCase;

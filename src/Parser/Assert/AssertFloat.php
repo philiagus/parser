@@ -14,11 +14,18 @@ namespace Philiagus\Parser\Parser\Assert;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Exception;
-use Philiagus\Parser\ResultBuilder;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
+/**
+ * Asserts the value to be a float. This explicitly excludes NAN, INF and -INF
+ * You can define further assertions on the float value (such as min and max)
+ *
+ * @package Parser\Assert
+ * @target-type float
+ */
 class AssertFloat extends Base\Parser
 {
     use OverwritableTypeErrorMessage;
@@ -38,7 +45,7 @@ class AssertFloat extends Base\Parser
     /**
      * Asserts that the value is >= the provided minimum
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - min: the set minimum
      *
@@ -47,7 +54,7 @@ class AssertFloat extends Base\Parser
      *
      * @return $this
      * @throws Exception\ParserConfigurationException
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      *
      */
     public function assertMinimum(float $minimum, string $errorMessage = 'Provided value of {value} is lower than the defined minimum of {min}'): static
@@ -58,7 +65,7 @@ class AssertFloat extends Base\Parser
 
         $this->assertionList[] = static function (ResultBuilder $builder, float $value) use ($minimum, $errorMessage): void {
             if ($minimum > $value) {
-                $builder->logErrorUsingDebug(
+                $builder->logErrorStringify(
                     $errorMessage,
                     ['min' => $minimum]
                 );
@@ -71,7 +78,7 @@ class AssertFloat extends Base\Parser
     /**
      * Asserts that the value is <= the provided maximum
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - max: the set maximum
      *
@@ -80,7 +87,7 @@ class AssertFloat extends Base\Parser
      *
      * @return $this
      * @throws Exception\ParserConfigurationException
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      *
      */
     public function assertMaximum(float $maximum, string $errorMessage = 'Provided value of {value} is greater than the defined maximum of {max}}'): static
@@ -91,7 +98,7 @@ class AssertFloat extends Base\Parser
 
         $this->assertionList[] = static function (ResultBuilder $builder, float $value) use ($maximum, $errorMessage): void {
             if ($maximum < $value) {
-                $builder->logErrorUsingDebug(
+                $builder->logErrorStringify(
                     $errorMessage,
                     ['max' => $maximum]
                 );

@@ -12,10 +12,22 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser\Logic;
 
+use Philiagus\Parser\Contract\Chainable;
 use Philiagus\Parser\Contract\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Result;
+use Philiagus\Parser\Parser\Extract\Append;
 
+/**
+ * Creates a parser that acts as a logical gate that will not let the same value through twice.
+ *
+ * This is best used in combination with an Append parser to have a unique list of elements in the
+ * resulting array
+ *
+ * @package Parser\Logic
+ * @see Append
+ * @see Chainable::thenAppendTo()
+ */
 final class Unique implements Parser
 {
 

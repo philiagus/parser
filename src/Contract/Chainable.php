@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Contract;
 
-use Philiagus\Parser\Parser\Extraction\Append;
-use Philiagus\Parser\Parser\Extraction\Assign;
+use Philiagus\Parser\Parser\Extract\Append;
+use Philiagus\Parser\Parser\Extract\Assign;
 use Philiagus\Parser\Parser\Logic\Chain;
 
 interface Chainable

@@ -2,7 +2,7 @@
 /*
  * This file is part of philiagus/parser
  *
- * (c) Andreas Bittner <philiagus@philiagus.de>
+ * (c) Andreas Eicher <philiagus@philiagus.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -10,18 +10,18 @@
 
 declare(strict_types=1);
 
-namespace Philiagus\Parser\Test\Unit\Parser;
+namespace Philiagus\Parser\Test\Unit\Parser\Logic;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Parser\IgnoreInput;
+use Philiagus\Parser\Parser\Logic\IgnoreInput;
 use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\TestBase;
 
 /**
- * @covers \Philiagus\Parser\Parser\IgnoreInput
+ * @covers \Philiagus\Parser\Parser\Logic\IgnoreInput
  */
 class IgnoreInputTest extends TestBase
 {

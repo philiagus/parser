@@ -15,6 +15,13 @@ namespace Philiagus\Parser\Subject\Utility;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
 
+/**
+ * A utility subject used to hand a value over to another parser for testing.
+ *
+ * Think of this subject as "if (another parser succeeds in testing this subject) then do something"
+ *
+ * @package Subject\Utility
+ */
 class Test extends Subject
 {
 

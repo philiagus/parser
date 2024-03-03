@@ -15,6 +15,11 @@ namespace Philiagus\Parser\Subject;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
 
+/**
+ * A subject representing the name of an object property
+ *
+ * @package Subject
+ */
 class PropertyName extends Subject
 {
 

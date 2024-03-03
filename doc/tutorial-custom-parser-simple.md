@@ -11,8 +11,8 @@ declare(strict_types=1);
 namespace Your\Namespace;
 
 use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
-use Philiagus\Parser\ResultBuilder;
 
 class Increment extends Parser
 {

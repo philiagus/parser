@@ -13,8 +13,19 @@ declare(strict_types=1);
 namespace Philiagus\Parser;
 
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
+/**
+ * Instances of this class represent an error that was found during parsing of values.
+ *
+ * Errors always contain the subject that they acted on. As subjects always contain the entire chain that lead
+ * to the subject this means that errors also always contain the path that lead to the error.
+ *
+ * In `throw mode` errors are usually directly thrown as ParsingExceptions
+ *
+ * @package Error
+ * @see ParsingException
+ */
 readonly class Error implements Contract\Error
 {
 
@@ -34,14 +45,14 @@ readonly class Error implements Contract\Error
         foreach ($sourceErrors as $sourceError) {
             if (!$sourceError instanceof Error) {
                 throw new \LogicException(
-                    "Error class has been filled with non-Error instance as sourceError: " . Debug::stringify($sourceError)
+                    "Error class has been filled with non-Error instance as sourceError: " . Stringify::stringify($sourceError)
                 );
             }
         }
     }
 
     /**
-     * Creates the error using Debug::parseMessage with $message and $replacers
+     * Creates the error using Stringify::parseMessage with $message and $replacers
      * The subject will by default be provided as a 'subject' replacer target
      * So you can use {subject} as a replacer in all calls to this method
      *
@@ -52,10 +63,10 @@ readonly class Error implements Contract\Error
      * @param array $sourceErrors
      *
      * @return Error
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      *
      */
-    public static function createUsingDebugString(
+    public static function createUsingStringify(
         Contract\Subject $subject,
         string           $message,
         array            $replacers = [],
@@ -65,7 +76,7 @@ readonly class Error implements Contract\Error
     {
         return new Error(
             $subject,
-            Debug::parseMessage($message, $replacers + ['subject' => $subject->getValue()]),
+            Stringify::parseMessage($message, $replacers + ['subject' => $subject->getValue()]),
             $sourceThrowable,
             $sourceErrors
         );

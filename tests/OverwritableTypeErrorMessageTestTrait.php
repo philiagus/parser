@@ -16,7 +16,7 @@ use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 use ReflectionClass;
 use ReflectionObject;
 
@@ -41,7 +41,7 @@ trait OverwritableTypeErrorMessageTestTrait
         self::assertCount(1, $result->getErrors());
 
         self::expectException(ParsingException::class);
-        self::expectExceptionMessage(Debug::parseMessage($defaultMessage, ['subject' => $invalidValue]));
+        self::expectExceptionMessage(Stringify::parseMessage($defaultMessage, ['subject' => $invalidValue]));
         $parser->parse(Subject::default($invalidValue));
     }
 
@@ -79,7 +79,7 @@ trait OverwritableTypeErrorMessageTestTrait
         self::assertCount(1, $result->getErrors());
 
         self::expectException(ParsingException::class);
-        self::expectExceptionMessage('the type is ' . Debug::getType($invalidValue));
+        self::expectExceptionMessage('the type is ' . Stringify::getType($invalidValue));
         $parser->parse(Subject::default($invalidValue));
     }
 

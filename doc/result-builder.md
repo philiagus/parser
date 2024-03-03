@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace YourNamespace;
 
 use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
-use Philiagus\Parser\ResultBuilder;
 
 class YourParser extends Parser {
 
@@ -53,7 +53,7 @@ Error cases come in different shapes and sizes. Generally speaking the system ca
 The ResultBuilder handles these details for your convenience, providing multiple methods.
 
 - `logError` adds a provided Error object to the list of errors or throws it directly if `throw mode` is enabled
-- `logErrorUsingDebug` creates a new Error object internally, using the `Debug` class to build a helpful Error message
+- `logErrorStringify` creates a new Error object internally, using the `Stringify` class to build a helpful Error message
 
 No matter which of the two methods you use, both might _not_ stop your code flow (given that in `gather mode` they do not throw a `ParsingException`).
 
@@ -65,7 +65,7 @@ So (generally speaking) your code should in most cases look like this:
 
 ```php
 if (my_breaking_check) {
-    $builder->logErrorUsingDebug('Your error message'); // align this call as you please
+    $builder->logErrorStringify('Your error message'); // align this call as you please
     
     return $builder->createResultUnchanged(); // the easiest way to create a result but as you
         // already know that it will contain an error the result value is of little relevance

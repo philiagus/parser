@@ -16,7 +16,7 @@ use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Parser\Assert\AssertArray;
 use Philiagus\Parser\Parser\Assert\AssertInteger;
 use Philiagus\Parser\Parser\Assert\AssertSame;
-use Philiagus\Parser\Parser\IgnoreInput;
+use Philiagus\Parser\Parser\Logic\IgnoreInput;
 use Philiagus\Parser\Parser\Logic\OneOf;
 use PHPUnit\Framework\TestCase;
 

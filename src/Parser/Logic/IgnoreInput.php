@@ -10,51 +10,45 @@
 
 declare(strict_types=1);
 
-
-namespace Philiagus\Parser\Parser\Extraction;
+namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
-use Philiagus\Parser\ResultBuilder;
-
 
 /**
- * Stores the value into the provided variable
+ * This parser ignores its received value and replaces it with a predefined value
+ *
+ * @package Parser\Logic
  */
-class Assign extends Base\Parser
+class IgnoreInput extends Base\Parser
 {
 
-    /** @var mixed */
-    private mixed $target;
-
-    private function __construct(&$target)
+    private function __construct(private readonly mixed $value)
     {
-        $this->target = &$target;
     }
 
     /**
-     * Returns a parser that assigns the provided value to the target when the parser is executed
+     * Creates a new instance of this parser which will result in the provided value
      *
-     * @param $target
+     * @param mixed $value
      *
      * @return static
      */
-    public static function to(&$target): static
+    public static function resultIn(mixed $value): static
     {
-        return new static($target);
+        return new static($value);
     }
 
     /** @inheritDoc */
     #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
     {
-        $this->target = $builder->getValue();
-
-        return $builder->createResultUnchanged();
+        return $builder->createResult($this->value);
     }
 
     /** @inheritDoc */
     #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
     {
-        return 'extract: assign';
+        return 'replace with fixed value';
     }
 }

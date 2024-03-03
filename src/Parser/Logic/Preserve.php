@@ -13,14 +13,16 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
-use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\Utility\Forwarded;
 
 
 /**
  * Preserves a value around another parser, shielding it from alteration
+ *
+ * @package Parser\Logic
  */
 class Preserve extends Base\Parser
 {

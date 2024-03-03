@@ -20,6 +20,8 @@ use Philiagus\Parser\Contract\Parser;
 /**
  * Parser used to chain multiple parsers after one another, feeding the result of the previous parser
  * to the next. The chain is broken when a parsers result has errors.
+ *
+ * @package Parser\Logic
  */
 class Chain implements Contract\Parser, Contract\Chainable
 {

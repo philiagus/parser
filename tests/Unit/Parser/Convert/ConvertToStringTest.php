@@ -14,8 +14,8 @@ namespace Philiagus\Parser\Test\Unit\Parser\Convert;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Parser\Convert\ConvertToString;
-use Philiagus\Parser\Parser\IgnoreInput;
 use Philiagus\Parser\Parser\Logic\Conditional;
+use Philiagus\Parser\Parser\Logic\IgnoreInput;
 use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\InvalidValueParserTestTrait;
 use Philiagus\Parser\Test\Mock\ParserMock;

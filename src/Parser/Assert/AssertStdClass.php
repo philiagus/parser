@@ -14,16 +14,22 @@ namespace Philiagus\Parser\Parser\Assert;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
-use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\MetaInformation;
 use Philiagus\Parser\Subject\PropertyName;
 use Philiagus\Parser\Subject\PropertyNameValuePair;
 use Philiagus\Parser\Subject\PropertyValue;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
+/**
+ * Asserts that the value is an \stdClass and allows to examine the contents of the \stdClass
+ *
+ * @package Parser\Assert
+ * @target-type \stdClass
+ */
 class AssertStdClass extends Base\Parser
 {
     use OverwritableTypeErrorMessage;
@@ -45,7 +51,7 @@ class AssertStdClass extends Base\Parser
      * Tests that the property exists and performs the parser on the value if present
      * In case the property does not exist an error with the specified message is generated
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - property: The missing property as defined here
      *
@@ -54,7 +60,7 @@ class AssertStdClass extends Base\Parser
      * @param string $missingPropertyExceptionMessage
      *
      * @return $this
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      *
      */
     public function givePropertyValue(
@@ -72,7 +78,7 @@ class AssertStdClass extends Base\Parser
                     )
                 );
             } else {
-                $builder->logErrorUsingDebug(
+                $builder->logErrorStringify(
                     $missingPropertyExceptionMessage,
                     ['property' => $property]
                 );
@@ -281,7 +287,7 @@ class AssertStdClass extends Base\Parser
      * Asserts that the defined list of properties exist in the object. This method ignores surplus properties.
      * If you want to make sure that no surplus properties exist in the object, please use assertNoSurplusPropertiesExist()
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - property: The name of the missing property
      *
@@ -302,7 +308,7 @@ class AssertStdClass extends Base\Parser
             foreach ($expectedPropertyNames as $propertyName) {
                 if (!in_array($propertyName, $existingProperties)) {
                     $expectedProperties[] = $propertyName;
-                    $builder->logErrorUsingDebug($missingPropertyMassage, ['property' => $propertyName]);
+                    $builder->logErrorStringify($missingPropertyMassage, ['property' => $propertyName]);
                 }
             }
         };
@@ -348,7 +354,7 @@ class AssertStdClass extends Base\Parser
      * list of property names exists. In order to check that all required properties exist, please use the
      * assertPropertiesExist() method
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - property: The name of the surplus property
      *
@@ -358,7 +364,7 @@ class AssertStdClass extends Base\Parser
      * @param string $surplusPropertyMessage
      *
      * @return $this
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      * @see assertPropertiesExist()
      */
     public function assertNoSurplusPropertiesExist(
@@ -376,7 +382,7 @@ class AssertStdClass extends Base\Parser
 
             foreach (self::extractPropertyNames($builder->getValue()) as $propertyName) {
                 if (!in_array($propertyName, $expectedPropertyNames)) {
-                    $builder->logErrorUsingDebug($surplusPropertyMessage, ['property' => $propertyName]);
+                    $builder->logErrorStringify($surplusPropertyMessage, ['property' => $propertyName]);
                 }
             }
         };

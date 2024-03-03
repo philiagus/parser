@@ -14,14 +14,17 @@ namespace Philiagus\Parser\Parser\Assert;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
-use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\MetaInformation;
 
 /**
  * Parser used to assert a value as string and using a regex to check that string
+ *
+ * @package Parser\Assert
+ * @target-type string
  */
 class AssertStringRegex extends Base\Parser
 {
@@ -53,7 +56,7 @@ class AssertStringRegex extends Base\Parser
      * Overwrites the pattern to be matched against with this regular expression.
      *
      *
-     * The error message is processed using Debug::parseMessage and receives the following elements:
+     * The error message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - pattern: The provided regular expression
      *
@@ -83,7 +86,7 @@ class AssertStringRegex extends Base\Parser
      * Shorthand for creation of the parser and defining a regular expression for it
      *
      *
-     * The error message is processed using Debug::parseMessage and receives the following elements:
+     * The error message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - pattern: The provided regular expression
      *
@@ -251,7 +254,7 @@ class AssertStringRegex extends Base\Parser
         }
 
         if (!$result) {
-            $builder->logErrorUsingDebug(
+            $builder->logErrorStringify(
                 $this->patternExceptionMessage,
                 [
                     'pattern' => $this->pattern,

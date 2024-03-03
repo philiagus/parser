@@ -14,14 +14,16 @@ namespace Philiagus\Parser\Parser\Parse;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
-use Philiagus\Parser\ResultBuilder;
 
 /**
  * Parses the provided string treating it as form encoded data
  * The result of the parser is the parsed data
  *
  * @see parse_str()
+ * @package Parser\Parse
+ * @target-type string
  */
 class ParseFormEncodedString extends Base\Parser
 {

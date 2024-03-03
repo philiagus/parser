@@ -13,10 +13,16 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Assert;
 
 use Philiagus\Parser\Base;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
-use Philiagus\Parser\ResultBuilder;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
+/**
+ * Used to assert for equality. This can be equality to a predefined value or that all
+ * values that reach this parser are the same as the first provided value
+ *
+ * @package Parser\Assert
+ */
 class AssertEqual extends Base\Parser
 {
     private ?Contract\Subject $lastRoot = null;
@@ -33,7 +39,7 @@ class AssertEqual extends Base\Parser
     /**
      * Assert provided value is equal (==) to a defined value
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - expected: The value the received value is compared against
      *
@@ -42,7 +48,7 @@ class AssertEqual extends Base\Parser
      *
      * @return static
      *
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      *
      */
     public static function value(mixed $value, string $errorMessage = 'The value is not equal to the expected value'): static
@@ -54,7 +60,7 @@ class AssertEqual extends Base\Parser
      * Assert provided value is equal (==) every time, using the first provided value
      * as defined target
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - expected: The value the received value is compared against
      *
@@ -62,7 +68,7 @@ class AssertEqual extends Base\Parser
      *
      * @return static
      *
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      *
      */
     public static function asFirstValue(string $errorMessage = 'The value is not the same everytime'): static
@@ -86,7 +92,7 @@ class AssertEqual extends Base\Parser
             $this->value = $builder->getValue();
             $this->valueSet = true;
         } else if ($builder->getValue() != $this->value) {
-            $builder->logErrorUsingDebug(
+            $builder->logErrorStringify(
                 $this->errorMessage,
                 ['expected' => $this->value]
             );

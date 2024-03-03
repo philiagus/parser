@@ -12,7 +12,12 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Util;
 
-class Debug
+/**
+ * Class used to convert values to strings and build messages
+ *
+ * @package Util
+ */
+class Stringify
 {
 
     /**
@@ -35,15 +40,16 @@ class Debug
 
     /**
      * Uses $message as a string and $replacers as an array of elements to be replaced into it
+     *
      * The replacement elements look like this "{arrayKey}", performing a raw replacement, or
      * "{arrayKey.infoType}", transforming the value before replacing.
      *
-     * infoType can be one of the following:
-     * - gettype: The result of a call to gettype on the replacers' element
-     * - type: the same as gettype for anything but objects. For objects its "object<className>"
-     * - debug: a string representation of the value, tying to show as much of the content as possible, see Debug::stringify
-     * - export: the result of var_export of the value
-     * - raw: the raw value form the replacers
+     * `infoType` can be one of the following:
+     * - `gettype`: The result of a call to gettype on the replacers' element
+     * - `type`: the same as gettype for anything but objects. For objects its "object<className>"
+     * - `debug`: a string representation of the value, tying to show as much of the content as possible, see Stringify::stringify
+     * - `export`: the result of var_export of the value
+     * - `raw`: the raw value form the replacers
      *
      * Only valid replacers are replaced. If the key or the infoType is not known that replacer won't be replaced.
      *
@@ -94,8 +100,11 @@ class Debug
 
     /**
      * Returns a string representation of the type of the provided variable
+     *
      * NAN, INF and -INF are represented as corresponding strings
+     *
      * objects are represented as "object<className>"
+     *
      * all other values will simply return whatever gettype returns
      *
      * @param $value

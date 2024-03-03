@@ -16,7 +16,7 @@ use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
 class TestInstance
 {
@@ -65,7 +65,7 @@ class TestInstance
             'success' => $expectSuccess ?? fn() => true,
             'result' => $successValidator ?? function (Contract\Subject $start, Contract\Result $result): array {
                     if (!DataProvider::isSame($start->getValue(), $result->getValue())) {
-                        return ['Result has been altered from ' . Debug::stringify($start->getValue()) . ' to ' . Debug::stringify($result->getValue())];
+                        return ['Result has been altered from ' . Stringify::stringify($start->getValue()) . ' to ' . Stringify::stringify($result->getValue())];
                     }
 
                     return [];
@@ -89,10 +89,10 @@ class TestInstance
                 $resultValue = $result->getValue();
                 if ($resultAssertion) {
                     if (!$resultAssertion($startValue, $resultValue)) {
-                        return ['Result ' . Debug::stringify($resultValue) . ' (create from ' . Debug::stringify($startValue) . ') did not match expectation'];
+                        return ['Result ' . Stringify::stringify($resultValue) . ' (create from ' . Stringify::stringify($startValue) . ') did not match expectation'];
                     }
                 } elseif (!DataProvider::isSame($startValue, $resultValue)) {
-                    return ['Result has been altered from ' . Debug::stringify($startValue) . ' to ' . Debug::stringify($resultValue)];
+                    return ['Result has been altered from ' . Stringify::stringify($startValue) . ' to ' . Stringify::stringify($resultValue)];
                 }
 
                 return [];
@@ -114,7 +114,7 @@ class TestInstance
             'success' => $expectSuccess ?? static fn() => true,
             'result' => $successValidator ?? static function (Contract\Subject $start, Contract\Result $result): array {
                     if (!DataProvider::isSame($start->getValue(), $result->getValue())) {
-                        return ['Result has been altered from ' . Debug::stringify($start->getValue()) . ' to ' . Debug::stringify($result->getValue())];
+                        return ['Result has been altered from ' . Stringify::stringify($start->getValue()) . ' to ' . Stringify::stringify($result->getValue())];
                     }
 
                     return [];
@@ -136,7 +136,7 @@ class TestInstance
             'success' => $expectSuccess ?? fn() => true,
             'result' => $successValidator ?? function (Contract\Subject $start, Contract\Result $result): array {
                     if (!DataProvider::isSame($start->getValue(), $result->getValue())) {
-                        return ['Result has been altered from ' . Debug::stringify($start->getValue()) . ' to ' . Debug::stringify($result->getValue())];
+                        return ['Result has been altered from ' . Stringify::stringify($start->getValue()) . ' to ' . Stringify::stringify($result->getValue())];
                     }
 
                     return [];
@@ -220,7 +220,7 @@ class TestInstance
                                     $errorCollection->add($compareType, $expectError($value));
                                 }
                             }
-                            $caseName = $line . ' #' . $callIndex . ' [' . Debug::stringify($value) . '] ' .
+                            $caseName = $line . ' #' . $callIndex . ' [' . Stringify::stringify($value) . '] ' .
                                 $name . ' >> ' . $argsCase . ' >> ' .
                                 ($success ? 'success' : 'error') . ' ' . $throwLabel;
 

@@ -14,13 +14,13 @@ namespace Philiagus\Parser\Test\Unit\Base;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\ResultBuilder;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 
@@ -38,28 +38,28 @@ class OverwritableTypeErrorMessageTest extends TestCase
                 function () {
                     return self::createParserWithoutBuilder();
                 },
-                Debug::parseMessage('DEFAULT {subject.debug}', ['subject' => $value]),
+                Stringify::parseMessage('DEFAULT {subject.debug}', ['subject' => $value]),
             ];
             $cases["Custom Message No Builder -> $name"] = [
                 $value,
                 function () {
                     return self::createParserWithoutBuilder()->setTypeErrorMessage('CUSTOM {subject.debug}');
                 },
-                Debug::parseMessage('CUSTOM {subject.debug}', ['subject' => $value]),
+                Stringify::parseMessage('CUSTOM {subject.debug}', ['subject' => $value]),
             ];
             $cases["Default Message Builder -> $name"] = [
                 $value,
                 function () {
                     return self::createParserWithBuilder();
                 },
-                Debug::parseMessage('DEFAULT {subject.debug}', ['subject' => $value]),
+                Stringify::parseMessage('DEFAULT {subject.debug}', ['subject' => $value]),
             ];
             $cases["Custom Message Builder -> $name"] = [
                 $value,
                 function () {
                     return self::createParserWithBuilder()->setTypeErrorMessage('CUSTOM {subject.debug}');
                 },
-                Debug::parseMessage('CUSTOM {subject.debug}', ['subject' => $value]),
+                Stringify::parseMessage('CUSTOM {subject.debug}', ['subject' => $value]),
             ];
 
         }

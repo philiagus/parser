@@ -14,16 +14,20 @@ namespace Philiagus\Parser\Parser\Parse;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
-use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\MetaInformation;
 
 /**
- * Parses the provided string, treating is an URL, and returns the
- * resulting parts.
+ * Parses the provided string, treating is a URL, and returns the resulting parts.
+ *
+ * While this parser is most times used for extraction (via the give* methods),
+ * its result value is exactly the result of the core PHP parse_url function.
  *
  * @see parse_url()
+ * @package Parser\Parse
+ * @target-type string
  */
 class ParseURL extends Base\Parser
 {
@@ -55,7 +59,7 @@ class ParseURL extends Base\Parser
     /**
      * Overwrites the error message in case the provided string cannot be parsed as an url
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param string $errorMessage
@@ -73,7 +77,7 @@ class ParseURL extends Base\Parser
      * If the parsed URL contains a scheme, it will be forwarded to the provided parser
      * If the url does not contain a scheme, an error with the specified message is thrown.
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param Parser $parser
@@ -109,7 +113,7 @@ class ParseURL extends Base\Parser
      * If the parsed URL contains a host, it will be forwarded to the provided parser
      * If the url does not contain a host, an error with the specified message is generated.
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param Parser $parser
@@ -145,7 +149,7 @@ class ParseURL extends Base\Parser
      * If the parsed URL contains a port, it will be forwarded to the provided parser
      * If the url does not contain a port, an error with the specified message is generated.
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param Parser $parser
@@ -182,7 +186,7 @@ class ParseURL extends Base\Parser
      * If the parsed URL contains a user, it will be forwarded to the provided parser
      * If the url does not contain a user, an error with the specified message is generated.
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param Parser $parser
@@ -218,7 +222,7 @@ class ParseURL extends Base\Parser
      * If the parsed URL contains a password, it will be forwarded to the provided parser
      * If the url does not contain a password, an error with the specified message is generated.
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param Parser $parser
@@ -254,7 +258,7 @@ class ParseURL extends Base\Parser
      * If the parsed URL contains a path, it will be forwarded to the provided parser
      * If the url does not contain a path, an error with the specified message is generated.
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param Parser $parser
@@ -290,7 +294,7 @@ class ParseURL extends Base\Parser
      * If the parsed URL contains a query, it will be forwarded to the provided parser
      * If the url does not contain a query, an error with the specified message is generated.
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param Parser $parser
@@ -326,7 +330,7 @@ class ParseURL extends Base\Parser
      * If the parsed URL contains a fragment, it will be forwarded to the provided parser
      * If the url does not contain a fragment, an error with the specified message is generated.
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param Parser $parser
@@ -371,7 +375,7 @@ class ParseURL extends Base\Parser
         $parsed = parse_url($value);
 
         if (!$parsed) {
-            $builder->logErrorUsingDebug(
+            $builder->logErrorStringify(
                 $this->invalidStringExceptionMessage
             );
 
@@ -382,7 +386,7 @@ class ParseURL extends Base\Parser
             $fieldValue = $parsed[$target] ?? null;
             if ($fieldValue === null) {
                 if ($missingExceptionMessage !== null) {
-                    $builder->logErrorUsingDebug($missingExceptionMessage);
+                    $builder->logErrorStringify($missingExceptionMessage);
 
                     continue;
                 }

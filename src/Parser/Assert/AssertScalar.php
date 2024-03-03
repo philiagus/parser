@@ -14,9 +14,17 @@ namespace Philiagus\Parser\Parser\Assert;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
-use Philiagus\Parser\ResultBuilder;
 
+/**
+ * Asserts that the received value is scalar
+ *
+ * @package Parser\Assert
+ *
+ * @see is_scalar()
+ * @target-type scalar
+ */
 class AssertScalar extends Base\Parser
 {
     use OverwritableTypeErrorMessage;

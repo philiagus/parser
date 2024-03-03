@@ -10,14 +10,16 @@
 
 declare(strict_types=1);
 
-namespace Philiagus\Parser\Parser;
+namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
-use Philiagus\Parser\ResultBuilder;
 
 /**
  * A parser that matches any value without further validation
+ *
+ * @package Parser\Logic
  */
 class Any extends Base\Parser
 {

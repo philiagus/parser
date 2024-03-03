@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Contract;
 
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\ResultBuilder;
 
 interface Subject
 {

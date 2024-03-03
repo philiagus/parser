@@ -13,15 +13,17 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
-use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\Utility\Forwarded;
 
 /**
  * Forks out the received subject to multiple other parsers
  * The result of this parser is identical to the received value, even
  * if any of the provided parsers changes the value
+ *
+ * @package Parser\Logic
  */
 class Fork extends Base\Parser
 {

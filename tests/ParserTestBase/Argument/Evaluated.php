@@ -15,7 +15,7 @@ namespace Philiagus\Parser\Test\ParserTestBase\Argument;
 use Generator;
 use Philiagus\Parser\Test\ParserTestBase\Argument;
 use Philiagus\Parser\Test\ParserTestBase\ErrorCollection;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
 class Evaluated implements Argument
 {
@@ -65,7 +65,7 @@ class Evaluated implements Argument
         foreach ($this->cases as $name => ['type' => $type, 'generator' => $generator, 'eligible' => $eligible]) {
             if ($eligible($subjectValue)) {
                 $value = $generator($subjectValue);
-                $name = '#' . $name . ' ' . Debug::stringify($value);
+                $name = '#' . $name . ' ' . Stringify::stringify($value);
                 yield $name => [
                     $type === self::TYPE_SUCCESS,
                     function (array $generatedArguments, array $successStack, ErrorCollection $errorCollection = null) use ($value, $type) {

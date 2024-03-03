@@ -14,13 +14,13 @@ namespace Philiagus\Parser\Test\Unit\Base;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Chainable;
-use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\ParserTestBase;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
 /**
  * @covers \Philiagus\Parser\Base\Parser
@@ -98,7 +98,7 @@ class ParserTest extends ParserTestBase
                 DataProvider::TYPE_ALL,
                 successValidator: function (Contract\Subject $subject, Contract\Result $result, array $arguments): array {
                     $received = $result->getSourceSubject()->getPathAsString(true);
-                    $expectedMessage = Debug::getType($subject->getValue()) . ' ▷' . $arguments[0];
+                    $expectedMessage = Stringify::getType($subject->getValue()) . ' ▷' . $arguments[0];
                     if ($received !== $expectedMessage) {
                         return [
                             'Message does not match:' . PHP_EOL .

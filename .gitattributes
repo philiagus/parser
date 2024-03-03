@@ -1,4 +1,5 @@
 # Exclusions from artifact
+/bin                    export-ignore
 /doc                    export-ignore
 /docker                 export-ignore
 /tests                  export-ignore

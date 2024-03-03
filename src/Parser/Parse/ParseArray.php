@@ -12,16 +12,20 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser\Parse;
 
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Parser\Assert\AssertArray;
-use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\ArrayKey;
 use Philiagus\Parser\Subject\ArrayValue;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
 /**
- * Parser to not only validate an array but also alter it
+ * Parser to not only validate an array but also alter it. This parser is an extension of the
+ * Assert Array parser and allows to change individual values rather than just look at them.
+ *
+ * @package Parser\Parse
+ * @target-type array
  */
 class ParseArray extends AssertArray
 {
@@ -55,7 +59,7 @@ class ParseArray extends AssertArray
      * Changes every key in the array using the parser. The parser must result in a string or integer, otherwise
      * an Error is created with the $newKeyIsNotUsableMessage
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - oldKey: The key before parsing it
      * - newKey: The key after parsing
      *
@@ -63,7 +67,7 @@ class ParseArray extends AssertArray
      * @param string $newKeyIsNotUsableMessage
      *
      * @return $this
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      */
     public function modifyEachKey(
         ParserContract $parser,
@@ -83,7 +87,7 @@ class ParseArray extends AssertArray
                 }
                 $newKey = $newKeyResult->getValue();
                 if (!is_int($newKey) && !is_string($newKey)) {
-                    $builder->logErrorUsingDebug(
+                    $builder->logErrorStringify(
                         $newKeyIsNotUsableMessage,
                         ['oldKey' => $key, 'newKey' => $newKey]
                     );
@@ -103,7 +107,7 @@ class ParseArray extends AssertArray
      * Tests that the key exists and performs the parser on the value if present
      * In case the key does not exist an error with the specified message is generated
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - key: The missing key
      * - subject: The value currently being parsed
      *
@@ -113,7 +117,7 @@ class ParseArray extends AssertArray
      * @param string $missingKeyErrorMessage
      *
      * @return $this
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      */
     public function modifyValue(string|int $key, ParserContract $parser, string $missingKeyErrorMessage = 'Array does not contain the requested key {key}'): static
     {
@@ -121,7 +125,7 @@ class ParseArray extends AssertArray
         $this->assertionList[] = static function (ResultBuilder $builder, array &$targetedKeys) use ($key, $parser, $missingKeyErrorMessage): void {
             $value = $builder->getValue();
             if (!array_key_exists($key, $value)) {
-                $builder->logErrorUsingDebug($missingKeyErrorMessage, ['key' => $key]);
+                $builder->logErrorStringify($missingKeyErrorMessage, ['key' => $key]);
 
                 return;
             }

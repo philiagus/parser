@@ -14,12 +14,12 @@ namespace Philiagus\Parser\Test\Unit\Util;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Test\TestBase;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
 /**
- * @covers \Philiagus\Parser\Util\Debug
+ * @covers \Philiagus\Parser\Util\Stringify
  */
-class DebugTest extends TestBase
+class StringifyTest extends TestBase
 {
     public static function provideAnything(): array
     {
@@ -201,7 +201,7 @@ class DebugTest extends TestBase
      */
     public function testTypeDetection(mixed $variable, string $expected): void
     {
-        self::assertSame($expected, Debug::getType($variable));
+        self::assertSame($expected, Stringify::getType($variable));
     }
 
     /**
@@ -211,7 +211,7 @@ class DebugTest extends TestBase
      */
     public function testTypeDetectionNeverThrowsException(mixed $value): void
     {
-        self::assertIsString(Debug::getType($value));
+        self::assertIsString(Stringify::getType($value));
     }
 
     /**
@@ -222,7 +222,7 @@ class DebugTest extends TestBase
      */
     public function testStringify($value, string $expected): void
     {
-        self::assertSame($expected, Debug::stringify($value));
+        self::assertSame($expected, Stringify::stringify($value));
     }
 
     public function testStringifyWithRecursiveArray(): void
@@ -231,7 +231,7 @@ class DebugTest extends TestBase
         $array = [&$array];
         self::assertSame(
             'array<integer,array>(1)',
-            Debug::stringify($array)
+            Stringify::stringify($array)
         );
     }
 
@@ -242,7 +242,7 @@ class DebugTest extends TestBase
      */
     public function testStringifyNeverThrowsException($value): void
     {
-        self::assertIsString(Debug::stringify($value));
+        self::assertIsString(Stringify::stringify($value));
     }
 
     /**
@@ -256,7 +256,7 @@ class DebugTest extends TestBase
     {
         self::assertSame(
             $expected,
-            Debug::parseMessage(
+            Stringify::parseMessage(
                 $message,
                 $parameters
             )

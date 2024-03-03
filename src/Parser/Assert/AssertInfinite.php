@@ -13,10 +13,17 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Assert;
 
 use Philiagus\Parser\Base;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
-use Philiagus\Parser\ResultBuilder;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
+/**
+ * Asserts that the provided value is INF or -INF. You can limit it to either by
+ * using the corresponding setters.
+ *
+ * @package Parser\Assert
+ * @target-type INF|-INF
+ */
 class AssertInfinite extends Base\Parser
 {
 
@@ -32,13 +39,13 @@ class AssertInfinite extends Base\Parser
     /**
      * Creates a parser that asserts that the value is INF or -INF (which can be refined using methods)
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param string $notInfiniteExceptionMessage
      *
      * @return static
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      */
     public static function new(string $notInfiniteExceptionMessage = 'Provided value is not INF'): static
     {
@@ -47,7 +54,7 @@ class AssertInfinite extends Base\Parser
 
     /**
      * Sets the parser to assert that the infinite value is positiv, so +INF
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param string $notPositiveMessage
@@ -66,13 +73,13 @@ class AssertInfinite extends Base\Parser
 
     /**
      * Sets the parser to assert that the infinite value is negative, so -INF
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param string $notNegativeMessage
      *
      * @return $this
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      */
     public function setAssertNegative(
         string $notNegativeMessage = 'Provided value is not negative infinity'
@@ -89,11 +96,11 @@ class AssertInfinite extends Base\Parser
     {
         $value = $builder->getValue();
         if (!is_float($value) || !is_infinite($value)) {
-            $builder->logErrorUsingDebug($this->errorMessage);
+            $builder->logErrorStringify($this->errorMessage);
         }
         if ($this->assertPositive !== null) {
             if (($value > 0) !== $this->assertPositive) {
-                $builder->logErrorUsingDebug($this->assertSignMessage);
+                $builder->logErrorStringify($this->assertSignMessage);
             }
         }
 

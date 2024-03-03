@@ -53,7 +53,7 @@ interface Error
      * Returns the list of errors that lead to this Error
      * This array can be empty
      *
-     * @return \Philiagus\Parser\Error[]
+     * @return self[]
      */
     public function getSourceErrors(): array;
 

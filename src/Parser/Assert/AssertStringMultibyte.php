@@ -14,15 +14,18 @@ namespace Philiagus\Parser\Parser\Assert;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParserConfigurationException;
-use Philiagus\Parser\ResultBuilder;
 use Philiagus\Parser\Subject\MetaInformation;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
 /**
  * Parser used to assert that a value is a string in a certain encoding
+ *
+ * @package Parser\Assert
+ * @target-type string
  */
 class AssertStringMultibyte extends Base\Parser
 {
@@ -66,7 +69,7 @@ class AssertStringMultibyte extends Base\Parser
      * Defines the encoding of the string. The code is checked to have this encoding
      * and every other method uses this encoding.
      *
-     * The error message is processed using Debug::parseMessage and receives the following elements:
+     * The error message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - encoding: The specified encoding
      *
@@ -75,7 +78,7 @@ class AssertStringMultibyte extends Base\Parser
      *
      * @return $this
      * @throws ParserConfigurationException
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      *
      */
     public function setEncoding(string $encoding, string $errorMessage = 'Multibyte string does not appear to be encoded in the requested encoding'): static
@@ -105,7 +108,7 @@ class AssertStringMultibyte extends Base\Parser
         foreach ($encodings as $encoding) {
             if (!is_string($encoding)) {
                 throw new ParserConfigurationException(
-                    Debug::parseMessage("Non-string provided as encoding: {encoding.debug}", ['encoding' => $encoding])
+                    Stringify::parseMessage("Non-string provided as encoding: {encoding.debug}", ['encoding' => $encoding])
                 );
             }
             if (!in_array($encoding, $availableEncodings)) {
@@ -130,7 +133,7 @@ class AssertStringMultibyte extends Base\Parser
      * If no encoding is set we try to detect the encoding using mb_detect_encoding($value, "auto", true)
      * The method defines the error message used if the encoding could not be detected that way
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param string[] $encodings
@@ -205,7 +208,7 @@ class AssertStringMultibyte extends Base\Parser
      * Checks that the string starts with the provided string and fails if it doesn't.
      * Compares the binary of the strings, so the encoding is not relevant
      *
-     * The error message is processed using Debug::parseMessage and receives the following elements:
+     * The error message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - expected: The expected string
      *
@@ -221,7 +224,7 @@ class AssertStringMultibyte extends Base\Parser
     {
         $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($string, $errorMessage): void {
             if (!str_starts_with($value, $string)) {
-                $builder->logErrorUsingDebug(
+                $builder->logErrorStringify(
                     $errorMessage,
                     ['expected' => $string]
                 );
@@ -235,7 +238,7 @@ class AssertStringMultibyte extends Base\Parser
      * Checks that the string ends with the provided string and fails if it doesn't.
      * Compares the binary of the strings, so the encoding is not relevant
      *
-     * The error message is processed using Debug::parseMessage and receives the following elements:
+     * The error message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - expected: The expected string
      *
@@ -251,7 +254,7 @@ class AssertStringMultibyte extends Base\Parser
     {
         $this->assertionList[] = static function (string $value, $encoding, ResultBuilder $builder) use ($string, $errorMessage): void {
             if (!str_ends_with($value, $string)) {
-                $builder->logErrorUsingDebug(
+                $builder->logErrorStringify(
                     $errorMessage,
                     ['expected' => $string]
                 );
@@ -294,7 +297,7 @@ class AssertStringMultibyte extends Base\Parser
         if ($this->encoding) {
             [$encoding, $errorMessage] = $this->encoding;
             if (!mb_check_encoding($value, $encoding)) {
-                $builder->logErrorUsingDebug(
+                $builder->logErrorStringify(
                     $errorMessage,
                     ['encoding' => $encoding]
                 );
@@ -304,7 +307,7 @@ class AssertStringMultibyte extends Base\Parser
         } else {
             $encoding = mb_detect_encoding($value, $this->availableEncodings, true);
             if (!$encoding) {
-                $builder->logErrorUsingDebug(
+                $builder->logErrorStringify(
                     $this->encodingDetectionExceptionMessage,
                 );
 

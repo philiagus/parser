@@ -19,6 +19,7 @@ namespace Philiagus\Parser\Exception;
  * please throw a RuntimeParserConfigurationException instead
  *
  * @see RuntimeParserConfigurationException
+ * @package Error
  */
 class ParserConfigurationException extends \LogicException
 {

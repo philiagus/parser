@@ -15,9 +15,17 @@ namespace Philiagus\Parser\Parser\Convert;
 use DateTimeZone;
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
-use Philiagus\Parser\ResultBuilder;
 
+/**
+ * Converts the received value to a \DateTime or \DateTimeImmutable if it isn't already
+ *
+ * @package Parser\Convert
+ * @see \DateTime
+ * @see \DateTimeImmutable
+ * @target-type string|\DateTimeInterface -> \DateTime|\DateTimeInterface
+ */
 class ConvertToDateTime extends Base\Parser
 {
     use OverwritableTypeErrorMessage;
@@ -59,7 +67,7 @@ class ConvertToDateTime extends Base\Parser
      *
      * The error message is used when the string value does not match the expected format.
      *
-     * The error message is processed using Debug::parseMessage and receives the following elements:
+     * The error message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - format: The format provided to this function
      *
@@ -117,7 +125,7 @@ class ConvertToDateTime extends Base\Parser
                 $dateTime = @\DateTime::createFromFormat($this->sourceFormat, (string)$value, $this->sourceTimezone);
             }
             if ($dateTime === false) {
-                $builder->logErrorUsingDebug(
+                $builder->logErrorStringify(
                     $this->sourceFormatException,
                     ['format' => $this->sourceFormat]
                 );

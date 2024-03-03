@@ -12,15 +12,19 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Base;
 
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Parser\Extraction\Append;
-use Philiagus\Parser\Parser\Extraction\Assign;
+use Philiagus\Parser\Parser\Extract\Append;
+use Philiagus\Parser\Parser\Extract\Assign;
 use Philiagus\Parser\Parser\Logic\Chain;
-use Philiagus\Parser\Result;
-use Philiagus\Parser\ResultBuilder;
 
+/**
+ * Base class used for parsers to easily write custom parsers by extending this base class.
+ *
+ * @package Base
+ */
 abstract class Parser implements Contract\Parser, Contract\Chainable
 {
 

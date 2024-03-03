@@ -15,6 +15,11 @@ namespace Philiagus\Parser\Subject\Utility;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
 
+/**
+ * A utility subject for values that have been forwarded from one parser to another
+ *
+ * @package Subject\Utility
+ */
 class Forwarded extends Subject
 {
 

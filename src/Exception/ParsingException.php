@@ -19,6 +19,8 @@ use Philiagus\Parser\Contract\Error;
 /**
  * This exception is supposed to be thrown, when the value as provided by the input does not conform with the parser
  * e.g. when the value could not be converted to the target type or when the provided type is not of the correct type
+ *
+ * @package Error
  */
 class ParsingException extends \Exception
 {

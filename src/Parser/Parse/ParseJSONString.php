@@ -15,15 +15,17 @@ namespace Philiagus\Parser\Parser\Parse;
 use JsonException;
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
-use Philiagus\Parser\ResultBuilder;
-use Philiagus\Parser\Util\Debug;
+use Philiagus\Parser\Util\Stringify;
 
 /**
  * Parses as string as JSON and returns the parsed result
  *
  * @see json_decode()
+ * @package Parser\Parse
+ * @target-type string
  */
 class ParseJSONString extends Base\Parser
 {
@@ -46,7 +48,7 @@ class ParseJSONString extends Base\Parser
     /**
      * Sets the error message if the json is invalid or parsing failed
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      * - message: The json parser error message as provided by json_last_error_msg
      * - code: The error code as provided by json_last_error
@@ -54,7 +56,7 @@ class ParseJSONString extends Base\Parser
      * @param string $errorMessage
      *
      * @return $this
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      * @see json_last_error()
      * @see json_last_error_msg()
      */
@@ -138,7 +140,7 @@ class ParseJSONString extends Base\Parser
                 $options
             );
         } catch (JsonException $jsonException) {
-            $builder->logErrorUsingDebug(
+            $builder->logErrorStringify(
                 $this->conversionExceptionMessage,
                 ['message' => json_last_error_msg(), 'code' => json_last_error()],
                 $jsonException

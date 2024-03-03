@@ -10,17 +10,23 @@
 
 declare(strict_types=1);
 
-namespace Philiagus\Parser\Parser\Extraction;
+namespace Philiagus\Parser\Parser\Extract;
 
 use Philiagus\Parser\Base;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
-use Philiagus\Parser\ResultBuilder;
 
 /**
  * Whenever this parser is called the value received by this parser is appended to the provided target
+ *
  * If the provided target is not an array at that point, Append will convert `null` to an empty array
+ *
  * Based on PHP reference rules this parser takes some type possession of the provided target
- * The target can only be null|array|\ArrayAccess
+ *
+ * The target can only be `null|array|\ArrayAccess`, where `null` will be internally converted to an empty array on parser creation.
+ *
+ * @package Parser\Extract
+ * @see Contract\Chainable::thenAppendTo()
  */
 class Append extends Base\Parser
 {

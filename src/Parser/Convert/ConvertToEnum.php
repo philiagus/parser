@@ -13,15 +13,17 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Convert;
 
 use Philiagus\Parser\Base;
+use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
-use Philiagus\Parser\ResultBuilder;
 
 /**
  * Parser used to convert a value to an element of a PHP enum
  * Matching can be performed by enum name, backed value or both
  *
+ * @package Parser\Convert
  * @see https://www.php.net/manual/en/language.enumerations.php
+ * @target-type mixed -> \UnitEnum
  */
 class ConvertToEnum extends Base\Parser
 {
@@ -108,13 +110,13 @@ class ConvertToEnum extends Base\Parser
      * Sets the error message to create when the provided value was not found among the available values
      * of the enum class
      *
-     * The message is processed using Debug::parseMessage and receives the following elements:
+     * The message is processed using Stringify::parseMessage and receives the following elements:
      * - subject: The value currently being parsed
      *
      * @param string $message
      *
      * @return $this
-     * @see Debug::parseMessage()
+     * @see Stringify::parseMessage()
      */
     public function setNotFoundErrorMessage(string $message): self
     {
@@ -149,7 +151,7 @@ class ConvertToEnum extends Base\Parser
             return $builder->createResult($result);
         }
 
-        $builder->logErrorUsingDebug($this->notFoundMessage);
+        $builder->logErrorStringify($this->notFoundMessage);
 
         return $builder->createResultUnchanged();
     }
