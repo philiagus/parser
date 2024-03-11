@@ -31,7 +31,7 @@ class AssertInteger extends Base\Parser
 
     private const string RANGE_ERROR_MESSAGE = 'Provided value {value.debug} is not between {min} and {max}',
         MIN_ERROR_MESSAGE = 'Provided value {value.debug} is lower than the defined minimum of {min}',
-        MAX_ERROR_MESSAGE = 'Provided value {value.debug} is greater than the defined maximum of {max}}';
+        MAX_ERROR_MESSAGE = 'Provided value {value.debug} is greater than the defined maximum of {max}';
 
     /** @var \SplDoublyLinkedList */
     private \SplDoublyLinkedList $assertionList;
