@@ -60,7 +60,7 @@ class ParseURL extends Base\Parser
      * Overwrites the error message in case the provided string cannot be parsed as an url
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      *
      * @param string $errorMessage
      *
@@ -78,7 +78,7 @@ class ParseURL extends Base\Parser
      * If the url does not contain a scheme, an error with the specified message is thrown.
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      *
      * @param Parser $parser
      * @param string $missingErrorMessage
@@ -114,7 +114,7 @@ class ParseURL extends Base\Parser
      * If the url does not contain a host, an error with the specified message is generated.
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      *
      * @param Parser $parser
      * @param string $missingErrorMessage
@@ -150,7 +150,7 @@ class ParseURL extends Base\Parser
      * If the url does not contain a port, an error with the specified message is generated.
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      *
      * @param Parser $parser
      * @param string $missingErrorMessage
@@ -187,7 +187,7 @@ class ParseURL extends Base\Parser
      * If the url does not contain a user, an error with the specified message is generated.
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      *
      * @param Parser $parser
      * @param string $missingErrorMessage
@@ -223,7 +223,7 @@ class ParseURL extends Base\Parser
      * If the url does not contain a password, an error with the specified message is generated.
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      *
      * @param Parser $parser
      * @param string $missingErrorMessage
@@ -259,7 +259,7 @@ class ParseURL extends Base\Parser
      * If the url does not contain a path, an error with the specified message is generated.
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      *
      * @param Parser $parser
      * @param string $missingErrorMessage
@@ -295,7 +295,7 @@ class ParseURL extends Base\Parser
      * If the url does not contain a query, an error with the specified message is generated.
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      *
      * @param Parser $parser
      * @param string $missingErrorMessage
@@ -331,7 +331,7 @@ class ParseURL extends Base\Parser
      * If the url does not contain a fragment, an error with the specified message is generated.
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      *
      * @param Parser $parser
      * @param string $missingErrorMessage

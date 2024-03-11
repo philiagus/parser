@@ -20,10 +20,9 @@ use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\InvalidValueParserTestTrait;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTestTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Parser\Parse\ParseBase64String
- */
+#[CoversClass(ParseBase64String::class)]
 class ParseBase64StringTest extends TestBase
 {
     use ChainableParserTestTrait, InvalidValueParserTestTrait, ValidValueParserTestTrait;
@@ -47,7 +46,7 @@ class ParseBase64StringTest extends TestBase
     {
         $value = '$$$';
         $parser = ParseBase64String::new()
-            ->setNotBase64ErrorMessage('MESSAGE {subject.raw}');
+            ->setNotBase64ErrorMessage('MESSAGE {value.raw}');
         self::expectException(ParsingException::class);
         self::expectExceptionMessage('MESSAGE $$$');
         $parser->parse(Subject::default($value));

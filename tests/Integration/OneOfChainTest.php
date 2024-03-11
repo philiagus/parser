@@ -18,11 +18,10 @@ use Philiagus\Parser\Parser\Assert\AssertInteger;
 use Philiagus\Parser\Parser\Assert\AssertSame;
 use Philiagus\Parser\Parser\Logic\IgnoreInput;
 use Philiagus\Parser\Parser\Logic\OneOf;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversNothing
- */
+#[CoversNothing]
 class OneOfChainTest extends TestCase
 {
     public function test()

@@ -58,7 +58,7 @@ class Conditional extends Base\Parser
      * Defines the error message to use if none of the provided values matches
      *
      * The error message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      *
      * @param string $error
      *

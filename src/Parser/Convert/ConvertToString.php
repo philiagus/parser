@@ -91,7 +91,7 @@ class ConvertToString extends Base\Parser
      * The element converter parser can be used to convert elements of the array before type checking them to be string
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      * - key: The key of the value that was not a string
      * - culprit: The value of the array that wasn't a string (after potential conversion)
      * - culpritRaw: The value of the array before conversion
@@ -219,7 +219,7 @@ class ConvertToString extends Base\Parser
     /** @inheritDoc */
     #[\Override] protected function getDefaultTypeErrorMessage(): string
     {
-        return 'Variable of type {subject.type} could not be converted to a string';
+        return 'Variable of type {value.type} could not be converted to a string';
     }
 
     /** @inheritDoc */

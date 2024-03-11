@@ -21,10 +21,9 @@ use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\InvalidValueParserTestTrait;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTestTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Parser\Parse\ParseJSONString
- */
+#[CoversClass(ParseJSONString::class)]
 class ParseJSONStringTest extends TestBase
 {
 
@@ -53,7 +52,7 @@ class ParseJSONStringTest extends TestBase
     public function test_setConversionExceptionMessage(): void
     {
         $value = 'nope';
-        $message = 'MESSAGE {subject.raw} | {message} | {code}';
+        $message = 'MESSAGE {value.raw} | {message} | {code}';
         $parser = ParseJSONString::new()
             ->setConversionErrorMessage($message);
         self::expectException(ParsingException::class);

@@ -101,7 +101,7 @@ class ParseStdClass extends AssertStdClass
      * In case the key does not exist an error with the specified message is generated.
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      * - property: The missing property as defined here
      *
      * @param string $property

@@ -48,7 +48,7 @@ class ParseBase64String extends Base\Parser
      * Defines the exception message to use if the value is not a valid base64 string
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      *
      * @param string $message
      *

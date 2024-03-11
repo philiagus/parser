@@ -40,7 +40,7 @@ class AssertEqual extends Base\Parser
      * Assert provided value is equal (==) to a defined value
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      * - expected: The value the received value is compared against
      *
      * @param mixed $value
@@ -61,7 +61,7 @@ class AssertEqual extends Base\Parser
      * as defined target
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      * - expected: The value the received value is compared against
      *
      * @param string $errorMessage

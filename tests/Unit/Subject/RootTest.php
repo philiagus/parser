@@ -18,11 +18,10 @@ use Philiagus\Parser\Subject\Root;
 use Philiagus\Parser\Test\SubjectTestBase;
 use Philiagus\Parser\Test\Util;
 use Philiagus\Parser\Util\Stringify;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Subject\Root
- * @covers \Philiagus\Parser\Base\Subject
- */
+#[CoversClass(Root::class)]
+#[CoversClass(Subject::class)]
 class RootTest extends SubjectTestBase
 {
     public static function provideConstructorArguments(): array
@@ -39,9 +38,7 @@ class RootTest extends SubjectTestBase
         return $cases;
     }
 
-    /**
-     * @dataProvider provideConstructorArguments
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideConstructorArguments')]
     public function testCreation(mixed $value, ?string $description, bool $throwOnError): void
     {
         $expectedDescription = $description ?? Stringify::getType($value);

@@ -85,7 +85,7 @@ trait OverwritableTypeErrorMessage
             $subject,
             Stringify::parseMessage(
                 $this->typeErrorMessage ?? $this->getDefaultTypeErrorMessage(),
-                ['subject' => $subject->getValue()]
+                ['value' => $subject->getValue()]
             )
         );
     }

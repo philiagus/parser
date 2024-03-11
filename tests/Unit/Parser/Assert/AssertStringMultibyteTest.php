@@ -21,10 +21,9 @@ use Philiagus\Parser\Test\InvalidValueParserTestTrait;
 use Philiagus\Parser\Test\OverwritableTypeErrorMessageTestTrait;
 use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\ValidValueParserTestTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Parser\Assert\AssertStringMultibyte
- */
+#[CoversClass(AssertStringMultibyte::class)]
 class AssertStringMultibyteTest extends ParserTestBase
 {
     private const ISO_8859_1 = "\xE4";
@@ -208,13 +207,7 @@ class AssertStringMultibyteTest extends ParserTestBase
         ];
     }
 
-    /**
-     * @param $invalidEncodings
-     *
-     * @return void
-     * @throws ParserConfigurationException
-     * @dataProvider provideSetAvailableEncodingsInvalidEncodings
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideSetAvailableEncodingsInvalidEncodings')]
     public function test_setAvailableEncodings_invalidEncoding($invalidEncodings): void
     {
         self::expectException(ParserConfigurationException::class);

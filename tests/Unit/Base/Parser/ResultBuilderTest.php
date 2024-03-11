@@ -21,10 +21,9 @@ use Philiagus\Parser\Subject\Utility\Internal;
 use Philiagus\Parser\Subject\Utility\ParserBegin;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Util\Stringify;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Base\Parser\ResultBuilder
- */
+#[CoversClass(ResultBuilder::class)]
 class ResultBuilderTest extends TestBase
 {
 
@@ -123,7 +122,7 @@ class ResultBuilderTest extends TestBase
         ];
 
         $builder->logErrorStringify(
-            'message1 {subject.debug} {a.debug}',
+            'message1 {value.debug} {a.debug}',
             ['a' => $object],
             $sourceThrowable,
             $sourceErrors
@@ -132,7 +131,7 @@ class ResultBuilderTest extends TestBase
         self::assertTrue($builder->hasErrors());
 
         $builder->logErrorStringify(
-            'message2 {subject.debug} {a.debug}',
+            'message2 {value.debug} {a.debug}',
             ['a' => $object],
             $sourceThrowable,
             $sourceErrors
@@ -145,9 +144,9 @@ class ResultBuilderTest extends TestBase
         [$error1, $error2] = $result->getErrors();
         self::assertSame(
             Stringify::parseMessage(
-                'message1 {subject.debug} {a.debug}',
+                'message1 {value.debug} {a.debug}',
                 [
-                    'subject' => $subject->getValue(),
+                    'value' => $subject->getValue(),
                     'a' => $object,
                 ]
             ),
@@ -155,9 +154,9 @@ class ResultBuilderTest extends TestBase
         );
         self::assertSame(
             Stringify::parseMessage(
-                'message2 {subject.debug} {a.debug}',
+                'message2 {value.debug} {a.debug}',
                 [
-                    'subject' => $subject->getValue(),
+                    'value' => $subject->getValue(),
                     'a' => $object,
                 ]
             ),
@@ -179,9 +178,9 @@ class ResultBuilderTest extends TestBase
             new Error($subject, ''),
         ];
         $expectedMessage = Stringify::parseMessage(
-            'message1 {subject.debug} {a.debug}',
+            'message1 {value.debug} {a.debug}',
             [
-                'subject' => $subject->getValue(),
+                'value' => $subject->getValue(),
                 'a' => $object,
             ]
         );
@@ -189,7 +188,7 @@ class ResultBuilderTest extends TestBase
         self::expectExceptionMessage($expectedMessage);
         try {
             $builder->logErrorStringify(
-                'message1 {subject.debug} {a.debug}',
+                'message1 {value.debug} {a.debug}',
                 ['a' => $object],
                 $sourceThrowable,
                 $sourceErrors

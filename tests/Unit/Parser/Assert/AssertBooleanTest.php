@@ -19,10 +19,9 @@ use Philiagus\Parser\Test\InvalidValueParserTestTrait;
 use Philiagus\Parser\Test\OverwritableTypeErrorMessageTestTrait;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTestTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Parser\Assert\AssertBoolean
- */
+#[CoversClass(AssertBoolean::class)]
 class AssertBooleanTest extends TestBase
 {
     use ChainableParserTestTrait, ValidValueParserTestTrait, InvalidValueParserTestTrait, OverwritableTypeErrorMessageTestTrait;

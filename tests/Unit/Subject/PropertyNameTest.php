@@ -17,11 +17,10 @@ use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Subject\PropertyName;
 use Philiagus\Parser\Test\SubjectTestBase;
 use Philiagus\Parser\Test\Util;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Subject\PropertyName
- * @covers \Philiagus\Parser\Base\Subject
- */
+#[CoversClass(PropertyName::class)]
+#[CoversClass(Subject::class)]
 class PropertyNameTest extends SubjectTestBase
 {
     public static function provideConstructorArguments(): array
@@ -38,9 +37,7 @@ class PropertyNameTest extends SubjectTestBase
         return $cases;
     }
 
-    /**
-     * @dataProvider provideConstructorArguments
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideConstructorArguments')]
     public function testCreation(string $propertyName, bool $throwOnError): void
     {
         $root = Subject::default(null, 'ROOT', $throwOnError);

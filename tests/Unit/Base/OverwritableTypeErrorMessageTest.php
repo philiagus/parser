@@ -22,52 +22,40 @@ use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Stringify;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Philiagus\Parser\Base\OverwritableTypeErrorMessage
- */
+#[CoversClass(OverwritableTypeErrorMessage::class)]
 class OverwritableTypeErrorMessageTest extends TestCase
 {
-    public static function provideCases(): array
+    public static function provideCases(): \Generator
     {
-        $cases = [];
         foreach ((new DataProvider())->provide(false) as $name => $value) {
-            $cases["Default Message No Builder -> $name"] = [
+            yield "Default Message No Builder -> $name" => [
                 $value,
-                function () {
-                    return self::createParserWithoutBuilder();
-                },
-                Stringify::parseMessage('DEFAULT {subject.debug}', ['subject' => $value]),
+                self::createParserWithoutBuilder(...),
+                Stringify::parseMessage('DEFAULT {value.debug}', ['value' => $value]),
             ];
-            $cases["Custom Message No Builder -> $name"] = [
+            yield "Custom Message No Builder -> $name" => [
                 $value,
-                function () {
-                    return self::createParserWithoutBuilder()->setTypeErrorMessage('CUSTOM {subject.debug}');
-                },
-                Stringify::parseMessage('CUSTOM {subject.debug}', ['subject' => $value]),
+                fn() => self::createParserWithoutBuilder()->setTypeErrorMessage('CUSTOM {value.debug}'),
+                Stringify::parseMessage('CUSTOM {value.debug}', ['value' => $value]),
             ];
-            $cases["Default Message Builder -> $name"] = [
+            yield "Default Message Builder -> $name" => [
                 $value,
-                function () {
-                    return self::createParserWithBuilder();
-                },
-                Stringify::parseMessage('DEFAULT {subject.debug}', ['subject' => $value]),
+                self::createParserWithBuilder(...),
+                Stringify::parseMessage('DEFAULT {value.debug}', ['value' => $value]),
             ];
-            $cases["Custom Message Builder -> $name"] = [
+            yield "Custom Message Builder -> $name" => [
                 $value,
-                function () {
-                    return self::createParserWithBuilder()->setTypeErrorMessage('CUSTOM {subject.debug}');
-                },
-                Stringify::parseMessage('CUSTOM {subject.debug}', ['subject' => $value]),
+                fn() => self::createParserWithBuilder()->setTypeErrorMessage('CUSTOM {value.debug}'),
+                Stringify::parseMessage('CUSTOM {value.debug}', ['value' => $value]),
             ];
-
         }
-
-        return $cases;
     }
 
-    private static function createParserWithoutBuilder(): Parser
+    private
+    static function createParserWithoutBuilder(): Parser
     {
         return new class() implements Parser {
             use OverwritableTypeErrorMessage;
@@ -81,12 +69,13 @@ class OverwritableTypeErrorMessageTest extends TestCase
 
             protected function getDefaultTypeErrorMessage(): string
             {
-                return 'DEFAULT {subject.debug}';
+                return 'DEFAULT {value.debug}';
             }
         };
     }
 
-    private static function createParserWithBuilder(): Parser
+    private
+    static function createParserWithBuilder(): Parser
     {
         return new class() implements Parser {
             use OverwritableTypeErrorMessage;
@@ -100,14 +89,13 @@ class OverwritableTypeErrorMessageTest extends TestCase
 
             protected function getDefaultTypeErrorMessage(): string
             {
-                return 'DEFAULT {subject.debug}';
+                return 'DEFAULT {value.debug}';
             }
         };
     }
 
-    /**
-     * @dataProvider provideCases
-     */
+    #[
+        \PHPUnit\Framework\Attributes\DataProvider('provideCases')]
     public function testGetDefaultChainDescription(mixed $value, \Closure $builder, string $expectedMessage): void
     {
         /** @var Parser $parser */

@@ -19,10 +19,9 @@ use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\Mock\ParserMock;
 use Philiagus\Parser\Test\ParserTestBase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Parser\Logic\OverwriteErrors
- */
+#[CoversClass(OverwriteErrors::class)]
 class OverwriteErrorsTest extends ParserTestBase
 {
 

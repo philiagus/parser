@@ -65,7 +65,7 @@ class AssertJSONString extends Parser
      * Defines the error message if the provided value is a string but not a valid JSON
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      * - message: The string returned from json_last_error_msg
      * - code: The error code returned from json_last_error
      *

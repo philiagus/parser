@@ -28,13 +28,7 @@ trait InvalidValueParserTestTrait
 
     abstract public function expectExceptionMessage(string $message): void;
 
-    /**
-     * @param $value
-     * @param Closure $parser
-     * @param string|Closure $expectedException
-     * @param bool $throw
-     * @dataProvider provideInvalidValuesAndParsers
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidValuesAndParsers')]
     public function testThatItBlocksInvalidValues(
         $value,
         \Closure $parser,
@@ -64,12 +58,7 @@ trait InvalidValueParserTestTrait
         }
     }
 
-    /**
-     * @param $value
-     * @param \Closure $parser
-     *
-     * @dataProvider provideInvalidValuesAndParsers
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidValuesAndParsers')]
     public function testThatItBlocksInvalidValuesNotThrowing(
         $value,
         \Closure $parser

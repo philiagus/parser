@@ -22,10 +22,9 @@ use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\InvalidValueParserTestTrait;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTestTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Parser\Assert\AssertSame
- */
+#[CoversClass(AssertSame::class)]
 class AssertSameTest extends TestBase
 {
     use ChainableParserTestTrait, ValidValueParserTestTrait, InvalidValueParserTestTrait;
@@ -51,12 +50,7 @@ class AssertSameTest extends TestBase
         yield 'same object' => [$o = new \stdClass(), $o];
     }
 
-    /**
-     * @param mixed $value1
-     * @param mixed $value2
-     * @return void
-     * @dataProvider provideAsFristValueCases()
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideAsFristValueCases')]
     public function test_asFirstValue(mixed $value1, mixed $value2): void
     {
         $parser = AssertSame::asFirstValue();

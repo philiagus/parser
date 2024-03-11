@@ -17,11 +17,10 @@ use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Subject\Utility\Internal;
 use Philiagus\Parser\Test\SubjectTestBase;
 use Philiagus\Parser\Test\Util;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Subject\Utility\Internal
- * @covers \Philiagus\Parser\Base\Subject
- */
+#[CoversClass(Internal::class)]
+#[CoversClass(Subject::class)]
 class InternalTest extends SubjectTestBase
 {
     public static function provideConstructorArguments(): array
@@ -36,9 +35,7 @@ class InternalTest extends SubjectTestBase
         return $cases;
     }
 
-    /**
-     * @dataProvider provideConstructorArguments
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideConstructorArguments')]
     public function testCreation(mixed $value, bool $throwOnError): void
     {
         $root = Subject::default(null, 'ROOT', $throwOnError);

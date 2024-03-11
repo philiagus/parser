@@ -17,10 +17,9 @@ use Philiagus\Parser\Parser\Assert\AssertArray;
 use Philiagus\Parser\Parser\Extract\Append;
 use Philiagus\Parser\Parser\Logic\Unique;
 use Philiagus\Parser\Test\TestBase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Parser\Logic\Unique
- */
+#[CoversClass(Unique::class)]
 class UniqueTest extends TestBase
 {
 
@@ -48,13 +47,8 @@ class UniqueTest extends TestBase
         ];
     }
 
-    /**
-     * @param array $input
-     * @param bool $strict
-     * @param array $expected
-     * @return void
-     * @dataProvider provideCases
-     */
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideCases')]
     public function testFull(
         array $input,
         bool  $strict,

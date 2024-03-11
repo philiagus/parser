@@ -111,7 +111,7 @@ class ConvertToEnum extends Base\Parser
      * of the enum class
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      *
      * @param string $message
      *
@@ -191,9 +191,9 @@ class ConvertToEnum extends Base\Parser
     #[\Override] protected function getDefaultTypeErrorMessage(): string
     {
         if ($this->valueFirst !== null) {
-            return "The provided value is not an integer or string, {subject.type} received";
+            return "The provided value is not an integer or string, {value.type} received";
         }
 
-        return "The provided value is not a string, {subject.type} received";
+        return "The provided value is not a string, {value.type} received";
     }
 }

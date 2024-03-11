@@ -19,10 +19,9 @@ use Philiagus\Parser\Test\InvalidValueParserTestTrait;
 use Philiagus\Parser\Test\OverwritableTypeErrorMessageTestTrait;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTestTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Parser\Convert\ConvertToInteger
- */
+#[CoversClass(ConvertToInteger::class)]
 class ConvertToIntegerTest extends TestBase
 {
 

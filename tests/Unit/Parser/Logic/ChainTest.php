@@ -20,10 +20,9 @@ use Philiagus\Parser\Parser\Logic\Chain;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\ParserTestBase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Parser\Logic\Chain
- */
+#[CoversClass(Chain::class)]
 class ChainTest extends ParserTestBase
 {
     use ChainableParserTestTrait;

@@ -27,11 +27,10 @@ use Philiagus\Parser\Parser\Logic\IgnoreInput;
 use Philiagus\Parser\Parser\Logic\Preserve;
 use Philiagus\Parser\Parser\Parse\ParseJSONString;
 use Philiagus\Parser\Parser\Parse\ParseStdClass;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversNothing
- */
+#[CoversNothing]
 class RandomFullTests extends TestCase
 {
     public function test()

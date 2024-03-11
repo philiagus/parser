@@ -162,7 +162,7 @@ class AssertArray extends Base\Parser
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
      * - key: The missing key
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      *
      *
      * @param int|string $key
@@ -256,7 +256,7 @@ class AssertArray extends Base\Parser
      * Specifies that this array is expected to have numeric keys starting at 0, incrementing by 1
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      *
      * @param string $errorMessage
      *
@@ -306,7 +306,7 @@ class AssertArray extends Base\Parser
      * If you want to make sure that no surplus keys exist in the array, please use assertNoSurplusKeysExist()
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      * - key: The key that was found missing
      *
      * @param array<int|string> $expectedKeys
@@ -347,7 +347,7 @@ class AssertArray extends Base\Parser
      * assertKeysExists() method
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      * - key: The key that was found missing
      *
      * @param array<int|string> $expectedKeys

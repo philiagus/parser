@@ -24,9 +24,7 @@ trait OverwritableTypeErrorMessageTestTrait
 {
     abstract public static function provideInvalidTypesAndParser(): array;
 
-    /**
-     * @dataProvider provideInvalidTypesAndParser
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidTypesAndParser')]
     public function testSetTypeErrorMessageDefaultMessage($invalidValue, \Closure $parser): void
     {
         $parser = $parser($invalidValue);
@@ -41,7 +39,7 @@ trait OverwritableTypeErrorMessageTestTrait
         self::assertCount(1, $result->getErrors());
 
         self::expectException(ParsingException::class);
-        self::expectExceptionMessage(Stringify::parseMessage($defaultMessage, ['subject' => $invalidValue]));
+        self::expectExceptionMessage(Stringify::parseMessage($defaultMessage, ['value' => $invalidValue]));
         $parser->parse(Subject::default($invalidValue));
     }
 
@@ -63,16 +61,14 @@ trait OverwritableTypeErrorMessageTestTrait
 
     abstract public static function fail(string $message): never;
 
-    /**
-     * @dataProvider provideInvalidTypesAndParser
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidTypesAndParser')]
     public function testSetTypeErrorMessageOverwrittenMessage($invalidValue, \Closure $parser): void
     {
         $parser = $parser($invalidValue);
         /** @var Parser $parser */
         $this->assertUsesTypeErrorMessageTrait($parser);
 
-        $parser->setTypeErrorMessage('the type is {subject.type}');
+        $parser->setTypeErrorMessage('the type is {value.type}');
 
         $result = $parser->parse(Subject::default($invalidValue, throwOnError: false));
         self::assertTrue($result->hasErrors());

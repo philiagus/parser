@@ -19,10 +19,9 @@ use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\Util;
 use Philiagus\Parser\Base;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Result
- */
+#[CoversClass(Result::class)]
 class ResultTest extends TestBase
 {
     public function testSuccess(): void
@@ -88,9 +87,8 @@ class ResultTest extends TestBase
         return $cases;
     }
 
-    /**
-     * @dataProvider provideConstructorArguments
-     */
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideConstructorArguments')]
     public function testCreation(mixed $value, bool $throwOnError): void
     {
         $root = Base\Subject::default(null, 'ROOT', $throwOnError);

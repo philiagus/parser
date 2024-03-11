@@ -18,10 +18,9 @@ use Philiagus\Parser\Contract;
 use Philiagus\Parser\Parser\Logic\OneOf;
 use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\ParserTestBase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Parser\Logic\OneOf
- */
+#[CoversClass(OneOf::class)]
 class OneOfTest extends ParserTestBase
 {
     use ChainableParserTestTrait;

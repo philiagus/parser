@@ -109,7 +109,7 @@ class ParseArray extends AssertArray
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
      * - key: The missing key
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      *
      *
      * @param string|int $key

@@ -14,6 +14,7 @@ namespace Philiagus\Parser\Test\ParserTestBase;
 
 use Philiagus\DataProvider\DataProvider;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 class CaseBuilder
 {
@@ -31,26 +32,21 @@ class CaseBuilder
     public function test(?\Closure $parserCreation = null, ?string $methodName = null): TestInstance
     {
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
-        $reflection = new \ReflectionClass($trace[1]['class']);
-        if (!preg_match('~@covers\s++(?<class>\S++)~', $reflection->getDocComment() ?: '', $matches)) {
-            Assert::fail("Class {$trace[0]['class']} does not define a @covers");
-        }
-        $targetClassName = $matches['class'];
-        $targetClass = new \ReflectionClass($matches['class']);
+        $targetClassName = $this->getTargetClassName();
+        $targetClass = new \ReflectionClass($targetClassName);
         if ($parserCreation === null) {
             if (
                 !$targetClass->hasMethod('new') ||
                 !$targetClass->getMethod('new')->isStatic() ||
                 !empty($targetClass->getMethod('new')->getAttributes())) {
-                Assert::fail("Static new does not exist for class {$matches['class']}");
+                Assert::fail("Static new does not exist for class {$targetClassName}");
             }
             $parserCreation = static fn() => $targetClassName::new();
         }
 
         if (func_num_args() < 2) {
-            if (!preg_match('~^test_?(?<method>.++)$~', $trace[1]['function'], $matches)) {
+            if (!preg_match('~^test_?(?<method>.++)$~', $trace[1]['function'], $matches))
                 Assert::fail('Cannot extract method name');
-            }
 
             $methodName = lcfirst($matches['method']);
         }
@@ -128,15 +124,25 @@ class CaseBuilder
         return new Argument\Generated($flags);
     }
 
+    private function getTargetClassName(): string
+    {
+        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
+        $testClass = $trace[2]['class'];
+        $reflection = new \ReflectionClass($testClass);
+        $attributes = $reflection->getAttributes(CoversClass::class);
+        if(empty($attributes)) {
+            Assert::fail("Class $testClass does not define a covered class");
+        }
+        /** @var CoversClass $attribute */
+        $attribute = $attributes[0]->newInstance();
+        return $attribute->className();
+    }
+
     public function testStaticConstructor(): TestInstance
     {
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
-        $reflection = new \ReflectionClass($trace[1]['class']);
-        if (!preg_match('~@covers\s++(?<class>\S++)~', $reflection->getDocComment() ?: '', $matches)) {
-            Assert::fail("Class {$trace[1]['class']} does not define a @covers");
-        }
-        $targetClassName = $matches['class'];
-        $targetClass = new \ReflectionClass($matches['class']);
+        $targetClassName = $this->getTargetClassName();
+        $targetClass = new \ReflectionClass($targetClassName);
 
 
         if (!preg_match('~^test_?(?<method>.++)$~', $trace[1]['function'], $matches)) {

@@ -21,10 +21,9 @@ use Philiagus\Parser\Test\Mock\BackedEnumMock;
 use Philiagus\Parser\Test\Mock\UnitEnumMock;
 use Philiagus\Parser\Test\OverwritableTypeErrorMessageTestTrait;
 use Philiagus\Parser\Test\ParserTestBase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Parser\Convert\ConvertToEnum
- */
+#[CoversClass(ConvertToEnum::class)]
 class ConvertToEnumTest extends ParserTestBase
 {
     use OverwritableTypeErrorMessageTestTrait;

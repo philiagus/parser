@@ -22,10 +22,9 @@ use Philiagus\Parser\Test\Mock\ParserMock;
 use Philiagus\Parser\Test\OverwritableTypeErrorMessageTestTrait;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTestTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Parser\Convert\ConvertToString
- */
+#[CoversClass(ConvertToString::class)]
 class ConvertToStringTest extends TestBase
 {
     use OverwritableTypeErrorMessageTestTrait,

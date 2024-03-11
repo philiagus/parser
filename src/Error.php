@@ -53,8 +53,8 @@ readonly class Error implements Contract\Error
 
     /**
      * Creates the error using Stringify::parseMessage with $message and $replacers
-     * The subject will by default be provided as a 'subject' replacer target
-     * So you can use {subject} as a replacer in all calls to this method
+     * The value of the subject will by default be provided as a 'value' replacer target
+     * So you can use {value} as a replacer in all calls to this method
      *
      * @param Contract\Subject $subject
      * @param string $message
@@ -76,7 +76,7 @@ readonly class Error implements Contract\Error
     {
         return new Error(
             $subject,
-            Stringify::parseMessage($message, $replacers + ['subject' => $subject->getValue()]),
+            Stringify::parseMessage($message, $replacers + ['value' => $subject->getValue()]),
             $sourceThrowable,
             $sourceErrors
         );

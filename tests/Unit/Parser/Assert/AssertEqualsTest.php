@@ -23,10 +23,9 @@ use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\InvalidValueParserTestTrait;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTestTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Parser\Assert\AssertEqual
- */
+#[CoversClass(AssertEqual::class)]
 class AssertEqualsTest extends TestBase
 {
     use ChainableParserTestTrait, ValidValueParserTestTrait, InvalidValueParserTestTrait;
@@ -63,12 +62,7 @@ class AssertEqualsTest extends TestBase
         yield 'equal' => [1, '1'];
     }
 
-    /**
-     * @param mixed $value1
-     * @param mixed $value2
-     * @return void
-     * @dataProvider provideAsFristValueCases()
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideAsFristValueCases')]
     public function test_asFirstValue(mixed $value1, mixed $value2): void
     {
         $equalParser = AssertEqual::asFirstValue();

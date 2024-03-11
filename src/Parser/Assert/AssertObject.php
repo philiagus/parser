@@ -59,7 +59,7 @@ class AssertObject extends Base\Parser
      *
      * The message of the exception is processed using Stringify::parseMessage
      * and receives the following elements:
-     * - subject: The object currently being parsed
+     * - value: The object currently being parsed
      * - class: The class the object is not an instance of
      *
      * @param string $class
@@ -92,7 +92,7 @@ class AssertObject extends Base\Parser
      *
      * The message of the exception is processed using Stringify::parseMessage
      * and receives the following elements:
-     * - subject: The object currently being parsed
+     * - value: The object currently being parsed
      * - class: The class the object is not an instance of
      *
      * @param string $class

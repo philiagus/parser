@@ -20,10 +20,9 @@ use Philiagus\Parser\Subject\Utility\Forwarded;
 use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\Mock\ParserMock;
 use Philiagus\Parser\Test\ParserTestBase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Parser\Logic\Preserve
- */
+#[CoversClass(Preserve::class)]
 class PreserveTest extends ParserTestBase
 {
 

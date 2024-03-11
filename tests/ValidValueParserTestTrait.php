@@ -23,9 +23,7 @@ trait ValidValueParserTestTrait
 
     abstract public static function provideValidValuesAndParsersAndResults(): array;
 
-    /**
-     * @dataProvider provideValidValuesAndParsersAndResults
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideValidValuesAndParsersAndResults')]
     public function testThatItAcceptsValidValuesThrowing($value, \Closure $parser, $expected): void
     {
         $parserInstance = $parser($value);
@@ -53,9 +51,7 @@ trait ValidValueParserTestTrait
 
     abstract public static function assertTrue($condition, string $message = ''): void;
 
-    /**
-     * @dataProvider provideValidValuesAndParsersAndResults
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideValidValuesAndParsersAndResults')]
     public function testThatItAcceptsValidValuesNotThrowing($value, \Closure $parser, $expected, bool $resultWillBeWrapped = true): void
     {
         $parserInstance = $parser($value);

@@ -23,10 +23,9 @@ use Philiagus\Parser\Test\InvalidValueParserTestTrait;
 use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\Util;
 use Philiagus\Parser\Test\ValidValueParserTestTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Parser\Parse\ParseArray
- */
+#[CoversClass(ParseArray::class)]
 class ParseArrayTest extends ParserTestBase
 {
 

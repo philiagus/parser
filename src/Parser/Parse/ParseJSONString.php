@@ -49,7 +49,7 @@ class ParseJSONString extends Base\Parser
      * Sets the error message if the json is invalid or parsing failed
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      * - message: The json parser error message as provided by json_last_error_msg
      * - code: The error code as provided by json_last_error
      *

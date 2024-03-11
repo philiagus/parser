@@ -83,7 +83,7 @@ class ConvertToInteger extends Base\Parser
     /** @inheritDoc */
     #[\Override] protected function getDefaultTypeErrorMessage(): string
     {
-        return 'Variable of type {subject.type} could not be converted to an integer';
+        return 'Variable of type {value.type} could not be converted to an integer';
     }
 
     /** @inheritDoc */

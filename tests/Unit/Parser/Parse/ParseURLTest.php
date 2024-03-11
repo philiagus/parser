@@ -22,10 +22,9 @@ use Philiagus\Parser\Test\OverwritableTypeErrorMessageTestTrait;
 use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\ValidValueParserTestTrait;
 use Philiagus\Parser\Util\Stringify;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Parser\Parse\ParseURL
- */
+#[CoversClass(ParseURL::class)]
 class ParseURLTest extends ParserTestBase
 {
 
@@ -108,10 +107,10 @@ class ParseURLTest extends ParserTestBase
 
     public function testStringCouldNotBeParsed_messageOverwrite(): void
     {
-        $msg = 'MSG {subject.raw}';
+        $msg = 'MSG {value.raw}';
         $value = 'https://';
         self::expectException(ParsingException::class);
-        self::expectExceptionMessage(Stringify::parseMessage($msg, ['subject' => $value]));
+        self::expectExceptionMessage(Stringify::parseMessage($msg, ['value' => $value]));
         ParseURL::new()
             ->setInvalidStringErrorMessage($msg)
             ->parse(Subject::default($value));
@@ -130,9 +129,7 @@ class ParseURLTest extends ParserTestBase
         ];
     }
 
-    /**
-     * @dataProvider provideMissingElementCases
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideMissingElementCases')]
     public function testMissingElement(string $value, string $target): void
     {
         $builder = $this->builder();

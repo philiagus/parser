@@ -31,7 +31,7 @@ final readonly class Fail implements Parser
 
     /**
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      *
      * @param string $message
      */
@@ -43,7 +43,7 @@ final readonly class Fail implements Parser
      * Static constructor to shorthand setting a specific message
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      *
      * @param string $message
      *

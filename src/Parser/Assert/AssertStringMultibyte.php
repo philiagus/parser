@@ -70,7 +70,7 @@ class AssertStringMultibyte extends Base\Parser
      * and every other method uses this encoding.
      *
      * The error message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      * - encoding: The specified encoding
      *
      * @param string $encoding
@@ -134,7 +134,7 @@ class AssertStringMultibyte extends Base\Parser
      * The method defines the error message used if the encoding could not be detected that way
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      *
      * @param string[] $encodings
      * @param string $errorMessage
@@ -209,7 +209,7 @@ class AssertStringMultibyte extends Base\Parser
      * Compares the binary of the strings, so the encoding is not relevant
      *
      * The error message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      * - expected: The expected string
      *
      * @param string $string
@@ -239,7 +239,7 @@ class AssertStringMultibyte extends Base\Parser
      * Compares the binary of the strings, so the encoding is not relevant
      *
      * The error message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      * - expected: The expected string
      *
      * @param string $string

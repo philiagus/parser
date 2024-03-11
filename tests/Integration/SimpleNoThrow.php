@@ -17,7 +17,9 @@ use Philiagus\Parser\Parser\Assert\AssertInteger;
 use Philiagus\Parser\Parser\Assert\AssertStringMultibyte;
 use Philiagus\Parser\Parser\Parse\ParseArray;
 use Philiagus\Parser\Test\TestBase;
+use PHPUnit\Framework\Attributes\CoversNothing;
 
+#[CoversNothing]
 class SimpleNoThrow extends TestBase
 {
 

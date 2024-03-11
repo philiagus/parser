@@ -83,10 +83,10 @@ class Message implements Argument
                     fn(bool $carry, \Closure $eligible) => $carry && $eligible($subjectValue, $generatedArguments, $successStack),
                     true
                 );
-                $message = '{subject.debug} ';
+                $message = '{value.debug} ';
                 foreach ($generated as $generatedGroup) {
-                    $message = '{subject.debug} ';
-                    $replacers = ['subject' => $subjectValue];
+                    $message = '{value.debug} ';
+                    $replacers = ['value' => $subjectValue];
                     foreach ($this->parameterElements as $name => $index) {
                         $message .= "{" . $name . ".debug} ";
                         $replacers[$name] = $generatedArguments[$index];

@@ -33,6 +33,10 @@ class AssertNumber extends Base\Parser
 {
     use OverwritableTypeErrorMessage;
 
+    private const string MIN_ERROR_MESSAGE = 'Provided value of {value} is lower than the defined minimum of {min}',
+        MAX_ERROR_MESSAGE = 'Provided value of {value} is greater than the defined maximum of {max}',
+        RANGE_ERROR_MESSAGE = '';
+
     /** @var callable[] */
     private array $assertionList = [];
 
@@ -40,16 +44,11 @@ class AssertNumber extends Base\Parser
     {
     }
 
-    public static function new(): static
-    {
-        return new static();
-    }
-
     /**
      * Asserts that the value is >= the provided minimum
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      * - min: The set minimum value
      *
      * @param float|int $minimum
@@ -58,9 +57,29 @@ class AssertNumber extends Base\Parser
      * @return $this
      * @throws Exception\ParserConfigurationException
      * @see Stringify::parseMessage()
-     *
+     * @see self::assertMinimum()
      */
-    public function assertMinimum(float|int $minimum, string $errorMessage = 'Provided value of {value} is lower than the defined minimum of {min}'): static
+    public static function minimum(float|int $minimum, string $errorMessage = self::MIN_ERROR_MESSAGE): static
+    {
+        return static::new()->assertMinimum($minimum, $errorMessage);
+    }
+
+    /**
+     * Asserts that the value is >= the provided minimum
+     *
+     * The message is processed using Stringify::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     * - min: The set minimum value
+     *
+     * @param float|int $minimum
+     * @param string $errorMessage
+     *
+     * @return $this
+     * @throws Exception\ParserConfigurationException
+     * @see Stringify::parseMessage()
+     * @see self::minimum()
+     */
+    public function assertMinimum(float|int $minimum, string $errorMessage = self::MIN_ERROR_MESSAGE): static
     {
         if (is_float($minimum) && (is_nan($minimum) || is_infinite($minimum))) {
             throw new Exception\ParserConfigurationException('The minimum for a numeric value must be provided as integer or float');
@@ -78,11 +97,16 @@ class AssertNumber extends Base\Parser
         return $this;
     }
 
+    public static function new(): static
+    {
+        return new static();
+    }
+
     /**
      * Asserts that the value is <= the provided maximum
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      * - max: The currently set maximum
      *
      * @param float|int $maximum
@@ -91,9 +115,29 @@ class AssertNumber extends Base\Parser
      * @return $this
      * @throws Exception\ParserConfigurationException
      * @see Stringify::parseMessage()
-     *
+     * @see self::assertMaximum()
      */
-    public function assertMaximum(float|int $maximum, string $errorMessage = 'Provided value of {value} is greater than the defined maximum of {max}}'): static
+    public static function maximum(float|int $maximum, string $errorMessage = self::MAX_ERROR_MESSAGE): static
+    {
+        return static::new()->assertMaximum($maximum, $errorMessage);
+    }
+
+    /**
+     * Asserts that the value is <= the provided maximum
+     *
+     * The message is processed using Stringify::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     * - max: The currently set maximum
+     *
+     * @param float|int $maximum
+     * @param string $errorMessage
+     *
+     * @return $this
+     * @throws Exception\ParserConfigurationException
+     * @see Stringify::parseMessage()
+     * @see self::maximum()
+     */
+    public function assertMaximum(float|int $maximum, string $errorMessage = self::MAX_ERROR_MESSAGE): static
     {
         if (is_float($maximum) && (is_nan($maximum) || is_infinite($maximum))) {
             throw new Exception\ParserConfigurationException('The maximum for a numeric value must be provided as integer or float');
@@ -104,6 +148,64 @@ class AssertNumber extends Base\Parser
                 $builder->logErrorStringify(
                     $errorMessage,
                     ['max' => $maximum]
+                );
+            }
+        };
+
+        return $this;
+    }
+
+    /**
+     * Asserts that the value is <= the provided maximum and >= the provided minimum
+     *
+     * The message is processed using Stringify::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     * - min: The currently set minimum
+     * - max: The currently set maximum
+     *
+     * @param float|int $minimum
+     * @param float|int $maximum
+     * @param string $errorMessage
+     *
+     * @return $this
+     * @see Stringify::parseMessage()
+     * @see self::assertRange()
+     */
+    public static function range(float|int $minimum, float|int $maximum, string $errorMessage = self::RANGE_ERROR_MESSAGE): static
+    {
+        return static::new()->assertRange($minimum, $maximum, $errorMessage);
+    }
+
+    /**
+     * Asserts that the value is <= the provided maximum and >= the provided minimum
+     *
+     * The message is processed using Stringify::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     * - min: The currently set minimum
+     * - max: The currently set maximum
+     *
+     * @param float|int $minimum
+     * @param float|int $maximum
+     * @param string $errorMessage
+     *
+     * @return $this
+     * @see Stringify::parseMessage()
+     * @see self::range()
+     */
+    public function assertRange(float|int $minimum, float|int $maximum, string $errorMessage = self::RANGE_ERROR_MESSAGE): static
+    {
+        if (
+            (is_float($maximum) && (is_nan($maximum) || is_infinite($maximum))) ||
+            (is_float($minimum) && (is_nan($minimum) || is_infinite($minimum)))
+        ) {
+            throw new Exception\ParserConfigurationException('The minimum and maximum for a numeric value must be provided as integer or float');
+        }
+
+        $this->assertionList[] = static function (ResultBuilder $builder, int|float $value) use ($minimum, $maximum, $errorMessage): void {
+            if ($value < $minimum || $maximum < $value) {
+                $builder->logErrorStringify(
+                    $errorMessage,
+                    ['min' => $minimum, 'max' => $maximum]
                 );
             }
         };

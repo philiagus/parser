@@ -22,11 +22,10 @@ use Philiagus\Parser\Parser\Logic\Fork;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\TestBase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Prophecy\Argument;
 
-/**
- * @covers \Philiagus\Parser\Parser\Logic\Fork
- */
+#[CoversClass(Fork::class)]
 class ForkTest extends TestBase
 {
     use ChainableParserTestTrait;
@@ -36,14 +35,8 @@ class ForkTest extends TestBase
         return (new DataProvider())->provide();
     }
 
-    /**
-     * @param $value
-     *
-     * @return void
-     * @throws ParserConfigurationException
-     * @throws ParsingException
-     * @dataProvider provideAnyValue
-     */
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideAnyValue')]
     public function testFull($value): void
     {
         $parser = function ($result) use ($value): Parser {

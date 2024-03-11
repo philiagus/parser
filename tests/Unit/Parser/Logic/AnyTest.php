@@ -17,10 +17,9 @@ use Philiagus\Parser\Parser\Logic\Any;
 use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTestTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Parser\Logic\Any
- */
+#[CoversClass(Any::class)]
 class AnyTest extends TestBase
 {
     use ChainableParserTestTrait, ValidValueParserTestTrait;

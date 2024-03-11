@@ -18,10 +18,9 @@ use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\InvalidValueParserTestTrait;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTestTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Parser\Parse\ParseFormEncodedString
- */
+#[CoversClass(ParseFormEncodedString::class)]
 class ParseFormEncodedStringTest extends TestBase
 {
 

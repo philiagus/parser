@@ -19,11 +19,10 @@ use Philiagus\Parser\Parser\Extract\Assign;
 use Philiagus\Parser\Parser\Logic\Any;
 use Philiagus\Parser\Parser\Logic\Chain;
 use Philiagus\Parser\Result;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Philiagus\Parser\Base\Chainable
- */
+#[CoversClass(Chainable::class)]
 class ChainableTest extends TestCase
 {
     public function testThen_LogicException(): void

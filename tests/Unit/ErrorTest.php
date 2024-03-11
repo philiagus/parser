@@ -17,7 +17,9 @@ use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Util\Stringify;
+use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(Error::class)]
 class ErrorTest extends TestBase
 {
 
@@ -50,15 +52,15 @@ class ErrorTest extends TestBase
         $error1 = new Error(
             $subject,
             $message = Stringify::parseMessage(
-                'REP {subject.debug} {further.debug}',
-                ['subject' => $subject->getValue(), 'further' => 'OII']
+                'REP {value.debug} {further.debug}',
+                ['value' => $subject->getValue(), 'further' => 'OII']
             ),
             $source,
             $prevErrors
         );
         $error2 = Error::createUsingStringify(
             $subject,
-            'REP {subject.debug} {further.debug}',
+            'REP {value.debug} {further.debug}',
             ['further' => 'OII'],
             $source,
             $prevErrors

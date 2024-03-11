@@ -22,10 +22,9 @@ use Philiagus\Parser\Test\InvalidValueParserTestTrait;
 use Philiagus\Parser\Test\OverwritableTypeErrorMessageTestTrait;
 use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\ValidValueParserTestTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Parser\Assert\AssertJSONString
- */
+#[CoversClass(AssertJSONString::class)]
 class AssertJSONStringTest extends ParserTestBase
 {
     use ChainableParserTestTrait, ValidValueParserTestTrait, InvalidValueParserTestTrait, OverwritableTypeErrorMessageTestTrait;
@@ -64,7 +63,7 @@ class AssertJSONStringTest extends ParserTestBase
     public function test_setConversionExceptionMessage(): void
     {
         $value = 'nope';
-        $message = 'MESSAGE {subject.raw} | {message} | {code}';
+        $message = 'MESSAGE {value.raw} | {message} | {code}';
         $parser = AssertJSONString::new()
             ->setInvalidJSONErrorMessage($message);
         $this->expectException(ParsingException::class);

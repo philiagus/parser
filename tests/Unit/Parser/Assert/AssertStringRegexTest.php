@@ -23,10 +23,9 @@ use Philiagus\Parser\Test\InvalidValueParserTestTrait;
 use Philiagus\Parser\Test\OverwritableTypeErrorMessageTestTrait;
 use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\ValidValueParserTestTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Parser\Assert\AssertStringRegex
- */
+#[CoversClass(AssertStringRegex::class)]
 class AssertStringRegexTest extends ParserTestBase
 {
 
@@ -103,20 +102,7 @@ class AssertStringRegexTest extends ParserTestBase
         return $cases;
     }
 
-    /**
-     * @param string $pattern
-     * @param $global
-     * @param int|null $offset
-     * @param bool|null $offsetCapture
-     * @param bool|null $unmatchedNull
-     * @param string $subject
-     *
-     * @return void
-     * @throws ParserConfigurationException
-     * @throws ParsingException
-     * @throws RuntimeParserConfigurationException
-     * @dataProvider provideCaptureVariants
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideCaptureVariants')]
     public function testCaptureVariants(
         string $pattern,
                $global,

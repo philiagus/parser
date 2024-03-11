@@ -101,7 +101,7 @@ class AssertString extends Base\Parser
      * Checks that the string starts with the provided string and fails if it doesn't
      *
      * The error message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      * - expected: The expected string
      *
      * @param string $string
@@ -130,7 +130,7 @@ class AssertString extends Base\Parser
      * Checks that the string ends with the provided string and fails if it doesn't
      *
      * The error message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      * - expected: The expected string
      *
      * @param string $string

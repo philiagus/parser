@@ -19,10 +19,9 @@ use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\Logic\Fail;
 use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Util\Stringify;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Parser\Logic\Fail
- */
+#[CoversClass(Fail::class)]
 class FailTest extends ParserTestBase
 {
 
@@ -31,18 +30,11 @@ class FailTest extends ParserTestBase
         return (new DataProvider())->provide();
     }
 
-    /**
-     * @param $value
-     *
-     * @return void
-     * @throws ParsingException
-     * @throws ParserConfigurationException
-     * @dataProvider provideAnyValue
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideAnyValue')]
     public function testFull($value): void
     {
-        $parser = Fail::message('message {subject.debug}');
-        $expectedMessage = Stringify::parseMessage('message {subject.debug}', ['subject' => $value]);
+        $parser = Fail::message('message {value.debug}');
+        $expectedMessage = Stringify::parseMessage('message {value.debug}', ['value' => $value]);
         $result = $parser->parse(Subject::default($value, throwOnError: false));
         self::assertFalse($result->isSuccess());
         self::assertCount(1, $result->getErrors());

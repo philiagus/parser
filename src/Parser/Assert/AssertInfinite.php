@@ -40,7 +40,7 @@ class AssertInfinite extends Base\Parser
      * Creates a parser that asserts that the value is INF or -INF (which can be refined using methods)
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      *
      * @param string $notInfiniteExceptionMessage
      *
@@ -55,7 +55,7 @@ class AssertInfinite extends Base\Parser
     /**
      * Sets the parser to assert that the infinite value is positiv, so +INF
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      *
      * @param string $notPositiveMessage
      *
@@ -74,7 +74,7 @@ class AssertInfinite extends Base\Parser
     /**
      * Sets the parser to assert that the infinite value is negative, so -INF
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      *
      * @param string $notNegativeMessage
      *

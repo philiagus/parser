@@ -14,10 +14,9 @@ namespace Philiagus\Parser\Test\Unit\Exception;
 
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Test\TestBase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Exception\ParserConfigurationException
- */
+#[CoversClass(ParserConfigurationException::class)]
 class ParserConfigurationExceptionTest extends TestBase
 {
 

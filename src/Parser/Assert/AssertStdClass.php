@@ -52,7 +52,7 @@ class AssertStdClass extends Base\Parser
      * In case the property does not exist an error with the specified message is generated
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      * - property: The missing property as defined here
      *
      * @param string $property
@@ -288,7 +288,7 @@ class AssertStdClass extends Base\Parser
      * If you want to make sure that no surplus properties exist in the object, please use assertNoSurplusPropertiesExist()
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      * - property: The name of the missing property
      *
      * @param string[] $expectedPropertyNames
@@ -355,7 +355,7 @@ class AssertStdClass extends Base\Parser
      * assertPropertiesExist() method
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      * - property: The name of the surplus property
      *
      * @param array $expectedPropertyNames List of property names to assert for

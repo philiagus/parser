@@ -17,10 +17,9 @@ use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\Callback;
 use Philiagus\Parser\Test\ParserTestBase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Parser\Callback
- */
+#[CoversClass(Callback::class)]
 class CallbackTest extends ParserTestBase
 {
 
@@ -75,7 +74,7 @@ class CallbackTest extends ParserTestBase
     {
         $throwable = new \LogicException('EXCEPTION_MESSAGE', 123);
         $parser = Callback::new(fn() => throw $throwable)
-            ->setErrorMessage('| {subject} | {throwable.raw} | {throwableMessage} | {throwableCode} | {throwableFile} | {throwableLine} |');
+            ->setErrorMessage('| {value} | {throwable.raw} | {throwableMessage} | {throwableCode} | {throwableFile} | {throwableLine} |');
 
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage("| SUBJECT | $throwable | {$throwable->getMessage()} | {$throwable->getCode()} | {$throwable->getFile()} | {$throwable->getLine()} |");

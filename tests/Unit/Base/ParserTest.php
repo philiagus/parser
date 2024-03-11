@@ -21,10 +21,9 @@ use Philiagus\Parser\Contract\Chainable;
 use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Util\Stringify;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Base\Parser
- */
+#[CoversClass(Parser::class)]
 class ParserTest extends ParserTestBase
 {
     use ChainableParserTestTrait;
@@ -34,9 +33,7 @@ class ParserTest extends ParserTestBase
         return (new DataProvider())->provide();
     }
 
-    /**
-     * @dataProvider provideAnything
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideAnything')]
     public function testExecute(mixed $sourceValue): void
     {
         $expectedResult = new \stdClass();

@@ -21,6 +21,8 @@ against it. The parsers make sure, that the data is following the rules of defin
 
 ## How does it work?
 
+A more in depth documentation and tutorials on how to write own parsers can be found [here](doc/index.md).
+
 A simple example to assert that a provided value lies within defined boundaries:
 
 ```php
@@ -30,16 +32,12 @@ use Philiagus\Parser\Parser\Assert\AssertInteger;
 
 $integer = 100;
 
-$parsingResult = AssertInteger::new()
-    ->assertMinimum(0)
-    ->assertMaximum(100)
+$parsingResult = AssertInteger::range(0, 100)
     ->parse(Subject::default($integer))
     ->getValue();
 
 // or, also possible:
-AssertInteger::new()
-    ->assertMinimum(0)
-    ->assertMaximum(10)
+AssertInteger::range(0, 100)
     ->thenAssignTo($target)
     ->parse(Subject::default($integer))
     ->getValue();
@@ -67,11 +65,9 @@ ParseArray::new()
     ->giveEachValue(
         OneOf::new()
             ->parser(
-                AssertInteger::new()
-                    ->assertMinimum(0)
+                AssertInteger::minimum(0)
                     ->thenAppendTo($integers),
-                AssertFloat::new()
-                    ->assertMinimum(0.0)
+                AssertFloat::minimum(0.0)
                     ->thenAppendTo($floats)
             )
     )

@@ -15,7 +15,9 @@ namespace Philiagus\Parser\Test\Unit\Exception;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Test\TestBase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(ParsingException::class)]
 class ParsingExceptionTest extends TestBase
 {
     public function testGetError(): void

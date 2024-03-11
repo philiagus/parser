@@ -68,7 +68,7 @@ class Callback extends Parser
      * Overwrites the error message used when the callback results in an error
      *
      * The error message is processed using Stringify::parseMessage and receives the following replacers:
-     * - subject: The value provided to the closure
+     * - value: The value provided to the closure
      * - throwable: The \Throwable object thrown by the closure
      * - throwableMessage: The \Throwable message thrown by the closure
      * - throwableCode: The code of the \Throwable thrown by the closure

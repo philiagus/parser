@@ -39,7 +39,7 @@ class AssertNull extends Base\Parser
      * Creates a parser with a defined message if the provided value is not NULL
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      *
      * @param string $notNullExceptionMessage
      *

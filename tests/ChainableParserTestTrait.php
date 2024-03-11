@@ -31,15 +31,7 @@ trait ChainableParserTestTrait
 
     abstract public function expectException(string $exception): void;
 
-    /**
-     * @param $value
-     * @param \Closure $parser
-     * @param $expected
-     *
-     * @throws ParsingException
-     * @throws RuntimeParserConfigurationException
-     * @dataProvider provideValidValuesAndParsersAndResults
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideValidValuesAndParsersAndResults')]
     public function testThenMultichain($value, \Closure $parser, $expected): void
     {
         $parser = $parser($value);
@@ -83,15 +75,7 @@ trait ChainableParserTestTrait
         Util::assertSame([$expectedResult], $appendTarget3);
     }
 
-    /**
-     * @param $value
-     * @param \Closure $parser
-     * @param $expected
-     *
-     * @throws ParsingException
-     * @throws RuntimeParserConfigurationException
-     * @dataProvider provideValidValuesAndParsersAndResults
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideValidValuesAndParsersAndResults')]
     public function testThen($value, \Closure $parser, $expected): void
     {
         $parser = $parser($value);
@@ -125,15 +109,7 @@ trait ChainableParserTestTrait
         Util::assertSame($expectedResult, $result->getValue());
     }
 
-    /**
-     * @param $value
-     * @param \Closure $parser
-     * @param $expected
-     *
-     * @throws ParsingException
-     * @throws RuntimeParserConfigurationException
-     * @dataProvider provideValidValuesAndParsersAndResults
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideValidValuesAndParsersAndResults')]
     public function testThenAssignTo($value, \Closure $parser, $expected): void
     {
         $parser = $parser($value);
@@ -148,15 +124,7 @@ trait ChainableParserTestTrait
         Util::assertSame($expected, $assignTarget);
     }
 
-    /**
-     * @param $value
-     * @param \Closure $parser
-     * @param $expected
-     *
-     * @throws ParsingException
-     * @throws RuntimeParserConfigurationException
-     * @dataProvider provideValidValuesAndParsersAndResults
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideValidValuesAndParsersAndResults')]
     public function testThenAppendTo_unsetVariable($value, \Closure $parser, $expected): void
     {
         $parser = $parser($value);
@@ -171,15 +139,7 @@ trait ChainableParserTestTrait
         Util::assertSame([$expected], $appendTarget);
     }
 
-    /**
-     * @param $value
-     * @param \Closure $parser
-     * @param $expected
-     *
-     * @throws ParsingException
-     * @throws RuntimeParserConfigurationException
-     * @dataProvider provideValidValuesAndParsersAndResults
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideValidValuesAndParsersAndResults')]
     public function testThenAppendTo_arrayVariable($value, \Closure $parser, $expected): void
     {
         $parser = $parser($value);
@@ -195,15 +155,7 @@ trait ChainableParserTestTrait
         Util::assertSame([$expected], $appendTarget);
     }
 
-    /**
-     * @param $value
-     * @param \Closure $parser
-     * @param $expected
-     *
-     * @throws ParsingException
-     * @throws RuntimeParserConfigurationException
-     * @dataProvider provideValidValuesAndParsersAndResults
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideValidValuesAndParsersAndResults')]
     public function testThenAppendTo_objectVariable($value, \Closure $parser, $expected): void
     {
         $parser = $parser($value);

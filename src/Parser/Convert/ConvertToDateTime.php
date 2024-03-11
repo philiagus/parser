@@ -68,7 +68,7 @@ class ConvertToDateTime extends Base\Parser
      * The error message is used when the string value does not match the expected format.
      *
      * The error message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      * - format: The format provided to this function
      *
      * @param string $format

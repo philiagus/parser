@@ -16,10 +16,9 @@ use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Parser\Convert\ConvertToArray;
 use Philiagus\Parser\Test\TestBase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Parser\Convert\ConvertToArray
- */
+#[CoversClass(ConvertToArray::class)]
 class ConvertToArrayTest extends TestBase
 {
 
@@ -43,9 +42,7 @@ class ConvertToArrayTest extends TestBase
         return $cases;
     }
 
-    /**
-     * @dataProvider provideArrayWithKey
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideArrayWithKey')]
     public function testCreatingArrayWithKey($key, $value)
     {
         self::assertTrue(DataProvider::isSame(
@@ -56,9 +53,7 @@ class ConvertToArrayTest extends TestBase
         ));
     }
 
-    /**
-     * @dataProvider provideUsingCast
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideUsingCast')]
     public function testUsingCast($value)
     {
         self::assertTrue(

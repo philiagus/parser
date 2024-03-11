@@ -15,10 +15,9 @@ namespace Philiagus\Parser\Test\Unit\Util;
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Util\Stringify;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Util\Stringify
- */
+#[CoversClass(Stringify::class)]
 class StringifyTest extends TestBase
 {
     public static function provideAnything(): array
@@ -193,33 +192,22 @@ class StringifyTest extends TestBase
         ];
     }
 
-    /**
-     * @param mixed $variable
-     * @param string $expected
-     *
-     * @dataProvider provideTypeDetection
-     */
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideTypeDetection')]
     public function testTypeDetection(mixed $variable, string $expected): void
     {
         self::assertSame($expected, Stringify::getType($variable));
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @dataProvider provideAnything
-     */
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideAnything')]
     public function testTypeDetectionNeverThrowsException(mixed $value): void
     {
         self::assertIsString(Stringify::getType($value));
     }
 
-    /**
-     * @param $value
-     * @param string $expected
-     *
-     * @dataProvider provideStringify
-     */
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideStringify')]
     public function testStringify($value, string $expected): void
     {
         self::assertSame($expected, Stringify::stringify($value));
@@ -235,23 +223,14 @@ class StringifyTest extends TestBase
         );
     }
 
-    /**
-     * @param $value
-     *
-     * @dataProvider provideAnything
-     */
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideAnything')]
     public function testStringifyNeverThrowsException($value): void
     {
         self::assertIsString(Stringify::stringify($value));
     }
 
-    /**
-     * @param string $message
-     * @param array $parameters
-     * @param string $expected
-     *
-     * @dataProvider provideParseMessage
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideParseMessage')]
     public function testParseMessage(string $message, array $parameters, string $expected): void
     {
         self::assertSame(

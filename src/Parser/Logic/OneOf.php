@@ -112,7 +112,7 @@ class OneOf extends Base\Parser
      * Defines the error message to use if none of the provided parsers matches
      *
      * The error message is processed using Stringify::parseMessage and receives the following elements:
-     * - subject: The value currently being parsed
+     * - value: The value currently being parsed
      *
      * @param string $message
      *

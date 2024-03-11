@@ -22,25 +22,15 @@ use Philiagus\Parser\Parser\Extract\Append;
 use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\ValidValueParserTestTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Prophecy\Argument;
 
-/**
- * @covers \Philiagus\Parser\Parser\Extract\Append
- */
+#[CoversClass(Append::class)]
 class AppendTest extends TestBase
 {
     use ValidValueParserTestTrait, ChainableParserTestTrait;
 
-    /**
-     * @dataProvider provideAnything
-     *
-     * @param $value
-     *
-     * @return void
-     * @throws ParserConfigurationException
-     * @throws ParsingException
-     * @throws RuntimeParserConfigurationException
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideAnything')]
     public function testAppendsToAnything($value): void
     {
         $parser = Append::to($unsetTarget);

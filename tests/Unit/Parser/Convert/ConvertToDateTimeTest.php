@@ -22,10 +22,9 @@ use Philiagus\Parser\Parser\Convert\ConvertToDateTime;
 use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\InvalidValueParserTestTrait;
 use Philiagus\Parser\Test\ParserTestBase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Parser\Convert\ConvertToDateTime
- */
+#[CoversClass(ConvertToDateTime::class)]
 class ConvertToDateTimeTest extends ParserTestBase
 {
 

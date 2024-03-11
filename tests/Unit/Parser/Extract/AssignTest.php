@@ -19,10 +19,9 @@ use Philiagus\Parser\Exception\RuntimeParserConfigurationException;
 use Philiagus\Parser\Parser\Extract\Assign;
 use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\TestBase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Parser\Extract\Assign
- */
+#[CoversClass(Assign::class)]
 class AssignTest extends TestBase
 {
     use ChainableParserTestTrait;
@@ -44,14 +43,7 @@ class AssignTest extends TestBase
             ->provide(false);
     }
 
-    /**
-     * @param $value
-     *
-     * @return void
-     * @throws ParsingException
-     * @throws RuntimeParserConfigurationException
-     * @dataProvider provideAnything
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideAnything')]
     public function testAssign($value): void
     {
         $something = ['any default value we can think of', $value];

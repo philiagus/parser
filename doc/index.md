@@ -1,11 +1,19 @@
 # Introduction
 
-## What are Parsers?
+## Using Parsers
 
 Parsers are an extendable suite of classes meant to assert, convert, sanitize and extract data from a provided dataset.
 
 You can see a list of all parsers in the system here: [List of Parsers](./list-of-parsers.md)
 
+The most important things to keep in mind are:
+
+- all parsers have static constructors, so you are best supported if you simply type the name of the parser and let your IDE guide you in how to use it
+- if you want to extract data while using a parser (see the example on the [Readme](../README.md)), use
+  - `->thenAssignTo($variable)` in order to assign to a variable
+  - `->thenAppendTo($array)` in order to append to an `array|\ArrayAccess`
+
+    
 ## Writing Parsers
 
 - [Tutorial: Writing parsers using Base\Parser as basis](./tutorial-custom-parser-simple.md)

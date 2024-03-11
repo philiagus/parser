@@ -19,10 +19,9 @@ use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\Logic\IgnoreInput;
 use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\TestBase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
-/**
- * @covers \Philiagus\Parser\Parser\Logic\IgnoreInput
- */
+#[CoversClass(IgnoreInput::class)]
 class IgnoreInputTest extends TestBase
 {
     use ChainableParserTestTrait;
@@ -39,14 +38,8 @@ class IgnoreInputTest extends TestBase
         return (new DataProvider())->provide();
     }
 
-    /**
-     * @param mixed $anything
-     *
-     * @return void
-     * @throws ParserConfigurationException
-     * @throws ParsingException
-     * @dataProvider provideAnyValue
-     */
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideAnyValue')]
     public function testFull($anything): void
     {
         $obj = new \stdClass();
