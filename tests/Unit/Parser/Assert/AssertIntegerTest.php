@@ -21,11 +21,14 @@ use Philiagus\Parser\Test\ValidValueParserTestTrait;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(AssertInteger::class)]
-class AssertIntegerTest extends ParserTestBase
+class AssertIntegerTest extends AbstractNumberTest
 {
 
+    protected static function getSuccessDataProviderUnion(): int
+    {
+        return DataProvider::TYPE_INTEGER;
+    }
 
-    use ChainableParserTestTrait, ValidValueParserTestTrait, InvalidValueParserTestTrait, ChainableParserTestTrait;
 
     public static function provideInvalidValuesAndParsers(): array
     {
@@ -39,129 +42,6 @@ class AssertIntegerTest extends ParserTestBase
         return (new DataProvider(DataProvider::TYPE_INTEGER))
             ->map(static fn($value) => [$value, static fn() => AssertInteger::new(), $value])
             ->provide(false);
-    }
-
-    public function testAssertRange(): void
-    {
-        $builder = $this->builder();
-        $builder
-            ->test()
-            ->arguments(
-                $builder
-                    ->evaluatedArgument()
-                    ->success(fn($value) => PHP_INT_MIN, fn($value) => $value !== PHP_INT_MIN)
-                    ->error(fn($value) => PHP_INT_MAX, fn($value) => $value !== PHP_INT_MAX),
-                $builder
-                    ->evaluatedArgument()
-                    ->success(fn($value) => PHP_INT_MAX, fn($value) => $value !== PHP_INT_MAX)
-                    ->error(fn($value) => PHP_INT_MIN, fn($value) => $value !== PHP_INT_MIN),
-                $builder
-                    ->messageArgument()
-                    ->expectedWhen(fn($value, array $args) => $value < $args[0] || $value > $args[1])
-                    ->withParameterElement('min', 0)
-                    ->withParameterElement('max', 1)
-            )
-            ->successProvider(DataProvider::TYPE_INTEGER);
-        $builder->run();
-    }
-
-    public function testRange(): void
-    {
-        $builder = $this->builder();
-        $builder
-            ->testStaticConstructor()
-            ->arguments(
-                $builder
-                    ->evaluatedArgument()
-                    ->success(fn($value) => PHP_INT_MIN, fn($value) => $value !== PHP_INT_MIN)
-                    ->error(fn($value) => PHP_INT_MAX, fn($value) => $value !== PHP_INT_MAX),
-                $builder
-                    ->evaluatedArgument()
-                    ->success(fn($value) => PHP_INT_MAX, fn($value) => $value !== PHP_INT_MAX)
-                    ->error(fn($value) => PHP_INT_MIN, fn($value) => $value !== PHP_INT_MIN),
-                $builder
-                    ->messageArgument()
-                    ->expectedWhen(fn($value, array $args) => $value < $args[0] || $value > $args[1])
-                    ->withParameterElement('min', 0)
-                    ->withParameterElement('max', 1)
-            )
-            ->successProvider(DataProvider::TYPE_INTEGER);
-        $builder->run();
-    }
-
-    public function testAssertMinimum(): void
-    {
-        $builder = $this->builder();
-        $builder
-            ->test()
-            ->arguments(
-                $builder
-                    ->evaluatedArgument()
-                    ->success(fn($value) => PHP_INT_MIN, fn($value) => $value !== PHP_INT_MIN)
-                    ->error(fn($value) => PHP_INT_MAX, fn($value) => $value !== PHP_INT_MAX),
-                $builder
-                    ->messageArgument()
-                    ->expectedWhen(fn($value, array $args) => $value < $args[0])
-                    ->withParameterElement('min', 0)
-            )
-            ->successProvider(DataProvider::TYPE_INTEGER);
-        $builder->run();
-    }
-    public function testMinimum(): void
-    {
-        $builder = $this->builder();
-        $builder
-            ->testStaticConstructor()
-            ->arguments(
-                $builder
-                    ->evaluatedArgument()
-                    ->success(fn($value) => PHP_INT_MIN, fn($value) => $value !== PHP_INT_MIN)
-                    ->error(fn($value) => PHP_INT_MAX, fn($value) => $value !== PHP_INT_MAX),
-                $builder
-                    ->messageArgument()
-                    ->expectedWhen(fn($value, array $args) => $value < $args[0])
-                    ->withParameterElement('min', 0)
-            )
-            ->successProvider(DataProvider::TYPE_INTEGER);
-        $builder->run();
-    }
-
-    public function testAssertMaximum(): void
-    {
-        $builder = $this->builder();
-        $builder
-            ->test()
-            ->arguments(
-                $builder
-                    ->evaluatedArgument()
-                    ->success(fn($value) => PHP_INT_MAX, fn($value) => $value !== PHP_INT_MAX)
-                    ->error(fn($value) => PHP_INT_MIN, fn($value) => $value !== PHP_INT_MIN),
-                $builder
-                    ->messageArgument()
-                    ->expectedWhen(fn($value, array $args) => $value > $args[0])
-                    ->withParameterElement('max', 0)
-            )
-            ->successProvider(DataProvider::TYPE_INTEGER);
-        $builder->run();
-    }
-
-    public function testMaximum(): void
-    {
-        $builder = $this->builder();
-        $builder
-            ->testStaticConstructor()
-            ->arguments(
-                $builder
-                    ->evaluatedArgument()
-                    ->success(fn($value) => PHP_INT_MAX, fn($value) => $value !== PHP_INT_MAX)
-                    ->error(fn($value) => PHP_INT_MIN, fn($value) => $value !== PHP_INT_MIN),
-                $builder
-                    ->messageArgument()
-                    ->expectedWhen(fn($value, array $args) => $value > $args[0])
-                    ->withParameterElement('max', 0)
-            )
-            ->successProvider(DataProvider::TYPE_INTEGER);
-        $builder->run();
     }
 
     public function testAssertMultipleOf(): void

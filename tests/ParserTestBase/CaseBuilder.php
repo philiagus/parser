@@ -24,7 +24,9 @@ class CaseBuilder
     /** @var TestInstance[] */
     private array $tests = [];
 
-    public function __construct()
+    public function __construct(
+        private readonly string $coveredClass
+    )
     {
         self::$totalNumberCreated++;
     }
@@ -52,6 +54,11 @@ class CaseBuilder
         }
 
         return $this->tests[] = new TestInstance($parserCreation, $methodName);
+    }
+
+    private function getTargetClassName(): string
+    {
+        return $this->coveredClass;
     }
 
     public function parserArgument(): Argument\Parser
@@ -113,7 +120,7 @@ class CaseBuilder
     public function fixedArgument(mixed ...$arguments): Argument\Fixed
     {
         $result = new Argument\Fixed();
-        foreach($arguments as $arg) {
+        foreach ($arguments as $arg) {
             $result->success($arg);
         }
         return $result;
@@ -122,20 +129,6 @@ class CaseBuilder
     public function dataProviderArgument(int $flags = DataProvider::TYPE_ALL): Argument\Generated
     {
         return new Argument\Generated($flags);
-    }
-
-    private function getTargetClassName(): string
-    {
-        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
-        $testClass = $trace[2]['class'];
-        $reflection = new \ReflectionClass($testClass);
-        $attributes = $reflection->getAttributes(CoversClass::class);
-        if(empty($attributes)) {
-            Assert::fail("Class $testClass does not define a covered class");
-        }
-        /** @var CoversClass $attribute */
-        $attribute = $attributes[0]->newInstance();
-        return $attribute->className();
     }
 
     public function testStaticConstructor(): TestInstance

@@ -20,6 +20,6 @@ abstract class ParserTestBase extends TestBase
 
     public function builder(): CaseBuilder
     {
-        return new CaseBuilder();
+        return new CaseBuilder($this::getCoveredClass());
     }
 }

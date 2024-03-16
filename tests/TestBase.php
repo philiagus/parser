@@ -13,11 +13,11 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test;
 
 use Philiagus\DataProvider\DataProvider;
-use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Result;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -38,13 +38,15 @@ class TestBase extends TestCase
             ->provide();
     }
 
-    protected function prophesizeUncalledParser(): Parser
+    public static function getCoveredClass(): string
     {
-        $parser = $this->prophesize(Parser::class);
-        $parser->parse(Argument::any())->shouldNotBeCalled();
-        $parser->parse(Argument::any())->shouldNotBeCalled();
+        $reflection = new \ReflectionClass(static::class);
+        $covers = $reflection->getAttributes(CoversClass::class);
+        if (empty($covers)) {
+            self::fail('Covered class of ' . static::class . ' cannot be determined');
+        }
 
-        return $parser->reveal();
+        return $covers[0]->newInstance()->className();
     }
 
     protected static function prophesizeParserStatic(array $inputResultParis): Parser
@@ -53,12 +55,14 @@ class TestBase extends TestCase
 
             public function __construct(
                 private readonly array $pairs
-            ) {}
+            )
+            {
+            }
 
             #[\Override] public function parse(Contract\Subject $subject): Contract\Result
             {
-                foreach($this->pairs as [$from, $to]) {
-                    if($subject->getValue() === $from) {
+                foreach ($this->pairs as [$from, $to]) {
+                    if ($subject->getValue() === $from) {
                         return new Result($subject, $to, []);
                     }
                 }
@@ -68,12 +72,21 @@ class TestBase extends TestCase
         };
     }
 
+    protected function prophesizeUncalledParser(): Parser
+    {
+        $parser = $this->prophesize(Parser::class);
+        $parser->parse(Argument::any())->shouldNotBeCalled();
+        $parser->parse(Argument::any())->shouldNotBeCalled();
+
+        return $parser->reveal();
+    }
+
     protected function prophesizeParser(array $inputResultPairs): Parser
     {
         $parser = $this->prophesize(Parser::class);
         foreach ($inputResultPairs as $pair) {
             if (!is_array($pair)) {
-                $pair = (array) $pair;
+                $pair = (array)$pair;
             }
             if (count($pair) === 1) {
                 $pair[1] = $pair[0];

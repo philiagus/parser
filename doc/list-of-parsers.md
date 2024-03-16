@@ -16,8 +16,9 @@ Here you can find a short overview of all the parsers provided with this package
     values that reach this parser are the same as the first provided value
 - `Philiagus\Parser\Parser\Assert\AssertFloat` for `float`
 
-    Asserts the value to be a float. This explicitly excludes NAN, INF and -INF
-    You can define further assertions on the float value (such as min and max)
+    Asserts the value to be a float. This explicitly excludes NAN on principle and INF/-INF by default
+    
+    You can define further assertions on the float value (such as min and max).
 - `Philiagus\Parser\Parser\Assert\AssertInfinite` for `INF|-INF`
 
     Asserts that the provided value is INF or -INF. You can limit it to either by
