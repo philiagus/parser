@@ -1,11 +1,11 @@
 # Migration document
 ## v1.2.0 to v2.0.0
 
-**This is a major rewrite of the entire Parser structure, naming and behaviour. In addition, we dropped support for PHP 7.2 and moved all the way up to PHP 8.1**
+**This is a major rewrite of the entire Parser structure, naming and behaviour. In addition, we dropped support for PHP 7.2 and moved all the way up to PHP 8.3**
 
 This means that the best update strategy would be to check every location where you are using the parsers and correspondingly migrate to the new phrasing and setup.
 
-Noteable fundamental changes are:
+Notable fundamental changes are:
 - Parsers are no longer called with a value and a path - these elements have been combined into a Subject value (see `Philiagus\Parser\Contract\Subject`)
 - The result of a parser is no longer just the value - instead it is a Result object (see `Philiagus\Parser\Contract\Result`)
   - You can retreive the value of the result via `->getValue()`
