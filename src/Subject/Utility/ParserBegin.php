@@ -20,7 +20,7 @@ use Philiagus\Parser\Contract;
  *
  * @package Subject\Utility
  */
-class ParserBegin extends Subject
+readonly class ParserBegin extends Subject
 {
 
     public function __construct(Contract\Subject $originalSubject, string $description)

@@ -24,7 +24,7 @@ use Philiagus\Parser\Contract;
 class IgnoreInput extends Base\Parser
 {
 
-    private function __construct(private readonly mixed $value)
+    protected function __construct(private readonly mixed $value)
     {
     }
 

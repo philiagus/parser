@@ -17,6 +17,7 @@ use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Stringify;
+use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionClass;
 use ReflectionObject;
 
@@ -24,7 +25,7 @@ trait OverwritableTypeErrorMessageTestTrait
 {
     abstract public static function provideInvalidTypesAndParser(): array;
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidTypesAndParser')]
+    #[DataProvider('provideInvalidTypesAndParser')]
     public function testSetTypeErrorMessageDefaultMessage($invalidValue, \Closure $parser): void
     {
         $parser = $parser($invalidValue);
@@ -61,7 +62,7 @@ trait OverwritableTypeErrorMessageTestTrait
 
     abstract public static function fail(string $message): never;
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidTypesAndParser')]
+    #[DataProvider('provideInvalidTypesAndParser')]
     public function testSetTypeErrorMessageOverwrittenMessage($invalidValue, \Closure $parser): void
     {
         $parser = $parser($invalidValue);

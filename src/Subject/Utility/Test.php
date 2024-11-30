@@ -22,7 +22,7 @@ use Philiagus\Parser\Contract;
  *
  * @package Subject\Utility
  */
-class Test extends Subject
+readonly class Test extends Subject
 {
 
     public function __construct(

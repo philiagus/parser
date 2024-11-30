@@ -25,12 +25,12 @@ use Philiagus\Parser\Subject\Root;
  *
  * @package Base
  */
-abstract class Subject implements Contract\Subject
+readonly abstract class Subject implements Contract\Subject
 {
 
     protected bool $throwOnError;
 
-    protected Contract\Subject $root;
+    protected Contract\Subject\Memory $memory;
 
     /**
      * Creates a new instance of the Subject
@@ -66,15 +66,21 @@ abstract class Subject implements Contract\Subject
      *                                $throwOnError is set to TRUE by default.
      */
     protected function __construct(
-        protected readonly ?Contract\Subject $sourceSubject,
-        protected readonly string            $description,
-        protected readonly mixed             $value,
-        protected readonly bool              $isUtilitySubject,
-        ?bool                              $throwOnError
+        protected ?Contract\Subject $sourceSubject,
+        protected string            $description,
+        protected mixed             $value,
+        protected bool              $isUtilitySubject,
+        ?bool                       $throwOnError
     )
     {
+        $this->memory = $this->sourceSubject?->getFullMemory() ?? new Subject\Memory();
         $this->throwOnError = $throwOnError ?? $this->sourceSubject?->throwOnError() ?? true;
-        $this->root = $this->sourceSubject?->getRoot() ?? $this;
+    }
+
+    /** @inheritDoc */
+    public function getFullMemory(): Contract\Subject\Memory
+    {
+        return $this->memory;
     }
 
     /** @inheritDoc */
@@ -177,8 +183,20 @@ abstract class Subject implements Contract\Subject
     }
 
     /** @inheritDoc */
-    #[\Override] public function getRoot(): Contract\Subject
+    public function getMemory(object $of, mixed $default = null): mixed
     {
-        return $this->root;
+        return $this->memory->get($of, $default);
+    }
+
+    /** @inheritDoc */
+    public function setMemory(object $of, mixed $value): void
+    {
+        $this->memory->set($of, $value);
+    }
+
+    /** @inheritDoc */
+    public function hasMemory(object $of): bool
+    {
+        return $this->memory->has($of);
     }
 }

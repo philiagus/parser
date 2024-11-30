@@ -19,7 +19,7 @@ use Philiagus\Parser\Test\OverwritableTypeErrorMessageTestTrait;
 use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Test\ValidValueParserTestTrait;
 
-abstract class AbstractNumberTest extends ParserTestBase
+abstract class NumberTestBase extends ParserTestBase
 {
     use ChainableParserTestTrait, ValidValueParserTestTrait, InvalidValueParserTestTrait, OverwritableTypeErrorMessageTestTrait;
 

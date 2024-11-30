@@ -34,31 +34,13 @@ class AssertJSONString extends Parser
 
     private string $invalidJSONMessage = 'Provided string is not a valid JSON: {message}';
 
-    private function __construct() {}
+    protected function __construct()
+    {
+    }
 
     public static function new(): static
     {
         return new static();
-    }
-
-
-    /** @inheritDoc */
-    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
-    {
-        $value = $builder->getValue();
-        if (!is_string($value)) {
-            $this->logTypeError($builder);
-        } else if (!json_validate($value)) {
-            $builder->logErrorStringify(
-                $this->invalidJSONMessage,
-                [
-                    'message' => json_last_error_msg(),
-                    'code' => json_last_error()
-                ]
-            );
-        }
-
-        return $builder->createResultUnchanged();
     }
 
     /**
@@ -80,6 +62,25 @@ class AssertJSONString extends Parser
         $this->invalidJSONMessage = $message;
 
         return $this;
+    }
+
+    /** @inheritDoc */
+    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
+    {
+        $value = $builder->getValue();
+        if (!is_string($value)) {
+            $this->logTypeError($builder);
+        } else if (!json_validate($value)) {
+            $builder->logErrorStringify(
+                $this->invalidJSONMessage,
+                [
+                    'message' => json_last_error_msg(),
+                    'code' => json_last_error()
+                ]
+            );
+        }
+
+        return $builder->createResultUnchanged();
     }
 
     /** @inheritDoc */

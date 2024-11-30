@@ -20,7 +20,7 @@ use Philiagus\Parser\Util\Stringify;
  *
  * @package Subject
  */
-class Root extends Subject
+readonly class Root extends Subject
 {
 
     public function __construct(mixed $value, ?string $description = null, bool $throwOnError = true)

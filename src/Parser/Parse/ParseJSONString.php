@@ -36,7 +36,7 @@ class ParseJSONString extends Base\Parser
     private ?int $maxDepth = null;
     private ?bool $bigintAsString = null;
 
-    private function __construct()
+    protected function __construct()
     {
     }
 
@@ -128,9 +128,8 @@ class ParseJSONString extends Base\Parser
         }
 
         $options = JSON_THROW_ON_ERROR;
-        if ($this->bigintAsString) {
+        if ($this->bigintAsString)
             $options |= JSON_BIGINT_AS_STRING;
-        }
 
         try {
             $result = json_decode(

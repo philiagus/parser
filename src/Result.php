@@ -28,7 +28,7 @@ use Philiagus\Parser\Util\Stringify;
  * @see self::getValue()
  * @see self::isSuccess()
  */
-class Result extends Subject implements Contract\Result
+readonly class Result extends Subject implements Contract\Result
 {
 
     /**
@@ -39,9 +39,9 @@ class Result extends Subject implements Contract\Result
      *                        result value, given that its content is not to be used
      */
     public function __construct(
-        Contract\Subject       $subject,
-        mixed                  $resultValue,
-        private readonly array $errors
+        Contract\Subject $subject,
+        mixed            $resultValue,
+        private array    $errors
     )
     {
         parent::__construct($subject, '', $resultValue, true, null);

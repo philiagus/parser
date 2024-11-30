@@ -36,7 +36,7 @@ class OverwriteErrors extends Base\Parser
     private string $message;
     private Parser $parser;
 
-    private function __construct(string $message, Parser $parser)
+    protected function __construct(string $message, Parser $parser)
     {
         $this->message = $message;
         $this->parser = $parser;

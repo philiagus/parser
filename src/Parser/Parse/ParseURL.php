@@ -47,7 +47,7 @@ class ParseURL extends Base\Parser
 
     private string $invalidStringExceptionMessage = 'The provided string could not be parsed as a url';
 
-    private function __construct()
+    protected function __construct()
     {
     }
 

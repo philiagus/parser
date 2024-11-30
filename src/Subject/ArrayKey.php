@@ -20,7 +20,7 @@ use Philiagus\Parser\Contract;
  *
  * @package Subject
  */
-class ArrayKey extends Subject
+readonly class ArrayKey extends Subject
 {
     public function __construct(Contract\Subject $sourceSubject, private readonly int|string $arrayKey)
     {

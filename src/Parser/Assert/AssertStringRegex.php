@@ -47,7 +47,7 @@ class AssertStringRegex extends Base\Parser
     /** @var Parser[] */
     private array $numberMatchesParsers = [];
 
-    private function __construct(string $pattern, string $errorMessage)
+    protected function __construct(string $pattern, string $errorMessage)
     {
         $this->setPattern($pattern, $errorMessage);
     }

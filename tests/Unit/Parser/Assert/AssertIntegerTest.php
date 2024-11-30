@@ -21,7 +21,7 @@ use Philiagus\Parser\Test\ValidValueParserTestTrait;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(AssertInteger::class)]
-class AssertIntegerTest extends AbstractNumberTest
+class AssertIntegerTest extends NumberTestBase
 {
 
     protected static function getSuccessDataProviderUnion(): int

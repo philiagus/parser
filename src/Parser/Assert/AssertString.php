@@ -36,7 +36,7 @@ class AssertString extends Base\Parser
     /** @var \SplDoublyLinkedList<\Closure> */
     private \SplDoublyLinkedList $assertionList;
 
-    private function __construct()
+    protected function __construct()
     {
         $this->assertionList = new \SplDoublyLinkedList();
     }

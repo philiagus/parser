@@ -13,9 +13,10 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Contract\Chainable;
-use Philiagus\Parser\Contract\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Contract\Result;
+use Philiagus\Parser\Contract\Subject;
+use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Parser\Extract\Append;
 
 /**
@@ -28,15 +29,12 @@ use Philiagus\Parser\Parser\Extract\Append;
  * @see Append
  * @see Chainable::thenAppendTo()
  */
-final class Unique implements Parser
+readonly final class Unique implements Parser
 {
 
-    private array $encounteredValues = [];
-    private ?Subject $currentRoot = null;
-
     private function __construct(
-        private readonly Parser $parser,
-        private readonly bool   $same,
+        private Parser        $parser,
+        private bool|\Closure $comparison,
     )
     {
     }
@@ -51,29 +49,46 @@ final class Unique implements Parser
         return new self($parser, false);
     }
 
+    /**
+     * @param \Closure $closure
+     * @param Parser $parser
+     * @return self
+     */
+    public static function comparingBy(\Closure $closure, Parser $parser): self
+    {
+        return new self($parser, $closure);
+    }
+
     #[\Override] public function parse(Subject $subject): Result
     {
-        $root = $subject->getRoot();
-        if ($this->currentRoot !== $root) {
-            $this->currentRoot = $root;
-            $this->encounteredValues = [];
-        }
-
+        $found = false;
         $value = $subject->getValue();
-        if ($this->same) {
-            $found = in_array($value, $this->encounteredValues, true);
-        } else {
-            $found = false;
-            foreach ($this->encounteredValues as $encounteredValue) {
+        $encounteredValues = $subject->getMemory($this, []);
+        if ($this->comparison === true) {
+            $found = in_array($value, $encounteredValues, true);
+        } elseif ($this->comparison === false) {
+            foreach ($encounteredValues as $encounteredValue) {
                 if ($value == $encounteredValue) {
                     $found = true;
                     break;
                 }
             }
+        } else {
+            try {
+                foreach ($encounteredValues as $encounteredValue) {
+                    if (($this->comparison)($encounteredValue, $value)) {
+                        $found = true;
+                        break;
+                    }
+                }
+            } catch (\Throwable $e) {
+                throw new ParserConfigurationException("Comparison closure for Unique threw an exception", $e);
+            }
         }
 
         if (!$found) {
-            $this->encounteredValues[] = $value;
+            $encounteredValues[] = $value;
+            $subject->setMemory($this, [...$encounteredValues, $value]);
             $this->parser->parse($subject);
         }
 

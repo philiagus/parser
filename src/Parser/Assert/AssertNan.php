@@ -29,7 +29,7 @@ class AssertNan extends Base\Parser
     /** @var string */
     private string $errorMessage;
 
-    private function __construct(string $message)
+    protected function __construct(string $message)
     {
         $this->errorMessage = $message;
     }

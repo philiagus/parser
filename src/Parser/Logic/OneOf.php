@@ -42,7 +42,7 @@ class OneOf extends Base\Parser
     private bool $defaultSet = false;
     private mixed $default = null;
 
-    private function __construct()
+    protected function __construct()
     {
     }
 

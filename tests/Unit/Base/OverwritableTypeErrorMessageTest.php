@@ -22,10 +22,8 @@ use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Stringify;
 use PHPUnit\Framework\Assert;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(OverwritableTypeErrorMessage::class)]
 class OverwritableTypeErrorMessageTest extends TestCase
 {
     public static function provideCases(): \Generator

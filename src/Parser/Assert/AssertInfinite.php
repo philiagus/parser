@@ -31,7 +31,7 @@ class AssertInfinite extends Base\Parser
     private ?bool $assertPositive = null;
     private ?string $assertSignMessage = null;
 
-    private function __construct(string $exceptionMessage)
+    protected function __construct(string $exceptionMessage)
     {
         $this->errorMessage = $exceptionMessage;
     }

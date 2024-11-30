@@ -17,7 +17,7 @@ use Philiagus\Parser\Parser\Assert\AssertFloat;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(AssertFloat::class)]
-class AssertFloatTest extends AbstractNumberTest
+class AssertFloatTest extends NumberTestBase
 {
 
     public static function provideInvalidValuesAndParsers(): array

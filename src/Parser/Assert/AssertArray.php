@@ -253,7 +253,8 @@ class AssertArray extends Base\Parser
     }
 
     /**
-     * Specifies that this array is expected to have numeric keys starting at 0, incrementing by 1
+     * Specifies that this array is expected to be a list, that is to say:
+     * Having numeric keys starting at 0, incrementing by 1
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
      * - value: The value currently being parsed
@@ -348,7 +349,7 @@ class AssertArray extends Base\Parser
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
      * - value: The value currently being parsed
-     * - key: The key that was found missing
+     * - key: The surplus key found
      *
      * @param array<int|string> $expectedKeys
      * @param bool $expectAlreadyTargetedKeys If true the list of already touched array keys are added

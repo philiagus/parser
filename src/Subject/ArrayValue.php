@@ -20,12 +20,12 @@ use Philiagus\Parser\Contract;
  *
  * @package Subject
  */
-class ArrayValue extends Subject
+readonly class ArrayValue extends Subject
 {
     public function __construct(
-        Contract\Subject $sourceSubject,
+        Contract\Subject            $sourceSubject,
         private readonly string|int $arrayKey,
-        mixed $value
+        mixed                       $value
     )
     {
         parent::__construct($sourceSubject, (string)$arrayKey, $value, false, null);

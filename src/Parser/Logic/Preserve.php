@@ -29,7 +29,7 @@ class Preserve extends Base\Parser
 
     private Parser $around;
 
-    private function __construct(Parser $around)
+    protected function __construct(Parser $around)
     {
         $this->around = $around;
     }

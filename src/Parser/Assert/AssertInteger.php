@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser\Assert;
 
-use Philiagus\Parser\Base;
-use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
 use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Util\Stringify;

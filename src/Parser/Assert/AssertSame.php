@@ -24,13 +24,11 @@ use Philiagus\Parser\Contract;
  */
 class AssertSame extends Base\Parser
 {
-    private ?Contract\Subject $lastRoot = null;
 
-    private function __construct(
-        private mixed $value,
-        private bool $valueSet,
-        private bool $resetOnSubjectChange,
-        private readonly mixed $errorMessage
+    protected function __construct(
+        private mixed           $value,
+        private readonly bool   $compareToMemory,
+        private readonly string $errorMessage
     )
     {
     }
@@ -52,7 +50,7 @@ class AssertSame extends Base\Parser
      */
     public static function value(mixed $value, string $errorMessage = 'The value is not the same as the expected value'): static
     {
-        return new static($value, true, false, $errorMessage);
+        return new static($value, false, $errorMessage);
     }
 
     /**
@@ -72,24 +70,25 @@ class AssertSame extends Base\Parser
      */
     public static function asFirstValue(string $errorMessage = 'The value is not the same everytime'): static
     {
-        return new static(null, false, true, $errorMessage);
+        return new static(null, true, $errorMessage);
     }
 
     /** @inheritDoc */
     #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
     {
-        if($this->resetOnSubjectChange) {
-            $root = $builder->getSubject()->getRoot();
-            if($root !== $this->lastRoot) {
-                $this->valueSet = false;
-                $this->value = null;
-                $this->lastRoot = $root;
+        if ($this->compareToMemory) {
+            $subject = $builder->getSubject();
+            if (!$subject->hasMemory($this)) {
+                $subject->setMemory($this, $subject->getValue());
+                return $builder->createResultUnchanged();
             }
+
+            $compareAgainst = $subject->getMemory($this);
+        } else {
+            $compareAgainst = $this->value;
         }
-        if(!$this->valueSet) {
-            $this->value = $builder->getValue();
-            $this->valueSet = true;
-        } else if ($builder->getValue() !== $this->value) {
+
+        if ($builder->getValue() !== $compareAgainst) {
             $builder->logErrorStringify(
                 $this->errorMessage,
                 ['expected' => $this->value]

@@ -29,7 +29,7 @@ class AssertBoolean extends Base\Parser
     use OverwritableTypeErrorMessage;
 
 
-    private function __construct()
+    protected function __construct()
     {
     }
 

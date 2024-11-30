@@ -24,7 +24,7 @@ use Philiagus\Parser\Contract;
 class Any extends Base\Parser
 {
 
-    private function __construct()
+    protected function __construct()
     {
     }
 

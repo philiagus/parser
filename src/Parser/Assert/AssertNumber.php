@@ -43,10 +43,32 @@ class AssertNumber extends Base\Parser
     /** @var \SplDoublyLinkedList<callable> */
     protected \SplDoublyLinkedList $assertionList;
 
-    private function __construct()
+    protected function __construct()
     {
         $this->assertionList = new \SplDoublyLinkedList();
     }
+
+    /**
+     * Asserts that lower < value < upper
+     *
+     * The message is processed using Stringify::parseMessage and receives the following elements:
+     * - value: The value currently being parsed
+     * - lower: The defined lower boundary value
+     * - upper: The defined upper boundary value
+     *
+     * @param int|float $lower
+     * @param int|float $upper
+     * @param string $errorMessage
+     *
+     * @return $this
+     * @see Stringify::parseMessage()
+     * @see self::assertBetween()
+     */
+    public static function between(int|float $lower, int|float $upper, string $errorMessage = self::BETWEEN_ERROR_MESSAGE): static
+    {
+        return static::new()->assertBetween($lower, $upper, $errorMessage);
+    }
+
     /**
      * Asserts that lower < value < upper
      *
@@ -84,25 +106,28 @@ class AssertNumber extends Base\Parser
         return $this;
     }
 
+    public static function new(): static
+    {
+        return new static();
+    }
+
     /**
-     * Asserts that lower < value < upper
+     * Asserts that the value is < the provided boundary
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
      * - value: The value currently being parsed
      * - lower: The defined lower boundary value
-     * - upper: The defined upper boundary value
      *
-     * @param int|float $lower
      * @param int|float $upper
      * @param string $errorMessage
      *
      * @return $this
      * @see Stringify::parseMessage()
-     * @see self::assertBetween()
+     * @see self::assertLowerThan()
      */
-    public static function between(int|float $lower, int|float $upper, string $errorMessage = self::BETWEEN_ERROR_MESSAGE): static
+    public static function lowerThan(int|float $upper, string $errorMessage = self::LT_ERROR_MESSAGE): static
     {
-        return static::new()->assertBetween($lower, $upper, $errorMessage);
+        return static::new()->assertLowerThan($upper, $errorMessage);
     }
 
     /**
@@ -138,22 +163,22 @@ class AssertNumber extends Base\Parser
     }
 
     /**
-     * Asserts that the value is < the provided boundary
+     * Asserts that the value is > the provided boundary
      *
      * The message is processed using Stringify::parseMessage and receives the following elements:
      * - value: The value currently being parsed
      * - lower: The defined lower boundary value
      *
-     * @param int|float $upper
+     * @param int|float $lower
      * @param string $errorMessage
      *
      * @return $this
      * @see Stringify::parseMessage()
-     * @see self::assertLowerThan()
+     * @see self::assertGreaterThan()
      */
-    public static function lowerThan(int|float $upper, string $errorMessage = self::LT_ERROR_MESSAGE): static
+    public static function greaterThan(int|float $lower, string $errorMessage = self::GT_ERROR_MESSAGE): static
     {
-        return static::new()->assertLowerThan($upper, $errorMessage);
+        return static::new()->assertGreaterThan($lower, $errorMessage);
     }
 
     /**
@@ -186,25 +211,6 @@ class AssertNumber extends Base\Parser
         };
 
         return $this;
-    }
-
-    /**
-     * Asserts that the value is > the provided boundary
-     *
-     * The message is processed using Stringify::parseMessage and receives the following elements:
-     * - value: The value currently being parsed
-     * - lower: The defined lower boundary value
-     *
-     * @param int|float $lower
-     * @param string $errorMessage
-     *
-     * @return $this
-     * @see Stringify::parseMessage()
-     * @see self::assertGreaterThan()
-     */
-    public static function greaterThan(int|float $lower, string $errorMessage = self::GT_ERROR_MESSAGE): static
-    {
-        return static::new()->assertGreaterThan($lower, $errorMessage);
     }
 
     /**
@@ -258,11 +264,6 @@ class AssertNumber extends Base\Parser
         };
 
         return $this;
-    }
-
-    public static function new(): static
-    {
-        return new static();
     }
 
     /**
@@ -376,16 +377,6 @@ class AssertNumber extends Base\Parser
         return $this;
     }
 
-    /**
-     * Returns true if the type matches
-     * @param mixed $value
-     * @return bool
-     */
-    protected function isSupportedType(mixed $value): bool
-    {
-        return is_int($value) || (is_float($value) && !is_nan($value) && !is_infinite($value));
-    }
-
     /** @inheritDoc */
     #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
     {
@@ -399,6 +390,16 @@ class AssertNumber extends Base\Parser
         }
 
         return $builder->createResultUnchanged();
+    }
+
+    /**
+     * Returns true if the type matches
+     * @param mixed $value
+     * @return bool
+     */
+    protected function isSupportedType(mixed $value): bool
+    {
+        return is_int($value) || (is_float($value) && !is_nan($value) && !is_infinite($value));
     }
 
     /** @inheritDoc */

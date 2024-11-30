@@ -21,7 +21,7 @@ The most important things to keep in mind are:
 - [What is a Subject](./subject.md)
 
 There are also a few fundamental design rules:
-- The action of executing a parser _should not_ alter the internal state of the parser. The behaviour of a parser instance _should not_ change, no matter how often that parser is executed. If an internal state is needed, please tie it to the `$subject->getRoot()`.
+- The action of executing a parser _should not_ alter the internal state of the parser. The behaviour of a parser instance _should not_ change, no matter how often that parser is executed. There should be no internal state needed. If the parser needs to remember something, the `Subject->getMemory`/`Subject->getMemory`/`Subject->hasMemory` methods should be used.
 - Parsers are configured using fluent methods, whose naming follows this pattern:
   - **Sequence control methods** are methods that define the order in which to do things in the parser. Any call to these methods must add another thing to do in the parsers internal list of commands. This can be achieved by adding the "things to do" to an array and looping through that array when executing the parser
     - `assert*`: Configures a rule that is asserted

@@ -11,6 +11,8 @@ The parameters are:
 - `$description`: This optional parameter allows you to set a description of the subject. This string is used in the error path on parsing errors. This value is defaulted to the type of the variable provided to the Subject
 - `$throwOnError`: If true the parsers abort on the first error and a `ParsingException` is thrown (`throw mode`). If false the Parsers accumulate errors (`gather mode`) and the result of the `parse` method will contain the list of errors
 
+The subject also provides an internal memory, shared among all subjects that derive from the root subject of the parser execution. This can be used to preserve data between parser executions within the same subject stem.
+
 ## Derived subjects
 
 The parsers come with a list of subjects to be used in the parsers.

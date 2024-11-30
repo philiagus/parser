@@ -16,13 +16,14 @@ use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Subject\Root;
 use Philiagus\Parser\Test\SubjectTestBase;
+use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\Util;
 use Philiagus\Parser\Util\Stringify;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(Root::class)]
 #[CoversClass(Subject::class)]
-class RootTest extends SubjectTestBase
+class RootTest extends TestBase
 {
     public static function provideConstructorArguments(): array
     {

@@ -37,7 +37,7 @@ class AssertStdClass extends Base\Parser
     /** @var \SplDoublyLinkedList<\Closure> */
     protected \SplDoublyLinkedList $assertionList;
 
-    final private function __construct()
+    protected function __construct()
     {
         $this->assertionList = new \SplDoublyLinkedList();
     }
@@ -128,7 +128,7 @@ class AssertStdClass extends Base\Parser
         $this->assertionList[] = static function (ResultBuilder $builder, array &$targetedProperties) use ($property, $default, $parser): void {
             $value = $builder->getValue();
             $propertyExists = property_exists($value, $property);
-            if($propertyExists) {
+            if ($propertyExists) {
                 $targetedProperties[] = $property;
                 $propertyValue = $value->$property;
             } else {
@@ -369,14 +369,14 @@ class AssertStdClass extends Base\Parser
      */
     public function assertNoSurplusPropertiesExist(
         array  $expectedPropertyNames = [],
-        bool $expectAlreadyTouchedNames = true,
+        bool   $expectAlreadyTouchedNames = true,
         string $surplusPropertyMessage = 'Object contains unexpected property {property}'
     ): static
     {
         self::assertValueIsListOfPropertyNames($expectedPropertyNames);
         $this->assertionList[] = static function (ResultBuilder $builder, array &$expectedProperties)
         use ($expectedPropertyNames, $expectAlreadyTouchedNames, $surplusPropertyMessage): void {
-            if($expectAlreadyTouchedNames) {
+            if ($expectAlreadyTouchedNames) {
                 $expectedPropertyNames = [...$expectedPropertyNames, ...$expectedProperties];
             }
 

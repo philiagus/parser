@@ -27,7 +27,6 @@ class ParserMock implements Parser
 
     private array $expectedCalls = [];
     private array $currentExpectedCalls = [];
-    private ?Contract\Subject $currentRoot = null;
 
     public function error(?ErrorCollection $errorCollection = null): self
     {
@@ -77,9 +76,9 @@ class ParserMock implements Parser
 
     public function parse(Contract\Subject $subject): Contract\Result
     {
-        if($subject->getRoot() !== $this->currentRoot) {
-            $this->currentRoot = $subject->getRoot();
+        if(!$subject->hasMemory($this)) {
             $this->currentExpectedCalls = $this->expectedCalls;
+            $subject->setMemory($this, true);
         }
         $next = array_shift($this->currentExpectedCalls);
         if (!$next) {

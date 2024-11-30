@@ -30,7 +30,7 @@ class Chain implements Contract\Parser, Contract\Chainable
     /** @var Contract\Parser[] */
     private array $parsers;
 
-    private function __construct(Contract\Parser ...$parsers)
+    protected function __construct(Contract\Parser ...$parsers)
     {
         $this->parsers = $parsers;
     }
@@ -57,13 +57,5 @@ class Chain implements Contract\Parser, Contract\Chainable
         }
 
         return $subject;
-    }
-
-    /** @inheritDoc */
-    #[\Override] public function then(Contract\Parser $parser): Chain
-    {
-        $this->parsers[] = $parser;
-
-        return $this;
     }
 }

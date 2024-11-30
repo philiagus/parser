@@ -20,7 +20,7 @@ use Philiagus\Parser\Contract;
  *
  * @package Subject
  */
-class PropertyNameValuePair extends Subject
+readonly class PropertyNameValuePair extends Subject
 {
     public function __construct(Contract\Subject $sourceSubject, string $propertyName, mixed $propertyValue)
     {

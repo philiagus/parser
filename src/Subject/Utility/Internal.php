@@ -22,7 +22,7 @@ use Philiagus\Parser\Contract;
  *
  * @package Subject\Utility
  */
-class Internal extends Subject
+readonly class Internal extends Subject
 {
 
     public function __construct(Contract\Subject $sourceSubject, string $description, mixed $value)

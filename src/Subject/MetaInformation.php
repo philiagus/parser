@@ -21,7 +21,7 @@ use Philiagus\Parser\Contract;
  *
  * @package Subject
  */
-class MetaInformation extends Subject
+readonly class MetaInformation extends Subject
 {
 
     public function __construct(Contract\Subject $sourceSubject, string $description, mixed $value)

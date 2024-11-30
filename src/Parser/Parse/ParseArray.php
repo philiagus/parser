@@ -256,7 +256,7 @@ class ParseArray extends AssertArray
         foreach ($expectedKeys as $key)
             $keys[] = self::normalizeArrayKey($key);
         $this->assertionList[] = static function (ResultBuilder $builder, array $targetedKeys) use ($keys, $expectAlreadyTargetedKeys): void {
-            if($expectAlreadyTargetedKeys) {
+            if ($expectAlreadyTargetedKeys) {
                 $keys = [...$keys, ...$targetedKeys];
             }
             $newValue = array_intersect_key($builder->getValue(), array_flip($keys));

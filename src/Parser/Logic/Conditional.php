@@ -45,7 +45,7 @@ class Conditional extends Base\Parser
     private mixed $default = null;
     private string $errorMessage = 'Provided value does not match any of the expected formats or values';
 
-    private function __construct()
+    protected function __construct()
     {
     }
 

@@ -36,9 +36,8 @@ class ConvertToDateTime extends Base\Parser
     private bool $immutable = false;
     private ?DateTimeZone $timezone = null;
 
-    private function __construct()
+    protected function __construct()
     {
-
     }
 
     /**
@@ -55,7 +54,7 @@ class ConvertToDateTime extends Base\Parser
     public static function fromSourceFormat(
         string       $format,
         DateTimeZone $timeZone = null,
-        string $errorMessage = 'The provided string is not in the format {format.raw}'
+        string       $errorMessage = 'The provided string is not in the format {format.raw}'
     ): static
     {
         return static::new()->setStringSourceFormat($format, $timeZone, $errorMessage);
@@ -80,7 +79,7 @@ class ConvertToDateTime extends Base\Parser
     public function setStringSourceFormat(
         string       $format,
         DateTimeZone $timeZone = null,
-        string $errorMessage = 'The provided string is not in the format {format.raw}'
+        string       $errorMessage = 'The provided string is not in the format {format.raw}'
     ): static
     {
         $this->sourceFormat = $format;

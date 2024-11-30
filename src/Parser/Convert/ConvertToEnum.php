@@ -36,7 +36,7 @@ class ConvertToEnum extends Base\Parser
      * @param bool|null $nameFirst
      * @param bool|null $valueFirst
      */
-    private function __construct(
+    protected function __construct(
         private readonly string $className,
         private readonly ?bool  $nameFirst,
         private readonly ?bool  $valueFirst
@@ -164,8 +164,6 @@ class ConvertToEnum extends Base\Parser
     private function executeByName(int|string $name): ?\UnitEnum
     {
         if (is_int($name)) return null;
-        /** @var \UnitEnum $value */
-        /** @noinspection PhpUndefinedMethodInspection */
         foreach (($this->className)::cases() as $value) {
             if ($value->name === $name) {
                 return $value;
@@ -177,7 +175,6 @@ class ConvertToEnum extends Base\Parser
 
     private function executeByValue(mixed $value): ?\BackedEnum
     {
-        /** @noinspection PhpUndefinedMethodInspection */
         return ($this->className)::tryFrom($value);
     }
 

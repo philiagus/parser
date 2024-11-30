@@ -34,7 +34,7 @@ class ConvertToArray extends Base\Parser
      */
     private string|int|null $targetedArrayKey = null;
 
-    private function __construct()
+    protected function __construct()
     {
     }
 

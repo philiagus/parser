@@ -37,7 +37,7 @@ class Append extends Base\Parser
      *
      * @param mixed $target
      */
-    private function __construct(null|array|\ArrayAccess &$target)
+    protected function __construct(null|array|\ArrayAccess &$target)
     {
         $target ??= [];
         $this->target =& $target;

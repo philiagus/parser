@@ -32,7 +32,7 @@ class Assign extends Base\Parser
     /** @var mixed */
     private mixed $target;
 
-    private function __construct(&$target)
+    protected function __construct(&$target)
     {
         $this->target = &$target;
     }

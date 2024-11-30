@@ -26,7 +26,7 @@ class Stringify
     private const int MAX_STRING_LENGTH = 32;
 
     /**
-     * List of control characters that can be replaced with corresponding unicode characters
+     * List of control characters that can be replaced with corresponding Unicode characters
      */
     private const array CONTROL_REPLACERS = [
         "\x00" => '␀', "\x01" => '␁', "\x02" => '␂', "\x03" => '␃', "\x04" => '␄',

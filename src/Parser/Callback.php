@@ -37,9 +37,9 @@ class Callback extends Parser
 {
     private ?string $errorMessage = null;
 
-    private function __construct(
+    protected function __construct(
         private readonly \Closure $closure,
-        private readonly string  $description
+        private readonly string   $description
     )
     {
     }

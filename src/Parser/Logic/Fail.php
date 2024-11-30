@@ -35,7 +35,7 @@ final readonly class Fail implements Parser
      *
      * @param string $message
      */
-    private function __construct(private string $message)
+    protected function __construct(private string $message)
     {
     }
 

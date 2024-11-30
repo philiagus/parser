@@ -88,9 +88,7 @@ class ParseStdClass extends AssertStdClass
 
             if (!$cloned) return;
 
-            $builder->setValue(
-                'defaulted with object', $value
-            );
+            $builder->setValue('defaulted with object', $value);
         };
 
         return $this;

@@ -17,7 +17,7 @@ use Philiagus\Parser\Parser\Assert\AssertNumber;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(AssertNumber::class)]
-class AssertNumberTest extends AbstractNumberTest
+class AssertNumberTest extends NumberTestBase
 {
 
     public static function provideInvalidValuesAndParsers(): array

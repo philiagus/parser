@@ -16,6 +16,7 @@ use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Contract\Subject;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Result;
+use Philiagus\Parser\Test\Mock\SubjectMock;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\Util;
 use Philiagus\Parser\Base;
@@ -26,10 +27,8 @@ class ResultTest extends TestBase
 {
     public function testSuccess(): void
     {
-        $subject = $this->prophesize(Subject::class);
-        $subject->getRoot()->willReturn($root = $this->prophesize(Subject::class)->reveal());
-        $subject->throwOnError()->willReturn(true);
-        $subject = $subject->reveal();
+        $subject = new SubjectMock();
+        $memory = $subject->getFullMemory();
         $value = new \stdClass();
         $result = new Result(
             $subject,
@@ -37,19 +36,16 @@ class ResultTest extends TestBase
             []
         );
         self::assertTrue($result->isSuccess());
-        self::assertSame($root, $result->getRoot());
         self::assertFalse($result->hasErrors());
         self::assertEmpty($result->getErrors());
+        self::assertSame($memory, $result->getFullMemory());
         self::assertSame($value, $result->getValue());
     }
 
     public function testError(): void
     {
-        $subject = $this->prophesize(Subject::class);
-        $subject->getRoot()->willReturn($root = $this->prophesize(Subject::class)->reveal());
-        $subject->throwOnError()->willReturn(true);
-        $subject->getPathAsString(true)->shouldBeCalledOnce()->willReturn('SUB');
-        $subject = $subject->reveal();
+        $subject = new SubjectMock();
+        $memory = $subject->getFullMemory();
         $result = new Result(
             $subject,
             null,
@@ -59,17 +55,14 @@ class ResultTest extends TestBase
         self::assertFalse($result->isSuccess());
         self::assertTrue($result->hasErrors());
         self::assertSame($errors, $result->getErrors());
-        self::assertSame($root, $result->getRoot());
+        self::assertSame($memory, $result->getFullMemory());
         self::expectException(\LogicException::class);
         $result->getValue();
     }
 
     public function testExceptionOnNonError(): void
     {
-        $subject = $this->prophesize(Subject::class);
-        $subject->getRoot()->willReturn($this->prophesize(Subject::class)->reveal());
-        $subject->throwOnError()->willReturn(true);
-        $subject = $subject->reveal();
+        $subject = new SubjectMock();
         self::expectException(\LogicException::class);
         /** @noinspection PhpParamsInspection */
         new Result($subject, null, ['invalid']);

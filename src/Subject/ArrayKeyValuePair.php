@@ -14,12 +14,13 @@ namespace Philiagus\Parser\Subject;
 
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
+
 /**
  * A subject representing the combination of an array key and its assigned value in the shape `[key, value]`
  *
  * @package Subject
  */
-class ArrayKeyValuePair extends Subject
+readonly class ArrayKeyValuePair extends Subject
 {
     public function __construct(Contract\Subject $sourceSubject, private readonly int|string $arrayKey, mixed $arrayValue)
     {

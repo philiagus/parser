@@ -52,4 +52,9 @@ class InternalTest extends SubjectTestBase
         self::assertSame([$root, $subject], $subject->getSubjectChain(true));
         self::assertSame([$root], $subject->getSubjectChain(false));
     }
+
+    protected function createChained(\Philiagus\Parser\Contract\Subject $parent): \Philiagus\Parser\Contract\Subject
+    {
+        return new Internal($parent, 'description', 'value');
+    }
 }

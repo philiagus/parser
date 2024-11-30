@@ -35,7 +35,7 @@ class ParseBase64String extends Base\Parser
     private bool $strict = true;
     private string $notBase64ExceptionMessage = 'The provided value is not a valid base64 sequence';
 
-    private function __construct()
+    protected function __construct()
     {
     }
 

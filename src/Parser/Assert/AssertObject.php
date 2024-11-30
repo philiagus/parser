@@ -32,7 +32,7 @@ class AssertObject extends Base\Parser
     /** @var callable[] */
     private array $checks = [];
 
-    private function __construct()
+    protected function __construct()
     {
     }
 

@@ -23,20 +23,13 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(Subject::class)]
 class PropertyValueTest extends SubjectTestBase
 {
-    public static function provideConstructorArguments(): array
+    public static function provideConstructorArguments(): \Generator
     {
-        $types = DataProvider::TYPE_STRING;
-
-        $cases = [];
-        foreach ((new DataProvider($types))->provide(false) as $keyName => $keyValue) {
-            foreach ((new DataProvider())->provide(false) as $valueName => $valueValue) {
-                foreach (['nothrow' => false, 'throw' => true] as $throwName => $throwValue) {
-                    $cases["$throwName $keyName $valueName"] = [$keyValue, $valueValue, $throwValue];
-                }
+        foreach ((new DataProvider())->provide(false) as $valueName => $valueValue) {
+            foreach (['nothrow' => false, 'throw' => true] as $throwName => $throwValue) {
+                yield "$throwName $valueName" => ['property name', $valueValue, $throwValue];
             }
         }
-
-        return $cases;
     }
 
     #[\PHPUnit\Framework\Attributes\DataProvider('provideConstructorArguments')]
@@ -57,5 +50,10 @@ class PropertyValueTest extends SubjectTestBase
         self::assertSame("ROOT$expectedPathPart", $subject->getPathAsString(false));
         self::assertSame([$root, $subject], $subject->getSubjectChain(true));
         self::assertSame([$root, $subject], $subject->getSubjectChain(false));
+    }
+
+    protected function createChained(\Philiagus\Parser\Contract\Subject $parent): \Philiagus\Parser\Contract\Subject
+    {
+        return new PropertyValue($parent, 'prop name', 'prop value');
     }
 }

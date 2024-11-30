@@ -15,6 +15,7 @@ namespace Philiagus\Parser\Test\Unit;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Test\Mock\SubjectMock;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Util\Stringify;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -32,7 +33,7 @@ class ErrorTest extends TestBase
     public function test(bool $hasSourceThrowable, bool $hasSourceErrors): void
     {
         $createError = function () {
-            $subject = $this->prophesize(Subject::class)->reveal();
+            $subject = new SubjectMock();
 
             return new Error($subject, 'MESSAGE');
         };
@@ -44,11 +45,7 @@ class ErrorTest extends TestBase
         }
 
         $source = $hasSourceThrowable ? new \Exception() : null;
-        $subject = $this->prophesize(Subject::class);
-        $subject->getPathAsString(true)->willReturn('PATH TRUE');
-        $subject->getPathAsString(false)->willReturn('PATH FALSE');
-        $subject->getValue()->willReturn('THE VALUE');
-        $subject = $subject->reveal();
+        $subject = new SubjectMock();
         $error1 = new Error(
             $subject,
             $message = Stringify::parseMessage(
@@ -88,7 +85,7 @@ class ErrorTest extends TestBase
 
     public function testExceptionOnNonError(): void
     {
-        $subject = $this->prophesize(Subject::class)->reveal();
+        $subject = new SubjectMock();
         self::expectException(\LogicException::class);
         new Error($subject, 'msg', sourceErrors: ['lol']);
     }

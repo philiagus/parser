@@ -45,9 +45,8 @@ class ConvertToString extends Base\Parser
     private null|string $numberFormat_ThousandsSeparator = null;
     private null|string $numberFormat_DecimalSeparator = null;
 
-    private function __construct()
+    protected function __construct()
     {
-
     }
 
     public static function new(): static
@@ -106,7 +105,7 @@ class ConvertToString extends Base\Parser
     public function setImplodeOfArrays(
         string  $delimiter,
         ?Parser $elementConverter = null,
-        string $errorMessage = 'A value at index {key} was not of type string but of type {culprit.type}'
+        string  $errorMessage = 'A value at index {key} was not of type string but of type {culprit.type}'
     ): static
     {
         $this->implode = [$delimiter, $errorMessage, $elementConverter];

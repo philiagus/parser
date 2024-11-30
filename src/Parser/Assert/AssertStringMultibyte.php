@@ -41,7 +41,7 @@ class AssertStringMultibyte extends Base\Parser
     /** @var string[]|null */
     private ?array $availableEncodings = ['auto'];
 
-    private function __construct()
+    protected function __construct()
     {
         $this->assertionList = new \SplDoublyLinkedList();
     }
@@ -183,8 +183,8 @@ class AssertStringMultibyte extends Base\Parser
      * @return $this
      */
     public function giveSubstring(
-        int            $start,
-        ?int           $length,
+        int    $start,
+        ?int   $length,
         Parser $stringParser
     ): static
     {

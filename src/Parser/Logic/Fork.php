@@ -36,7 +36,7 @@ class Fork extends Base\Parser
      *
      * @param Parser ...$parsers
      */
-    private function __construct(Parser ...$parsers)
+    protected function __construct(Parser ...$parsers)
     {
         $this->parsers = $parsers;
     }
