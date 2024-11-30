@@ -270,9 +270,8 @@ class AssertStdClass extends Base\Parser
     {
         $this->assertionList[] = static function (ResultBuilder $builder) use ($integerParser): void {
             $count = 0;
-            foreach ($builder->getValue() as $_) {
+            foreach ($builder->getValue() as $ignored)
                 $count++;
-            }
             $builder->unwrapResult(
                 $integerParser->parse(
                     new MetaInformation($builder->getSubject(), 'property count', $count)
@@ -341,9 +340,8 @@ class AssertStdClass extends Base\Parser
     protected static function extractPropertyNames(\stdClass $object): array
     {
         $result = [];
-        foreach ($object as $key => $_) {
+        foreach ($object as $key => $_)
             $result[] = $key;
-        }
 
         return $result;
     }
@@ -374,7 +372,7 @@ class AssertStdClass extends Base\Parser
     ): static
     {
         self::assertValueIsListOfPropertyNames($expectedPropertyNames);
-        $this->assertionList[] = static function (ResultBuilder $builder, array &$expectedProperties)
+        $this->assertionList[] = static function (ResultBuilder $builder, array $expectedProperties)
         use ($expectedPropertyNames, $expectAlreadyTouchedNames, $surplusPropertyMessage): void {
             if ($expectAlreadyTouchedNames) {
                 $expectedPropertyNames = [...$expectedPropertyNames, ...$expectedProperties];

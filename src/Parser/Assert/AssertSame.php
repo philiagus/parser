@@ -26,7 +26,7 @@ class AssertSame extends Base\Parser
 {
 
     protected function __construct(
-        private mixed           $value,
+        private readonly mixed  $value,
         private readonly bool   $compareToMemory,
         private readonly string $errorMessage
     )

@@ -127,7 +127,7 @@ class ParseJSONString extends Base\Parser
             return $builder->createResultUnchanged();
         }
 
-        $options = JSON_THROW_ON_ERROR;
+        $options = 0;
         if ($this->bigintAsString)
             $options |= JSON_BIGINT_AS_STRING;
 
@@ -136,7 +136,7 @@ class ParseJSONString extends Base\Parser
                 $value,
                 $this->objectAsArrays ?? false,
                 $this->maxDepth ?? 512,
-                $options
+                JSON_THROW_ON_ERROR | $options
             );
         } catch (JsonException $jsonException) {
             $builder->logErrorStringify(

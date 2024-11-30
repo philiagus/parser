@@ -22,7 +22,7 @@ use Philiagus\Parser\Contract;
  */
 readonly class ArrayKeyValuePair extends Subject
 {
-    public function __construct(Contract\Subject $sourceSubject, private readonly int|string $arrayKey, mixed $arrayValue)
+    public function __construct(Contract\Subject $sourceSubject, private int|string $arrayKey, mixed $arrayValue)
     {
         parent::__construct($sourceSubject, (string)$arrayKey, [$arrayKey, $arrayValue], false, null);
     }

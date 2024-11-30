@@ -37,7 +37,7 @@ class AssertStringRegex extends Base\Parser
     private ?bool $offsetCapture = null;
     private ?bool $unmatchedAsNull = null;
 
-    /** @var Parser */
+    /** @var Parser[] */
     private array $matchesParser = [];
 
     private string $pattern;

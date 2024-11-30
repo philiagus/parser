@@ -24,7 +24,7 @@ readonly class ArrayValue extends Subject
 {
     public function __construct(
         Contract\Subject            $sourceSubject,
-        private readonly string|int $arrayKey,
+        private string|int $arrayKey,
         mixed                       $value
     )
     {
