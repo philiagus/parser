@@ -12,17 +12,10 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Base\Subject;
 
-use Philiagus\Parser\Contract;
-use Philiagus\Parser\Contract\Subject;
-
 /**
  * Memory is a utility class used by the subject to store values associated with objects (most times parsers)
- *
- * @see Subject::setMemory()
- * @see Subject::getMemory()
- * @see Subject::hasMemory()
  */
-class Memory implements Contract\Subject\Memory
+class Memory
 {
     private \SplObjectStorage $memory;
 
@@ -32,9 +25,16 @@ class Memory implements Contract\Subject\Memory
     }
 
     /**
+     * Returns the memory associated to the provided object or the default
+     * if no memory is associated with it.
+     *
+     * If the associated value is `null` this method will treat it as not set
+     * and return the default
+     *
      * @param object $of
      * @param mixed|null $default
      * @return mixed
+     * @see self::set()
      */
     public function get(object $of, mixed $default = null): mixed
     {
@@ -46,9 +46,12 @@ class Memory implements Contract\Subject\Memory
     }
 
     /**
+     * Associates the provided value with the $of object so that it can be recalled
+     * later using get
      * @param object $of
      * @param mixed $value
      * @return void
+     * @see self::get()
      */
     public function set(object $of, mixed $value): void
     {
@@ -56,6 +59,9 @@ class Memory implements Contract\Subject\Memory
     }
 
     /**
+     * Returns true if any data has been associated with the provided object.
+     * If the associated data is `null` this method will also return `false`
+     *
      * @param object $of
      * @return bool
      */

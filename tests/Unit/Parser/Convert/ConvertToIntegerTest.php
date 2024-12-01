@@ -36,7 +36,7 @@ class ConvertToIntegerTest extends TestBase
     {
         return (new DataProvider(~DataProvider::TYPE_INTEGER & ~DataProvider::TYPE_FLOAT & ~DataProvider::TYPE_STRING))
             ->filter(
-                fn($value) => !is_numeric($value) || $value != (int) $value
+                fn($value) => !is_numeric($value) || $value != (int)$value
             )
             ->addCase('float', 1.2)
             ->addCase('float string', '1.2')
@@ -57,7 +57,7 @@ class ConvertToIntegerTest extends TestBase
             ->addCase('float -23.0', -23.0)
             ->addCase('string 0', '0000')
             ->map(
-                fn($value) => [$value, fn() => ConvertToInteger::new(), (int) $value]
+                fn($value) => [$value, fn() => ConvertToInteger::new(), (int)$value]
             )
             ->provide(false);
     }

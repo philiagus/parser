@@ -13,18 +13,29 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit;
 
 use Philiagus\DataProvider\DataProvider;
-use Philiagus\Parser\Contract\Subject;
+use Philiagus\Parser\Base;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\Mock\SubjectMock;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\Util;
-use Philiagus\Parser\Base;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(Result::class)]
 class ResultTest extends TestBase
 {
+    public static function provideConstructorArguments(): array
+    {
+        $cases = [];
+        foreach ((new DataProvider())->provide(false) as $name => $value) {
+            foreach (['nothrow' => false, 'throw' => true] as $throwName => $throwValue) {
+                $cases["$throwName $name"] = [$value, $throwValue];
+            }
+        }
+
+        return $cases;
+    }
+
     public function testSuccess(): void
     {
         $subject = new SubjectMock();
@@ -67,19 +78,6 @@ class ResultTest extends TestBase
         /** @noinspection PhpParamsInspection */
         new Result($subject, null, ['invalid']);
     }
-
-    public static function provideConstructorArguments(): array
-    {
-        $cases = [];
-        foreach ((new DataProvider())->provide(false) as $name => $value) {
-            foreach (['nothrow' => false, 'throw' => true] as $throwName => $throwValue) {
-                $cases["$throwName $name"] = [$value, $throwValue];
-            }
-        }
-
-        return $cases;
-    }
-
 
     #[\PHPUnit\Framework\Attributes\DataProvider('provideConstructorArguments')]
     public function testCreation(mixed $value, bool $throwOnError): void

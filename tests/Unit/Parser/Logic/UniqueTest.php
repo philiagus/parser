@@ -78,7 +78,8 @@ class UniqueTest extends TestBase
         self::assertSame($expected, $result);
     }
 
-    public function testClosureException() {
+    public function testClosureException()
+    {
         $appender = Append::to($result);
         $parser = AssertArray::new()
             ->giveEachValue(

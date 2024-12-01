@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Subject\Utility;
 
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Contract;
 
 /**
  * A utility subject to represent that start of a parser
@@ -23,9 +22,9 @@ use Philiagus\Parser\Contract;
 readonly class ParserBegin extends Subject
 {
 
-    public function __construct(Contract\Subject $originalSubject, string $description)
+    public function __construct(Subject $original, string $description)
     {
-        parent::__construct($originalSubject, $description, $originalSubject->getValue(), true, null);
+        parent::__construct($original, $description, $original->getValue(), true, null);
     }
 
     /** @inheritDoc */

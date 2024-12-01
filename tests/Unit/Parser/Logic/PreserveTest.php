@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser\Logic;
 
 use Philiagus\DataProvider\DataProvider;
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Parser\Logic\Preserve;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Subject\Utility\Forwarded;
@@ -28,6 +28,15 @@ class PreserveTest extends ParserTestBase
 
     use ChainableParserTestTrait;
 
+    public static function provideValidValuesAndParsersAndResults(): array
+    {
+        return (new DataProvider())
+            ->map(static fn($value) => [$value, fn() => Preserve::around(
+                (new ParserMock())->acceptAnything()
+            ), $value])
+            ->provide(false);
+    }
+
     public function testAround(): void
     {
         $builder = $this->builder();
@@ -39,12 +48,12 @@ class PreserveTest extends ParserTestBase
                     ->expectSingleCall(
                         fn($value) => $value,
                         Forwarded::class,
-                        result: fn(Contract\Subject $subject) => new Result($subject, !$subject->getValue(), [])
+                        result: fn(Subject $subject) => new Result($subject, !$subject->getValue(), [])
                     )
             )
             ->provider(
                 DataProvider::TYPE_ALL,
-                successValidator: function (Contract\Subject $subject, Contract\Result $result) {
+                successValidator: function (Subject $subject, Result $result) {
                     if (!DataProvider::isSame($subject->getValue(), $result->getValue())) {
                         return ['Result value does not match'];
                     }
@@ -53,14 +62,5 @@ class PreserveTest extends ParserTestBase
                 }
             );
         $builder->run();
-    }
-
-    public static function provideValidValuesAndParsersAndResults(): array
-    {
-        return (new DataProvider())
-            ->map(static fn($value) => [$value, fn() => Preserve::around(
-                (new ParserMock())->acceptAnything()
-            ), $value])
-            ->provide(false);
     }
 }

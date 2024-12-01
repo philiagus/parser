@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Subject\Utility;
 
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Contract;
 
 /**
  * A utility subject used when a value is internally changed by a parser to represent that
@@ -25,9 +24,9 @@ use Philiagus\Parser\Contract;
 readonly class Internal extends Subject
 {
 
-    public function __construct(Contract\Subject $sourceSubject, string $description, mixed $value)
+    public function __construct(Subject $source, string $description, mixed $value)
     {
-        parent::__construct($sourceSubject, $description, $value, true, null);
+        parent::__construct($source, $description, $value, true, null);
     }
 
     /** @inheritDoc */

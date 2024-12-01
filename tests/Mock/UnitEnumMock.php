@@ -12,7 +12,8 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\Mock;
 
-enum UnitEnumMock {
+enum UnitEnumMock
+{
 
     case VALUE1;
     case VALUE2;

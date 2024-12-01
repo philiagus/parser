@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser\Logic;
 
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
@@ -55,7 +55,7 @@ final readonly class Fail implements Parser
     }
 
     /** @inheritDoc */
-    #[\Override] public function parse(Contract\Subject $subject): Contract\Result
+    #[\Override] public function parse(Subject $subject): Result
     {
         $error = Error::createUsingStringify($subject, $this->message);
         if ($subject->throwOnError()) {

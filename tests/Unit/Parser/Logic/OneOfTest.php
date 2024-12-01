@@ -14,8 +14,8 @@ namespace Philiagus\Parser\Test\Unit\Parser\Logic;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Contract;
 use Philiagus\Parser\Parser\Logic\OneOf;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\ParserTestBase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -24,6 +24,14 @@ use PHPUnit\Framework\Attributes\CoversClass;
 class OneOfTest extends ParserTestBase
 {
     use ChainableParserTestTrait;
+
+    public static function provideValidValuesAndParsersAndResults(): array
+    {
+        return (new DataProvider())
+            ->filter(fn($value) => $value == $value)
+            ->map(static fn($value) => [$value, fn($value) => OneOf::new()->equalTo($value), $value])
+            ->provide(false);
+    }
 
     public function testNullOr(): void
     {
@@ -176,7 +184,7 @@ class OneOfTest extends ParserTestBase
             )
             ->provider(
                 DataProvider::TYPE_ALL,
-                successValidator: function (Contract\Subject $subject, Contract\Result $result, array $generatedArguments) {
+                successValidator: function (Subject $subject, Result $result, array $generatedArguments) {
                     if (!DataProvider::isSame($generatedArguments[0], $result->getValue())) {
                         return ['Result value does not match'];
                     }
@@ -186,13 +194,5 @@ class OneOfTest extends ParserTestBase
             );
 
         $builder->run();
-    }
-
-    public static function provideValidValuesAndParsersAndResults(): array
-    {
-        return (new DataProvider())
-            ->filter(fn($value) => $value == $value)
-            ->map(static fn($value) => [$value, fn($value) => OneOf::new()->equalTo($value), $value])
-            ->provide(false);
     }
 }

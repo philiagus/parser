@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\ParserTestBase;
 
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 
 class TestCase
@@ -21,13 +21,13 @@ class TestCase
     public static int $totalRun = 0;
 
     public function __construct(
-        private readonly bool             $success,
-        private readonly bool             $throw,
-        private readonly Contract\Subject $subject,
-        private readonly \Closure         $parserBuilder,
-        private readonly \Closure         $resultValidator,
-        private readonly ErrorCollection  $errorCollection,
-        private readonly array            $usedArguments
+        private readonly bool            $success,
+        private readonly bool            $throw,
+        private readonly Subject         $subject,
+        private readonly \Closure        $parserBuilder,
+        private readonly \Closure        $resultValidator,
+        private readonly ErrorCollection $errorCollection,
+        private readonly array           $usedArguments
     )
     {
 

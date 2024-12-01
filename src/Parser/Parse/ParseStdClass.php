@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Parse;
 
 use Philiagus\Parser\Base\Parser\ResultBuilder;
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception;
 use Philiagus\Parser\Parser\Assert\AssertStdClass;
@@ -291,7 +291,7 @@ class ParseStdClass extends AssertStdClass
     }
 
     /** @inheritDoc */
-    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
+    #[\Override] protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'parse stdClass';
     }

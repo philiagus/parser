@@ -12,10 +12,9 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\ParserTestBase;
 
-use Philiagus\Parser\Contract;
 use Philiagus\Parser\Error;
-use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Result;
 
 class ErrorCollection
 {
@@ -43,18 +42,18 @@ class ErrorCollection
             $errors[] = 'Exception is not a ParsingException, it is ' . get_class($e);
         }
         $foundError = false;
-        foreach($this->errors as [$compareType, $string]) {
-            if($compareType === '=') {
+        foreach ($this->errors as [$compareType, $string]) {
+            if ($compareType === '=') {
                 $foundError = $message === $string;
-            } elseif($compareType === 'regex') {
+            } elseif ($compareType === 'regex') {
                 $foundError = (bool)preg_match($string, $message);
             }
-            if($foundError) break;
+            if ($foundError) break;
         }
         if (!$foundError) {
             if ($this->errors) {
                 $messageSubpart = ", but expected:";
-                foreach($this->errors as [$compareType, $string])
+                foreach ($this->errors as [$compareType, $string])
                     $messageSubpart .= PHP_EOL . "\t\t$compareType: " . $string;
             } else {
                 $messageSubpart = ' as none were expected';
@@ -65,38 +64,38 @@ class ErrorCollection
         return $errors;
     }
 
-    public function assertResult(Contract\Result $result): array
+    public function assertResult(Result $result): array
     {
         $errors = array_map(fn(Error $error) => $error->getMessage(), $result->getErrors());
         $unfoundErrors = [];
         $searchErrors = $this->errors;
-        foreach($errors as $error) {
+        foreach ($errors as $error) {
             $found = false;
-            foreach($searchErrors as $index => [$compareType, $string]) {
-                if($compareType === '=') {
+            foreach ($searchErrors as $index => [$compareType, $string]) {
+                if ($compareType === '=') {
                     $found = $string === $error;
-                } else if($compareType === 'regex') {
+                } else if ($compareType === 'regex') {
                     $found = (bool)preg_match($string, $error);
                 }
-                if($found) {
+                if ($found) {
                     unset($searchErrors[$index]);
                     break;
                 }
             }
-            if(!$found) {
+            if (!$found) {
                 $unfoundErrors[] = $error;
             }
         }
         $messages = [];
-        if($unfoundErrors) {
+        if ($unfoundErrors) {
             $message = 'Error messages created but not expected:';
-            foreach($unfoundErrors as $unfoundError)
+            foreach ($unfoundErrors as $unfoundError)
                 $message .= "\n\t\t- " . $unfoundError;
             $messages[] = $message;
         }
-        if($searchErrors) {
+        if ($searchErrors) {
             $message = 'Error messages expected but not received:';
-            foreach($searchErrors as [$compareType, $string])
+            foreach ($searchErrors as [$compareType, $string])
                 $message .= "\n\t\t- $compareType:" . $string;
             $messages[] = $message;
         }

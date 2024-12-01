@@ -14,8 +14,8 @@ namespace Philiagus\Parser\Test\ParserTestBase;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Stringify;
 
 class TestInstance
@@ -63,7 +63,7 @@ class TestInstance
         $this->success[$trace['line']][] = [
             'source' => fn() => $values,
             'success' => $expectSuccess ?? fn() => true,
-            'result' => $successValidator ?? function (Contract\Subject $start, Contract\Result $result): array {
+            'result' => $successValidator ?? function (Subject $start, Result $result): array {
                     if (!DataProvider::isSame($start->getValue(), $result->getValue())) {
                         return ['Result has been altered from ' . Stringify::stringify($start->getValue()) . ' to ' . Stringify::stringify($result->getValue())];
                     }
@@ -76,7 +76,7 @@ class TestInstance
     }
 
     public function successProvider(
-        int $flags,
+        int      $flags,
         \Closure $resultAssertion = null
     ): self
     {
@@ -84,8 +84,8 @@ class TestInstance
         $this->success[$trace['line']][] = [
             'source' => static fn() => (new DataProvider($flags))->provide(false),
             'success' => static fn() => true,
-            'result' => static function (Contract\Subject $start, Contract\Result $result) use ($resultAssertion): array {
-            $startValue = $start->getValue();
+            'result' => static function (Subject $start, Result $result) use ($resultAssertion): array {
+                $startValue = $start->getValue();
                 $resultValue = $result->getValue();
                 if ($resultAssertion) {
                     if (!$resultAssertion($startValue, $resultValue)) {
@@ -112,7 +112,7 @@ class TestInstance
         $this->success[$trace['line']][] = [
             'source' => static fn() => (new DataProvider($flags))->provide(false),
             'success' => $expectSuccess ?? static fn() => true,
-            'result' => $successValidator ?? static function (Contract\Subject $start, Contract\Result $result): array {
+            'result' => $successValidator ?? static function (Subject $start, Result $result): array {
                     if (!DataProvider::isSame($start->getValue(), $result->getValue())) {
                         return ['Result has been altered from ' . Stringify::stringify($start->getValue()) . ' to ' . Stringify::stringify($result->getValue())];
                     }
@@ -134,7 +134,7 @@ class TestInstance
         $this->success[$trace['line']][] = [
             'source' => fn() => [$value],
             'success' => $expectSuccess ?? fn() => true,
-            'result' => $successValidator ?? function (Contract\Subject $start, Contract\Result $result): array {
+            'result' => $successValidator ?? function (Subject $start, Result $result): array {
                     if (!DataProvider::isSame($start->getValue(), $result->getValue())) {
                         return ['Result has been altered from ' . Stringify::stringify($start->getValue()) . ' to ' . Stringify::stringify($result->getValue())];
                     }
@@ -254,7 +254,7 @@ class TestInstance
 
                                     return $parser;
                                 },
-                                $success ? $resultValidator : function (Contract\Subject $subject, Contract\Result $result): array {
+                                $success ? $resultValidator : function (Subject $subject, Result $result): array {
                                     $errors = [];
                                     if ($result->isSuccess()) $errors[] = 'Should be a success, but is error';
                                     if (empty($result->getErrors())) $errors[] = 'Errors should not be empty';

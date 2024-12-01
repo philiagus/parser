@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser\Parse;
 
 use Philiagus\DataProvider\DataProvider;
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Parser\Parse\ParseArray;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Subject\ArrayKey;
@@ -56,14 +56,14 @@ class ParseArrayTest extends ParserTestBase
                     ->expectMultipleCalls(
                         fn($value) => array_values($value),
                         ArrayValue::class,
-                        result: fn(Contract\Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
+                        result: fn(Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
                     )
             )
             ->values(
                 [
                     ['a' => 123, 'b' => 123, 'c' => 632],
                 ],
-                successValidator: function (Contract\Subject $start, Contract\Result $result): array {
+                successValidator: function (Subject $start, Result $result): array {
                     $expected = array_map(fn($value) => $value . 'f', $start->getValue());
                     $received = $result->getValue();
                     if ($expected != $received) {
@@ -96,7 +96,7 @@ class ParseArrayTest extends ParserTestBase
             )
             ->provider(
                 DataProvider::TYPE_ARRAY,
-                successValidator: static function (Contract\Subject $subject, Contract\Result $result, array $args): array {
+                successValidator: static function (Subject $subject, Result $result, array $args): array {
                     $expected = $subject->getValue();
                     if (!array_key_exists($args[0], $expected)) {
                         $expected[$args[0]] = $args[1];
@@ -122,7 +122,7 @@ class ParseArrayTest extends ParserTestBase
             )
             ->provider(
                 DataProvider::TYPE_ARRAY,
-                successValidator: static function (Contract\Subject $subject, Contract\Result $result, array $args): array {
+                successValidator: static function (Subject $subject, Result $result, array $args): array {
                     $expected = $subject->getValue() + $args[0];
                     if (!DataProvider::isSame($expected, $result->getValue())) {
                         return ['Result does not match expected result'];
@@ -141,7 +141,7 @@ class ParseArrayTest extends ParserTestBase
             ->test()
             ->provider(
                 DataProvider::TYPE_ARRAY,
-                successValidator: static function (Contract\Subject $subject, Contract\Result $result): array {
+                successValidator: static function (Subject $subject, Result $result): array {
                     $expected = array_values($subject->getValue());
                     if (!DataProvider::isSame($expected, $result->getValue())) {
                         return ['Result does not match expected result'];
@@ -164,14 +164,14 @@ class ParseArrayTest extends ParserTestBase
                     ->expectMultipleCalls(
                         fn($value) => array_keys($value),
                         ArrayKey::class,
-                        result: fn(Contract\Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
+                        result: fn(Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
                     )
             )
             ->values(
                 [
                     ['a' => 123, 'b' => 123, 'c' => 632],
                 ],
-                successValidator: function (Contract\Subject $start, Contract\Result $result): array {
+                successValidator: function (Subject $start, Result $result): array {
                     $expected = [];
                     foreach ($start->getValue() as $name => $value) {
                         $expected[$name . 'f'] = $value;
@@ -193,7 +193,7 @@ class ParseArrayTest extends ParserTestBase
                     ->expectMultipleCalls(
                         fn($value) => array_keys($value),
                         ArrayKey::class,
-                        result: fn(Contract\Subject $subject) => new Result($subject, null, [])
+                        result: fn(Subject $subject) => new Result($subject, null, [])
                     )
                     ->willBeCalledIf(fn($value) => !empty($value)),
                 $builder
@@ -236,7 +236,7 @@ class ParseArrayTest extends ParserTestBase
                     ->expectSingleCall(
                         fn($value, array $generatedValues) => $value[$generatedValues[0]],
                         ArrayValue::class,
-                        result: fn(Contract\Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
+                        result: fn(Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
                     )
                     ->willBeCalledIf(
                         fn($value, array $generatedValues) => array_key_exists($generatedValues[0], $value)
@@ -247,7 +247,7 @@ class ParseArrayTest extends ParserTestBase
                     ['a' => 123, 'b' => 234, 'c' => 345],
                     [],
                 ],
-                successValidator: function (Contract\Subject $subject, Contract\Result $result, array $methodArgs): array {
+                successValidator: function (Subject $subject, Result $result, array $methodArgs): array {
                     $expectedResult = $subject->getValue();
                     if (array_key_exists($methodArgs[0], $expectedResult)) {
                         $expectedResult[$methodArgs[0]] .= 'f';
@@ -283,7 +283,7 @@ class ParseArrayTest extends ParserTestBase
                     ->expectSingleCall(
                         fn($value, array $generatedValues) => $value[$generatedValues[0]],
                         ArrayValue::class,
-                        result: fn(Contract\Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
+                        result: fn(Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
                     )
                     ->willBeCalledIf(
                         fn($value, array $generatedValues) => array_key_exists($generatedValues[0], $value)
@@ -300,7 +300,7 @@ class ParseArrayTest extends ParserTestBase
                     ['a' => 123, 'b' => 234, 'c' => 345],
                     [],
                 ],
-                successValidator: function (Contract\Subject $subject, Contract\Result $result, array $methodArgs): array {
+                successValidator: function (Subject $subject, Result $result, array $methodArgs): array {
                     $expectedResult = $subject->getValue();
                     $expectedResult[$methodArgs[0]] .= 'f';
                     if ($result->getValue() !== $expectedResult) {
@@ -328,7 +328,7 @@ class ParseArrayTest extends ParserTestBase
             )
             ->provider(
                 DataProvider::TYPE_ARRAY,
-                successValidator: function (Contract\Subject $subject, Contract\Result $result, array $methodArgs): array {
+                successValidator: function (Subject $subject, Result $result, array $methodArgs): array {
                     $expectedResult = array_intersect_key($subject->getValue(), array_flip($methodArgs[0]));
                     if (!Util::isSame($result->getValue(), $expectedResult)) {
                         return [
@@ -353,7 +353,7 @@ class ParseArrayTest extends ParserTestBase
             )
             ->provider(
                 DataProvider::TYPE_ARRAY,
-                successValidator: function (Contract\Subject $subject, Contract\Result $result, array $methodArgs): array {
+                successValidator: function (Subject $subject, Result $result, array $methodArgs): array {
                     $expectedResult = array_intersect_key($subject->getValue(), array_flip($methodArgs[0]));
                     if (!Util::isSame($result->getValue(), $expectedResult)) {
                         return [

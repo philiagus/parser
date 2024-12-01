@@ -43,8 +43,8 @@ class MetaInformationTest extends SubjectTestBase
 
         $subject = new MetaInformation($root, 'DESCRIPTION', $value);
         Util::assertSame($value, $subject->getValue());
-        self::assertFalse($subject->isUtilitySubject());
-        self::assertSame($root, $subject->getSourceSubject());
+        self::assertFalse($subject->isUtility());
+        self::assertSame($root, $subject->getSource());
         self::assertSame('DESCRIPTION', $subject->getDescription());
         self::assertSame($throwOnError, $subject->throwOnError());
         self::assertSame("ROOT$expectedPathPart", $subject->getPathAsString(true));
@@ -53,7 +53,7 @@ class MetaInformationTest extends SubjectTestBase
         self::assertSame([$root, $subject], $subject->getSubjectChain(false));
     }
 
-    protected function createChained(\Philiagus\Parser\Contract\Subject $parent): \Philiagus\Parser\Contract\Subject
+    protected function createChained(Subject $parent): Subject
     {
         return new MetaInformation($parent, 'meta info', 'value');
     }

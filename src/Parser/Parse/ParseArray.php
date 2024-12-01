@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Parse;
 
 use Philiagus\Parser\Base\Parser\ResultBuilder;
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Parser\Assert\AssertArray;
 use Philiagus\Parser\Subject\ArrayKey;
@@ -22,7 +22,7 @@ use Philiagus\Parser\Util\Stringify;
 
 /**
  * Parser to not only validate an array but also alter it. This parser is an extension of the
- * Assert Array parser and allows to change individual values rather than just look at them.
+ * AssertArray parser and allows to change individual values rather than just look at them.
  *
  * @package Parser\Parse
  * @target-type array
@@ -267,7 +267,7 @@ class ParseArray extends AssertArray
     }
 
     /** @inheritDoc */
-    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
+    #[\Override] protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'parse array';
     }

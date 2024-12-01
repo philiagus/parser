@@ -15,9 +15,6 @@ namespace Philiagus\Parser\Test\Unit\Parser\Extract;
 use ArrayAccess;
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Exception\ParserConfigurationException;
-use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Exception\RuntimeParserConfigurationException;
 use Philiagus\Parser\Parser\Extract\Append;
 use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\TestBase;
@@ -29,6 +26,23 @@ use Prophecy\Argument;
 class AppendTest extends TestBase
 {
     use ValidValueParserTestTrait, ChainableParserTestTrait;
+
+    public static function provideValidValuesAndParsersAndResults(): array
+    {
+        return (new DataProvider())
+            ->map(
+                fn($value) => [
+                    $value,
+                    function () {
+                        $target = null;
+
+                        return Append::to($target);
+                    },
+                    $value,
+                ]
+            )
+            ->provide(false);
+    }
 
     #[\PHPUnit\Framework\Attributes\DataProvider('provideAnything')]
     public function testAppendsToAnything($value): void
@@ -58,22 +72,5 @@ class AppendTest extends TestBase
         $parser = Append::to($presetArrayAccess);
         $parser->parse(Subject::default($value));
         $parser->parse(Subject::default($value));
-    }
-
-    public static function provideValidValuesAndParsersAndResults(): array
-    {
-        return (new DataProvider())
-            ->map(
-                fn($value) => [
-                    $value,
-                    function () {
-                        $target = null;
-
-                        return Append::to($target);
-                    },
-                    $value,
-                ]
-            )
-            ->provide(false);
     }
 }

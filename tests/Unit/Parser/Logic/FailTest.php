@@ -14,7 +14,6 @@ namespace Philiagus\Parser\Test\Unit\Parser\Logic;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\Logic\Fail;
 use Philiagus\Parser\Test\ParserTestBase;

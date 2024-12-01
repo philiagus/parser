@@ -51,6 +51,19 @@ class ParseURLTest extends ParserTestBase
             ->provide(false);
     }
 
+    public static function provideMissingElementCases(): array
+    {
+        return [
+            'missing path' => ['https://example.org', 'Path'],
+            'missing user' => ['path', 'User'],
+            'missing password' => ['path', 'Password'],
+            'missing scheme' => ['path', 'Scheme'],
+            'missing host' => ['path', 'Host'],
+            'missing fragment' => ['path', 'Fragment'],
+            'missing port' => ['path', 'Port'],
+        ];
+    }
+
     public function testDefaultingOfEverythingExceptionPath(): void
     {
         ParseURL::new()
@@ -114,19 +127,6 @@ class ParseURLTest extends ParserTestBase
         ParseURL::new()
             ->setInvalidStringErrorMessage($msg)
             ->parse(Subject::default($value));
-    }
-
-    public static function provideMissingElementCases(): array
-    {
-        return [
-            'missing path' => ['https://example.org', 'Path'],
-            'missing user' => ['path', 'User'],
-            'missing password' => ['path', 'Password'],
-            'missing scheme' => ['path', 'Scheme'],
-            'missing host' => ['path', 'Host'],
-            'missing fragment' => ['path', 'Fragment'],
-            'missing port' => ['path', 'Port'],
-        ];
     }
 
     #[\PHPUnit\Framework\Attributes\DataProvider('provideMissingElementCases')]

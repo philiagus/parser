@@ -14,10 +14,11 @@ namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Parser\ResultBuilder;
-use Philiagus\Parser\Contract;
-use Philiagus\Parser\Contract\Error;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
+use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Stringify;
 
 /**
@@ -55,7 +56,7 @@ class OverwriteErrors extends Base\Parser
      *
      * @return static
      * @see Stringify::parseMessage()
-     * @see Error::getSourceErrors()
+     * @see Error::getSourceErrors
      */
     public static function withMessage(string $message, Parser $around): static
     {
@@ -63,7 +64,7 @@ class OverwriteErrors extends Base\Parser
     }
 
     /** @inheritDoc */
-    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
+    #[\Override] protected function execute(ResultBuilder $builder): Result
     {
         /** @var Error[] $errors */
         $errors = [];
@@ -83,7 +84,7 @@ class OverwriteErrors extends Base\Parser
     }
 
     /** @inheritDoc */
-    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
+    #[\Override] protected function getDefaultParserDescription(Subject $subject): string
     {
         return '';
     }

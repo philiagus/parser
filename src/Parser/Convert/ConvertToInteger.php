@@ -15,7 +15,8 @@ namespace Philiagus\Parser\Parser\Convert;
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
 use Philiagus\Parser\Base\Parser\ResultBuilder;
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Result;
 
 /**
  * Takes any input and attempts a loss free conversion of the provided value into a valid integer value
@@ -39,7 +40,7 @@ class ConvertToInteger extends Base\Parser
     }
 
     /** @inheritDoc */
-    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
+    #[\Override] protected function execute(ResultBuilder $builder): Result
     {
         $value = $builder->getValue();
         if (is_int($value)) {
@@ -87,7 +88,7 @@ class ConvertToInteger extends Base\Parser
     }
 
     /** @inheritDoc */
-    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
+    #[\Override] protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'convert to integer';
     }

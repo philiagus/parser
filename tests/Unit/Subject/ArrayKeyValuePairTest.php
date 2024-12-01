@@ -14,7 +14,6 @@ namespace Philiagus\Parser\Test\Unit\Subject;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Subject\ArrayKey;
 use Philiagus\Parser\Subject\ArrayKeyValuePair;
 use Philiagus\Parser\Test\SubjectTestBase;
 use Philiagus\Parser\Test\Util;
@@ -43,9 +42,9 @@ class ArrayKeyValuePairTest extends SubjectTestBase
 
         $subject = new ArrayKeyValuePair($root, $keyValue, $valueValue);
         Util::assertSame([$keyValue, $valueValue], $subject->getValue());
-        self::assertFalse($subject->isUtilitySubject());
-        self::assertSame($root, $subject->getSourceSubject());
-        self::assertSame((string) $keyValue, $subject->getDescription());
+        self::assertFalse($subject->isUtility());
+        self::assertSame($root, $subject->getSource());
+        self::assertSame((string)$keyValue, $subject->getDescription());
         self::assertSame($throwOnError, $subject->throwOnError());
         self::assertSame("ROOT$expectedPathPart", $subject->getPathAsString(true));
         self::assertSame("ROOT$expectedPathPart", $subject->getPathAsString(false));
@@ -53,7 +52,7 @@ class ArrayKeyValuePairTest extends SubjectTestBase
         self::assertSame([$root, $subject], $subject->getSubjectChain(false));
     }
 
-    protected function createChained(\Philiagus\Parser\Contract\Subject $parent): \Philiagus\Parser\Contract\Subject
+    protected function createChained(Subject $parent): Subject
     {
         return new ArrayKeyValuePair($parent, 'key', 'value');
     }

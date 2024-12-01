@@ -14,8 +14,9 @@ namespace Philiagus\Parser\Parser\Convert;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Parser\ResultBuilder;
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParserConfigurationException;
+use Philiagus\Parser\Result;
 
 /**
  * Parser used to convert a value to an element of a PHP enum
@@ -126,7 +127,7 @@ class ConvertToEnum extends Base\Parser
     }
 
     /** @inheritDoc */
-    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
+    #[\Override] protected function execute(ResultBuilder $builder): Result
     {
         $value = $builder->getValue();
 
@@ -179,7 +180,7 @@ class ConvertToEnum extends Base\Parser
     }
 
     /** @inheritDoc */
-    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
+    #[\Override] protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'ConvertToEnum';
     }

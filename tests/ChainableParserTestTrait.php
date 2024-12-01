@@ -17,8 +17,6 @@ use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
-use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Exception\RuntimeParserConfigurationException;
 use Philiagus\Parser\Result;
 use Prophecy\Argument;
 use SplDoublyLinkedList;
@@ -42,7 +40,7 @@ trait ChainableParserTestTrait
         /** @noinspection PhpParamsInspection */
         $thenParser
             ->parse(
-                Argument::that(function (Contract\Subject $subject) use ($expected) {
+                Argument::that(function (Subject $subject) use ($expected) {
                     $value = $subject->getValue();
                     if ($value instanceof DateTimeInterface && $expected instanceof DateTimeInterface) {
                         return $value::class === $expected::class &&
@@ -59,7 +57,7 @@ trait ChainableParserTestTrait
         $thenParser = $thenParser->reveal();
         $appendTarget2 = new SplDoublyLinkedList();
         $appendTarget3 = [];
-        /** @var Contract\Result $result */
+        /** @var Result $result */
         $result = $parser
             ->then($thenParser)
             ->thenAssignTo($assignTarget)
@@ -86,7 +84,7 @@ trait ChainableParserTestTrait
         /** @noinspection PhpParamsInspection */
         $thenParser
             ->parse(
-                Argument::that(function (Contract\Subject $subject) use ($expected) {
+                Argument::that(function (Subject $subject) use ($expected) {
                     $value = $subject->getValue();
                     if ($value instanceof DateTimeInterface && $expected instanceof DateTimeInterface) {
                         return $value::class === $expected::class &&
@@ -101,7 +99,7 @@ trait ChainableParserTestTrait
                 return new Result($args[0], $expectedResult, []);
             });
         $thenParser = $thenParser->reveal();
-        /** @var Contract\Result $result */
+        /** @var Result $result */
         $result = $parser
             ->then($thenParser)
             ->parse(Subject::default($value));
@@ -115,7 +113,7 @@ trait ChainableParserTestTrait
         $parser = $parser($value);
         /** @var Contract\Chainable $parser */
         self::assertInstanceOf(Contract\Chainable::class, $parser);
-        /** @var Contract\Result $result */
+        /** @var Result $result */
         $result = $parser
             ->thenAssignTo($assignTarget)
             ->parse(Subject::default($value));
@@ -130,7 +128,7 @@ trait ChainableParserTestTrait
         $parser = $parser($value);
         /** @var Contract\Chainable $parser */
         self::assertInstanceOf(Contract\Chainable::class, $parser);
-        /** @var Contract\Result $result */
+        /** @var Result $result */
         $result = $parser
             ->thenAppendTo($appendTarget)
             ->parse(Subject::default($value));
@@ -145,7 +143,7 @@ trait ChainableParserTestTrait
         $parser = $parser($value);
         /** @var Contract\Chainable $parser */
         self::assertInstanceOf(Contract\Chainable::class, $parser);
-        /** @var Contract\Result $result */
+        /** @var Result $result */
         $appendTarget = [];
         $result = $parser
             ->thenAppendTo($appendTarget)
@@ -161,7 +159,7 @@ trait ChainableParserTestTrait
         $parser = $parser($value);
         /** @var Contract\Chainable $parser */
         self::assertInstanceOf(Contract\Chainable::class, $parser);
-        /** @var Contract\Result $result */
+        /** @var Result $result */
         $appendTarget = new SplDoublyLinkedList();
         $result = $parser
             ->thenAppendTo($appendTarget)

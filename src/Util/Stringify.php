@@ -41,22 +41,22 @@ class Stringify
     /**
      * Uses $message as a string and $replacers as an array of elements to be replaced into it
      *
-     * The replacement elements look like this "{arrayKey}", performing a raw replacement, or
-     * "{arrayKey.infoType}", transforming the value before replacing.
+     * The replacement elements look like this `{arrayKey}`, performing a raw replacement, or
+     * `{arrayKey.infoType}`, transforming the value before replacing.
      *
      * `infoType` can be one of the following:
      * - `gettype`: The result of a call to gettype on the replacers' element
-     * - `type`: the same as gettype for anything but objects. For objects its "object<className>"
+     * - `type`: invokes Stringify::getType @param string $message
+     * @param array $replacers
+     *
+     * @return string
+     * @see self::getType()
      * - `debug`: a string representation of the value, tying to show as much of the content as possible, see Stringify::stringify
      * - `export`: the result of var_export of the value
      * - `raw`: the raw value form the replacers
      *
      * Only valid replacers are replaced. If the key or the infoType is not known that replacer won't be replaced.
      *
-     * @param string $message
-     * @param array $replacers
-     *
-     * @return string
      */
     public static function parseMessage(
         string $message,
@@ -101,11 +101,13 @@ class Stringify
     /**
      * Returns a string representation of the type of the provided variable
      *
-     * NAN, INF and -INF are represented as corresponding strings
+     * `true`, `false` and `null` will be represented as lower case strings
      *
-     * objects are represented as "object<className>"
+     * `NAN`, `INF` and `-INF` are represented as corresponding strings
      *
-     * all other values will simply return whatever gettype returns
+     * Objects are represented as `object<className>`
+     *
+     * All other values will simply return whatever gettype returns
      *
      * @param $value
      *
@@ -140,6 +142,17 @@ class Stringify
 
     /**
      * Converts a value to a string representation of that value
+     *
+     * This includes adding some rudimentary information about the content
+     * as far as possible.
+     *
+     * For any representation its type will be clearly visible
+     *
+     * Examples:
+     * - `integer 123`
+     * - An array will list its value and key types and the amount of items
+     * - A string will show its encoding (ASCII, UTF-8 or binary) and a first few chars if non-binary
+     * - An object will show its class
      *
      * @param $value
      *

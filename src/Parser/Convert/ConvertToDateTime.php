@@ -16,7 +16,8 @@ use DateTimeZone;
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
 use Philiagus\Parser\Base\Parser\ResultBuilder;
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Result;
 
 /**
  * Converts the received value to a \DateTime or \DateTimeImmutable if it isn't already
@@ -107,7 +108,7 @@ class ConvertToDateTime extends Base\Parser
     }
 
     /** @inheritDoc */
-    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
+    #[\Override] protected function execute(ResultBuilder $builder): Result
     {
         $value = $builder->getValue();
         $dateTime = null;
@@ -161,7 +162,7 @@ class ConvertToDateTime extends Base\Parser
     }
 
     /** @inheritDoc */
-    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
+    #[\Override] protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'convert to DateTime';
     }

@@ -40,15 +40,15 @@ class AssertBooleanTest extends TestBase
             ->provide(false);
     }
 
-    public function testStaticCreation(): void
-    {
-        self::assertInstanceOf(AssertBoolean::class, AssertBoolean::new());
-    }
-
     public static function provideInvalidTypesAndParser(): array
     {
         return (new DataProvider(~DataProvider::TYPE_BOOLEAN))
             ->map(static fn($value) => [$value, static fn() => AssertBoolean::new()])
             ->provide(false);
+    }
+
+    public function testStaticCreation(): void
+    {
+        self::assertInstanceOf(AssertBoolean::class, AssertBoolean::new());
     }
 }

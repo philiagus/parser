@@ -64,11 +64,11 @@ class AssertStdClassTest extends ParserTestBase
                 $builder
                     ->evaluatedArgument()
                     ->success(
-                        static fn($value) => array_key_first((array) $value),
-                        static fn($value) => !empty((array) $value)
+                        static fn($value) => array_key_first((array)$value),
+                        static fn($value) => !empty((array)$value)
                     )
                     ->error(
-                        static fn($value) => implode('|', array_keys((array) $value)) . 'ff'
+                        static fn($value) => implode('|', array_keys((array)$value)) . 'ff'
                     ),
                 $builder
                     ->parserArgument()
@@ -83,8 +83,8 @@ class AssertStdClassTest extends ParserTestBase
                     ->withParameterElement('property', 0)
             )
             ->values([
-                (object) ['a' => 1, 'b' => 2],
-                (object) [],
+                (object)['a' => 1, 'b' => 2],
+                (object)[],
             ]);
         $builder->run();
     }
@@ -98,8 +98,8 @@ class AssertStdClassTest extends ParserTestBase
                 $builder
                     ->evaluatedArgument()
                     ->success(
-                        static fn($value) => array_key_first((array) $value),
-                        static fn($value) => !empty((array) $value)
+                        static fn($value) => array_key_first((array)$value),
+                        static fn($value) => !empty((array)$value)
                     ),
                 $builder
                     ->parserArgument()
@@ -109,8 +109,8 @@ class AssertStdClassTest extends ParserTestBase
                     )
             )
             ->values([
-                (object) ['a' => 1, 'b' => 2],
-                (object) [],
+                (object)['a' => 1, 'b' => 2],
+                (object)[],
             ]);
         $builder
             ->test()
@@ -118,15 +118,15 @@ class AssertStdClassTest extends ParserTestBase
                 $builder
                     ->evaluatedArgument()
                     ->success(
-                        static fn($value) => implode('|', array_keys((array) $value)) . '|'
+                        static fn($value) => implode('|', array_keys((array)$value)) . '|'
                     ),
                 $builder
                     ->parserArgument()
                     ->willBeCalledIf(static fn() => false)
             )
             ->values([
-                (object) ['a' => 1, 'b' => 2],
-                (object) [],
+                (object)['a' => 1, 'b' => 2],
+                (object)[],
             ]);
         $builder->run();
     }
@@ -141,11 +141,11 @@ class AssertStdClassTest extends ParserTestBase
                 $builder
                     ->evaluatedArgument()
                     ->success(
-                        static fn($value) => array_key_first((array) $value),
-                        static fn($value) => !empty((array) $value)
+                        static fn($value) => array_key_first((array)$value),
+                        static fn($value) => !empty((array)$value)
                     )
                     ->success(
-                        static fn($value) => implode('|', array_keys((array) $value))
+                        static fn($value) => implode('|', array_keys((array)$value))
                     ),
                 $builder
                     ->fixedArgument()
@@ -158,8 +158,8 @@ class AssertStdClassTest extends ParserTestBase
                     )
             )
             ->values([
-                (object) ['a' => 1, 'b' => 2],
-                (object) [],
+                (object)['a' => 1, 'b' => 2],
+                (object)[],
             ]);
         $builder->run();
     }
@@ -173,13 +173,13 @@ class AssertStdClassTest extends ParserTestBase
                 $builder
                     ->parserArgument()
                     ->expectSingleCall(
-                        static fn($value) => array_map('strval', array_keys((array) $value)),
+                        static fn($value) => array_map('strval', array_keys((array)$value)),
                         MetaInformation::class
                     )
             )
             ->values([
-                (object) ['a' => 1, 'b' => 2],
-                (object) [],
+                (object)['a' => 1, 'b' => 2],
+                (object)[],
             ]);
         $builder->run();
     }
@@ -193,13 +193,13 @@ class AssertStdClassTest extends ParserTestBase
                 $builder
                     ->parserArgument()
                     ->expectSingleCall(
-                        static fn($value) => array_values((array) $value),
+                        static fn($value) => array_values((array)$value),
                         MetaInformation::class
                     )
             )
             ->values([
-                (object) ['a' => 1, 'b' => 2],
-                (object) [],
+                (object)['a' => 1, 'b' => 2],
+                (object)[],
             ]);
         $builder->run();
     }
@@ -213,14 +213,14 @@ class AssertStdClassTest extends ParserTestBase
                 $builder
                     ->parserArgument()
                     ->expectMultipleCalls(
-                        static fn($value) => array_map('strval', array_keys((array) $value)),
+                        static fn($value) => array_map('strval', array_keys((array)$value)),
                         PropertyName::class
                     )
-                    ->willBeCalledIf(static fn($value) => !empty((array) $value))
+                    ->willBeCalledIf(static fn($value) => !empty((array)$value))
             )
             ->values([
-                (object) ['a' => 1, 'b' => 2],
-                (object) [],
+                (object)['a' => 1, 'b' => 2],
+                (object)[],
             ]);
         $builder->run();
     }
@@ -232,14 +232,14 @@ class AssertStdClassTest extends ParserTestBase
             $builder
                 ->parserArgument()
                 ->expectMultipleCalls(
-                    static fn($value) => array_values((array) $value),
+                    static fn($value) => array_values((array)$value),
                     PropertyValue::class
                 )
-                ->willBeCalledIf(static fn($value) => !empty((array) $value))
+                ->willBeCalledIf(static fn($value) => !empty((array)$value))
         )
             ->values([
-                (object) ['a' => 1, 'b' => 2],
-                (object) [],
+                (object)['a' => 1, 'b' => 2],
+                (object)[],
             ]);
         $builder->run();
     }
@@ -254,15 +254,15 @@ class AssertStdClassTest extends ParserTestBase
                     static fn($value) => array_map(
                         fn($p, $v) => [$p, $v],
                         array_map(strval(...), array_keys((array)$value)),
-                        array_values((array) $value)
+                        array_values((array)$value)
                     ),
                     PropertyNameValuePair::class
                 )
-                ->willBeCalledIf(static fn($value) => !empty((array) $value))
+                ->willBeCalledIf(static fn($value) => !empty((array)$value))
         )
             ->values([
-                (object) ['a' => 1, 'b' => 2],
-                (object) [],
+                (object)['a' => 1, 'b' => 2],
+                (object)[],
             ]);
         $builder->run();
     }
@@ -276,13 +276,13 @@ class AssertStdClassTest extends ParserTestBase
                 $builder
                     ->parserArgument()
                     ->expectSingleCall(
-                        static fn($value) => count((array) $value),
+                        static fn($value) => count((array)$value),
                         MetaInformation::class
                     )
             )
             ->values([
-                (object) ['a' => 1, 'b' => 2],
-                (object) [],
+                (object)['a' => 1, 'b' => 2],
+                (object)[],
             ]);
         $builder->run();
     }
@@ -295,8 +295,8 @@ class AssertStdClassTest extends ParserTestBase
             ->arguments(
                 $builder
                     ->evaluatedArgument()
-                    ->success(fn($value) => array_map(strval(...), array_keys((array) $value)))
-                    ->error(fn($value) => [], fn($value) => !empty((array) $value))
+                    ->success(fn($value) => array_map(strval(...), array_keys((array)$value)))
+                    ->error(fn($value) => [], fn($value) => !empty((array)$value))
                     ->configException(fn($value) => [INF])
                     ->configException(fn($value) => [new \stdClass()]),
                 $builder
@@ -308,17 +308,17 @@ class AssertStdClassTest extends ParserTestBase
                             $properties = array_filter($arguments[0], fn($v) => is_string($v));
 
                             return array_map(
-                                fn($property) => ['property' => (string) $property],
-                                array_diff(array_keys((array) $value), $properties)
+                                fn($property) => ['property' => (string)$property],
+                                array_diff(array_keys((array)$value), $properties)
                             );
                         }
                     )
                     ->expectedWhen(fn($_0, $_1, array $success) => !$success[0])
             )
             ->values([
-                (object) ['a' => 1, 'b' => 2],
-                (object) [1, 2],
-                (object) [],
+                (object)['a' => 1, 'b' => 2],
+                (object)[1, 2],
+                (object)[],
             ]);
         $builder->run();
     }
@@ -331,8 +331,8 @@ class AssertStdClassTest extends ParserTestBase
             ->arguments(
                 $builder
                     ->evaluatedArgument()
-                    ->success(fn($value) => array_map('strval', array_keys((array) $value)))
-                    ->error(fn($value) => [implode('|', array_keys((array) $value)) . '|'])
+                    ->success(fn($value) => array_map('strval', array_keys((array)$value)))
+                    ->error(fn($value) => [implode('|', array_keys((array)$value)) . '|'])
                     ->configException(fn($value) => [INF])
                     ->configException(fn($value) => [new \stdClass()]),
                 $builder
@@ -342,17 +342,17 @@ class AssertStdClassTest extends ParserTestBase
                             $properties = array_filter($arguments[0], fn($v) => is_string($v));
 
                             return array_map(
-                                fn($property) => ['property' => (string) $property],
-                                array_diff($properties, array_keys((array) $value))
+                                fn($property) => ['property' => (string)$property],
+                                array_diff($properties, array_keys((array)$value))
                             );
                         }
                     )
                     ->expectedWhen(fn($_0, $_1, array $success) => !$success[0])
             )
             ->values([
-                (object) ['a' => 1, 'b' => 2],
-                (object) [1, 2],
-                (object) [],
+                (object)['a' => 1, 'b' => 2],
+                (object)[1, 2],
+                (object)[],
             ]);
         $builder->run();
     }

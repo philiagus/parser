@@ -42,9 +42,9 @@ class PropertyValueTest extends SubjectTestBase
 
         $subject = new PropertyValue($root, $keyValue, $valueValue);
         Util::assertSame($valueValue, $subject->getValue());
-        self::assertFalse($subject->isUtilitySubject());
-        self::assertSame($root, $subject->getSourceSubject());
-        self::assertSame((string) $keyValue, $subject->getDescription());
+        self::assertFalse($subject->isUtility());
+        self::assertSame($root, $subject->getSource());
+        self::assertSame((string)$keyValue, $subject->getDescription());
         self::assertSame($throwOnError, $subject->throwOnError());
         self::assertSame("ROOT$expectedPathPart", $subject->getPathAsString(true));
         self::assertSame("ROOT$expectedPathPart", $subject->getPathAsString(false));
@@ -52,7 +52,7 @@ class PropertyValueTest extends SubjectTestBase
         self::assertSame([$root, $subject], $subject->getSubjectChain(false));
     }
 
-    protected function createChained(\Philiagus\Parser\Contract\Subject $parent): \Philiagus\Parser\Contract\Subject
+    protected function createChained(Subject $parent): Subject
     {
         return new PropertyValue($parent, 'prop name', 'prop value');
     }

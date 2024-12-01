@@ -14,7 +14,6 @@ namespace Philiagus\Parser\Test\ParserTestBase;
 
 use Philiagus\DataProvider\DataProvider;
 use PHPUnit\Framework\Assert;
-use PHPUnit\Framework\Attributes\CoversClass;
 
 class CaseBuilder
 {

@@ -16,8 +16,9 @@ use JsonException;
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
 use Philiagus\Parser\Base\Parser\ResultBuilder;
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParserConfigurationException;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Stringify;
 
 /**
@@ -118,7 +119,7 @@ class ParseJSONString extends Base\Parser
     }
 
     /** @inheritDoc */
-    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
+    #[\Override] protected function execute(ResultBuilder $builder): Result
     {
         $value = $builder->getValue();
         if (!is_string($value)) {
@@ -158,7 +159,7 @@ class ParseJSONString extends Base\Parser
     }
 
     /** @inheritDoc */
-    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
+    #[\Override] protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'parse as JSON';
     }

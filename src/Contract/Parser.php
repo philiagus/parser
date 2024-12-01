@@ -12,15 +12,18 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Contract;
 
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Exception\RuntimeParserConfigurationException;
+use Philiagus\Parser\Result;
 
 interface Parser
 {
     /**
+     * Triggers this parser to work on the subject provided
+     *
      * @param Subject $subject
      *
-     * @return Result
      * @throws RuntimeParserConfigurationException
      * @throws ParsingException
      */

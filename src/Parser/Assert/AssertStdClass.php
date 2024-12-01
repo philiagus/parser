@@ -15,9 +15,10 @@ namespace Philiagus\Parser\Parser\Assert;
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
 use Philiagus\Parser\Base\Parser\ResultBuilder;
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser as ParserContract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Subject\MetaInformation;
 use Philiagus\Parser\Subject\PropertyName;
 use Philiagus\Parser\Subject\PropertyNameValuePair;
@@ -389,7 +390,7 @@ class AssertStdClass extends Base\Parser
     }
 
     /** @inheritDoc */
-    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
+    #[\Override] protected function execute(ResultBuilder $builder): Result
     {
         $expectedProperties = [];
         if ($builder->getValue() instanceof \stdClass) {
@@ -410,7 +411,7 @@ class AssertStdClass extends Base\Parser
     }
 
     /** @inheritDoc */
-    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
+    #[\Override] protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'assert stdClass';
     }

@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser\Logic;
 
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Chainable;
 use Philiagus\Parser\Contract\Parser;
-use Philiagus\Parser\Contract\Result;
-use Philiagus\Parser\Contract\Subject;
-use Philiagus\Parser\Exception\ParserConfigurationException;
+use Philiagus\Parser\Exception\RuntimeParserConfigurationException;
 use Philiagus\Parser\Parser\Extract\Append;
+use Philiagus\Parser\Result;
 
 /**
  * Creates a parser that acts as a logical gate that will not let the same value through twice.
@@ -82,16 +82,16 @@ readonly final class Unique implements Parser
                     }
                 }
             } catch (\Throwable $e) {
-                throw new ParserConfigurationException("Comparison closure for Unique threw an exception", $e);
+                throw new RuntimeParserConfigurationException("Comparison closure for Unique threw an exception", $e);
             }
         }
 
         if (!$found) {
             $encounteredValues[] = $value;
-            $subject->setMemory($this, [...$encounteredValues, $value]);
+            $subject->setMemory($this, $encounteredValues);
             $this->parser->parse($subject);
         }
 
-        return new \Philiagus\Parser\Result($subject, $value, []);
+        return new Result($subject, $value, []);
     }
 }

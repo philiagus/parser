@@ -14,10 +14,11 @@ namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Parser\ResultBuilder;
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract\Parser;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Subject\Utility\Forwarded;
 use Philiagus\Parser\Subject\Utility\Test;
 use Philiagus\Parser\Util\Stringify;
@@ -187,7 +188,7 @@ class Conditional extends Base\Parser
     }
 
     /** @inheritDoc */
-    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
+    #[\Override] protected function execute(ResultBuilder $builder): Result
     {
         $value = $builder->getValue();
         $errors = [];
@@ -293,7 +294,7 @@ class Conditional extends Base\Parser
     }
 
     /** @inheritDoc */
-    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
+    #[\Override] protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'Conditional';
     }

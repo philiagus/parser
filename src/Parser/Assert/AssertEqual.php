@@ -14,7 +14,8 @@ namespace Philiagus\Parser\Parser\Assert;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Parser\ResultBuilder;
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Stringify;
 
 /**
@@ -75,16 +76,15 @@ class AssertEqual extends Base\Parser
     }
 
     /** @inheritDoc */
-    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
+    #[\Override] protected function execute(ResultBuilder $builder): Result
     {
         if ($this->compareToMemory) {
-            $subject = $builder->getSubject();
-            if (!$subject->hasMemory($this)) {
-                $subject->setMemory($this, $subject->getValue());
+            if (!$builder->hasMemory($this)) {
+                $builder->setMemory($this, $builder->getValue());
                 return $builder->createResultUnchanged();
             }
 
-            $compareAgainst = $subject->getMemory($this);
+            $compareAgainst = $builder->getMemory($this);
         } else {
             $compareAgainst = $this->value;
         }
@@ -100,7 +100,7 @@ class AssertEqual extends Base\Parser
     }
 
     /** @inheritDoc */
-    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
+    #[\Override] protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'assert equals';
     }

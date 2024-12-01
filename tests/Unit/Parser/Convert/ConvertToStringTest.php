@@ -39,7 +39,7 @@ class ConvertToStringTest extends TestBase
             '+inf' => [INF, fn() => ConvertToString::new()],
             '-inf' => [-INF, fn() => ConvertToString::new()],
             'nan' => [NAN, fn() => ConvertToString::new()],
-            'non __toString object' => [(object) [], fn() => ConvertToString::new()],
+            'non __toString object' => [(object)[], fn() => ConvertToString::new()],
             'null' => [null, fn() => ConvertToString::new()],
             'true' => [true, fn() => ConvertToString::new()],
             'false' => [false, fn() => ConvertToString::new()],
@@ -68,7 +68,7 @@ class ConvertToStringTest extends TestBase
     {
         return (new DataProvider(DataProvider::TYPE_INTEGER | DataProvider::TYPE_FLOAT | DataProvider::TYPE_STRING))
             ->map(
-                fn($value) => [$value, fn() => ConvertToString::new(), (string) $value]
+                fn($value) => [$value, fn() => ConvertToString::new(), (string)$value]
             )
             ->addCase('null', [null, fn() => ConvertToString::new()->setNullValue('NuLl'), 'NuLl'])
             ->addCase(

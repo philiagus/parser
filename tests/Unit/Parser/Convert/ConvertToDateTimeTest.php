@@ -17,8 +17,9 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
 use Philiagus\DataProvider\DataProvider;
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Parser\Convert\ConvertToDateTime;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\InvalidValueParserTestTrait;
 use Philiagus\Parser\Test\ParserTestBase;
@@ -55,6 +56,19 @@ class ConvertToDateTimeTest extends ParserTestBase
                 $value,
             ],
         ];
+    }
+
+    public static function provideInvalidValuesAndParsers(): array
+    {
+
+        return (new DataProvider())
+            ->filter(
+                fn($value) => !$value instanceof DateTimeInterface
+            )
+            ->map(
+                fn($value) => [$value, fn() => ConvertToDateTime::new()]
+            )
+            ->provide(false);
     }
 
     public function testFromSourceFormat(): void
@@ -96,7 +110,7 @@ class ConvertToDateTimeTest extends ParserTestBase
             )
             ->values(
                 array_column($cases, 0),
-                successValidator: function (Contract\Subject $subject, Contract\Result $result, array $arguments) use ($cases) {
+                successValidator: function (Subject $subject, Result $result, array $arguments) use ($cases) {
                     $relevantFormat = null;
                     $value = $subject->getValue();
                     $resultValue = $result->getValue();
@@ -112,7 +126,7 @@ class ConvertToDateTimeTest extends ParserTestBase
                     if (!$relevantFormat) return ['Source format could not be evaluated'];
                     $expectedValue = $value;
                     if (!$value instanceof DateTimeInterface) {
-                        $expectedValue = DateTime::createFromFormat($relevantFormat, (string) $expectedValue, $arguments[1]);
+                        $expectedValue = DateTime::createFromFormat($relevantFormat, (string)$expectedValue, $arguments[1]);
                     } else {
                         $expectedValue = DateTime::createFromInterface($value);
                     }
@@ -175,7 +189,7 @@ class ConvertToDateTimeTest extends ParserTestBase
             )
             ->values(
                 array_column($cases, 0),
-                successValidator: function (Contract\Subject $subject, Contract\Result $result, array $arguments) use ($cases) {
+                successValidator: function (Subject $subject, Result $result, array $arguments) use ($cases) {
                     $relevantFormat = null;
                     $value = $subject->getValue();
                     $resultValue = $result->getValue();
@@ -191,7 +205,7 @@ class ConvertToDateTimeTest extends ParserTestBase
                     if (!$relevantFormat) return ['Source format could not be evaluated'];
                     $expectedValue = $value;
                     if (!$value instanceof DateTimeInterface) {
-                        $expectedValue = DateTime::createFromFormat($relevantFormat, (string) $expectedValue, $arguments[1]);
+                        $expectedValue = DateTime::createFromFormat($relevantFormat, (string)$expectedValue, $arguments[1]);
                     } else {
                         $expectedValue = DateTime::createFromInterface($value);
                     }
@@ -227,7 +241,7 @@ class ConvertToDateTimeTest extends ParserTestBase
                     new DateTimeImmutable(),
                     new DateTime(),
                 ],
-                successValidator: function (Contract\Subject $subject, Contract\Result $result, array $arguments) {
+                successValidator: function (Subject $subject, Result $result, array $arguments) {
                     $value = $subject->getValue();
                     $resultValue = $result->getValue();
                     if (!$resultValue instanceof DateTimeInterface) {
@@ -245,18 +259,5 @@ class ConvertToDateTimeTest extends ParserTestBase
             );
 
         $builder->run();
-    }
-
-    public static function provideInvalidValuesAndParsers(): array
-    {
-
-        return (new DataProvider())
-            ->filter(
-                fn($value) => !$value instanceof DateTimeInterface
-            )
-            ->map(
-                fn($value) => [$value, fn() => ConvertToDateTime::new()]
-            )
-            ->provide(false);
     }
 }

@@ -15,17 +15,18 @@ namespace YourNamespace;
 
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Parser\ResultBuilder;
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Result;
 
 class YourParser extends Parser {
 
     // BEHOLD! A ResultBuilder being injected ⬇⬇⬇⬇⬇⬇⬇⬇⬇
-    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
+    #[\Override] protected function execute(ResultBuilder $builder): Result
     {
         // TODO: Implement execute() method.
     }
 
-    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
+    #[\Override] protected function getDefaultParserDescription(Subject $subject): string
     {
         // TODO: Implement getDefaultParserDescription() method.
     }
@@ -82,6 +83,6 @@ It offers multiple methods to create a result, but for all cases it will always 
 This means that the Result object can only be treated as success, if the `ResultBuilder` has not found any errors, which is exactly what we want.
 
 - `createResult(mixed $resultValue)`: Creates a Result object with the provided `$resultValue` as its value
-- `createResultFromResult(Result $result)`: Create a result, forwarding the result of another parser as its value. This is most times needed when your parser delegates the last step of its job to another parser and thus the result of that parser is the result of your parser.
-- `createResultUnchanged()`: Creates the Result object with its value being the unchanged value that the parser received. This is used in all `Assert*`-Parsers and also in most cases when `return` is called directly after logging an error in order to exit when in _gather mode_.
+- `createResultFromResult(Result $result)`: Create a result, forwarding the value of the result of another parser as its value. This is most times needed when your parser delegates the last step of its job to another parser and thus the result of that parser is the result of your parser.
+- `createResultUnchanged()`: Creates the Result object with its value being the unchanged value that the parser received. This is used in all `Assert*`-Parsers and also in most cases when `return` is called directly after logging an error in order to exit when in `gather mode`.
 - `createResultWithCurrentValue()`: Creates the Result object with the current value stored in the `ResultBuilder`. You can overwrite the current value in the `ResultBuilder` by using its `setValue`-method as described before.

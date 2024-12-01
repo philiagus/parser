@@ -12,8 +12,9 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\Unit\Exception;
 
-use Philiagus\Parser\Contract;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Test\Mock\ErrorMock;
+use Philiagus\Parser\Test\Mock\SubjectMock;
 use Philiagus\Parser\Test\TestBase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -22,10 +23,10 @@ class ParsingExceptionTest extends TestBase
 {
     public function testGetError(): void
     {
-        $error = $this->prophesize(Contract\Error::class);
-        $error->getSourceThrowable()->willReturn(null);
-        $error->getMessage()->willReturn('the message');
-        $error = $error->reveal();
+        $error = new ErrorMock(
+            sourceThrowable: null,
+            message: 'the message',
+        );
 
         $exception = new ParsingException($error);
         self::assertSame($error, $exception->getError());
@@ -33,10 +34,10 @@ class ParsingExceptionTest extends TestBase
 
     public function testThrowable(): void
     {
-        $error = $this->prophesize(Contract\Error::class);
-        $error->getSourceThrowable()->willReturn(null);
-        $error->getMessage()->willReturn('the message');
-        $error = $error->reveal();
+        $error = new ErrorMock(
+            message: 'the message',
+            sourceThrowable: null,
+        );
 
         $exception = new ParsingException($error);
         self::assertInstanceOf(\Throwable::class, $exception);
@@ -44,14 +45,13 @@ class ParsingExceptionTest extends TestBase
 
     public function testGetSubject(): void
     {
-        $subject = $this->prophesize(Contract\Subject::class);
-        $subject = $subject->reveal();
+        $subject = new SubjectMock();
 
-        $error = $this->prophesize(Contract\Error::class);
-        $error->getSourceThrowable()->willReturn(null);
-        $error->getMessage()->willReturn('the message');
-        $error->getSubject()->willReturn($subject);
-        $error = $error->reveal();
+        $error = new ErrorMock(
+            subject: $subject,
+            message: 'the message',
+            sourceThrowable: null,
+        );
 
         $exception = new ParsingException($error);
         self::assertSame($subject, $exception->getSubject());
@@ -68,15 +68,13 @@ class ParsingExceptionTest extends TestBase
     public function testGetPathAsString(bool $includeUtility): void
     {
         $expected = uniqid(microtime());
-        $subject = $this->prophesize(Contract\Subject::class);
-        $subject->getPathAsString($includeUtility)->shouldBeCalled()->willReturn($expected);
-        $subject = $subject->reveal();
+        $subject = new SubjectMock(isUtility: false, path: $expected);
 
-        $error = $this->prophesize(Contract\Error::class);
-        $error->getSourceThrowable()->willReturn(null);
-        $error->getMessage()->willReturn('the message');
-        $error->getSubject()->willReturn($subject);
-        $error = $error->reveal();
+        $error = new ErrorMock(
+            subject: $subject,
+            message: 'the message',
+            sourceThrowable: null,
+        );
 
         $exception = new ParsingException($error);
         self::assertSame($expected, $exception->getPathAsString($includeUtility));

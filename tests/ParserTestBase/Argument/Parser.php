@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\ParserTestBase\Argument;
 
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
@@ -149,7 +150,7 @@ class Parser implements Argument
                 $parser->expect(
                     fn() => true,
                     fn() => true,
-                    function (Contract\Subject $subject) use ($errorCollection) {
+                    function (Subject $subject) use ($errorCollection) {
                         $message = uniqid(microtime());
                         $error = new Error($subject, $message);
                         if (!$this->errorWillBeHidden) {

@@ -59,6 +59,14 @@ class AssertStringMultibyteTest extends ParserTestBase
             ->provide(false);
     }
 
+    public static function provideSetAvailableEncodingsInvalidEncodings(): array
+    {
+        return [
+            'invalid encoding' => [['UTF-8', 'nope']],
+            'not string' => [[true]],
+        ];
+    }
+
     public function testSetAvailableEncodings(): void
     {
         $builder = $this->builder();
@@ -199,14 +207,6 @@ class AssertStringMultibyteTest extends ParserTestBase
         $builder->run();
     }
 
-    public static function provideSetAvailableEncodingsInvalidEncodings(): array
-    {
-        return [
-            'invalid encoding' => [['UTF-8', 'nope']],
-            'not string' => [[true]],
-        ];
-    }
-
     #[\PHPUnit\Framework\Attributes\DataProvider('provideSetAvailableEncodingsInvalidEncodings')]
     public function test_setAvailableEncodings_invalidEncoding($invalidEncodings): void
     {
@@ -234,5 +234,26 @@ class AssertStringMultibyteTest extends ParserTestBase
             AssertStringMultibyte::UTF8('MSG'),
             AssertStringMultibyte::ofEncoding('UTF-8', 'MSG')
         );
+    }
+
+    public function testAssertRegex(): void
+    {
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->configException(fn() => 'not a pattern')
+                    ->success(fn($value) => $value !== '' ? '~^.++$~' : '~^$~')
+                    ->error(fn($value) => $value === '' ? '~^.++$~' : '~^$~'),
+                $builder
+                    ->messageArgument()
+                    ->withParameterElement('pattern', 0)
+                    ->expectedWhen(fn($value, array $_, array $successes) => !$successes[0])
+            )
+            ->successProvider(DataProvider::TYPE_STRING);
+
+        $builder->run();
     }
 }

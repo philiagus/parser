@@ -13,8 +13,6 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Base;
 
 use Philiagus\Parser\Base\Parser\ResultBuilder;
-use Philiagus\Parser\Contract\Error;
-use Philiagus\Parser\Contract\Subject;
 use Philiagus\Parser\Error as ErrorImplementation;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Stringify;
@@ -77,9 +75,9 @@ trait OverwritableTypeErrorMessage
      *
      * @param Subject $subject
      *
-     * @return Error
+     * @return ErrorImplementation
      */
-    protected function getTypeError(Subject $subject): Error
+    protected function getTypeError(Subject $subject): ErrorImplementation
     {
         return new ErrorImplementation(
             $subject,

@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Subject;
 
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Contract;
 
 /**
  * A subject representing meta information of a value, such as the encoding of a string,
@@ -24,9 +23,9 @@ use Philiagus\Parser\Contract;
 readonly class MetaInformation extends Subject
 {
 
-    public function __construct(Contract\Subject $sourceSubject, string $description, mixed $value)
+    public function __construct(Subject $source, string $description, mixed $value)
     {
-        parent::__construct($sourceSubject, $description, $value, false, null);
+        parent::__construct($source, $description, $value, false, null);
     }
 
     /** @inheritDoc */

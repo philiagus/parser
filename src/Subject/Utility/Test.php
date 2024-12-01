@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Subject\Utility;
 
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Contract;
 
 /**
  * A utility subject used to hand a value over to another parser for testing.
@@ -26,9 +25,9 @@ readonly class Test extends Subject
 {
 
     public function __construct(
-        Contract\Subject $subject,
-        string           $description,
-        bool             $forceThrowOnError = false
+        Subject $subject,
+        string  $description,
+        bool    $forceThrowOnError = false
     )
     {
         parent::__construct($subject, $description, $subject->getValue(), true, $forceThrowOnError ?: null);

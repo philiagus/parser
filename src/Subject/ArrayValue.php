@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Subject;
 
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Contract;
 
 /**
  * A subject representing the value assigned to an array key
@@ -23,12 +22,12 @@ use Philiagus\Parser\Contract;
 readonly class ArrayValue extends Subject
 {
     public function __construct(
-        Contract\Subject            $sourceSubject,
+        Subject            $source,
         private string|int $arrayKey,
-        mixed                       $value
+        mixed              $value
     )
     {
-        parent::__construct($sourceSubject, (string)$arrayKey, $value, false, null);
+        parent::__construct($source, (string)$arrayKey, $value, false, null);
     }
 
     /** @inheritDoc */

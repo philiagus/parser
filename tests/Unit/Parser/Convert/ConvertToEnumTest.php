@@ -13,10 +13,10 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser\Convert;
 
 use Philiagus\DataProvider\DataProvider;
-use Philiagus\Parser\Contract\Result;
-use Philiagus\Parser\Contract\Subject;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Parser\Convert\ConvertToEnum;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\Mock\BackedEnumMock;
 use Philiagus\Parser\Test\Mock\UnitEnumMock;
 use Philiagus\Parser\Test\OverwritableTypeErrorMessageTestTrait;
@@ -27,6 +27,19 @@ use PHPUnit\Framework\Attributes\CoversClass;
 class ConvertToEnumTest extends ParserTestBase
 {
     use OverwritableTypeErrorMessageTestTrait;
+
+    public static function provideInvalidTypesAndParser(): array
+    {
+        $cases = [];
+        foreach ((new DataProvider(~DataProvider::TYPE_STRING & ~DataProvider::TYPE_INTEGER))->provide(false) as $name => $value) {
+            $cases["Backed $name"] = [$value, fn() => ConvertToEnum::byValue(BackedEnumMock::class)];
+        }
+        foreach ((new DataProvider(~DataProvider::TYPE_STRING))->provide(false) as $name => $value) {
+            $cases["Unit $name"] = [$value, fn() => ConvertToEnum::byName(BackedEnumMock::class)];
+        }
+
+        return $cases;
+    }
 
     public function testByName(): void
     {
@@ -243,7 +256,6 @@ class ConvertToEnumTest extends ParserTestBase
         $builder->run();
     }
 
-
     /**
      * @testWith ["byValue"]
      *           ["byNameThenValue"]
@@ -265,18 +277,5 @@ class ConvertToEnumTest extends ParserTestBase
     {
         self::expectException(ParserConfigurationException::class);
         ConvertToEnum::$method(\stdClass::class);
-    }
-
-    public static function provideInvalidTypesAndParser(): array
-    {
-        $cases = [];
-        foreach ((new DataProvider(~DataProvider::TYPE_STRING & ~DataProvider::TYPE_INTEGER))->provide(false) as $name => $value) {
-            $cases["Backed $name"] = [$value, fn() => ConvertToEnum::byValue(BackedEnumMock::class)];
-        }
-        foreach ((new DataProvider(~DataProvider::TYPE_STRING))->provide(false) as $name => $value) {
-            $cases["Unit $name"] = [$value, fn() => ConvertToEnum::byName(BackedEnumMock::class)];
-        }
-
-        return $cases;
     }
 }

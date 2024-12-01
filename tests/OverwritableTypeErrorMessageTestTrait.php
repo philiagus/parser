@@ -56,11 +56,11 @@ trait OverwritableTypeErrorMessageTestTrait
         self::fail('Parser does not provide setTypeErrorMessage method');
     }
 
+    abstract public static function fail(string $message): never;
+
     abstract public function expectException(string $exception): void;
 
     abstract public function expectExceptionMessage(string $exception): void;
-
-    abstract public static function fail(string $message): never;
 
     #[DataProvider('provideInvalidTypesAndParser')]
     public function testSetTypeErrorMessageOverwrittenMessage($invalidValue, \Closure $parser): void

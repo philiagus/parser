@@ -58,7 +58,7 @@ class ConvertToArrayTest extends TestBase
     {
         self::assertTrue(
             DataProvider::isSame(
-                (array) $value,
+                (array)$value,
                 ConvertToArray::usingCast()
                     ->parse(Subject::default($value))
                     ->getValue()

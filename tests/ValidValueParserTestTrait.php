@@ -15,7 +15,7 @@ namespace Philiagus\Parser\Test;
 use DateTimeInterface;
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Stringify;
 
 trait ValidValueParserTestTrait
@@ -27,12 +27,12 @@ trait ValidValueParserTestTrait
     public function testThatItAcceptsValidValuesThrowing($value, \Closure $parser, $expected): void
     {
         $parserInstance = $parser($value);
-        for($repeat=2;$repeat>0;$repeat--) {
+        for ($repeat = 2; $repeat > 0; $repeat--) {
             $subject = Subject::default($value);
-            /** @var Contract\Result $result */
+            /** @var Result $result */
             $result = $parserInstance->parse($subject);
             self::assertTrue($result->isSuccess());
-            $expectedSubject = $result->getSourceSubject()->getSourceSubject();
+            $expectedSubject = $result->getSource()->getSource();
             self::assertSame(
                 $subject,
                 $expectedSubject,
@@ -55,12 +55,12 @@ trait ValidValueParserTestTrait
     public function testThatItAcceptsValidValuesNotThrowing($value, \Closure $parser, $expected, bool $resultWillBeWrapped = true): void
     {
         $parserInstance = $parser($value);
-        for($repeat=2;$repeat>0;$repeat--) {
+        for ($repeat = 2; $repeat > 0; $repeat--) {
             $subject = Subject::default($value, throwOnError: false);
-            /** @var Contract\Result $result */
+            /** @var Result $result */
             $result = $parserInstance->parse($subject);
             self::assertTrue($result->isSuccess());
-            self::assertSame($subject, $resultWillBeWrapped ? $result->getSourceSubject()->getSourceSubject() : $result->getSourceSubject());
+            self::assertSame($subject, $resultWillBeWrapped ? $result->getSource()->getSource() : $result->getSource());
             self::assertSame([], $result->getErrors());
             $resultValue = $result->getValue();
             self::assertTrue(

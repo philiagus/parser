@@ -14,10 +14,7 @@ namespace Philiagus\Parser\Test\Unit\Parser\Logic;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
-use Philiagus\Parser\Exception\ParserConfigurationException;
-use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\Logic\Fork;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\ChainableParserTestTrait;
@@ -35,6 +32,12 @@ class ForkTest extends TestBase
         return (new DataProvider())->provide();
     }
 
+    public static function provideValidValuesAndParsersAndResults(): array
+    {
+        return (new DataProvider())
+            ->map(fn($value) => [$value, fn() => Fork::to(), $value])
+            ->provide(false);
+    }
 
     #[\PHPUnit\Framework\Attributes\DataProvider('provideAnyValue')]
     public function testFull($value): void
@@ -45,7 +48,7 @@ class ForkTest extends TestBase
             $parser
                 ->parse(
                     Argument::that(
-                        fn(Contract\Subject $subject) => DataProvider::isSame($subject->getValue(), $value)
+                        fn(Subject $subject) => DataProvider::isSame($subject->getValue(), $value)
                     )
                 )
                 ->shouldBeCalled()
@@ -67,12 +70,5 @@ class ForkTest extends TestBase
                     ->getValue()
             )
         );
-    }
-
-    public static function provideValidValuesAndParsersAndResults(): array
-    {
-        return (new DataProvider())
-            ->map(fn($value) => [$value, fn() => Fork::to(), $value])
-            ->provide(false);
     }
 }

@@ -128,5 +128,26 @@ class AssertStringTest extends ParserTestBase
         $builder->run();
     }
 
+    public function testAssertRegex(): void
+    {
+        $builder = $this->builder();
+        $builder
+            ->test()
+            ->arguments(
+                $builder
+                    ->evaluatedArgument()
+                    ->configException(fn() => 'not a pattern')
+                    ->success(fn($value) => $value !== '' ? '~^.++$~' : '~^$~')
+                    ->error(fn($value) => $value === '' ? '~^.++$~' : '~^$~'),
+                $builder
+                    ->messageArgument()
+                    ->withParameterElement('pattern', 0)
+                    ->expectedWhen(fn($value, array $_, array $successes) => !$successes[0])
+            )
+            ->successProvider(DataProvider::TYPE_STRING);
+
+        $builder->run();
+    }
+
 
 }

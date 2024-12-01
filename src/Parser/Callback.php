@@ -14,8 +14,9 @@ namespace Philiagus\Parser\Parser;
 
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Parser\ResultBuilder;
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Error;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Stringify;
 
 /**
@@ -54,7 +55,7 @@ class Callback extends Parser
      * If the \Closure does not throw a \Throwable the return value is treated as the result
      * of this parser
      *
-     * @param \Closure(mixed, Contract\Subject): mixed $closure
+     * @param \Closure(mixed, Subject): mixed $closure
      * @param string $description Can be used to overwrite the description of this parser in the
      *                                 utility parser chain
      * @return self
@@ -88,7 +89,7 @@ class Callback extends Parser
     }
 
     /** @inheritDoc */
-    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
+    #[\Override] protected function execute(ResultBuilder $builder): Result
     {
         $subject = $builder->getSubject();
         $value = $builder->getValue();
@@ -119,7 +120,7 @@ class Callback extends Parser
     }
 
     /** @inheritDoc */
-    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
+    #[\Override] protected function getDefaultParserDescription(Subject $subject): string
     {
         return $this->description;
     }

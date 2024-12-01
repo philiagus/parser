@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Base;
 
 use Philiagus\Parser\Base\Chainable;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Parser\Extract\Append;
 use Philiagus\Parser\Parser\Extract\Assign;
@@ -67,7 +68,7 @@ class ChainableTest extends TestCase
         return new class() implements Contract\Parser, Contract\Chainable {
             use Chainable;
 
-            public function parse(Contract\Subject $subject): Contract\Result
+            public function parse(Subject $subject): Result
             {
                 return new Result($subject, null, []);
             }

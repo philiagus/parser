@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Assert;
 
 use Philiagus\Parser\Base\Parser\ResultBuilder;
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Util\Stringify;
 
 /**
@@ -65,7 +65,7 @@ class AssertInteger extends AssertNumber
     }
 
     /** @inheritDoc */
-    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
+    #[\Override] protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'assert integer';
     }

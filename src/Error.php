@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser;
 
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Util\Stringify;
 
@@ -26,20 +27,20 @@ use Philiagus\Parser\Util\Stringify;
  * @package Error
  * @see ParsingException
  */
-readonly class Error implements Contract\Error
+readonly class Error
 {
 
     /**
-     * @param Contract\Subject $subject
+     * @param Subject $subject
      * @param string $message
      * @param \Throwable|null $sourceThrowable
      * @param array $sourceErrors
      */
     public function __construct(
-        private Contract\Subject $subject,
-        private string           $message,
-        private ?\Throwable      $sourceThrowable = null,
-        private array            $sourceErrors = []
+        private Subject     $subject,
+        private string      $message,
+        private ?\Throwable $sourceThrowable = null,
+        private array       $sourceErrors = []
     )
     {
         foreach ($sourceErrors as $sourceError) {
@@ -56,7 +57,7 @@ readonly class Error implements Contract\Error
      * The value of the subject will by default be provided as a 'value' replacer target
      * So you can use {value} as a replacer in all calls to this method
      *
-     * @param Contract\Subject $subject
+     * @param Subject $subject
      * @param string $message
      * @param array $replacers
      * @param \Throwable|null $sourceThrowable
@@ -67,11 +68,11 @@ readonly class Error implements Contract\Error
      *
      */
     public static function createUsingStringify(
-        Contract\Subject $subject,
-        string           $message,
-        array            $replacers = [],
-        ?\Throwable      $sourceThrowable = null,
-        array            $sourceErrors = []
+        Subject     $subject,
+        string      $message,
+        array       $replacers = [],
+        ?\Throwable $sourceThrowable = null,
+        array       $sourceErrors = []
     ): Error
     {
         return new Error(
@@ -82,50 +83,87 @@ readonly class Error implements Contract\Error
         );
     }
 
-    /** @inheritDoc */
-    #[\Override] public function getMessage(): string
+    /**
+     * Returns the message of this error
+     *
+     * @return string
+     */
+    public function getMessage(): string
     {
         return $this->message;
     }
 
-    /** @inheritDoc */
-    #[\Override] public function throw(): never
+    /**
+     * Throws the error as a ParsingException
+     *
+     * @return never
+     * @throws ParsingException
+     */
+    public function throw(): never
     {
         throw new ParsingException($this);
     }
 
-    /** @inheritDoc */
-    #[\Override] public function getSubject(): Contract\Subject
+    /**
+     * Returns the subject which was parsed when this error occurred
+     *
+     * @return Subject
+     */
+    public function getSubject(): Subject
     {
         return $this->subject;
     }
 
-    /** @inheritDoc */
-    #[\Override] public function getSourceThrowable(): ?\Throwable
+    /**
+     * Return the throwable that lead to the creation of this Error (if any)
+     *
+     * @return \Throwable|null
+     */
+    public function getSourceThrowable(): ?\Throwable
     {
         return $this->sourceThrowable;
     }
 
-    /** @inheritDoc */
-    #[\Override] public function getSourceErrors(): array
+    /**
+     * Returns the list of errors that lead to this Error
+     * This array can be empty
+     *
+     * @return self[]
+     */
+    public function getSourceErrors(): array
     {
         return $this->sourceErrors;
     }
 
-    /** @inheritDoc */
-    #[\Override] public function hasSourceErrors(): bool
+    /**
+     * Returns true if this error has a list of errors that lead to it
+     *
+     * @return bool
+     */
+    public function hasSourceErrors(): bool
     {
         return !empty($this->sourceErrors);
     }
 
-    /** @inheritDoc */
-    #[\Override] public function hasSourceThrowable(): bool
+    /**
+     * Return true if the error has been loaded with an Exception that caused this error
+     *
+     * @return bool
+     */
+    public function hasSourceThrowable(): bool
     {
         return isset($this->sourceThrowable);
     }
 
-    /** @inheritDoc */
-    #[\Override] public function getPathAsString(bool $includeUtility = false): string
+    /**
+     * Calls getPathAsString($includeUtility) on the subject of this error
+     *
+     * @param bool $includeUtility
+     *
+     * @return string
+     * @see Subject::getPathAsString
+     */
+    public function getPathAsString(bool $includeUtility = false): string
     {
         return $this->subject->getPathAsString($includeUtility);
     }

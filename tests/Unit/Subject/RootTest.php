@@ -15,7 +15,6 @@ namespace Philiagus\Parser\Test\Unit\Subject;
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Subject\Root;
-use Philiagus\Parser\Test\SubjectTestBase;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Test\Util;
 use Philiagus\Parser\Util\Stringify;
@@ -46,7 +45,7 @@ class RootTest extends TestBase
 
         $root = new Root($value, $description, $throwOnError);
         Util::assertSame($value, $root->getValue());
-        self::assertFalse($root->isUtilitySubject());
+        self::assertFalse($root->isUtility());
         self::assertSame($expectedDescription, $root->getDescription());
         self::assertSame($throwOnError, $root->throwOnError());
         self::assertSame($expectedDescription, $root->getPathAsString(true));
@@ -57,7 +56,7 @@ class RootTest extends TestBase
 
         $root = Subject::default($value, $description, $throwOnError);
         Util::assertSame($value, $root->getValue());
-        self::assertFalse($root->isUtilitySubject());
+        self::assertFalse($root->isUtility());
         self::assertSame($expectedDescription, $root->getDescription());
         self::assertSame($throwOnError, $root->throwOnError());
         self::assertSame($expectedDescription, $root->getPathAsString(true));

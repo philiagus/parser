@@ -40,15 +40,15 @@ class AssertScalarTest extends TestBase
             ->provide(false);
     }
 
-    public function testStaticCreation(): void
-    {
-        self::assertInstanceOf(AssertScalar::class, AssertScalar::new());
-    }
-
     public static function provideInvalidTypesAndParser(): array
     {
         return (new DataProvider(~DataProvider::TYPE_SCALAR))
             ->map(fn($value) => [$value, fn() => AssertScalar::new()])
             ->provide(false);
+    }
+
+    public function testStaticCreation(): void
+    {
+        self::assertInstanceOf(AssertScalar::class, AssertScalar::new());
     }
 }

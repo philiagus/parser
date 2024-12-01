@@ -18,6 +18,7 @@ use Philiagus\Parser\Base\Parser\ResultBuilder;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Chainable;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\ParserTestBase;
 use Philiagus\Parser\Util\Stringify;
@@ -33,38 +34,6 @@ class ParserTest extends ParserTestBase
         return (new DataProvider())->provide();
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideAnything')]
-    public function testExecute(mixed $sourceValue): void
-    {
-        $expectedResult = new \stdClass();
-        $parser = self::createParser($expectedResult);
-
-        self::assertSame(
-            $expectedResult,
-            $parser->parse(Subject::default($sourceValue))->getValue()
-        );
-    }
-
-    private static function createParser(mixed $expectedResult): Contract\Parser&Chainable
-    {
-        return new class($expectedResult) extends Parser {
-
-            public function __construct(private readonly mixed $expectedResult)
-            {
-            }
-
-            protected function execute(ResultBuilder $builder): Contract\Result
-            {
-                return $builder->createResult($this->expectedResult);
-            }
-
-            protected function getDefaultParserDescription(Contract\Subject $subject): string
-            {
-                return 'parser';
-            }
-        };
-    }
-
     public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider())
@@ -76,6 +45,38 @@ class ParserTest extends ParserTestBase
                 }
             )
             ->provide(false);
+    }
+
+    private static function createParser(mixed $expectedResult): Contract\Parser&Chainable
+    {
+        return new class($expectedResult) extends Parser {
+
+            public function __construct(private readonly mixed $expectedResult)
+            {
+            }
+
+            protected function execute(ResultBuilder $builder): Result
+            {
+                return $builder->createResult($this->expectedResult);
+            }
+
+            protected function getDefaultParserDescription(Subject $subject): string
+            {
+                return 'parser';
+            }
+        };
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideAnything')]
+    public function testExecute(mixed $sourceValue): void
+    {
+        $expectedResult = new \stdClass();
+        $parser = self::createParser($expectedResult);
+
+        self::assertSame(
+            $expectedResult,
+            $parser->parse(Subject::default($sourceValue))->getValue()
+        );
     }
 
     public function test(): void
@@ -93,8 +94,8 @@ class ParserTest extends ParserTestBase
             )
             ->provider(
                 DataProvider::TYPE_ALL,
-                successValidator: function (Contract\Subject $subject, Contract\Result $result, array $arguments): array {
-                    $received = $result->getSourceSubject()->getPathAsString(true);
+                successValidator: function (Subject $subject, Result $result, array $arguments): array {
+                    $received = $result->getSource()->getPathAsString(true);
                     $expectedMessage = Stringify::getType($subject->getValue()) . ' ▷' . $arguments[0];
                     if ($received !== $expectedMessage) {
                         return [

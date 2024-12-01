@@ -14,7 +14,6 @@ namespace Philiagus\Parser\Test\Unit\Parser\Logic;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Contract;
 use Philiagus\Parser\Parser\Logic\Any;
 use Philiagus\Parser\Parser\Logic\Chain;
 use Philiagus\Parser\Result;
@@ -26,6 +25,13 @@ use PHPUnit\Framework\Attributes\CoversClass;
 class ChainTest extends ParserTestBase
 {
     use ChainableParserTestTrait;
+
+    public static function provideValidValuesAndParsersAndResults(): array
+    {
+        return (new DataProvider())
+            ->map(static fn($value) => [$value, fn() => Chain::parsers(Any::new()), $value])
+            ->provide(false);
+    }
 
     public function testParsers(): void
     {
@@ -41,7 +47,7 @@ class ChainTest extends ParserTestBase
                     ->expectSingleCall(
                         fn($value) => $value,
                         Subject::class,
-                        result: fn(Contract\Subject $subject) => new Result($subject, $result1, [])
+                        result: fn(Subject $subject) => new Result($subject, $result1, [])
                     )
                 ,
                 $builder
@@ -50,7 +56,7 @@ class ChainTest extends ParserTestBase
                         fn() => $result1,
                         Result::class,
                         eligible: fn($_1, $_2, array $successes) => $successes[0],
-                        result: fn(Contract\Subject $subject) => new Result($subject, $result2, []),
+                        result: fn(Subject $subject) => new Result($subject, $result2, []),
                     ),
                 $builder
                     ->parserArgument()
@@ -58,12 +64,12 @@ class ChainTest extends ParserTestBase
                         fn() => $result2,
                         Result::class,
                         eligible: fn($_1, $_2, array $successes) => $successes[0] && $successes[1],
-                        result: fn(Contract\Subject $subject) => new Result($subject, $result3, []),
+                        result: fn(Subject $subject) => new Result($subject, $result3, []),
                     ),
             )
             ->provider(
                 DataProvider::TYPE_ALL,
-                successValidator: function (Contract\Subject $subject, Contract\Result $result) use ($result3) {
+                successValidator: function (Subject $subject, Result $result) use ($result3) {
                     if ($result->getValue() !== $result3) {
                         return ['The result does not match'];
                     }
@@ -72,12 +78,5 @@ class ChainTest extends ParserTestBase
                 }
             );
         $builder->run();
-    }
-
-    public static function provideValidValuesAndParsersAndResults(): array
-    {
-        return (new DataProvider())
-            ->map(static fn($value) => [$value, fn() => Chain::parsers(Any::new()), $value])
-            ->provide(false);
     }
 }

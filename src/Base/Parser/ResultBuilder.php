@@ -13,11 +13,13 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Base\Parser;
 
 use Philiagus\Parser\Base\Parser;
+use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Base\Subject\Memory;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Result;
-use Philiagus\Parser\Subject;
+use Philiagus\Parser\Subject\Utility;
 
 /**
  * Class used by the base parser to ease handling of errors and changes of values.
@@ -25,12 +27,12 @@ use Philiagus\Parser\Subject;
  * @see Parser
  * @package Util
  */
-class ResultBuilder
+class ResultBuilder implements Contract\MemoryProvider
 {
 
-    private readonly Contract\Subject $subject;
+    private readonly Subject $subject;
 
-    private Contract\Subject $currentSubject;
+    private Subject $currentSubject;
 
     private mixed $currentValue;
 
@@ -45,13 +47,13 @@ class ResultBuilder
      * The parser description is injected into the subject chain via the ParserBegin subject,
      * which is used if the subject string is created excluding utility elements
      *
-     * @param Contract\Subject $subject
+     * @param Subject $subject
      * @param string $parserDescription
      */
-    public function __construct(Contract\Subject $subject, string $parserDescription)
+    public function __construct(Subject $subject, string $parserDescription)
     {
         $this->subject = $subject;
-        $this->currentSubject = new Subject\Utility\ParserBegin($this->subject, $parserDescription);
+        $this->currentSubject = new Utility\ParserBegin($this->subject, $parserDescription);
         $this->currentValue = $this->subject->getValue();
     }
 
@@ -129,12 +131,12 @@ class ResultBuilder
      *
      * If the current subject of the builder has throwOnError set the error is thrown instead
      *
-     * @param Contract\Error $error
+     * @param Error $error
      *
      * @return static
      * @throws ParsingException
      */
-    public function logError(Contract\Error $error): static
+    public function logError(Error $error): static
     {
         if ($this->subject->throwOnError()) {
             $error->throw();
@@ -191,7 +193,7 @@ class ResultBuilder
         }
 
         return new Result(
-            $result->getSourceSubject(),
+            $result->getSource(),
             $result->isSuccess() ? $result->getValue() : null,
             [...$this->errors, ...$result->getErrors()]
         );
@@ -228,7 +230,7 @@ class ResultBuilder
      */
     public function setValue(string $description, mixed $value): static
     {
-        $this->currentSubject = new Subject\Utility\Internal($this->currentSubject, $description, $value);
+        $this->currentSubject = new Utility\Internal($this->currentSubject, $description, $value);
         $this->currentValue = $value;
 
         return $this;
@@ -239,10 +241,10 @@ class ResultBuilder
      * This method is most times used when creating a new Subject for a child parser, such as when
      * an array key is handed over to another parser for further parsing
      *
-     * @return Contract\Subject
+     * @return Subject
      * @see ResultBuilder::setValue()
      */
-    public function getSubject(): Contract\Subject
+    public function getSubject(): Subject
     {
         return $this->currentSubject;
     }
@@ -262,4 +264,27 @@ class ResultBuilder
         return (bool)$this->errors;
     }
 
+    /** @inheritDoc */
+    public function setMemory(object $of, mixed $value): void
+    {
+        $this->subject->setMemory($of, $value);
+    }
+
+    /** @inheritDoc */
+    public function getMemory(object $of, mixed $default = null): mixed
+    {
+        return $this->subject->getMemory($of, $default);
+    }
+
+    /** @inheritDoc */
+    public function hasMemory(object $of): bool
+    {
+        return $this->subject->hasMemory($of);
+    }
+
+    /** @inheritDoc */
+    public function getFullMemory(): Memory
+    {
+        return $this->subject->getFullMemory();
+    }
 }

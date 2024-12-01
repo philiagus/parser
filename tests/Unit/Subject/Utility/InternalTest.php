@@ -43,8 +43,8 @@ class InternalTest extends SubjectTestBase
 
         $subject = new Internal($root, 'DESCRIPTION', $value);
         Util::assertSame($value, $subject->getValue());
-        self::assertTrue($subject->isUtilitySubject());
-        self::assertSame($root, $subject->getSourceSubject());
+        self::assertTrue($subject->isUtility());
+        self::assertSame($root, $subject->getSource());
         self::assertSame('DESCRIPTION', $subject->getDescription());
         self::assertSame($throwOnError, $subject->throwOnError());
         self::assertSame("ROOT$expectedPathPart", $subject->getPathAsString(true));
@@ -53,7 +53,7 @@ class InternalTest extends SubjectTestBase
         self::assertSame([$root], $subject->getSubjectChain(false));
     }
 
-    protected function createChained(\Philiagus\Parser\Contract\Subject $parent): \Philiagus\Parser\Contract\Subject
+    protected function createChained(Subject $parent): Subject
     {
         return new Internal($parent, 'description', 'value');
     }

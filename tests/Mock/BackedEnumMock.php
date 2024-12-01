@@ -12,7 +12,8 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test\Mock;
 
-enum BackedEnumMock: string {
+enum BackedEnumMock: string
+{
 
     case VALUE1 = 'VALUE3';
     case VALUE2 = 'VALUE2';

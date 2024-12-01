@@ -175,7 +175,7 @@ Here you can find a short overview of all the parsers provided with this package
 - `Philiagus\Parser\Parser\Parse\ParseArray` for `array`
 
     Parser to not only validate an array but also alter it. This parser is an extension of the
-    Assert Array parser and allows to change individual values rather than just look at them.
+    AssertArray parser and allows to change individual values rather than just look at them.
 - `Philiagus\Parser\Parser\Parse\ParseBase64String` for `string`
 
     Parser used to base64 decode a string

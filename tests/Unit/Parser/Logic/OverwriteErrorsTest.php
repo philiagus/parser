@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser\Logic;
 
 use Philiagus\DataProvider\DataProvider;
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Parser\Logic\OverwriteErrors;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Test\ChainableParserTestTrait;
@@ -26,6 +26,25 @@ class OverwriteErrorsTest extends ParserTestBase
 {
 
     use ChainableParserTestTrait;
+
+    public static function provideValidValuesAndParsersAndResults(): array
+    {
+        return (new DataProvider())
+            ->map(static fn($value) => [
+                $value,
+                fn() => OverwriteErrors::withMessage(
+                    'message',
+                    (new ParserMock())
+                        ->expect(
+                            static fn() => true,
+                            static fn() => true,
+                            fn(Subject $subject) => new Result($subject, $subject->getValue(), [])
+                        )
+                ),
+                $value,
+            ])
+            ->provide(false);
+    }
 
     public function testWithMessage(): void
     {
@@ -45,13 +64,13 @@ class OverwriteErrorsTest extends ParserTestBase
                     ->expectSingleCall(
                         fn() => fn() => true,
                         fn() => fn() => true,
-                        result: fn(Contract\Subject $subject) => new Result($subject, $alteredResult, [])
+                        result: fn(Subject $subject) => new Result($subject, $alteredResult, [])
                     )
                     ->errorWillBeHidden()
             )
             ->provider(
                 DataProvider::TYPE_ALL,
-                successValidator: function (Contract\Subject $subject, Contract\Result $result) use ($alteredResult) {
+                successValidator: function (Subject $subject, Result $result) use ($alteredResult) {
                     if ($result->getValue() !== $alteredResult) {
                         return ['Result does not match expected format'];
                     }
@@ -61,24 +80,5 @@ class OverwriteErrorsTest extends ParserTestBase
             );
 
         $builder->run();
-    }
-
-    public static function provideValidValuesAndParsersAndResults(): array
-    {
-        return (new DataProvider())
-            ->map(static fn($value) => [
-                $value,
-                fn() => OverwriteErrors::withMessage(
-                    'message',
-                    (new ParserMock())
-                        ->expect(
-                            static fn() => true,
-                            static fn() => true,
-                            fn(Contract\Subject $subject) => new Result($subject, $subject->getValue(), [])
-                        )
-                ),
-                $value,
-            ])
-            ->provide(false);
     }
 }

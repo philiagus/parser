@@ -15,7 +15,8 @@ namespace Philiagus\Parser\Parser\Assert;
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\OverwritableTypeErrorMessage;
 use Philiagus\Parser\Base\Parser\ResultBuilder;
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Result;
 
 
 /**
@@ -39,7 +40,7 @@ class AssertBoolean extends Base\Parser
     }
 
     /** @inheritDoc */
-    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
+    #[\Override] protected function execute(ResultBuilder $builder): Result
     {
         if (!is_bool($builder->getValue())) {
             $this->logTypeError($builder);
@@ -55,7 +56,7 @@ class AssertBoolean extends Base\Parser
     }
 
     /** @inheritDoc */
-    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
+    #[\Override] protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'assert boolean';
     }

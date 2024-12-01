@@ -14,8 +14,6 @@ namespace Philiagus\Parser\Test\Unit\Parser\Extract;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Exception\RuntimeParserConfigurationException;
 use Philiagus\Parser\Parser\Extract\Assign;
 use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\TestBase;

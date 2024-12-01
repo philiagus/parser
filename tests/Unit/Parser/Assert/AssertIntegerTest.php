@@ -14,21 +14,11 @@ namespace Philiagus\Parser\Test\Unit\Parser\Assert;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Parser\Assert\AssertInteger;
-use Philiagus\Parser\Test\ChainableParserTestTrait;
-use Philiagus\Parser\Test\InvalidValueParserTestTrait;
-use Philiagus\Parser\Test\ParserTestBase;
-use Philiagus\Parser\Test\ValidValueParserTestTrait;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(AssertInteger::class)]
 class AssertIntegerTest extends NumberTestBase
 {
-
-    protected static function getSuccessDataProviderUnion(): int
-    {
-        return DataProvider::TYPE_INTEGER;
-    }
-
 
     public static function provideInvalidValuesAndParsers(): array
     {
@@ -42,6 +32,11 @@ class AssertIntegerTest extends NumberTestBase
         return (new DataProvider(DataProvider::TYPE_INTEGER))
             ->map(static fn($value) => [$value, static fn() => AssertInteger::new(), $value])
             ->provide(false);
+    }
+
+    protected static function getSuccessDataProviderUnion(): int
+    {
+        return DataProvider::TYPE_INTEGER;
     }
 
     public function testAssertMultipleOf(): void

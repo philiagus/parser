@@ -14,7 +14,8 @@ namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Parser\ResultBuilder;
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Result;
 
 /**
  * This parser ignores its received value and replaces it with a predefined value
@@ -41,13 +42,13 @@ class IgnoreInput extends Base\Parser
     }
 
     /** @inheritDoc */
-    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
+    #[\Override] protected function execute(ResultBuilder $builder): Result
     {
         return $builder->createResult($this->value);
     }
 
     /** @inheritDoc */
-    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
+    #[\Override] protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'replace with fixed value';
     }

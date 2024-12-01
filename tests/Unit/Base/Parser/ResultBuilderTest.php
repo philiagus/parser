@@ -13,15 +13,18 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Base\Parser;
 
 use Philiagus\Parser\Base\Parser\ResultBuilder;
+use Philiagus\Parser\Base\Subject\Memory;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Subject\Root;
 use Philiagus\Parser\Subject\Utility\Internal;
 use Philiagus\Parser\Subject\Utility\ParserBegin;
+use Philiagus\Parser\Test\Mock\SubjectMock;
 use Philiagus\Parser\Test\TestBase;
 use Philiagus\Parser\Util\Stringify;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Prophecy\Argument;
 
 #[CoversClass(ResultBuilder::class)]
 class ResultBuilderTest extends TestBase
@@ -35,7 +38,7 @@ class ResultBuilderTest extends TestBase
         $subject1 = $builder->getSubject();
         self::assertInstanceOf(ParserBegin::class, $subject1);
         self::assertSame('description', $subject1->getDescription());
-        self::assertSame($subject0, $subject1->getSourceSubject());
+        self::assertSame($subject0, $subject1->getSource());
         self::assertSame($value0, $builder->getValue());
         self::assertFalse($builder->hasErrors());
         $value1 = new \stdClass();
@@ -45,7 +48,7 @@ class ResultBuilderTest extends TestBase
         self::assertInstanceOf(Internal::class, $subject2);
         self::assertSame($value1, $builder->getValue());
         self::assertSame($value1, $subject2->getValue());
-        self::assertSame($subject1, $subject2->getSourceSubject());
+        self::assertSame($subject1, $subject2->getSource());
         self::assertFalse($builder->hasErrors());
 
         $value2 = new \stdClass();
@@ -287,6 +290,30 @@ class ResultBuilderTest extends TestBase
                 new Error($subject, 'ERROR2'),
             ])
         );
+    }
+
+    public function testMemoryMethods(): void
+    {
+        $object = new \stdClass();
+        $default = new \stdClass();
+        $memory = $this->prophesize(Memory::class);
+        $memory->set($object, 'yes')->shouldBeCalledOnce();
+        $memory->has($object)->shouldBeCalledOnce()->willReturn(true);
+        $memory->get($object, Argument::is($default))->shouldBeCalledOnce()->willReturn($default);
+        $memory->get($object, null)->shouldBeCalledOnce()->willReturn('OINK');
+        $memory = $memory->reveal();
+        $subject = new SubjectMock(
+            source: new SubjectMock(
+                fullMemory: $memory
+            )
+        );
+
+        $builder = new ResultBuilder($subject, '');
+        self::assertTrue($builder->hasMemory($object));
+        self::assertSame($default, $builder->getMemory($object, $default));
+        self::assertSame('OINK', $builder->getMemory($object));
+        $builder->setMemory($object, 'yes');
+        self::assertSame($memory, $builder->getFullMemory());
     }
 
 }

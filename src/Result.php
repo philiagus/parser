@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Philiagus\Parser;
 
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Contract\Error;
 use Philiagus\Parser\Util\Stringify;
 
 /**
@@ -28,20 +27,20 @@ use Philiagus\Parser\Util\Stringify;
  * @see self::getValue()
  * @see self::isSuccess()
  */
-readonly class Result extends Subject implements Contract\Result
+readonly class Result extends Subject
 {
 
     /**
-     * @param Contract\Subject $subject The subject that was used to create this result
+     * @param Subject $subject The subject that was used to create this result
      * @param mixed $resultValue The result value - basically the subjects value after transformation
      * @param Error[] $errors A list of errors that has occurred during parsing of the subject
      *                        if any. If errors occurred the Result object will prevent access to the
      *                        result value, given that its content is not to be used
      */
     public function __construct(
-        Contract\Subject $subject,
-        mixed            $resultValue,
-        private array    $errors
+        Subject       $subject,
+        mixed         $resultValue,
+        private array $errors
     )
     {
         parent::__construct($subject, '', $resultValue, true, null);
@@ -54,30 +53,53 @@ readonly class Result extends Subject implements Contract\Result
         }
     }
 
-    /** @inheritDoc */
-    #[\Override] public function isSuccess(): bool
+    /**
+     * Returns true if the parsing did not result in any errors
+     * If false please use getErrors to get the list of errors that cause the lack of
+     * success of this parser
+     *
+     * @return bool
+     * @see hasErrors()
+     */
+    public function isSuccess(): bool
     {
         return empty($this->errors);
     }
 
-    /** @inheritDoc */
-    #[\Override] public function hasErrors(): bool
+    /**
+     * Returns true if this result has been loaded with errors
+     * If true it implies that this result was no success and thus
+     * isSuccess will return false
+     *
+     * @return bool
+     * @see isSuccess()
+     */
+    public function hasErrors(): bool
     {
         return (bool)$this->errors;
     }
 
-    /** @inheritDoc */
+    /**
+     * Returns the result value of this result
+     * This method has to throw a \LogicException if the Result is not a success
+     *
+     * @throws \LogicException
+     */
     #[\Override] public function getValue(): mixed
     {
         return empty($this->errors)
             ? parent::getValue()
             : throw new \LogicException(
-                "Trying to get result value of failed parsing: " . $this->getSourceSubject()->getPathAsString(true)
+                "Trying to get result value of failed parsing: " . $this->getSource()->getPathAsString(true)
             );
     }
 
-    /** @inheritDoc */
-    #[\Override] public function getErrors(): array
+    /**
+     * Returns the list of errors that are embedded in this result
+     *
+     * @return Error[]
+     */
+    public function getErrors(): array
     {
         return $this->errors;
     }

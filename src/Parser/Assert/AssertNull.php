@@ -15,7 +15,8 @@ namespace Philiagus\Parser\Parser\Assert;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Parser\ResultBuilder;
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Stringify;
 
 /**
@@ -53,7 +54,7 @@ class AssertNull extends Base\Parser
     }
 
     /** @inheritDoc */
-    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
+    #[\Override] protected function execute(ResultBuilder $builder): Result
     {
         if ($builder->getValue() !== null) {
             $builder->logErrorStringify($this->errorMessage);
@@ -63,7 +64,7 @@ class AssertNull extends Base\Parser
     }
 
     /** @inheritDoc */
-    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
+    #[\Override] protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'assert null';
     }

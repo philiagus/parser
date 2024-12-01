@@ -63,10 +63,10 @@ class ParseJSONStringTest extends TestBase
     public function test_setObjectsAsArrays(): void
     {
         $value = '{"a":1}';
-        self::assertEquals((object) ['a' => 1], ParseJSONString::new()->parse(Subject::default($value))->getValue());
+        self::assertEquals((object)['a' => 1], ParseJSONString::new()->parse(Subject::default($value))->getValue());
         self::assertSame(['a' => 1], ParseJSONString::new()->setObjectsAsArrays()->parse(Subject::default($value))->getValue());
         self::assertSame(['a' => 1], ParseJSONString::new()->setObjectsAsArrays(true)->parse(Subject::default($value))->getValue());
-        self::assertEquals((object) ['a' => 1], ParseJSONString::new()->setObjectsAsArrays(false)->parse(Subject::default($value))->getValue());
+        self::assertEquals((object)['a' => 1], ParseJSONString::new()->setObjectsAsArrays(false)->parse(Subject::default($value))->getValue());
     }
 
     public function test_setMaxDepth(): void
@@ -94,7 +94,7 @@ class ParseJSONStringTest extends TestBase
     {
         $value = PHP_INT_MAX . '1';
         self::assertSame(
-            (float) $value,
+            (float)$value,
             ParseJSONString::new()
                 ->parse(Subject::default($value))
                 ->getValue()

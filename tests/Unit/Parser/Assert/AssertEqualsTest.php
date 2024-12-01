@@ -17,7 +17,6 @@ use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\Assert\AssertArray;
 use Philiagus\Parser\Parser\Assert\AssertEqual;
-use Philiagus\Parser\Subject\ArrayKey;
 use Philiagus\Parser\Subject\ArrayValue;
 use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\InvalidValueParserTestTrait;

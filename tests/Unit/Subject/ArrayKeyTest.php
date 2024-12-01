@@ -46,9 +46,9 @@ class ArrayKeyTest extends SubjectTestBase
 
         $subject = new ArrayKey($root, $value);
         Util::assertSame($value, $subject->getValue());
-        self::assertFalse($subject->isUtilitySubject());
-        self::assertSame($root, $subject->getSourceSubject());
-        self::assertSame((string) $value, $subject->getDescription());
+        self::assertFalse($subject->isUtility());
+        self::assertSame($root, $subject->getSource());
+        self::assertSame((string)$value, $subject->getDescription());
         self::assertSame($throwOnError, $subject->throwOnError());
         self::assertSame("ROOT$expectedPathPart", $subject->getPathAsString(true));
         self::assertSame("ROOT$expectedPathPart", $subject->getPathAsString(false));
@@ -56,7 +56,7 @@ class ArrayKeyTest extends SubjectTestBase
         self::assertSame([$root, $subject], $subject->getSubjectChain(false));
     }
 
-    protected function createChained(\Philiagus\Parser\Contract\Subject $parent): \Philiagus\Parser\Contract\Subject
+    protected function createChained(Subject $parent): Subject
     {
         return new ArrayKey($parent, 'key');
     }

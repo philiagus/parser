@@ -13,25 +13,37 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Mock;
 
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Base\Subject\Memory;
 
-readonly class SubjectMock extends Subject {
+readonly class SubjectMock extends Subject
+{
 
     public function __construct(
-        ?Contract\Subject $sourceSubject = null,
-        string $description = 'description',
-        mixed $value = 'value',
-        bool $isUtilitySubject = true,
-        ?bool $throwOnError = null
+        ?Subject                $source = null,
+        string                  $description = 'description',
+        mixed                   $value = 'value',
+        bool                    $isUtility = true,
+        ?bool                   $throwOnError = null,
+        private ?string         $path = null,
+        private ?Subject\Memory $fullMemory = null,
     )
     {
-        parent::__construct($sourceSubject, $description, $value, $isUtilitySubject, $throwOnError);
+        parent::__construct($source, $description, $value, $isUtility, $throwOnError);
+    }
+
+    public function getFullMemory(): Memory
+    {
+        return $this->fullMemory ?? parent::getFullMemory();
     }
 
     protected function getPathStringPart(bool $isLastInChain): string
     {
-        if($isLastInChain)
+        if ($this->path !== null)
+            return $this->path;
+
+        if ($isLastInChain)
             return ' <mock last>';
+
         return ' <mock>';
     }
 }

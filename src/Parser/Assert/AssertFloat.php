@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Parser\Assert;
 
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Base\Subject;
 
 /**
  * Asserts the value to be a float. This explicitly excludes NAN on principle and INF/-INF by default
@@ -48,7 +48,7 @@ class AssertFloat extends AssertNumber
     }
 
     /** @inheritDoc */
-    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
+    #[\Override] protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'assert float';
     }

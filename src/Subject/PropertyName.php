@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Subject;
 
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Contract;
 
 /**
  * A subject representing the name of an object property
@@ -23,9 +22,9 @@ use Philiagus\Parser\Contract;
 readonly class PropertyName extends Subject
 {
 
-    public function __construct(Contract\Subject $sourceSubject, string $propertyName)
+    public function __construct(Subject $source, string $propertyName)
     {
-        parent::__construct($sourceSubject, $propertyName, $propertyName, false, null);
+        parent::__construct($source, $propertyName, $propertyName, false, null);
     }
 
     /** @inheritDoc */

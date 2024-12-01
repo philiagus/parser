@@ -13,8 +13,10 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Parser\Logic;
 
 use Philiagus\Parser\Base\Chainable;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
 use Philiagus\Parser\Contract\Parser;
+use Philiagus\Parser\Result;
 
 
 /**
@@ -49,7 +51,7 @@ class Chain implements Contract\Parser, Contract\Chainable
     }
 
     /** @inheritDoc */
-    #[\Override] public function parse(Contract\Subject $subject): Contract\Result
+    #[\Override] public function parse(Subject $subject): Result
     {
         foreach ($this->parsers as $parser) {
             $subject = $parser->parse($subject);

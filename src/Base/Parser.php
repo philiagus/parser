@@ -19,6 +19,7 @@ use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\Extract\Append;
 use Philiagus\Parser\Parser\Extract\Assign;
 use Philiagus\Parser\Parser\Logic\Chain;
+use Philiagus\Parser\Result;
 
 /**
  * Base class used for parsers to easily write custom parsers by extending this base class.
@@ -41,7 +42,7 @@ abstract class Parser implements Contract\Parser, Contract\Chainable
     }
 
     /** @inheritDoc */
-    #[\Override] public function parse(Contract\Subject $subject): Contract\Result
+    #[\Override] public function parse(Subject $subject): Result
     {
         return $this->execute(
             new ResultBuilder($subject, $this->parserDescription ?? $this->getDefaultParserDescription($subject)),
@@ -53,15 +54,15 @@ abstract class Parser implements Contract\Parser, Contract\Chainable
      *
      * @param ResultBuilder $builder
      *
-     * @return Contract\Result
+     * @return Result
      * @throws ParsingException
      */
-    abstract protected function execute(ResultBuilder $builder): Contract\Result;
+    abstract protected function execute(ResultBuilder $builder): Result;
 
     /**
      * @see OverwritableParserDescription::getDefaultParserDescription()
      */
-    abstract protected function getDefaultParserDescription(Contract\Subject $subject): string;
+    abstract protected function getDefaultParserDescription(Subject $subject): string;
 
     /** @inheritDoc */
     #[\Override] public function thenAssignTo(&$target): Chain

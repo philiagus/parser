@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Philiagus\Parser\Test;
 
-use Closure;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Contract;
 use Philiagus\Parser\Error;
 use Philiagus\Parser\Exception\ParsingException;
+use Philiagus\Parser\Result;
 use Philiagus\Parser\Util\Stringify;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 trait InvalidValueParserTestTrait
 {
@@ -28,7 +28,7 @@ trait InvalidValueParserTestTrait
 
     abstract public function expectExceptionMessage(string $message): void;
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidValuesAndParsers')]
+    #[DataProvider('provideInvalidValuesAndParsers')]
     public function testThatItBlocksInvalidValues(
         $value,
         \Closure $parser,
@@ -37,9 +37,9 @@ trait InvalidValueParserTestTrait
     ): void
     {
         $parserInstance = $parser($value);
-        for($repeat = 2;$repeat > 0;$repeat--) {
+        for ($repeat = 2; $repeat > 0; $repeat--) {
             try {
-                /** @var Contract\Result $result */
+                /** @var Result $result */
                 $result = $parserInstance->parse(Subject::default($value, throwOnError: $throw));
             } catch (\Throwable $exception) {
 
@@ -58,15 +58,15 @@ trait InvalidValueParserTestTrait
         }
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidValuesAndParsers')]
+    #[DataProvider('provideInvalidValuesAndParsers')]
     public function testThatItBlocksInvalidValuesNotThrowing(
         $value,
         \Closure $parser
     ): void
     {
         $parserInstance = $parser($value);
-        for($repeat = 2;$repeat > 0;$repeat--) {
-            /** @var Contract\Result $result */
+        for ($repeat = 2; $repeat > 0; $repeat--) {
+            /** @var Result $result */
             $result = $parserInstance->parse(Subject::default($value, throwOnError: false));
             self::assertFalse($result->isSuccess());
             self::assertNotEmpty($result->getErrors());

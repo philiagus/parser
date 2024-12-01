@@ -14,7 +14,6 @@ namespace Philiagus\Parser\Test\Unit\Parser\Parse;
 
 use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
-use Philiagus\Parser\Contract;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
 use Philiagus\Parser\Parser\Parse\ParseStdClass;
@@ -58,20 +57,26 @@ class ParseStdClassTest extends ParserTestBase
             ->provide(false);
     }
 
+    public static function provideInvalidPropertyNames(): array
+    {
+        return (new DataProvider(~DataProvider::TYPE_STRING))
+            ->provide();
+    }
+
     public function testFullModification(): void
     {
         $testPropertiesAndValues = function (ParseStdClass $parser, $expected): void {
-            $expected = (array) $expected;
+            $expected = (array)$expected;
             $keys = array_map('strval', array_keys($expected));
             $values = array_values($expected);
             $parser->givePropertyNames($this->prophesizeParser([[$keys, $keys]]));
             $parser->givePropertyValues($this->prophesizeParser([[$values, $values]]));
         };
 
-        $baseValue = (object) ['a' => 1, 'c' => 3];
+        $baseValue = (object)['a' => 1, 'c' => 3];
         $parser = ParseStdClass::new();
         $testPropertiesAndValues($parser, $baseValue);
-        $parser->defaultWith((object) ['a' => 'ignored', 'b' => 2]);
+        $parser->defaultWith((object)['a' => 'ignored', 'b' => 2]);
         $testPropertiesAndValues($parser, ['a' => 1, 'c' => 3, 'b' => 2]);
         $parser->modifyEachPropertyName($this->prophesizeParser([
             ['a', 'first'],
@@ -105,15 +110,8 @@ class ParseStdClassTest extends ParserTestBase
         $testPropertiesAndValues($parser, ['reduce' => 20]);
         $parser->defaultProperty('defaulted', 90);
         $testPropertiesAndValues($parser, ['reduce' => 20, 'defaulted' => 90]);
-        $parser->parse(Subject::default((object) ['a' => 1, 'c' => 3]));
+        $parser->parse(Subject::default((object)['a' => 1, 'c' => 3]));
     }
-
-    public static function provideInvalidPropertyNames(): array
-    {
-        return (new DataProvider(~DataProvider::TYPE_STRING))
-            ->provide();
-    }
-
 
     #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidPropertyNames')]
     public function testExceptionOnInvalidPropertyNameModify($invalidName): void
@@ -126,12 +124,12 @@ class ParseStdClassTest extends ParserTestBase
             );
 
         self::expectException(ParserConfigurationException::class);
-        $parser->parse(Subject::default((object) ['name' => 'value']));
+        $parser->parse(Subject::default((object)['name' => 'value']));
     }
 
     public function test_modifyOptionalProperty_cloning(): void
     {
-        $source = (object) ['name' => 'value'];
+        $source = (object)['name' => 'value'];
         $result = ParseStdClass::new()
             ->modifyOptionalPropertyValue('name', $this->prophesizeParser([['value', 'new value']]))
             ->parse(Subject::default($source));
@@ -140,7 +138,7 @@ class ParseStdClassTest extends ParserTestBase
 
     public function test_modifyPropertyValue_cloning(): void
     {
-        $source = (object) ['name' => 'value'];
+        $source = (object)['name' => 'value'];
         $result = ParseStdClass::new()
             ->modifyPropertyValue('name', $this->prophesizeParser([['value', 'new value']]))
             ->parse(Subject::default($source));
@@ -152,27 +150,27 @@ class ParseStdClassTest extends ParserTestBase
         self::expectException(ParsingException::class);
         ParseStdClass::new()
             ->modifyPropertyValue('name', $this->prophesizeUncalledParser())
-            ->parse(Subject::default((object) []));
+            ->parse(Subject::default((object)[]));
     }
 
     public function test_defaultProperty_cloning(): void
     {
-        $source = (object) [];
+        $source = (object)[];
         $result = ParseStdClass::new()
             ->defaultProperty('name', 'value')
             ->parse(Subject::default($source));
         self::assertNotSame($source, $result);
-        self::assertEquals((object) ['name' => 'value'], $result->getValue());
+        self::assertEquals((object)['name' => 'value'], $result->getValue());
     }
 
     public function test_defaultProperty_notReplacing(): void
     {
-        $source = (object) ['name' => 'value'];
+        $source = (object)['name' => 'value'];
         $result = ParseStdClass::new()
             ->defaultProperty('name', 'nope')
             ->parse(Subject::default($source));
         self::assertSame($source, $result->getValue());
-        self::assertEquals((object) ['name' => 'value'], $result->getValue());
+        self::assertEquals((object)['name' => 'value'], $result->getValue());
     }
 
     public function testModifyEachPropertyValue(): void
@@ -184,17 +182,17 @@ class ParseStdClassTest extends ParserTestBase
                 $builder
                     ->parserArgument()
                     ->expectMultipleCalls(
-                        fn($value) => array_values((array) $value),
+                        fn($value) => array_values((array)$value),
                         PropertyValue::class,
-                        result: fn(Contract\Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
+                        result: fn(Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
                     )
             )
             ->values(
                 [
-                    (object) ['a' => 123, 'b' => 123, 'c' => 632],
+                    (object)['a' => 123, 'b' => 123, 'c' => 632],
                 ],
-                successValidator: function (Contract\Subject $start, Contract\Result $result): array {
-                    $expected = (object) array_map(fn($value) => $value . 'f', (array) $start->getValue());
+                successValidator: function (Subject $start, Result $result): array {
+                    $expected = (object)array_map(fn($value) => $value . 'f', (array)$start->getValue());
                     $received = $result->getValue();
                     if ($expected != $received) {
                         return ['Parser changes have not been correctly applied'];
@@ -215,16 +213,16 @@ class ParseStdClassTest extends ParserTestBase
                 $builder
                     ->parserArgument()
                     ->expectMultipleCalls(
-                        fn($value) => array_keys((array) $value),
+                        fn($value) => array_keys((array)$value),
                         PropertyName::class,
-                        result: fn(Contract\Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
+                        result: fn(Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
                     )
             )
             ->values(
                 [
-                    (object) ['a' => 123, 'b' => 123, 'c' => 632],
+                    (object)['a' => 123, 'b' => 123, 'c' => 632],
                 ],
-                successValidator: function (Contract\Subject $start, Contract\Result $result): array {
+                successValidator: function (Subject $start, Result $result): array {
                     $expected = new \stdClass();
                     foreach ($start->getValue() as $name => $value) {
                         $expected->{$name . 'f'} = $value;
@@ -250,18 +248,18 @@ class ParseStdClassTest extends ParserTestBase
                 $builder
                     ->evaluatedArgument()
                     ->success(
-                        fn($value) => array_key_first((array) $value),
-                        fn($value) => !empty((array) $value)
+                        fn($value) => array_key_first((array)$value),
+                        fn($value) => !empty((array)$value)
                     )
                     ->success(
-                        fn($value) => implode('|', array_keys((array) $value)) . '|'
+                        fn($value) => implode('|', array_keys((array)$value)) . '|'
                     ),
                 $builder
                     ->parserArgument()
                     ->expectSingleCall(
                         fn($value, array $generatedValues) => $value->{$generatedValues[0]},
                         PropertyValue::class,
-                        result: fn(Contract\Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
+                        result: fn(Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
                     )
                     ->willBeCalledIf(
                         fn($value, array $generatedValues) => property_exists($value, $generatedValues[0])
@@ -269,10 +267,10 @@ class ParseStdClassTest extends ParserTestBase
             )
             ->values(
                 [
-                    (object) ['a' => 123, 'b' => 234, 'c' => 345],
-                    (object) [],
+                    (object)['a' => 123, 'b' => 234, 'c' => 345],
+                    (object)[],
                 ],
-                successValidator: function (Contract\Subject $subject, Contract\Result $result, array $methodArgs): array {
+                successValidator: function (Subject $subject, Result $result, array $methodArgs): array {
                     $expectedResult = clone $subject->getValue();
                     if (property_exists($expectedResult, $methodArgs[0])) {
                         $expectedResult->{$methodArgs[0]} .= 'f';
@@ -284,7 +282,7 @@ class ParseStdClassTest extends ParserTestBase
                     return [];
                 }
             )
-            ->value((object) []);
+            ->value((object)[]);
         $builder->run();
     }
 
@@ -298,18 +296,18 @@ class ParseStdClassTest extends ParserTestBase
                 $builder
                     ->evaluatedArgument()
                     ->success(
-                        fn($value) => array_key_first((array) $value),
-                        fn($value) => !empty((array) $value)
+                        fn($value) => array_key_first((array)$value),
+                        fn($value) => !empty((array)$value)
                     )
                     ->error(
-                        fn($value) => implode('|', array_keys((array) $value)) . '|'
+                        fn($value) => implode('|', array_keys((array)$value)) . '|'
                     ),
                 $builder
                     ->parserArgument()
                     ->expectSingleCall(
                         fn($value, array $generatedValues) => $value->{$generatedValues[0]},
                         PropertyValue::class,
-                        result: fn(Contract\Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
+                        result: fn(Subject $subject) => new Result($subject, $subject->getValue() . 'f', [])
                     )
                     ->willBeCalledIf(
                         fn($value, array $generatedValues) => property_exists($value, $generatedValues[0])
@@ -322,10 +320,10 @@ class ParseStdClassTest extends ParserTestBase
             )
             ->values(
                 [
-                    (object) ['a' => 123, 'b' => 234, 'c' => 345],
-                    (object) [],
+                    (object)['a' => 123, 'b' => 234, 'c' => 345],
+                    (object)[],
                 ],
-                successValidator: function (Contract\Subject $subject, Contract\Result $result, array $methodArgs): array {
+                successValidator: function (Subject $subject, Result $result, array $methodArgs): array {
                     $expectedResult = clone $subject->getValue();
                     $expectedResult->{$methodArgs[0]} .= 'f';
                     if ($result->getValue() != $expectedResult) {
@@ -335,7 +333,7 @@ class ParseStdClassTest extends ParserTestBase
                     return [];
                 }
             )
-            ->value((object) []);
+            ->value((object)[]);
         $builder->run();
     }
 
@@ -348,19 +346,19 @@ class ParseStdClassTest extends ParserTestBase
             ->arguments(
                 $builder
                     ->evaluatedArgument()
-                    ->success(fn($value) => [(string)array_key_first((array) $value)], fn($value) => !empty((array) $value))
-                    ->success(fn($value) => [implode('|', array_keys((array) $value)) . '|']),
+                    ->success(fn($value) => [(string)array_key_first((array)$value)], fn($value) => !empty((array)$value))
+                    ->success(fn($value) => [implode('|', array_keys((array)$value)) . '|']),
                 $builder
                     ->fixedArgument(true, false),
             )
             ->values(
                 [
-                    (object) ['a' => 1, 'b' => 2],
-                    (object) [1, 2],
-                    (object) [],
+                    (object)['a' => 1, 'b' => 2],
+                    (object)[1, 2],
+                    (object)[],
                 ],
-                successValidator: function (Contract\Subject $subject, Contract\Result $result, array $methodArgs): array {
-                    $expectedResult = (object)array_intersect_key((array) $subject->getValue(), array_flip($methodArgs[0]));
+                successValidator: function (Subject $subject, Result $result, array $methodArgs): array {
+                    $expectedResult = (object)array_intersect_key((array)$subject->getValue(), array_flip($methodArgs[0]));
                     if ($result->getValue() != $expectedResult) {
                         return [
                             'Value was not altered as expected, from ' .

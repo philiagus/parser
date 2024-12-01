@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Philiagus\Parser\Test\Unit\Parser\Logic;
 
 use Philiagus\DataProvider\DataProvider;
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Parser\Logic\Conditional;
 use Philiagus\Parser\Result;
 use Philiagus\Parser\Subject\Utility\Forwarded;
@@ -27,6 +27,13 @@ class ConditionalTest extends ParserTestBase
 {
 
     use ChainableParserTestTrait;
+
+    public static function provideValidValuesAndParsersAndResults(): array
+    {
+        return (new DataProvider())
+            ->map(static fn($value) => [$value, fn() => Conditional::new()->setDefaultResult($value), $value])
+            ->provide(false);
+    }
 
     public function testSetNonOfErrorMessage(): void
     {
@@ -66,13 +73,13 @@ class ConditionalTest extends ParserTestBase
                     ->expectSingleCall(
                         fn($value) => $value,
                         Forwarded::class,
-                        result: fn(Contract\Subject $subject) => new Result($subject, $expectedResult, [])
+                        result: fn(Subject $subject) => new Result($subject, $expectedResult, [])
                     )
                     ->willBeCalledIf(fn($_1, $_2, array $successes) => $successes[0])
             )
             ->provider(
                 DataProvider::TYPE_ALL,
-                successValidator: function (Contract\Subject $subject, Contract\Result $result) use ($expectedResult) {
+                successValidator: function (Subject $subject, Result $result) use ($expectedResult) {
                     if ($expectedResult !== $result->getValue()) {
                         return ['value does not match'];
                     }
@@ -103,13 +110,13 @@ class ConditionalTest extends ParserTestBase
                     ->expectSingleCall(
                         fn($value) => $value,
                         Forwarded::class,
-                        result: fn(Contract\Subject $subject) => new Result($subject, $expectedResult, [])
+                        result: fn(Subject $subject) => new Result($subject, $expectedResult, [])
                     )
                     ->willBeCalledIf(fn($_1, $_2, array $successes) => $successes[0])
             )
             ->provider(
                 DataProvider::TYPE_ALL,
-                successValidator: function (Contract\Subject $subject, Contract\Result $result) use ($expectedResult) {
+                successValidator: function (Subject $subject, Result $result) use ($expectedResult) {
                     if ($expectedResult !== $result->getValue()) {
                         return ['value does not match'];
                     }
@@ -140,13 +147,13 @@ class ConditionalTest extends ParserTestBase
                     ->expectSingleCall(
                         fn($value) => $value,
                         Forwarded::class,
-                        result: fn(Contract\Subject $subject) => new Result($subject, $expectedResult, [])
+                        result: fn(Subject $subject) => new Result($subject, $expectedResult, [])
                     )
                     ->willBeCalledIf(fn($_1, $_2, array $successes) => $successes[0])
             )
             ->provider(
                 DataProvider::TYPE_ALL,
-                successValidator: function (Contract\Subject $subject, Contract\Result $result) use ($expectedResult) {
+                successValidator: function (Subject $subject, Result $result) use ($expectedResult) {
                     if ($expectedResult !== $result->getValue()) {
                         return ['value does not match'];
                     }
@@ -177,13 +184,13 @@ class ConditionalTest extends ParserTestBase
                     ->expectSingleCall(
                         fn($value) => $value,
                         Forwarded::class,
-                        result: fn(Contract\Subject $subject) => new Result($subject, $expectedResult, [])
+                        result: fn(Subject $subject) => new Result($subject, $expectedResult, [])
                     )
                     ->willBeCalledIf(fn($_1, $_2, array $successes) => $successes[0])
             )
             ->provider(
                 DataProvider::TYPE_ALL,
-                successValidator: function (Contract\Subject $subject, Contract\Result $result) use ($expectedResult) {
+                successValidator: function (Subject $subject, Result $result) use ($expectedResult) {
                     if ($expectedResult !== $result->getValue()) {
                         return ['value does not match'];
                     }
@@ -211,20 +218,20 @@ class ConditionalTest extends ParserTestBase
                     ->expectSingleCall(
                         fn($value) => $value,
                         Test::class,
-                        result: fn(Contract\Subject $subject) => new Result($subject, new \stdClass(), [])
+                        result: fn(Subject $subject) => new Result($subject, new \stdClass(), [])
                     ),
                 $builder
                     ->parserArgument()
                     ->expectSingleCall(
                         fn($value) => $value,
                         Forwarded::class,
-                        result: fn(Contract\Subject $subject) => new Result($subject, $expectedResult, [])
+                        result: fn(Subject $subject) => new Result($subject, $expectedResult, [])
                     )
                     ->willBeCalledIf(fn($_1, $_2, array $successes) => $successes[0])
             )
             ->provider(
                 DataProvider::TYPE_ALL,
-                successValidator: function (Contract\Subject $subject, Contract\Result $result) use ($expectedResult) {
+                successValidator: function (Subject $subject, Result $result) use ($expectedResult) {
                     if ($expectedResult !== $result->getValue()) {
                         return ['value does not match'];
                     }
@@ -253,20 +260,20 @@ class ConditionalTest extends ParserTestBase
                     ->expectSingleCall(
                         fn($value) => $value,
                         Test::class,
-                        result: fn(Contract\Subject $subject) => new Result($subject, $forwardedValue, [])
+                        result: fn(Subject $subject) => new Result($subject, $forwardedValue, [])
                     ),
                 $builder
                     ->parserArgument()
                     ->expectSingleCall(
                         fn($value) => $forwardedValue,
                         Result::class,
-                        result: fn(Contract\Subject $subject) => new Result($subject, $expectedResult, [])
+                        result: fn(Subject $subject) => new Result($subject, $expectedResult, [])
                     )
                     ->willBeCalledIf(fn($_1, $_2, array $successes) => $successes[0])
             )
             ->provider(
                 DataProvider::TYPE_ALL,
-                successValidator: function (Contract\Subject $subject, Contract\Result $result) use ($expectedResult) {
+                successValidator: function (Subject $subject, Result $result) use ($expectedResult) {
                     if ($expectedResult !== $result->getValue()) {
                         return ['value does not match'];
                     }
@@ -276,12 +283,5 @@ class ConditionalTest extends ParserTestBase
             );
 
         $builder->run();
-    }
-
-    public static function provideValidValuesAndParsersAndResults(): array
-    {
-        return (new DataProvider())
-            ->map(static fn($value) => [$value, fn() => Conditional::new()->setDefaultResult($value), $value])
-            ->provide(false);
     }
 }

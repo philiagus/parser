@@ -12,16 +12,17 @@ namespace Your\Namespace;
 
 use Philiagus\Parser\Base\Parser;
 use Philiagus\Parser\Base\Parser\ResultBuilder;
-use Philiagus\Parser\Contract;
+use Philiagus\Parser\Base\Subject;
+use Philiagus\Parser\Result;
 
 class Increment extends Parser
 {
-    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
+    #[\Override] protected function execute(ResultBuilder $builder): Result
     {
         // TODO: Implement execute() method.
     }
 
-    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
+    #[\Override] protected function getDefaultParserDescription(Subject $subject): string
     {
         // TODO: Implement getDefaultParserDescription() method.
     }
@@ -129,7 +130,7 @@ Then we can use that value to uppercase it (using `mb_strtoupper` in this exampl
 
 class Increment extends Parser {
     
-    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
+    #[\Override] protected function execute(ResultBuilder $builder): \Philiagus\Parser\Result
     {
         // extract value from builder
         $value = $builder->getValue();
@@ -239,7 +240,7 @@ So let's return to our two options, starting with an attempt at implementing the
 class Increment extends AssertNumber
 {
 
-    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
+    #[\Override] protected function execute(ResultBuilder $builder): \Philiagus\Parser\Result
     {
         // use AssertNumber parser
         $numberResult = parent::execute($builder);
@@ -298,7 +299,7 @@ After this if we _know_ that `$numberResult` is a success result _and_ contains 
 
 class Increment extends Parser {
     
-    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
+    #[\Override] protected function execute(ResultBuilder $builder): \Philiagus\Parser\Result
     {
         // use AssertNumber parser
         $numberResult = AssertNumber::new()->parse($builder->getSubject());
@@ -364,7 +365,7 @@ class Increment extends Parser
 
     use OverwritableTypeErrorMessage;
 
-    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
+    #[\Override] protected function execute(ResultBuilder $builder): \Philiagus\Parser\Result
     {
         // extract value from builder
         $value = $builder->getValue();

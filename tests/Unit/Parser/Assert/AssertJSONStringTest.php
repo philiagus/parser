@@ -32,7 +32,7 @@ class AssertJSONStringTest extends ParserTestBase
     public static function provideValidValuesAndParsersAndResults(): array
     {
         return (new DataProvider(DataProvider::TYPE_ALL))
-            ->filter(function($value): bool {
+            ->filter(function ($value): bool {
                 try {
                     json_encode($value, flags: JSON_THROW_ON_ERROR);
                 } catch (JsonException) {

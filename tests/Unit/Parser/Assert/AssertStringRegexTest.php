@@ -16,7 +16,6 @@ use Philiagus\DataProvider\DataProvider;
 use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Exception\ParserConfigurationException;
 use Philiagus\Parser\Exception\ParsingException;
-use Philiagus\Parser\Exception\RuntimeParserConfigurationException;
 use Philiagus\Parser\Parser\Assert\AssertStringRegex;
 use Philiagus\Parser\Test\ChainableParserTestTrait;
 use Philiagus\Parser\Test\InvalidValueParserTestTrait;
@@ -50,12 +49,6 @@ class AssertStringRegexTest extends ParserTestBase
         return (new DataProvider(~DataProvider::TYPE_STRING))
             ->map(fn($value) => [$value, fn() => AssertStringRegex::pattern('/.?/')])
             ->provide(false);
-    }
-
-    public function testExceptionOnInvalidPattern(): void
-    {
-        self::expectException(ParserConfigurationException::class);
-        AssertStringRegex::pattern('not a pattern');
     }
 
     public static function provideCaptureVariants(): array
@@ -100,6 +93,12 @@ class AssertStringRegexTest extends ParserTestBase
         }
 
         return $cases;
+    }
+
+    public function testExceptionOnInvalidPattern(): void
+    {
+        self::expectException(ParserConfigurationException::class);
+        AssertStringRegex::pattern('not a pattern');
     }
 
     #[\PHPUnit\Framework\Attributes\DataProvider('provideCaptureVariants')]

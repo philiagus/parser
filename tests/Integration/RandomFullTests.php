@@ -35,7 +35,7 @@ class RandomFullTests extends TestCase
 {
     public function test()
     {
-        $rawValue = (object) [
+        $rawValue = (object)[
             'string' => 'string',
             'integer' => 1,
             'float' => 1.0,
@@ -77,7 +77,7 @@ class RandomFullTests extends TestCase
         }
 
         self::assertSame($preservedValue2, $result->getValue());
-        self::assertEquals((object) ['overwritten' => 'overwritten again'], $result2);
+        self::assertEquals((object)['overwritten' => 'overwritten again'], $result2);
         self::assertSame([$result2], $result3);
         self::assertSame($preservedValue1, $preservedValue2);
         self::assertEquals($rawValue, $preservedValue1);

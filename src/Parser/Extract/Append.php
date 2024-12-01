@@ -14,7 +14,9 @@ namespace Philiagus\Parser\Parser\Extract;
 
 use Philiagus\Parser\Base;
 use Philiagus\Parser\Base\Parser\ResultBuilder;
+use Philiagus\Parser\Base\Subject;
 use Philiagus\Parser\Contract;
+use Philiagus\Parser\Result;
 
 /**
  * Whenever this parser is called the value received by this parser is appended to the provided target
@@ -59,7 +61,7 @@ class Append extends Base\Parser
     }
 
     /** @inheritDoc */
-    #[\Override] protected function execute(ResultBuilder $builder): Contract\Result
+    #[\Override] protected function execute(ResultBuilder $builder): Result
     {
         $this->target[] = $builder->getValue();
 
@@ -67,7 +69,7 @@ class Append extends Base\Parser
     }
 
     /** @inheritDoc */
-    #[\Override] protected function getDefaultParserDescription(Contract\Subject $subject): string
+    #[\Override] protected function getDefaultParserDescription(Subject $subject): string
     {
         return 'extract: appended';
     }
