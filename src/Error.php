@@ -63,7 +63,7 @@ readonly class Error
      * @param \Throwable|null $sourceThrowable
      * @param array $sourceErrors
      *
-     * @return Error
+     * @return static
      * @see Stringify::parseMessage()
      *
      */
@@ -73,9 +73,9 @@ readonly class Error
         array       $replacers = [],
         ?\Throwable $sourceThrowable = null,
         array       $sourceErrors = []
-    ): Error
+    ): static
     {
-        return new Error(
+        return new static(
             $subject,
             Stringify::parseMessage($message, $replacers + ['value' => $subject->getValue()]),
             $sourceThrowable,
